@@ -5,7 +5,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Dashboard from './views/Dashboard';
 import DataViewer from './views/DataViewer';
 import Leaflet from './views/Leaflet';
-import MapBox from './views/MapBox';
+/*import MapBox from './views/MapBox';*/
 
 class App extends Component {
   render() {
@@ -16,7 +16,7 @@ class App extends Component {
           <Route exact path="/" component={Dashboard} />
           <Route path="/dataviewer" component={DataViewer} />
           <Route path="/leaflet" component={Leaflet} />
-          <Route path="/mapbox" component={MapBox} />
+          {/*<Route path="/mapbox" component={MapBox} />*/}
         </div>
       </Router>
     );
