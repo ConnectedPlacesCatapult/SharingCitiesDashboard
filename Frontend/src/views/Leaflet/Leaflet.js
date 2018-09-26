@@ -68,9 +68,21 @@ class Leaflet extends Component {
 
   onEachFeature = (feature, layer) => {
     let popupContent = `<h3>${feature.properties.name}</h3>${feature.properties.bike} / ${feature.properties.dock}`;
+    let pp = <Popup >feature.properties.name</Popup>;
 
-    layer
-      .bindPopup(popupContent)
+    layer.bindPopup(pp)
+
+
+    return (
+      <Marker>
+        <Popup>
+          A pretty CSS3 popup. <br /> Easily customizable.
+        </Popup>
+      </Marker>
+    );
+
+
+
       /*.on({
         mouseover: () => {},
         mouseout: () => {},
