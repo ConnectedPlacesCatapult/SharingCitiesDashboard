@@ -1,0 +1,39 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "properties": {
+        "name": "Austin Road, Battersea Park",
+        "bike": 9,
+        "dock": 24,
+        "dock_id": 1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.155442,
+          51.474376
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "properties": {
+        "name": "Royal Avenue 1, Chelsea",
+        "bike": 2,
+        "dock": 10,
+        "dock_id": 2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.162727,
+          51.489932
+        ]
+      }
+    }
+  ]
+}
