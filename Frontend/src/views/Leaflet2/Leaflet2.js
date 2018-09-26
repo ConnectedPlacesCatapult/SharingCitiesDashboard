@@ -156,7 +156,7 @@ class Leaflet2 extends Component {
     if (feature.properties && feature.properties.name && feature.properties.bike && feature.properties.dock) {
 
       // assemble the HTML for the markers' popups (Leaflet's bindPopup method doesn't accept React JSX)
-      let popupContent = `<h3>${feature.properties.name}</h3>${feature.properties.bike} of ${feature.properties.dock} available`;
+      let popupContent = `<h3>${feature.properties.name}</h3><p>${feature.properties.bike} of ${feature.properties.dock} available</p>`;
       layer.bindPopup(popupContent);
     }
   }

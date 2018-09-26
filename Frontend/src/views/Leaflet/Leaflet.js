@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { Map, Marker, Popup, TileLayer, GeoJSON } from 'react-leaflet';
+import { Map, TileLayer, GeoJSON } from 'react-leaflet';
 import L from 'leaflet';
 
 import CONFIG from './config';
@@ -68,18 +68,18 @@ class Leaflet extends Component {
 
   onEachFeature = (feature, layer) => {
     let popupContent = `<h3>${feature.properties.name}</h3>${feature.properties.bike} / ${feature.properties.dock}`;
-    let pp = <Popup >feature.properties.name</Popup>;
+    //let pp = <Popup >feature.properties.name</Popup>;
 
-    layer.bindPopup(pp)
+    layer.bindPopup(popupContent);
 
 
-    return (
+    /*return (
       <Marker>
         <Popup>
           A pretty CSS3 popup. <br /> Easily customizable.
         </Popup>
       </Marker>
-    );
+    );*/
 
 
 
@@ -89,8 +89,8 @@ class Leaflet extends Component {
         click: () => {
           //console.log(feature.properties);
         }
-      })*/
-    ;
+      })
+    ;*/
   };
 
   pointToLayer = (feature, latlng) => {
