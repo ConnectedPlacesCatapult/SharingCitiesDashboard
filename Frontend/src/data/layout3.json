@@ -1,0 +1,16 @@
+[
+  {
+    "component": "MultiLineChart",
+    "name": "Weather Forecast",
+    "grid": {
+      "x": 0,
+      "y": 0,
+      "w": 11,
+      "h": 4,
+      "minW": 11,
+      "minH": 4,
+      "static": false
+    },
+    "options": {}
+  }
+]
