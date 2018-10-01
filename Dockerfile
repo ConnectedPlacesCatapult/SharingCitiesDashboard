@@ -9,7 +9,7 @@ RUN pip3 install -r /requirements.txt
 USER postgres
 RUN    /etc/init.d/postgresql start &&\
     psql --command "CREATE USER root WITH SUPERUSER PASSWORD 'root';" &&\
-    createdb -O root analytics
+    createdb -O root test_analytics
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.5/main/pg_hba.conf
 USER root
 

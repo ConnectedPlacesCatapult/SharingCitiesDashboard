@@ -18,7 +18,7 @@ class SetupTearDown(object):
             SECRET_KEY='testing'
         )
 
-        self.db_uri = 'mysql+pymysql://%s:%s@%s/' % (application.config['DB_USERNAME'], application.config['DB_PASSWORD'], application.config['DB_HOST'])
+        self.db_uri = 'postgresql+psycopg2://%s:%s@%s/' % (application.config['DB_USERNAME'], application.config['DB_PASSWORD'], application.config['DB_HOST'])
         application.config['SQLALCHEMY_DATABASE_URI'] = self.db_uri + application.config['DATABASE_NAME']
 
         # Creating database engine
@@ -27,8 +27,8 @@ class SetupTearDown(object):
         conn.execute('commit')
         
         # Creating test database
-        conn.execute('create database ' + application.config['DATABASE_NAME'])
-        conn.execute('use ' + application.config['DATABASE_NAME'])
+        # conn.execute('create database ' + application.config['DATABASE_NAME'])
+        # conn.execute('use ' + application.config['DATABASE_NAME'])
 
         # Creating all required tables
         db.create_all(app=application)
