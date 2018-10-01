@@ -4,7 +4,7 @@ build:
     - script:
         name: Basic Information
         code: |
-          python -V
+          python3 -V
     - script:
         name: Set up Postgres env variables
         code: |
@@ -31,12 +31,12 @@ build:
     - script:
         name: Setup Database
         code: |
-          python Analytics/initdb.py
-          python Analytics/manage.py db init
-          python Analytics/manage.py db migrate
-          python Analytics/manage.py db upgrade
-          python Analytics/inittb_operations.py
+          python3 Analytics/initdb.py
+          python3 Analytics/manage.py db init
+          python3 Analytics/manage.py db migrate
+          python3 Analytics/manage.py db upgrade
+          python3 Analytics/inittb_operations.py
     - script:
         name: Run Test
         code: |
-          python Analytics/run_tests.py
+          python3 Analytics/run_tests.py
