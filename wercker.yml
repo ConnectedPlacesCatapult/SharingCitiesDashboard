@@ -8,10 +8,10 @@ build:
     - script:
         name: Wait for Postgres to come up
         code: |
+          sudo /etc/init.d/postgresql start
           createuser root
           createdb -O root analytics -E UTF8
           echo "local all all trust" >> /etc/postgresql/9.5/main/pg_hba.conf
-          sudo /etc/init.d/postgresql start
           while ! psql -c "\l"; do
             echo "PostgresSQL unavailable, waiting..."
             sleep 3
