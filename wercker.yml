@@ -6,15 +6,11 @@ build:
         code: |
           python3 -V
     - script:
-        name: Set up Postgres env variables
-        code: |
-          export PGHOST=$POSTGIS_PORT_5432_TCP_ADDR
-          export PGPORT=$POSTGIS_PORT_5432_TCP_PORT
-          export PGUSER=postgres
-          export PGPASSWORD=postgres
-    - script:
         name: Wait for Postgres to come up
         code: |
+          createuser root
+          createdb -O root analytics -E UTF8
+          echo "local all all trust" >> /etc/postgresql/9.5/main/pg_hba.conf
           sudo /etc/init.d/postgresql start
           while ! psql -c "\l"; do
             echo "PostgresSQL unavailable, waiting..."
@@ -23,8 +19,7 @@ build:
     - script:
         name: Set up test database
         code: |
-          createuser root
-          createdb -O root analytics -E UTF8
+          
     - script:
         name: Set Settings file
         code: |
