@@ -8,6 +8,7 @@ build:
     - script:
         name: Wait for Postgres to come up
         code: |
+          /etc/init.d/postgresql start
           while ! psql -c "\l"; do
             echo "PostgresSQL unavailable, waiting..."
             sleep 3
