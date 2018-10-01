@@ -1,4 +1,4 @@
-box: fcclab/sharingcitiesdashboard
+box: fccsharingcities/sharingcitiesdashboard
 build:
   steps:
     - script:
