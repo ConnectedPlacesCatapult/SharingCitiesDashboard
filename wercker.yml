@@ -13,6 +13,7 @@ build:
         name: Set Settings file
         code: |
           mv Analytics/settings.py.test Analytics/settings.py
+          cat Analytics/settings.py
     - script:
         name: Setup Database
         code: |
