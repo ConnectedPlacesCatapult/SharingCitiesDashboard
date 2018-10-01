@@ -32,7 +32,6 @@ build:
     - script:
         name: Setup Database
         code: |
-          python3 Analytics/initdb.py
           python3 Analytics/manage.py db init
           python3 Analytics/manage.py db migrate
           python3 Analytics/manage.py db upgrade
