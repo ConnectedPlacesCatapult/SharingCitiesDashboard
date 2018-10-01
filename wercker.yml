@@ -20,6 +20,7 @@ build:
           python3 Analytics/manage.py db init
           python3 Analytics/manage.py db migrate
           python3 Analytics/manage.py db upgrade
+          python3 Analytics/inittb_operations.py
     - script:
         name: Run Test
         code: |

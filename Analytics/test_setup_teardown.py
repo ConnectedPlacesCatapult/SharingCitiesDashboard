@@ -12,34 +12,35 @@ class SetupTearDown(object):
 
     def setUp(self):
         # Initialising test application
-        application = create_app(
-            TESTING=True,
-            DATABASE_NAME='test_analytics',
-            SECRET_KEY='testing'
-        )
+        # application = create_app(
+        #     TESTING=True,
+        #     DATABASE_NAME='test_analytics',
+        #     SECRET_KEY='testing'
+        # )
+        application = create_app()
 
-        self.db_uri = 'postgresql+psycopg2://%s:%s@%s/' % (application.config['DB_USERNAME'], application.config['DB_PASSWORD'], application.config['DB_HOST'])
-        application.config['SQLALCHEMY_DATABASE_URI'] = self.db_uri + application.config['DATABASE_NAME']
+        # self.db_uri = 'postgresql+psycopg2://%s:%s@%s/' % (application.config['DB_USERNAME'], application.config['DB_PASSWORD'], application.config['DB_HOST'])
+        # application.config['SQLALCHEMY_DATABASE_URI'] = self.db_uri + application.config['DATABASE_NAME']
 
-        # Creating database engine
-        engine = sqlalchemy.create_engine(self.db_uri)
-        conn = engine.connect()
-        conn.execute('commit')
+        # # Creating database engine
+        # engine = sqlalchemy.create_engine(self.db_uri)
+        # conn = engine.connect()
+        # conn.execute('commit')
         
         # Creating test database
         # conn.execute('create database ' + application.config['DATABASE_NAME'])
         # conn.execute('use ' + application.config['DATABASE_NAME'])
 
         # Creating all required tables
-        db.create_all(app=application)
+        # db.create_all(app=application)
 
         # Inserting data into operation table required to validate requests
-        conn.execute("insert into operation values (1, 'regression', now());")
-        conn.execute("insert into operation values (2, 'classification', now());")
-        conn.execute("insert into operation values (3, 'clustering', now());")
+        # conn.execute("insert into operation values (1, 'regression', now());")
+        # conn.execute("insert into operation values (2, 'classification', now());")
+        # conn.execute("insert into operation values (3, 'clustering', now());")
 
         # Closing the test connection
-        conn.close()
+        # conn.close()
 
         # Creating testclient and returning it
         self.appl = application.test_client()
@@ -48,8 +49,8 @@ class SetupTearDown(object):
 
     def tearDown(self):
         db.session.remove()
-        engine = sqlalchemy.create_engine(self.db_uri)
-        conn = engine.connect()
-        conn.execute('commit')
-        conn.execute('drop database ' + self.app.config['DATABASE_NAME'])
-        conn.close()
+        # engine = sqlalchemy.create_engine(self.db_uri)
+        # conn = engine.connect()
+        # conn.execute('commit')
+        # conn.execute('drop database ' + self.app.config['DATABASE_NAME'])
+        # conn.close()
