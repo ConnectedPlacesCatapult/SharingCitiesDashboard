@@ -11,4 +11,5 @@ RUN    /etc/init.d/postgresql start &&\
     psql --command "CREATE USER root WITH SUPERUSER PASSWORD '';" &&\
     createdb -O root analytics
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.5/main/pg_hba.conf
+USER ubuntu
 
