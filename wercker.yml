@@ -9,14 +9,13 @@ build:
         name: Wait for Postgres to come up
         code: |
           sudo /etc/init.d/postgresql start
-          sudo -i -u postgres
-          createuser root
-          createdb -O root analytics -E UTF8
           echo "local all all trust" >> /etc/postgresql/9.5/main/pg_hba.conf
           while ! psql -c "\l"; do
             echo "PostgresSQL unavailable, waiting..."
             sleep 3
           done
+          createuser root
+          createdb -O root analytics -E UTF8
     - script:
         name: Set up test database
         code: |
