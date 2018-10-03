@@ -40,12 +40,20 @@ class Analytics(Resource):
                         required=True,
                         help='Is the request to process timeseries data')
 
+    parser.add_argument('missingValues',
+                        type=str,
+                        required=True,
+                        choices=('remove', 'mean', 'median'),
+                        help='Provide what needs to be done with missing values')
+
     def post(self):
         data = self.parser.parse_args()
         operation = data['operation']
         requestor = data['requestor_id']
         timeseries = data['timeseries']
-        request_id = self.create_request(operation, requestor, timeseries)
+        missing_values = data['missingValues']
+
+        request_id = self.create_request(operation, requestor, timeseries, missing_values)
 
         j = json.loads(data['columnsX'].replace("'", '"'))
         if not j:
@@ -71,9 +79,9 @@ class Analytics(Resource):
             }
         }, 202
 
-    def create_request(self, operation, requestor, timeseries):
+    def create_request(self, operation, requestor, timeseries, missing_values):
         operation_found = Operation.get_operation(operation)
-        analytics = RequestAnalytics(requestor, operation_found.id, timeseries,
+        analytics = RequestAnalytics(requestor, operation_found.id, timeseries, missing_values,
                                         'Accepted')
         analytics.save()
         return analytics.id
