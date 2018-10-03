@@ -35,11 +35,17 @@ class Analytics(Resource):
                         required=True,
                         help='Requestor Id is mandatory')
 
+    parser.add_argument('timeseries',
+                        type=bool,
+                        required=True,
+                        help='Is the request to process timeseries data')
+
     def post(self):
         data = self.parser.parse_args()
         operation = data['operation']
         requestor = data['requestor_id']
-        request_id = self.create_request(operation, requestor)
+        timeseries = data['timeseries']
+        request_id = self.create_request(operation, requestor, timeseries)
 
         j = json.loads(data['columnsX'].replace("'", '"'))
         if not j:
@@ -65,9 +71,9 @@ class Analytics(Resource):
             }
         }, 202
 
-    def create_request(self, operation, requestor):
+    def create_request(self, operation, requestor, timeseries):
         operation_found = Operation.get_operation(operation)
-        analytics = RequestAnalytics(requestor, operation_found.id,
+        analytics = RequestAnalytics(requestor, operation_found.id, timeseries,
                                         'Accepted')
         analytics.save()
         return analytics.id
