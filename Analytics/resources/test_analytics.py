@@ -25,7 +25,8 @@ class AnalyticsTest(unittest.TestCase):
                                 tableY= 'table2',
                                 operation= operation_name,
                                 requestor_id= req_id,
-                                timeseries='True')), 
+                                timeseries='True',
+                                missingValues='remove')), 
                                 content_type='application/json')
 
     def create_request_missing_attribute(self, attribute_name):
@@ -38,8 +39,23 @@ class AnalyticsTest(unittest.TestCase):
                                 tableY= 'table2',
                                 operation= 'classification',
                                 requestor_id= 456,
-                                timeseries= 'True')
+                                timeseries= 'True',
+                                missingValues= 'remove')
         d.pop(attribute_name)
+        return self.app.post('/analytics', data=json.dumps(d), content_type='application/json')
+
+    def create_request_change_attribute_value(self, attribute_name, value):
+        d = dict(columnsX= dict(
+                                table1= ['col1', 'col2', 'col3'],
+                                table2= ['col4', 'col5', 'col6']
+                                ),
+                                columnY= 'yCol',
+                                tableY= 'table2',
+                                operation= 'classification',
+                                requestor_id= 456,
+                                timeseries= 'True',
+                                missingValues= 'remove')
+        d[attribute_name] = value
         return self.app.post('/analytics', data=json.dumps(d), content_type='application/json')
 
     def test_request(self):
@@ -78,4 +94,19 @@ class AnalyticsTest(unittest.TestCase):
         self.assertEqual(response.get_json(), { "message": {
                                                 "timeseries": "Is the request to process timeseries data"
                                                 }})
+
+    def test_missing_missingValues(self):
+        response = self.create_request_missing_attribute('missingValues')
+
+        self.assertEqual(response.get_json(), { "message": {
+                                                "missingValues": "Provide what needs to be done with missing values"
+                                                }})
+
+    def test_incorrect_missing_value(self):
+        response = self.create_request_change_attribute_value('missingValues', 'test')
+
+        self.assertEqual(response.get_json(), { "message": {
+                                                "missingValues": "Provide what needs to be done with missing values"
+                                                }})
+
         
