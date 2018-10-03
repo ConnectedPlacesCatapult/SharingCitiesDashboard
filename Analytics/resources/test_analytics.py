@@ -24,21 +24,23 @@ class AnalyticsTest(unittest.TestCase):
                                 columnY= 'yCol',
                                 tableY= 'table2',
                                 operation= operation_name,
-                                requestor_id= req_id)), 
+                                requestor_id= req_id,
+                                timeseries='True')), 
                                 content_type='application/json')
 
-    def create_request_missing_attribute(self):
+    def create_request_missing_attribute(self, attribute_name):
         # a mandatory attribute tableY is missing while creating this request
-        return self.app.post('/analytics', 
-                            data=json.dumps(
-                                dict(columnsX= dict(
-                                    table1= ['col1', 'col2', 'col3'],
-                                    table2= ['col4', 'col5', 'col6']
+        d = dict(columnsX= dict(
+                                table1= ['col1', 'col2', 'col3'],
+                                table2= ['col4', 'col5', 'col6']
                                 ),
                                 columnY= 'yCol',
+                                tableY= 'table2',
                                 operation= 'classification',
-                                requestor_id= 456)), 
-                                content_type='application/json')
+                                requestor_id= 456,
+                                timeseries= 'True')
+        d.pop(attribute_name)
+        return self.app.post('/analytics', data=json.dumps(d), content_type='application/json')
 
     def test_request(self):
         response = self.create_request('classification', 456)
@@ -64,9 +66,16 @@ class AnalyticsTest(unittest.TestCase):
                                                 }})
 
     def test_missing_attribute(self):
-        response = self.create_request_missing_attribute()
+        response = self.create_request_missing_attribute('tableY')
         
         self.assertEqual(response.get_json(), {'message': {
                                                 'tableY': 'Target table name is mandatory'
+                                                }})
+
+    def test_missing_timeseries(self):
+        response = self.create_request_missing_attribute('timeseries')
+
+        self.assertEqual(response.get_json(), { "message": {
+                                                "timeseries": "Is the request to process timeseries data"
                                                 }})
         
