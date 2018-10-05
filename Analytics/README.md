@@ -7,12 +7,8 @@ Sharing Cities Analytics API allow user of the Sharing Cities Dashboard to perfo
 - [Clustering](https://en.wikipedia.org/wiki/Cluster_analysis)
 - [Classification](https://en.wikipedia.org/wiki/Statistical_classification)
 
-The primary purpose of all 3 operations are to make predictions using historical data.
-In order to train model the API makes use of multiple library:
-- [Prophet](https://facebook.github.io/prophet/docs/quick_start.html)
-- [Scikit-Learn](http://scikit-learn.org/stable/)
-- [Pandas](https://pandas.pydata.org/)
-- [Numpy](https://docs.scipy.org/doc/numpy-1.15.1/reference/)
+The primary purpose of all 3 operations are to extract patterns and make predictions using historical data. \
+The analytical functionality of Sharing Cities is based on [prophet](https://facebook.github.io/prophet/docs/quick_start.html) and [scikit learn](http://scikit-learn.org/stable/)
 
 ## Requirements
 
