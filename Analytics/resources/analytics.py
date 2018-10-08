@@ -68,14 +68,19 @@ class Analytics(Resource):
             date_from = data['dataRangeFrom']
             date_to = data['dataRangeTo']
 
-            valid_f, _ = convert_to_date(date_from) 
-            valid_t, _ = convert_to_date(date_to)
+            valid_f, from_d = convert_to_date(date_from) 
+            valid_t, to_d = convert_to_date(date_to)
 
             if not valid_f or not valid_t:
                 return {"error": "Invalid date format"}, 400
 
+            if to_d < from_d:
+                return {"error": "Invalid date format"}, 400
+
             data_range_from = data['dataRangeFrom']
             data_range_to = data['dataRangeTo']
+
+
 
         request_id = self.create_request(operation, requestor, timeseries, 
                                             missing_values, data_range_from, data_range_to)
