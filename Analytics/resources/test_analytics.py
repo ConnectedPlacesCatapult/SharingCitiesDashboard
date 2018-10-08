@@ -15,7 +15,8 @@ class AnalyticsTest(unittest.TestCase):
         self.application.tearDown()
 
     def create_request(self, operation_name='classification', req_id=456, 
-                        data_range='12-03-2018 00:00:00.12-03-2018 00:00:00'):
+                        data_range_from='12-03-2018 00:00:00', 
+                        data_range_to='12-03-2018 00:00:00'):
         d = dict(columnsX= dict(
                                 table1= ['col1', 'col2', 'col3'],
                                 table2= ['col4', 'col5', 'col6']
@@ -26,7 +27,8 @@ class AnalyticsTest(unittest.TestCase):
                                 requestor_id= req_id,
                                 timeseries='True',
                                 missingValues='remove',
-                                dataRange=data_range)
+                                dataRangeFrom=data_range_from,
+                                dataRangeTo=data_range_to)
         return self.app.post('/analytics', data=json.dumps(d), 
                             content_type='application/json')
 
@@ -111,11 +113,11 @@ class AnalyticsTest(unittest.TestCase):
                                                 }})
 
     def test_data_range_invalid(self):
-        response = self.create_request(data_range='test')
+        response = self.create_request(data_range_from='test', data_range_to='test')
         self.assertEqual(response.get_json(), {"error": "Invalid date format"})
 
-        response_1 = self.create_request(data_range='test.test')
-        self.assertEqual(response.get_json(), {"error": "Invalid date format"})
+        response_1 = self.create_request(data_range_to='test')
+        self.assertEqual(response_1.get_json(), {"error": "Invalid date format"})
 
 
 

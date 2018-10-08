@@ -46,7 +46,11 @@ class Analytics(Resource):
                         choices=('remove', 'mean', 'median', 'backward fill', 'forward fill', 'default'),
                         help='Provide what needs to be done with missing values')
 
-    parser.add_argument('dataRange',
+    parser.add_argument('dataRangeFrom',
+                        type=str,
+                        required=False)
+
+    parser.add_argument('dataRangeTo',
                         type=str,
                         required=False)
 
@@ -56,24 +60,25 @@ class Analytics(Resource):
         requestor = data['requestor_id']
         timeseries = data['timeseries']
         missing_values = data['missingValues']
-        data_range = None
+        data_range_from = None
+        data_range_to = None
 
-        if data['dataRange']:
-            if '.' not in data['dataRange']:
-                return {"error": "Invalid date format"}, 400
+        if data['dataRangeFrom'] and data['dataRangeTo']:
             
-            date = data['dataRange'].split('.')
+            date_from = data['dataRangeFrom']
+            date_to = data['dataRangeTo']
 
-            valid_f, from_d = convert_to_date(date[0]) 
-            valid_t, to_d = convert_to_date(date[1])
+            valid_f, _ = convert_to_date(date_from) 
+            valid_t, _ = convert_to_date(date_to)
 
             if not valid_f or not valid_t:
                 return {"error": "Invalid date format"}, 400
 
-            data_range = data['dataRange']
+            data_range_from = data['dataRangeFrom']
+            data_range_to = data['dataRangeTo']
 
         request_id = self.create_request(operation, requestor, timeseries, 
-                                            missing_values, data_range)
+                                            missing_values, data_range_from, data_range_to)
 
         j = json.loads(data['columnsX'].replace("'", '"'))
         if not j:
@@ -99,13 +104,14 @@ class Analytics(Resource):
             }
         }, 202
 
-    def create_request(self, operation, requestor, timeseries, missing_values, data_range):
+    def create_request(self, operation, requestor, timeseries, missing_values, data_range_from, data_range_to):
         operation_found = Operation.get_operation(operation)
         analytics = RequestAnalytics(user_id=requestor, 
                                     operation_id = operation_found.id, 
                                     timeseries = timeseries, 
                                     missing_values = missing_values, 
-                                    data_range = data_range,
+                                    data_range_from = data_range_from,
+                                    data_range_to = data_range_to,
                                     status = 'Accepted')
         analytics.save()
         return analytics.id
