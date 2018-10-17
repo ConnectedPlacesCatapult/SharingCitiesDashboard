@@ -80,7 +80,8 @@ The API should be called using POST and passing in request parameters are JSON.
 "requestor_id": 456,
 "timeseries": "True",
 "missingValues": "mean",
-"dataRange": "12-03-2018 00:00:00.12-03-2018 00:00:00"
+"dataRangeFrom": "12-03-2018 00:00:00",
+"dataRangeTo": "14-03-2018 00:00:00"
 }
 
 ```
