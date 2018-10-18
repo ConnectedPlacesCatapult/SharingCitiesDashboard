@@ -8,14 +8,18 @@ class RequestTablesCols(db.Model):
     request_id = db.Column(db.Integer, db.ForeignKey('requestanalytics.id'))
     table_name = db.Column(db.String(255), nullable=False)
     col_name = db.Column(db.String(255), nullable=False)
+    filter_type = db.Column(db.String(255))
+    filters = db.Column(db.String(255))
     type_col = db.Column(db.String(80), nullable=False)
     timestamp = db.Column(db.DateTime)
 
-    def __init__(self, request_id, table_name, col_name, type_col, timestamp=None):
+    def __init__(self, request_id, table_name, col_name, type_col, filter_type='None', filters='None', timestamp=None):
         self.request_id = request_id
         self.table_name = table_name
         self.col_name = col_name
         self.type_col = type_col
+        self.filter_type = filter_type
+        self.filters = filters
 
         if timestamp is None:
             timestamp = datetime.utcnow()
@@ -32,6 +36,8 @@ class RequestTablesCols(db.Model):
             'table_name': self.table_name,
             'col_name': self.col_name,
             'type_col': self.type_col,
+            'filter_type': self.filter_type,
+            'filters': self.filters,
             'timestamp': self.timestamp
         }
     
