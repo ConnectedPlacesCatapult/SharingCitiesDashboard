@@ -7,6 +7,7 @@ from models.request_tables import RequestTables
 from models.request_table_cols import RequestTablesCols
 from db import db
 from utility import current_time, convert_to_date
+from resources.initiate_task import InitiateTask
 
 class Analytics(Resource):
     parser = reqparse.RequestParser()
@@ -124,4 +125,9 @@ class Analytics(Resource):
 
     def save_request(self):
         db.session.commit()
+
+class Dataset(object):
+    def __init__(self, X, Y):
+        self.X = X
+        self.Y = Y
     
