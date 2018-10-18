@@ -149,6 +149,10 @@ class AnalyticsTest(unittest.TestCase):
         response_1 = self.create_request(data_range_to='test')
         self.assertEqual(response_1.get_json(), {"error": "Invalid date format"})
 
+        response_2 = self.create_request(data_range_from='12-03-2018 00:00:00',
+                                        data_range_to='11-03-2018 00:00:00')
+        self.assertEqual(response_2.get_json(), {"error": "Invalid date format"})
+
 
 
 
