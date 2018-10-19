@@ -36,7 +36,9 @@ The API should be called using POST and passing in request parameters are JSON.
 
 - columnsX(Dependent Variables):
     - It is a mandatory field
-    - Requires a dictionary with table names as keys and column names as list
+    - Requires a dictionary with table names as keys and column names as dictionary
+    - With in column name filters can be provided currently we are only 
+    supporting **_and** and **_or** filter.
 - columnY(Independent Variable):
     - It is a mandatory field
     - Requires a string mentioning the column name
@@ -71,8 +73,18 @@ The API should be called using POST and passing in request parameters are JSON.
 
 {
 "columnsX": {
-	"table1": ["col1", "col2", "col3"],
-	"table2": ["col4", "col5", "col6"]
+	"table1": {
+		"col1": {
+			"_and": ["no2", "so2"]
+		},
+		"col2": "None" ,
+		"col3": "None"
+	},
+	"table2": {
+		"col4": "None",
+		"col5": "None",
+		"col6": "None"
+	}
 },
 "columnY": "ycola",
 "tableY": "table3",
@@ -80,7 +92,8 @@ The API should be called using POST and passing in request parameters are JSON.
 "requestor_id": 456,
 "timeseries": "True",
 "missingValues": "mean",
-"dataRange": "12-03-2018 00:00:00.12-03-2018 00:00:00"
+"dataRangeFrom": "12-03-2018 00:00:00",
+"dataRangeTo": "14-03-2018 00:00:00"
 }
 
 ```

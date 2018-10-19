@@ -18,46 +18,76 @@ class AnalyticsTest(unittest.TestCase):
                         data_range_from='12-03-2018 00:00:00', 
                         data_range_to='12-03-2018 00:00:00'):
         d = dict(columnsX= dict(
-                                table1= ['col1', 'col2', 'col3'],
-                                table2= ['col4', 'col5', 'col6']
+                                table1= dict(
+                                    col1 = dict(
+                                        _and= ['no2', 'so2']
+                                    ),
+                                    col2= 'None',
+                                    col3= 'None'
                                 ),
-                                columnY= 'yCol',
-                                tableY= 'table2',
-                                operation= operation_name,
-                                requestor_id= req_id,
-                                timeseries='True',
-                                missingValues='remove',
-                                dataRangeFrom=data_range_from,
-                                dataRangeTo=data_range_to)
+                                table2= dict(
+                                    col4= 'None',
+                                    col5= 'None',
+                                    col6= 'None'
+                                )
+                            ),
+                            columnY= 'yCol',
+                            tableY= 'table2',
+                            operation= operation_name,
+                            requestor_id= req_id,
+                            timeseries='True',
+                            missingValues='remove',
+                            dataRangeFrom=data_range_from,
+                            dataRangeTo=data_range_to)
         return self.app.post('/analytics', data=json.dumps(d), 
                             content_type='application/json')
 
     def create_request_missing_attribute(self, attribute_name):
         # a mandatory attribute tableY is missing while creating this request
         d = dict(columnsX= dict(
-                                table1= ['col1', 'col2', 'col3'],
-                                table2= ['col4', 'col5', 'col6']
+                                table1= dict(
+                                    col1 = dict(
+                                        _and= ['no2', 'so2']
+                                    ),
+                                    col2= 'None',
+                                    col3= 'None'
                                 ),
-                                columnY= 'yCol',
-                                tableY= 'table2',
-                                operation= 'classification',
-                                requestor_id= 456,
-                                timeseries= 'True',
-                                missingValues= 'remove')
+                                table2= dict(
+                                    col4= 'None',
+                                    col5= 'None',
+                                    col6= 'None'
+                                )
+                            ),
+                            columnY= 'yCol',
+                            tableY= 'table2',
+                            operation= 'classification',
+                            requestor_id= 456,
+                            timeseries= 'True',
+                            missingValues= 'remove')
         d.pop(attribute_name)
         return self.app.post('/analytics', data=json.dumps(d), content_type='application/json')
 
     def create_request_change_attribute_value(self, attribute_name, value):
         d = dict(columnsX= dict(
-                                table1= ['col1', 'col2', 'col3'],
-                                table2= ['col4', 'col5', 'col6']
+                                table1= dict(
+                                    col1 = dict(
+                                        _and= ['no2', 'so2']
+                                    ),
+                                    col2= 'None',
+                                    col3= 'None'
                                 ),
-                                columnY= 'yCol',
-                                tableY= 'table2',
-                                operation= 'classification',
-                                requestor_id= 456,
-                                timeseries= 'True',
-                                missingValues= 'remove')
+                                table2= dict(
+                                    col4= 'None',
+                                    col5= 'None',
+                                    col6= 'None'
+                                )
+                            ),
+                            columnY= 'yCol',
+                            tableY= 'table2',
+                            operation= 'classification',
+                            requestor_id= 456,
+                            timeseries= 'True',
+                            missingValues= 'remove')
         d[attribute_name] = value
         return self.app.post('/analytics', data=json.dumps(d), content_type='application/json')
 
@@ -118,6 +148,10 @@ class AnalyticsTest(unittest.TestCase):
 
         response_1 = self.create_request(data_range_to='test')
         self.assertEqual(response_1.get_json(), {"error": "Invalid date format"})
+
+        response_2 = self.create_request(data_range_from='12-03-2018 00:00:00',
+                                        data_range_to='11-03-2018 00:00:00')
+        self.assertEqual(response_2.get_json(), {"error": "Invalid date format"})
 
 
 

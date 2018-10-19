@@ -8,6 +8,7 @@ from models.request_table_cols import RequestTablesCols
 from db import db
 from utility import current_time, convert_to_date
 from resources.initiate_task import InitiateTask
+from resources.request_mapper import RequestMapper
 
 class Analytics(Resource):
     parser = reqparse.RequestParser()
@@ -37,8 +38,9 @@ class Analytics(Resource):
                         help='Requestor Id is mandatory')
 
     parser.add_argument('timeseries',
-                        type=bool,
+                        type=str,
                         required=True,
+                        choices=('True', 'False'),
                         help='Is the request to process timeseries data')
 
     parser.add_argument('missingValues',
@@ -56,51 +58,56 @@ class Analytics(Resource):
                         required=False)
 
     def post(self):
-        data = self.parser.parse_args()
-        operation = data['operation']
-        requestor = data['requestor_id']
-        timeseries = data['timeseries']
-        missing_values = data['missingValues']
-        data_range_from = None
-        data_range_to = None
+        data = str(self.parser.parse_args()).replace('"', '')
+        data = data.replace("'", '"')
+        jdata = None
+        try:
+            jdata = json.loads(data)
+        except Exception:
+            return {"Error": "Invalid json request"}, 400
 
-        if data['dataRangeFrom'] and data['dataRangeTo']:
-            
-            date_from = data['dataRangeFrom']
-            date_to = data['dataRangeTo']
+        _request = RequestMapper(**jdata)
 
-            valid_f, _ = convert_to_date(date_from) 
-            valid_t, _ = convert_to_date(date_to)
+        if _request.dataRangeFrom and _request.dataRangeTo:
+
+            valid_f, from_d = convert_to_date(_request.dataRangeFrom) 
+            valid_t, to_d = convert_to_date(_request.dataRangeTo)
 
             if not valid_f or not valid_t:
                 return {"error": "Invalid date format"}, 400
+            
+            if to_d < from_d:
+                return {"error": "Invalid date format"}, 400
 
-            data_range_from = data['dataRangeFrom']
-            data_range_to = data['dataRangeTo']
+        request_id = self.create_request(_request.operation, _request.requestor_id, 
+                                        bool(_request.timeseries), _request.missingValues, 
+                                        _request.dataRangeFrom, _request.dataRangeTo)
 
-        request_id = self.create_request(operation, requestor, timeseries, 
-                                            missing_values, data_range_from, data_range_to)
-
-        j = json.loads(data['columnsX'].replace("'", '"'))
-        if not j:
-            return {"error": "Column names not valid"}, 400
-
-        for key in j:
-            RequestTables(request_id, key).add_to_session()
-            for value in j[key]:
-                RequestTablesCols(request_id, key, value, 'X').add_to_session()
+        for table in _request.columnsX.tables:
+            RequestTables(request_id, table.name).add_to_session()
+            for column in table.columns:
+                f_type = None
+                f_value = None
+                if column.filters:
+                    for f in column.filters:
+                        f_type = f.filters
+                        f_value = ','.join(f.values)
+                RequestTablesCols(request_id, table.name, column.name, 'X', f_type, f_value).add_to_session()
 
         is_present = False
-        if data['tableY'] in j:
-            is_present = True
-        self.save_dependent_variable(request_id, data['tableY'], data['columnY'], is_present)
+        for table in _request.columnsX.tables:
+            if table.name == _request.tableY:
+                is_present = True
+                break
+
+        self.save_dependent_variable(request_id, _request.tableY, _request.columnY, is_present)
         self.save_request()
         
         return {
             'status': {
                 'message': 'Request Accepted',
                 'id': request_id,
-                'user': requestor,
+                'user': _request.requestor_id,
                 'timestamp': current_time()
             }
         }, 202
