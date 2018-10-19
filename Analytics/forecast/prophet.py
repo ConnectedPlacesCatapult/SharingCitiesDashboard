@@ -7,6 +7,28 @@ import json
     It uses Prophet library to do the timeseries forecasting.
     Currently the class only fits and predicts based on defaults set in the library
 
+    Default for Prophet for Initiating the object
+
+        growth='linear',
+        changepoints=None,
+        n_changepoints=25,
+        changepoint_range=0.8,
+        yearly_seasonality='auto',
+        weekly_seasonality='auto',
+        daily_seasonality='auto',
+        holidays=None,
+        seasonality_mode='additive',
+        seasonality_prior_scale=10.0,
+        holidays_prior_scale=10.0,
+        changepoint_prior_scale=0.05,
+        mcmc_samples=0,
+        interval_width=0.80,
+        uncertainty_samples=1000
+
+    Default for Prophet for make_future_dataframe the model
+
+        freq='D'
+
 '''
 
 class ProphetForecast(object):
