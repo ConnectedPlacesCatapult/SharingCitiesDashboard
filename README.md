@@ -1,11 +1,10 @@
 # Sharing Cities Dashboard
 
+![](logo.jpg)
 
-##Introduction
+## Introduction
 ### What is sharing cities?
 The Sharing Cities programme seeks to create a better, common approach to making smart cities a reality. By fostering international collaboration between industry and cities, the project seeks to develop affordable, integrated, commercial-scale smart city solutions with a high market potential. For more information on the project click [here](https://drive.google.com/open?id=1ntDUl-UkOadJ6ov6ZzLeyOfllBFpRhW1).
-
-![](logo.jpg)
 
 ### What is this tool?
 This tool, provides an interface to city managers for visualising and monitoring the performance of smart city measures such as those relating to housing retrofit, integrated energy management, shared eMobility and smart lampposts. Different combinations of these 'measures' have been deployed in Greenwich, Lisbon and Milan and so this dashboard caters for each location specifically. 
@@ -22,15 +21,15 @@ To circumvent this challenge, we have developed a tool that enables users to cre
 - Create visualisations that they want on their dashboard
 
 
-##Delpoyment 
+## Delpoyment 
 
-##Modules
+## Modules
 
-###Back end
-###Analytics
-###Front end
+### Back end
+### Analytics
+### Front end
 
-##Quick-start
+## Quick-start
 
 
 
