@@ -24,13 +24,21 @@ None at time of writing.
 
 ## Lisbon USP
 
-Lisbon's USP is built and maintained by [AlticeLabs](http://www.alticelabs.com/en/) and is based on their smartIoT solution. 
+Lisbon's USP is built and maintained by [AlticeLabs](http://www.alticelabs.com/en/) and is based on their smartIoT platform.
 
-Access to this service requires:
+This platform provides the following APIs: 
+
+-	Admin/Account API (private) – to create accounts and other internal management functions – currently to create an account you must __contact__ [Altice Labs] (https://iot.alticelabs.com/contact/)  
+-	[Authentication API](https://iot.alticelabs.com/docs/authentication/intro/) – to authenticate using credentials, meaning to retrieve access tokens based on both the `account_id` and `account_secret` provided by the platform administrator.
+-	[Authorization API](https://iot.alticelabs.com/docs/authorization/authorization/) – to define access control rules related to account operations (e.g. devices) and access rights to write and read information to and from streams.
+-	[Device Management API](https://iot.alticelabs.com/docs/devices/devices/) – To manage your devices and streams, meaning to create, update, get and delete devices (e.g. sensors, gateways, buildings, counters, etc.) and streams (e.g. temperature, consumed energy, traveled kilometers)
+-	[Subscription API](https://iot.alticelabs.com/docs/data-comunication/subscriptions/) – To manage subscriptions to be able to publish and receive data.
+
+
+Currently, basic access to this service requires:
 
  1. An account with the SmartIoT platform (enabled by AlticeLabs)
- 2. The creation of a [Token]() which will create something like:
-
+ 2. The creation of a [Token](https://iot.alticelabs.com/docs/authentication/intro/) which will create something like:
  
  ```skr5h56kd8rwids4c6e9du0ohdf83ng08d2pdug44omt9bt3st9q4t```
 
