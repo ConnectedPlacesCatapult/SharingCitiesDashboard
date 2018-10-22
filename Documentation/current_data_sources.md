@@ -20,6 +20,8 @@ Access to this service requires:
 
 ### Other non-USP data in Greenwich
 
+None at time of writing. 
+
 ## Lisbon USP
 
 Lisbon's USP is built and maintained by [AlticeLabs](http://www.alticelabs.com/en/) and is based on their smartIoT solution. 
@@ -33,6 +35,8 @@ Access to this service requires:
  ```skr5h56kd8rwids4c6e9du0ohdf83ng08d2pdug44omt9bt3st9q4t```
 
 ### Other non-USP data in Lisbon
+
+None at time of writing. 
 
 ## Milan USP
 
@@ -48,3 +52,7 @@ Access to this service requires:
  	5. You can set a token that never expires but this is adviced only for temporary development uses. However, Once deployed, your application should get the access token by calling the alternative [REST endpoint](https://api.comune.milano.it/token).
 
 ### Other non-USP data in Milan
+
+None at time of writing. 
+
+To add: http://www.e015.regione.lombardia.it/site/api-catalog 
