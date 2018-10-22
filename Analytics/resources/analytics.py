@@ -9,6 +9,7 @@ from db import db
 from utility import current_time, convert_to_date
 from resources.initiate_task import InitiateTask
 from resources.request_mapper import RequestMapper
+from resources.analytics_data import AnalyticsData
 
 class Analytics(Resource):
     parser = reqparse.RequestParser()
@@ -102,6 +103,8 @@ class Analytics(Resource):
 
         self.save_dependent_variable(request_id, _request.tableY, _request.columnY, is_present)
         self.save_request()
+
+        pd_dataset = AnalyticsData(_request).get_data()
         
         return {
             'status': {
