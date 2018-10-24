@@ -28,19 +28,23 @@ class GreenwichDemo extends Source
 	
 	public function tables($schema)
 	{
-		for($layer = 0; $layer <= 6; $layer++)
-			$this->layerToTable($layer, $schema);
+		$layerNumbers = $this->getAvailableLayerNumbers();
+		
+		foreach($layerNumbers as $num)
+			$this->layerToTable($num, $schema);
 	}
 	
 	public function sync()
 	{
-		for($layer = 0; $layer <= 6; $layer++)
-			$this->saveLayerData($layer, true);		
+		$layerNumbers = $this->getAvailableLayerNumbers();
+				
+		foreach($layerNumbers as $num)
+			$this->saveLayerData($num, true);		
 	}
 	
 	private function layerToTable($layerNum, $schema)
 	{
-		$meta = $this->get('/'.$layerNum.'?f=pjson');
+		$meta = $this->get('/'.$layerNum.'?f=json');
 				
 		if(!array_key_exists('name', $meta) || !array_key_exists('fields', $meta))
 			return;
@@ -113,11 +117,28 @@ class GreenwichDemo extends Source
 								
 			$table->addColumn($fieldName, $field['type'], $options);
 		}
-	}	
+	}
+	
+	private function getAvailableLayerNumbers()
+	{
+		$layerNumbers = [];
+		
+		$meta = $this->get('/?f=json');
+
+		if(is_array($meta['layers']))
+			foreach($meta['layers'] as $table)
+				$layerNumbers[] = $table['id'];
+
+		if(is_array($meta['tables']))
+			foreach($meta['tables'] as $table)
+				$layerNumbers[] = $table['id'];
+		
+		return $layerNumbers;
+	}
 	
 	private function saveLayerData($layerNum, $emptyTable = false)
 	{
-		$meta = $this->get('/'.$layerNum.'?f=pjson');
+		$meta = $this->get('/'.$layerNum.'?f=json');
 		
 		if(!array_key_exists('name', $meta) || !array_key_exists('fields', $meta))
 			return;
@@ -219,6 +240,8 @@ class GreenwichDemo extends Source
 	{		
 		$uri = 'https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer'
 			.$uri.'&token='.$this->config['token'];
+			
+		var_dump($uri);
 				
 		$response = $this->http->get($uri);
 				
