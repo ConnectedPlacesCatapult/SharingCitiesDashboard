@@ -1,0 +1,22 @@
+{
+    "type": "project",
+    "require": {
+        "php": "^7.2",
+        "league/climate": "3.4.*",
+				"guzzlehttp/guzzle": "6.3.*",
+				"doctrine/dbal": "v2.8.*"
+    },
+    "require-dev": {
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "FCC\\": "fcc/"
+        }
+    }
+}
