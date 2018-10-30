@@ -30,7 +30,7 @@ class RequestAnalytics(db.Model):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return sellf.id
+        return self.id
 
     def json(self):
         return {
