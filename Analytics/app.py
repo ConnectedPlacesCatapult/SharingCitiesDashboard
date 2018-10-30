@@ -17,6 +17,7 @@ def create_app(**config_overrides):
     from models.request_analytics import RequestAnalytics
     from models.request_table_cols import RequestTablesCols
     from models.request_tables import RequestTables
+    from models.result_error import ResultError
 
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')

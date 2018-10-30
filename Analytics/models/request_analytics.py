@@ -14,6 +14,8 @@ class RequestAnalytics(db.Model):
     status = db.Column(db.String(80), nullable=False)
     timestamp = db.Column(db.DateTime)
 
+    result_error = db.relationship('ResultError', backref='requestanalytics', lazy=True)
+
     def __init__(self, user_id, operation_id, timeseries, status, missing_values, 
                         data_range_from=None, data_range_to=None, timestamp=None):
         self.user_id = user_id
@@ -30,7 +32,7 @@ class RequestAnalytics(db.Model):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return sellf.id
+        return self.id
 
     def json(self):
         return {
