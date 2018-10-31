@@ -1,39 +1,69 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import { render } from 'react-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
-import registerServiceWorker from './registerServiceWorker';
+// reducer(s)
+import rootReducer from './rootReducer';
 
-// body css
-import './index.css';
+// base components
+import Header from './components/common/Header';
+import DashboardPage from './components/dashboard/DashboardPage';
+import DataPage from './components/data/DataPage';
+import BuilderPage from './components/builder/BuilderPage';
 
-// localisation
-import './styles/portugal.css';
+// page components
+const pages = { DashboardPage, DataPage, BuilderPage };
 
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      light: '#95E5CC',
-      main: '#81C3AE',
-      dark: '#6AA08E'
-    },
-    secondary: {
-      light: '#FC554B',
-      main: '#D54A44',
-      dark: '#AE3C38'
-    }
-  },
-  typography: {
-    fontFamily: "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
-  }
-});
+// default/fallback font
+require('typeface-roboto');
 
-ReactDOM.render(
-  <MuiThemeProvider theme={theme}>
-    <App />
-  </MuiThemeProvider>,
-  document.getElementById('root')
+// locale config
+// ToDo :: prettier way of doing this?
+import { localeStyleSheet, localeThemeData, routes } from './../fcc.config';
+const localTheme = createMuiTheme(localeThemeData);
+
+// redux store
+const store = createStore(
+  rootReducer,
+  compose(
+    applyMiddleware(thunk),
+    window.devToolsExtension ? window.devToolsExtension() : f => f
+  )
 );
 
-registerServiceWorker();
+// ToDo :: add a 404 (NotFoundPage) component
+
+const pageRoutes = routes.map((route, i) => {
+  return (
+    <Route
+      key={i}
+      exact={route.exact}
+      path={route.path}
+      component={pages[route.component]}
+    />
+  )
+});
+
+render(
+  <Provider store={store}>
+    <React.Fragment>
+      <CssBaseline />
+      <MuiThemeProvider theme={localTheme}>
+        <Router>
+          <React.Fragment>
+            <Route component={Header} />
+            <Switch>
+              { pageRoutes }
+            </Switch>
+          </React.Fragment>
+        </Router>
+      </MuiThemeProvider>
+    </React.Fragment>
+  </Provider>,
+  document.getElementById("root")
+);
