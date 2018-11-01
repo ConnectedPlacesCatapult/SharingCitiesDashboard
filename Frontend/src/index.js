@@ -17,7 +17,7 @@ import DataPage from './components/data/DataPage';
 import BuilderPage from './components/builder/BuilderPage';
 
 // page components
-const pages = { DashboardPage, DataPage, BuilderPage };
+//const pages = { DashboardPage, DataPage, BuilderPage };
 
 // default/fallback font
 require('typeface-roboto');
@@ -38,7 +38,7 @@ const store = createStore(
 
 // ToDo :: add a 404 (NotFoundPage) component
 
-const pageRoutes = routes.map((route, i) => {
+/*const pageRoutes = routes.map((route, i) => {
   return (
     <Route
       key={i}
@@ -47,7 +47,7 @@ const pageRoutes = routes.map((route, i) => {
       component={pages[route.component]}
     />
   )
-});
+});*/
 
 render(
   <Provider store={store}>
@@ -58,7 +58,10 @@ render(
           <React.Fragment>
             <Route component={Header} />
             <Switch>
-              { pageRoutes }
+              <Route exact path="/" component={ DashboardPage } />
+              <Route path="/data" component={ DataPage } />
+              <Route path="/build" component={ BuilderPage } />
+              {/*{ pageRoutes }*/}
             </Switch>
           </React.Fragment>
         </Router>
