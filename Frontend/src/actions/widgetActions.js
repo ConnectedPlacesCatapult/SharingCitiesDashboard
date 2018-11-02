@@ -1,9 +1,11 @@
-import {ADD_WIDGET, EDIT_WIDGET, DELETE_WIDGET } from "./types";
+import { ADD_WIDGET, EDIT_WIDGET, DELETE_WIDGET } from "./types";
+
+let nextWidgetId = 0;
 
 export function addWidget(stuff) {
   return {
     type: ADD_WIDGET,
-    id: nextThemeId++,
+    id: nextWidgetId++,
     text: theme,
   }
 }

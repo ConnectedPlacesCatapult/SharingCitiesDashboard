@@ -1,15 +1,22 @@
+// source
+export const FETCH_SOURCE_DATA = 'FETCH_SOURCE_DATA';
+export const FETCH_SOURCE_DATA_FULFILLED = 'FETCH_SOURCE_DATA_FULFILLED';
+export const FETCH_SOURCE_DATA_REJECTED = 'FETCH_SOURCE_DATA_REJECTED';
+
+// sources
+export const FETCH_SOURCES = 'FETCH_SOURCES';
+export const FETCH_SOURCES_FULFILLED = 'FETCH_SOURCES_FULFILLED';
+export const FETCH_SOURCES_REJECTED = 'FETCH_SOURCES_REJECTED';
+
+// themes
+export const FETCH_THEMES = 'FETCH_THEMES';
+export const FETCH_THEMES_FULFILLED = 'FETCH_THEMES_FULFILLED';
+export const FETCH_THEMES_REJECTED = 'FETCH_THEMES_REJECTED';
 
 // user auth
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 
-// themes
-export const ADD_THEME = 'ADD_THEME';
-export const TOGGLE_THEME = 'TOGGLE_THEME';
-
-// datasources
-export const SET_CURRENT_DATASOURCE = 'SET_CURRENT_DATASOURCE';
-
-// widgets
+// widget & widgets
 export const ADD_WIDGET = 'ADD_WIDGET';
 export const EDIT_WIDGET = 'EDIT_WIDGET';
 export const DELETE_WIDGET = 'DELETE_WIDGET';

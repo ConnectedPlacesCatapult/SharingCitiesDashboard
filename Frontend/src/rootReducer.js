@@ -1,12 +1,17 @@
 import { combineReducers } from 'redux';
 
-//import auth from './reducers/auth';
-import datasource from './reducers/datasource';
-import theme from './reducers/theme';
+import source from './reducers/source';
+import sources from './reducers/sources';
+import themes from './reducers/themes';
+import user from './reducers/user';
 import widget from './reducers/widget';
+import widgets from './reducers/widgets';
 
 export default combineReducers({
-  //auth,
-  datasource,
-  theme,
+  source,
+  sources,
+  themes,
+  user,
+  widget,
+  widgets,
 });

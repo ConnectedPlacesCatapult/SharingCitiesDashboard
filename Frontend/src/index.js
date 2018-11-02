@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -28,10 +29,11 @@ import { localeStyleSheet, localeThemeData, routes } from './../fcc.config';
 const localTheme = createMuiTheme(localeThemeData);
 
 // redux store
+const middleware = applyMiddleware(thunk, createLogger());
 const store = createStore(
   rootReducer,
   compose(
-    applyMiddleware(thunk),
+    middleware,
     window.devToolsExtension ? window.devToolsExtension() : f => f
   )
 );
