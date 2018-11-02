@@ -1,4 +1,4 @@
-import { SET_CURRENT_DATASOURCE } from "./../actions/types";
+import { ADD_WIDGET, EDIT_WIDGET, DELETE_WIDGET } from "./../actions/types";
 
 const initialState = {
   datasource: null,
@@ -9,12 +9,22 @@ const initialState = {
 
 export default (state = initialState, action = {}) => {
   switch(action.type) {
-    case SET_CURRENT_DATASOURCE:
+    case ADD_WIDGET:
       return {
         ...state,
         datasource: action.datasource,
         data: [],
 
+      };
+
+    case EDIT_WIDGET:
+      return {
+        ...state,
+      };
+
+    case DELETE_WIDGET:
+      return {
+        ...state,
       };
 
     default: return state;
