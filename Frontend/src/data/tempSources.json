@@ -1,8 +1,8 @@
 [
   {
     "name": "Air Quality",
+    "theme": "Environment",
     "meta": {
-      "theme": "Environment",
       "columns": [
         {"id": "current_at", "numeric": false, "label": "DateTime"},
         {"id": "name", "numeric": false, "label": "Sensor Location"},

@@ -5,8 +5,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
-import { connect } from 'react-redux';
-import { setCurrentDatasource, fetchData } from './../../../actions/datasourceActions';
 
 const styles = theme => ({
   nested: {
@@ -18,23 +16,22 @@ const styles = theme => ({
 });
 
 class SourceListItem extends Component {
-  handleClick = name => e => {
-    this.props.setCurrentDatasource(name);
-    this.props.fetchData();
+  state = {
+    open: false,
+  };
+
+  handleClick = () => {
+    this.setState(state => ({ open: !state.open }));
   };
 
   render() {
-
-    console.log(this.props);
-
     const { classes, name } = this.props;
-    const { datasource } = this.props.datasource;
 
     return (
       <div>
-        <ListItem button className={classes.nested} onClick={this.handleClick(name)}>
+        <ListItem button className={classes.nested} onClick={this.handleClick}>
           {
-            datasource === name
+            this.state.open
               ? <RadioButtonCheckedIcon fontSize="small" color="secondary" />
               : <RadioButtonUncheckedIcon fontSize="small" className={classes.darkColor} />
           }
@@ -47,20 +44,6 @@ class SourceListItem extends Component {
 
 SourceListItem.propTypes = {
   classes: PropTypes.object.isRequired,
-  datasource: PropTypes.object.isRequired,
-  setCurrentDatasource: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    datasource: state.datasource,
-  }
-};
-
-const mapDispatchToProps = {
-  setCurrentDatasource,
-  fetchData,
-};
-
-SourceListItem = withStyles(styles)(SourceListItem);
-export default connect(mapStateToProps, mapDispatchToProps)(SourceListItem);
+export default withStyles(styles)(SourceListItem);

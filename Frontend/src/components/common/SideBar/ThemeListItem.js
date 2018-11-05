@@ -29,13 +29,10 @@ class ThemeListItem extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, sources } = this.props;
 
-    // ToDo: get sources from a different place now!
-    const sources = this.props.sources.map((source, i) => {
-      return (
-        <SourceListItem key={i} {...source} />
-      )
+    const sourceListItems = sources.map((source, i) => {
+      return <SourceListItem key={i} {...source} />
     });
 
     return (
@@ -55,7 +52,7 @@ class ThemeListItem extends Component {
         </ListItem>
         <Collapse in={this.state.open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {sources}
+            {sourceListItems}
           </List>
         </Collapse>
       </div>
@@ -65,6 +62,7 @@ class ThemeListItem extends Component {
 
 ThemeListItem.propTypes = {
   classes: PropTypes.object.isRequired,
+  sources: PropTypes.array.isRequired,
 };
 
 export default withStyles(styles)(ThemeListItem);
