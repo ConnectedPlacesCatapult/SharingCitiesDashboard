@@ -13,6 +13,7 @@ def create_app(**config_overrides):
     
     db.init_app(app)
     db.app = app
+    # db.Model.metadata.reflect(db.engine)
     
     from models.operation import Operation
     from models.request_analytics import RequestAnalytics
@@ -20,10 +21,12 @@ def create_app(**config_overrides):
     from models.request_tables import RequestTables
     from models.api import API
     from models.attributes import Attributes
-    from models.device_type import DeviceType
-    from models.devices import Devices
+    from models.sensor import Sensor
     from models.location import Location
-    from models.models import devicetype_attribute, devicetype_device
+    from models.unit import Unit
+    from models.models import sensor_attribute, attribute_sub_theme
+    from models.theme import Theme, SubTheme
+
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
 
