@@ -1,30 +1,34 @@
-import { ADD_WIDGET, EDIT_WIDGET, DELETE_WIDGET } from "./../actions/types";
+import { FETCH_WIDGETS, FETCH_WIDGETS_FULFILLED, FETCH_WIDGETS_REJECTED } from "./../actions/types";
 
 const initialState = {
-  datasource: null,
-  data: [],
-  isError: false,
-  isFetching: false,
+  widgets: [],
+  fetching: false,
+  fetched: false,
+  error: null,
 };
 
 export default (state = initialState, action = {}) => {
   switch(action.type) {
-    case ADD_WIDGET:
+    case FETCH_WIDGETS:
       return {
         ...state,
-        datasource: action.datasource,
-        data: [],
-
+        fetching: true,
       };
 
-    case EDIT_WIDGET:
+    case FETCH_WIDGETS_FULFILLED:
       return {
         ...state,
+        fetching: false,
+        fetched: true,
+        widgets: action.payload,
       };
 
-    case DELETE_WIDGET:
+    case FETCH_WIDGETS_REJECTED:
       return {
         ...state,
+        fetching: false,
+        fetched: false,
+        error: action.payload,
       };
 
     default: return state;

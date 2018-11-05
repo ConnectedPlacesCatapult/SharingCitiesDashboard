@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
+import GridLayout from './GridLayout';
+
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -32,6 +34,7 @@ class DashboardPage extends Component {
       <div className={classes.root}>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
+          <GridLayout />
         </main>
       </div>
     )

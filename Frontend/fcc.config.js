@@ -2,6 +2,7 @@ module.exports = {
   localeStyleSheet: import('./src/styles/lisbon.css'),
   localeThemeData: {
     "palette": {
+     //"type": "dark",
       "primary": {
         "light": "#d3edea",
         "main": "#81cfc7",
