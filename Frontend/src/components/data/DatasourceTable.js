@@ -107,8 +107,8 @@ class DatasourceTable extends Component {
       newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
-      selected.slice(0, selectedIndex),
-      selected.slice(selectedIndex + 1),
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
       );
     }
 
@@ -325,11 +325,11 @@ class DataSourceTableToolbar extends Component {
       <Toolbar className={classNames(classes.root, { [classes.highlight]: numSelected > 0, })}>
         <div className={classes.title}>
           {numSelected > 0 ? (
-            <Typography color="white" variant="subheading">
+            <Typography color="textPrimary" variant="subtitle1">
               {numSelected} selected
             </Typography>
           ) : (
-            <Typography variant="title" id="tableTitle">
+            <Typography variant="h6" id="tableTitle">
               {sourceName}
             </Typography>
           )}
