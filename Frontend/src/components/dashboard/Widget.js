@@ -7,6 +7,10 @@ import IconButton from '@material-ui/core/IconButton';
 import SettingsIcon from '@material-ui/icons/Settings';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import InfoIcon from '@material-ui/icons/Info';
+import OpenWithIcon from '@material-ui/icons/OpenWith';
+
+import MapWidget from "./MapWidget";
+import PlotWidget from "./PlotWidget";
 
 const styles = theme => ({
   widget: {
@@ -27,10 +31,13 @@ const styles = theme => ({
     float: 'right',
   },
   widgetBodyWrapper: {
-
+    overflow: 'hidden',
+    position: 'relative',
+    height: '100%',
   },
   widgetBodyContent: {
-
+    height: '100%',
+    width: 'auto',
   },
   smallerButton: {
     padding: theme.spacing.unit,
@@ -39,8 +46,12 @@ const styles = theme => ({
 });
 
 class Widget extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
-    const { classes, title } = this.props;
+    const { classes, title, isStatic, type, data } = this.props;
 
     return (
       <Paper className={classes.widget}>
@@ -49,6 +60,16 @@ class Widget extends React.Component {
             {title}
           </Typography>
           <div className={classes.widgetButtons}>
+            {
+              !isStatic
+              ? <IconButton
+                  color="primary"
+                  className={classes.smallerButton}
+                >
+                  <OpenWithIcon fontSize="small" className="draggableHandle" />
+                </IconButton>
+              : ''
+            }
             <IconButton
               color="primary"
               className={classes.smallerButton}
@@ -71,7 +92,10 @@ class Widget extends React.Component {
         </div>
         <div className={classes.widgetBodyWrapper}>
           <div className={classes.widgetBodyContent}>
-            WIDGET BODY
+            { type === 'plot'
+              ? <PlotWidget spec={this.props.spec} data={data} />
+              : <MapWidget tileLayer={this.props.tileLayer} data={data} />
+            }
           </div>
         </div>
       </Paper>

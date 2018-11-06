@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from "prop-types";
+import { withStyles } from '@material-ui/core/styles';
 import RGL, { WidthProvider } from "react-grid-layout";
 import { connect } from 'react-redux';
 import { fetchLayout } from "./../../actions/layoutActions";
@@ -11,6 +12,12 @@ import Widget from './Widget';
 import './../../../node_modules/react-grid-layout/css/styles.css';
 import './../../../node_modules/react-resizable/css/styles.css';
 
+const styles = theme => ({
+  root: {
+    display: 'flex',
+    marginTop: theme.spacing.unit * 2,
+  },
+});
 
 // ToDo :: check out WidthProvider
 //const ReactGridLayout = WidthProvider(RGL);
@@ -33,7 +40,9 @@ class GridLayout extends React.Component {
   }
 
   onLayoutChange(layout) {
-    this.setState({ layout });
+    this.setState({ layout }, () => {
+      //console.log(this.state.layout)
+    });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -43,14 +52,15 @@ class GridLayout extends React.Component {
   }
 
   render() {
+    const { classes } = this.props;
     const { layout } = this.state;
 
     const gridItems = layout.map((gridItem) => {
-      let gridItemWidget = this.props.widgets.filter((widget) => gridItem.i === widget.i)[0];
+      let gridItemWidget = this.props.widgets.find((widget) => gridItem.i === widget.i);
 
       return (
         <div key={gridItem.i}>
-          <Widget {...gridItemWidget} />
+          <Widget {...gridItemWidget} isStatic={gridItem.static || false} />
         </div>
       )
     });
@@ -62,6 +72,8 @@ class GridLayout extends React.Component {
         rowHeight={30}
         width={1200}
         onLayoutChange={this.onLayoutChange}
+        className={classes.root}
+        draggableHandle='.draggableHandle'
       >
         {gridItems}
       </ReactGridLayout>
@@ -70,6 +82,7 @@ class GridLayout extends React.Component {
 }
 
 GridLayout.propTypes = {
+  classes: PropTypes.object.isRequired,
   layout: PropTypes.array.isRequired,
 };
 
@@ -85,5 +98,5 @@ const mapDispatchToProps = {
   fetchWidgets,
 };
 
-
+GridLayout = withStyles(styles)(GridLayout);
 export default connect(mapStateToProps, mapDispatchToProps)(GridLayout);
