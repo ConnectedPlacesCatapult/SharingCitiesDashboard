@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 
+import config from './reducers/config';
 import layout from './reducers/layout';
 import source from './reducers/source';
 import sources from './reducers/sources';
@@ -8,6 +9,7 @@ import user from './reducers/user';
 import widgets from './reducers/widgets';
 
 export default combineReducers({
+  config,
   layout,
   source,
   sources,

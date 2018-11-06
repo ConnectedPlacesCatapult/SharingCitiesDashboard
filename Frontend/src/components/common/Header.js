@@ -12,8 +12,11 @@ import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import Modal from '@material-ui/core/Modal';
 import LoginForm from './LoginForm';
 
+// ToDo :: needs tying in with the config reducer
+// ToDo :: replace dynamic with static routes?
 import { routes } from './../../../fcc.config';
 
+// ToDo :: add this to config and define a default logo (somewhere)
 const bgImage = require('./../../images/Lisbon-logo-med.png');
 
 const styles = theme => ({

@@ -1,5 +1,12 @@
 module.exports = {
-  localeStyleSheet: import('./src/styles/lisbon.css'),
+
+  // root uri of the API
+  apiRoot: 'https://heregoestheapiaddress.mkay/',
+
+  // optionally include localisation stylesheet (good for @font-face stuff)
+  localeStyleSheet:'./styles/lisbon.css',
+
+  // overrides for MaterialUI default theme
   localeThemeData: {
     "palette": {
      //"type": "dark",
@@ -23,6 +30,8 @@ module.exports = {
       "fontFamily": "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
     }
   },
+
+  // currently used by the common/Header component to define links
   routes: [
     {
       path: "/",
