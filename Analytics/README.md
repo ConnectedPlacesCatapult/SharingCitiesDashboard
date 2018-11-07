@@ -2,10 +2,10 @@
 
 [![wercker status](https://app.wercker.com/status/350323c0db166acb5049b26ec2330f42/s/master "wercker status")](https://app.wercker.com/project/byKey/350323c0db166acb5049b26ec2330f42)
 
-Sharing Cities Analytics API allow user of the Sharing Cities Dashboard to perform analytics on datasets. Currently, only time series forecasting over historical measurements is supported. In the future, this will be extended to include [Regression](https://en.wikipedia.org/wiki/Regression), [Clustering](https://en.wikipedia.org/wiki/Cluster_analysis) and [Classification](https://en.wikipedia.org/wiki/Statistical_classification). 
+Sharing Cities Analytics API allow the users of the Sharing Cities Dashboard to perform analytics on datasets. Currently, only time series forecasting over historical measurements is supported. In the future, this could be extended to include [Regression](https://en.wikipedia.org/wiki/Regression), [Clustering](https://en.wikipedia.org/wiki/Cluster_analysis) and [Classification](https://en.wikipedia.org/wiki/Statistical_classification). 
 
 ## Time Series Forecasting
-Time series is a set of oredered measurements collected over time. In the context of Sharing Cities, this includes data sourced though the API sensor importers. Examples include air quality measurements for a particular attribute, availability of parking spots etc. Time Series Forecasting is a set of methods that allow extrapolation of time series values in the future by relating the present values of a time series to past values. At the moment, Sharing Cities only support univariate time series forecasting. 
+A time series is a set of oredered measurements collected over time. In the context of Sharing Cities, this includes data sourced through the API sensor importers. Examples include air quality measurements for a particular attribute, availability of parking spots etc. Time Series Forecasting is a set of methods that allow extrapolation of time series values in the future by relating the present values of a time series to past values. At the moment, Sharing Cities only support univariate time series forecasting. 
 
 Compared to an ordinary set of measurements, time series may include the following additional characteristic:
 
@@ -14,7 +14,7 @@ Compared to an ordinary set of measurements, time series may include the followi
 - Long-run cycle (any period unrelated to seasonality)
 - Stationarity (the statistical properties of the time series such as mean, variance etc. remain constant)
 
-From the multitude of forecasting methodologies, Sharing Cities forecasting engine uses the Holt-Winters (exponential smoothing) seasonal method. This method has been exctensivelly used by UK's [Office of National Statistics](https://www.ons.gov.uk/) for tasks such as GPD forecasting. The method produces forecasting results that are in par with other methods (eg. [ARIMA](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average)), however, in the context of this project, Holt-Winters outperforms in terms of performance speed. 
+From the multitude of forecasting methodologies, Sharing Cities forecasting engine uses the Holt-Winters (exponential smoothing) seasonal method. This method has been extensively used by UK's [Office of National Statistics](https://www.ons.gov.uk/) for tasks such as GPD forecasting. The method produces forecasting results that are in par with other methods (eg. [ARIMA](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average)), however, in the context of this project, Holt-Winters outperforms in terms of performance speed. 
 
 ## Holt-Winters method
 ...
