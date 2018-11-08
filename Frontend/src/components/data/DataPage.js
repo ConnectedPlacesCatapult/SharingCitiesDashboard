@@ -2,11 +2,10 @@ import React, { Component } from "react";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import SideBar from './../common/SideBar';
+import { connect } from 'react-redux';
 
-import DataSourceTable from './DatasourceTable';
-
-// fake data
-import THEME_DATA from './../../data/dataThemes';
+import DataTable from './DataTable';
+import NoData from './NoData';
 
 const styles = theme => ({
   root: {
@@ -24,21 +23,18 @@ const styles = theme => ({
 
 class DataPage extends Component {
   render() {
-    const { classes } = this.props;
-
-    const datasourceTables = THEME_DATA.map((theme) => {
-      return theme.sources.map((source, i) => {
-        return <DataSourceTable key={i} active={source.name === "Weather Forecast"} {...source} />
-      })
-    });
+    const { classes, data } = this.props;
 
     return (
       <div className={classes.root}>
         <SideBar />
         <main className={classes.content}>
-          {/*<div className={classes.appBarSpacer} />*/}
           <div className={classes.appBarSpacer} />
-          {datasourceTables}
+          {
+            data.fetched
+            ? <DataTable />
+            : <NoData />
+          }
         </main>
       </div>
     )
@@ -47,6 +43,17 @@ class DataPage extends Component {
 
 DataPage.propTypes = {
   classes: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(DataPage);
+const mapStateToProps = state => ({
+  data: state.data,
+});
+
+const mapDispatchToProps = dispatch => ({
+
+});
+
+DataPage = withStyles(styles)(DataPage);
+
+export default connect(mapStateToProps, mapDispatchToProps)(DataPage);

@@ -1,7 +1,8 @@
 import {
   FETCH_DATA,
   FETCH_DATA_FULFILLED,
-  FETCH_DATA_REJECTED
+  FETCH_DATA_REJECTED,
+  PURGE_DATA,
 } from "./types";
 
 export function fetchData(requestData) {
@@ -25,5 +26,11 @@ export function fetchData(requestData) {
         payload: e,
       })
     }
+  }
+}
+
+export function purgeData() {
+  return {
+    type: PURGE_DATA,
   }
 }

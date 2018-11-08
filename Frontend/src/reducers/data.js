@@ -1,7 +1,8 @@
 import {
   FETCH_DATA,
   FETCH_DATA_FULFILLED,
-  FETCH_DATA_REJECTED
+  FETCH_DATA_REJECTED,
+  PURGE_DATA,
 } from "./../actions/types";
 
 const initialState = {
@@ -40,6 +41,10 @@ export default (state=initialState, action={}) => {
         fetched: false,
         error: action.payload,
       }
+    }
+
+    case PURGE_DATA: {
+      return initialState
     }
   }
 

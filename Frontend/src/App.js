@@ -44,10 +44,11 @@ class App extends React.Component {
           <Router>
             <React.Fragment>
               <Route component={Header} />
+              <Route path="/" component={DataPage} />
               <Switch>
-                <Route exact path="/" component={DashboardPage} />
-                <Route path="/data" component={DataPage} />
-                <Route path="/build" component={BuilderPage} />
+                {/*<Route exact path="/" component={DashboardPage} />*/}
+                {/*<Route path="/data" component={DataPage} />*/}
+                {/*<Route path="/build" component={BuilderPage} />*/}
               </Switch>
             </React.Fragment>
           </Router>

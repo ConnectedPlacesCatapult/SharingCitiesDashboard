@@ -12,6 +12,7 @@ import Collapse from '@material-ui/core/Collapse';
 import greyColor from '@material-ui/core/colors/grey';
 import { connect } from 'react-redux';
 import { toggleSourceSelected } from "./../../../actions/sourcesActions";
+import { fetchData, purgeData } from "./../../../actions/dataActions";
 import _ from 'lodash';
 
 import SourceListItem from './SourceListItem';
@@ -23,17 +24,36 @@ const styles = theme => ({
 });
 
 class ThemeListItem extends Component {
+  handleSourceClicked = (id, isSelected, source) => {
+    if (isSelected) {
+      this.props.purgeData()
+    } else {
+      this.props.fetchData({
+        source: source.name,
+        theme: this.props.themeName,
+        meta: source.meta,
+      })
+    }
+
+    this.props.toggleSourceSelected(id);
+  };
+
+  isSourceSelected = (id) => {
+    return _.indexOf(this.props.selectedSources, id) !== -1
+  };
+
   render() {
-    const { classes, themeId, themeName, sources, isSelected, onClick, selectedSources, toggleSourceSelected } = this.props;
+    const { classes, themeId, themeName, sources, isSelected, onClick } = this.props;
 
     const sourceListItems = sources.map((source, i) => {
       const sourceId = themeId + "_" + i;
+      const selected = this.isSourceSelected(sourceId);
 
       return (
         <SourceListItem
           key={i}
-          isSelected={_.indexOf(selectedSources, sourceId) !== -1}
-          onClick={() => toggleSourceSelected(sourceId)}
+          isSelected={selected}
+          onClick={() => this.handleSourceClicked(sourceId, selected, source)}
           {...source}
         />
       )
@@ -73,6 +93,8 @@ ThemeListItem.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
   toggleSourceSelected: PropTypes.func.isRequired,
+  fetchData: PropTypes.func.isRequired,
+  purgeData: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -81,6 +103,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   toggleSourceSelected: id => dispatch(toggleSourceSelected(id)),
+  fetchData: requestObj => dispatch(fetchData(requestObj)),
+  purgeData: () => dispatch(purgeData()),
 });
 
 ThemeListItem = withStyles(styles)(ThemeListItem);
