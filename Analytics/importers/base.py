@@ -32,15 +32,18 @@ class BaseImporter(object):
     contains only one item then it will be considered 
     as a geometry object
     '''
-    def sensors(self, sensor: str, location: list, use_tag: bool):
+    def sensors(self, sensor: str, location: list, use_value_of_tag: bool):
         api_id = self.stage_api_commit()
+        sensors_with_id = {}
 
-        if use_tag:
-            self.tag_as_sensor(api_id, location, sensor)
+        if use_value_of_tag:
+            sensors_with_id = self.value_as_sensor(api_id, location, sensor)
         else:
-            self.value_as_sensor(api_id, location, sensor)
+            self.tag_as_sensor(api_id, location, sensor)
+            
 
         # self.commit()
+        return sensors_with_id
 
     def tag_as_sensor(self, api_id, location, sensor) -> list:
         values = []
@@ -56,9 +59,10 @@ class BaseImporter(object):
             sensor_created.append(_sensor.id)
         return sensor_created
 
-    def value_as_sensor(self, api_id, location, sensor) -> list:
+    def value_as_sensor(self, api_id, location, sensor) -> dict:
         values = {}
-        sensor_created = []
+        # return dictionary to reference later
+        sensor_created = {}
         sensor_values = ReadJson(sensor, location)
         sensor_values.get_sensor_by_tag_name(self.dataset, values)
         
@@ -66,7 +70,7 @@ class BaseImporter(object):
             location_id = self.stage_location_commit(values[key])
             _sensor = Sensor(api_id, location_id, key)
             _sensor.save()
-            sensor_created.append(_sensor.id)
+            sensor_created[key] = _sensor.id
 
         return sensor_created
 
@@ -74,16 +78,19 @@ class BaseImporter(object):
         values = {}
         if not as_tag:
             values = self.get_values(attribute_tag)
+        return values
 
     def units(self, unit_tag: list, as_tag=False):
         values = {}
         if not as_tag:
             values = self.get_values(unit_tag)
+        return values
 
     def descriptions(self, description_tag: list, as_tag=False):
         values = {}
         if not as_tag:
             values = self.get_values(description_tag)
+        return values
 
     def get_values(self, tags):
         values = set()
@@ -96,32 +103,36 @@ class BaseImporter(object):
         
         return _values
     
-    def join_attr_unit(self, attribute: str, unit: list):
+    def join_attr_unit(self, attribute: str, unit: str):
         # List of AttributeUnitData objects
-        attr_units = []
-        for u in unit:
-            a = AttributeUnitDescription()
-            a.attribute = attribute
-            a.unit_value = u
-            attr_units.append(a)
+        a = AttributeUnitDescription()
+        a.attribute = attribute
+        a.unit_value = unit
+        return a
 
-        return attr_units
-
-    def join_attr_desc(self, attribute: AttributeUnitDescription, description: str):
+    def join_attr_desc(self, attribute, description: str):
+        '''
+        attribute: should be an object of AttributeUnitDescription
+        '''
         attribute.description = description
-        return attribute
 
     def join_attr_unit_type(self, attribute: list, unit: int):
+        '''
+        attribute: should be a list of AttributeUnitDescription objects
+        '''
         for a in attribute:
             a.unit_type = unit
 
-        return attribute
+        # return attribute
 
     def join_attr_sub_theme(self, attribute: list, subtheme: int):
+        '''
+        attribute: should be a list of AttributeUnitDescription objects
+        '''
         for a in attribute:
             a.sub_theme = subtheme
 
-        return attribute
+        # return attribute
 
     def stage_api_commit(self):
         api = API(name=self.api_name, 

@@ -24,7 +24,7 @@ def create_app(**config_overrides):
     from models.sensor import Sensor
     from models.location import Location
     from models.unit import Unit
-    from models.models import sensor_attribute, attribute_sub_theme
+    from models.sensor_attribute import SensorAttribute 
     from models.theme import Theme, SubTheme
 
     migrate = Migrate(app, db)

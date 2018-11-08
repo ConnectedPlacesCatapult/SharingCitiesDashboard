@@ -1,5 +1,6 @@
 from db import db
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 class Unit(db.Model):
     __tablename__ = 'unit'
@@ -9,7 +10,8 @@ class Unit(db.Model):
     description = db.Column(db.String(255), nullable=False)
     timestamp = db.Column(db.DateTime)
 
-    _attributes = db.relationship('Attributes', backref='unit', lazy=True)
+    # Temporary commenting
+    # attributes = db.relationship('Attributes', backref='unit', lazy=True)
 
     def __init__(self, _type, description, timestamp=None):
         self._type = _type
@@ -32,8 +34,16 @@ class Unit(db.Model):
         }
 
     def save(self):
-        db.session.add(self)
-        db.session.flush()
+        try:
+            db.session.add(self)
+            db.session.flush()
+        except IntegrityError as ie:
+            db.session.rollback()
+            print(self._type, 'unit already exists')
 
-    def get(self):
+    def commit(self):
+        db.session.commit()
+
+    @classmethod
+    def get(cls):
         return Unit.query.all()

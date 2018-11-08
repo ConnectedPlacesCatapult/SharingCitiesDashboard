@@ -10,7 +10,7 @@ class API(db.Model):
     name = db.Column(db.String(255), nullable=False, unique=True)
     url = db.Column(db.String(255), nullable=False, unique=True)
     api_key = db.Column(db.Text, nullable=False)
-    refresh_time = db.Column(db.DateTime)
+    refresh_time = db.Column(db.Integer)
     token_expiry = db.Column(db.DateTime)
     timestamp = db.Column(db.DateTime)
 

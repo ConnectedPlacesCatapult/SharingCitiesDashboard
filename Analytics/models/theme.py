@@ -1,5 +1,6 @@
 from db import db
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 class Theme(db.Model):
     __tablename__ = 'theme'
@@ -28,9 +29,17 @@ class Theme(db.Model):
         }
 
     def save(self):
-        db.session.add(self)
-        db.session.flush()
+        try:
+            db.session.add(self)
+            db.session.flush()
+        except IntegrityError as ie:
+            db.session.rollback()
+            print(self.name, 'theme already exists')
 
+    def commit(self):
+        db.session.commit()
+
+    @classmethod
     def get_all(self):
         return Theme.query.all()
 
@@ -66,13 +75,22 @@ class SubTheme(db.Model):
         }
     
     def save(self):
-        db.session.add(self)
-        db.session.flush()
+        try:
+            db.session.add(self)
+            db.session.flush()
+        except IntegrityError as ie:
+            db.session.rollback()
+            print(self.name, 'sub theme already exists')
 
-    def get_all(self):
+    def commit(self):
+        db.session.commit()
+
+    @classmethod
+    def get_all(cls):
         return SubTheme.query.all()
 
-    def get_by_theme_id(self, theme_id):
+    @classmethod
+    def get_by_theme_id(cls, theme_id):
         return SubTheme.query.filter_by(t_id=theme_id).all()
         
         

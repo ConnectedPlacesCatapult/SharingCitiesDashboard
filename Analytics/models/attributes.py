@@ -1,21 +1,24 @@
 from db import db
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 class Attributes(db.Model):
     __tablename__ = 'attributes'
     # __bind_key__ = 'backend'
 
-    id = db.Column(db.Integer, primary_key=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False, primary_key=True)
     table_name = db.Column(db.String(255), nullable=False)
+    sub_theme_id = db.Column(db.Integer, db.ForeignKey('subtheme.id'), nullable=False)
     unit_id = db.Column(db.Integer, db.ForeignKey('unit.id'), nullable=False, primary_key=True)
     unit_value = db.Column(db.Text, nullable=False, primary_key=True)
-    description = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=True)
     timestamp = db.Column(db.DateTime)
 
-    def __init__(self, name, table_name, unit, description='No Description', unit_value='1', timestamp=None):
+    def __init__(self, name, table_name, sub_theme, unit, description='No Description', unit_value='1', timestamp=None):
         self.name = name
         self.table_name = table_name
+        self.sub_theme_id = sub_theme
         self.unit_id = unit
         self.unit_value = unit_value
         self.description = description
@@ -33,8 +36,20 @@ class Attributes(db.Model):
             'id': self.id,
             'name': self.name,
             'table_name': self.table_name,
+            'Sub Theme id': self.sub_theme_id,
             'Unit': self.unit_id,
             'Unit Value': self.unit_value,
             'Description': self.description,
             'timestamp': self.timestamp
         }
+
+    def save(self):
+        try:
+            db.session.add(self)
+            db.session.flush()
+        except IntegrityError as ie:
+            db.session.rollback()
+            print(self.name, 'attribute with Unit ID:', str(self.unit_id), 'and Unit Value:', self.unit_value, 'already exists')
+
+    def commit(self):
+        db.session.commit()

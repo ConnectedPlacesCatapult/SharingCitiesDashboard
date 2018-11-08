@@ -1,5 +1,6 @@
 from db import db
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 class Sensor(db.Model):
     __tablename__ = 'sensor'
@@ -36,8 +37,12 @@ class Sensor(db.Model):
         }
 
     def save(self):
-        db.session.add(self)
-        db.session.flush()
+        try:
+            db.session.add(self)
+            db.session.flush()
+        except IntegrityError as ie:
+            db.session.rollback()
+            print(self.name, 'sensor already exists with Attribute ID:', str(self.a_id), 'and Location ID:', str(self.l_id))
 
     def save_all(self):
         db.session.add(self)

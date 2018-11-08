@@ -1,68 +1,251 @@
+import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from base import BaseImporter
 from datetime import datetime
-import os
+import os, uuid
 import json
+from app import create_app
+from importers.attr_unit_desc import AttributeUnitDescription
+from models.unit import Unit
+from models.theme import Theme, SubTheme
+# from models.models import sensor_attribute
+from read_json import ReadJson
+from models.attributes import Attributes
+from models.sensor_attribute import SensorAttribute
+from db import db
 
 class CreateImporter(object):
     def __init__(self):
         self.terminal_width = os.get_terminal_size().columns
+        self.application = create_app()
         
     def builder(self):
-        self._print_in_middle('Importer Builder')
+        self._print_in_middle(Statuses.BUILD_IMPORTER)
         data_source = {}
-        questions = Questions()
-        for q in dir(questions):
-            if not q.startswith('__'):
-                t = getattr(questions, q)
-                self._questions(t)
-                data_source[t] = input()
-                
-        data_source[self._questions(Questions.API_NAME)] = input()
-        # api_name = input()
 
-        data_source[self._questions(Questions.API_URL)] = input()
-        # api_url = input()
+        '''
+        Section for saving API
+        '''
+        a_questions = APIQuestions()
+        self.question_generator(a_questions, data_source)
 
-        data_source[self._questions(Questions.API_REFRESH_TIME)] = input()
-        # refresh_time = input()
+        base_importer = self.load_dataset(data_source[APIQuestions._1_API_NAME], data_source[APIQuestions._2_API_URL], 
+                                    data_source[APIQuestions._3_API_REFRESH_TIME], data_source[APIQuestions._4_API_KEY], 
+                                    data_source[APIQuestions._5_API_TOKEN_EXPIRY])
+        self._print_dataset(base_importer.dataset)
 
-        data_source[self._questions(Questions.API_KEY)] = input()
-        # api_key = input()
+        '''
+        Section for Saving Sensors
+        '''
+        s_questions = SensorQuestions()
+        self.question_generator(s_questions, data_source)
 
-        data_source[self._questions(Questions.API_TOKEN_EXPIRY)] = input()
-        # token_expiry = input()
-
-        dataset = self.load_dataset(api_name, api_url, refresh_time, api_key, token_expiry)
-        self._print_dataset(dataset)
-
-        data_source[self._questions(Questions.SENSOR_TAG_NAME)] = input()
-        # sensor_tag_name = input()
-        # Before the next step check if the entered tag name exists or not
-
-        data_source[self._questions(Questions.USE_VALUE_OF_TAG_AS_SENSOR_NAME)] = input()
-        # use_tag_value = input()
-
-        data_source[self._questions(Questions.SENSOR_LOCATION_TAG_NAMES)] = input()
-        # location = input()
-        _location = data_source[self._questions(Questions.SENSOR_LOCATION_TAG_NAMES)].split()
-        lat = lon = 0.0
+        _location = data_source[SensorQuestions._8_SENSOR_LOCATION_TAG_NAMES].split()
+        lat = lon = None
         if len(_location) > 1:
             lat, lon = _location
 
         
-        self._print_in_middle('Staging API and Sensor for Commit')
-        self._print_in_middle('Summary')
+        self._print_in_middle(Statuses.STAGING_SENSOR)
+        self._print_in_middle(Statuses.SUMMARY)
+        self._print_dict(data_source)
+        self._questions(Statuses.SAVE_SENSOR)
+        save_sensor = input()
+
+        # Need to also check what if the input is No aur N
+        saved_sensors_ids = {}
+        if save_sensor == 'y' or save_sensor == 'Y':
+            saved_sensors_ids = base_importer.sensors(data_source[SensorQuestions._6_SENSOR_TAG_NAME], 
+                                    [lat, lon],
+                                    True if data_source[SensorQuestions._7_USE_VALUE_OF_TAG_AS_SENSOR_NAME] == 'Y' \
+                                    or data_source[SensorQuestions._7_USE_VALUE_OF_TAG_AS_SENSOR_NAME] == 'y' \
+                                    else False)
+
+            self._print_in_middle(Statuses.SENSOR_SAVED)
 
         
 
+        '''
+        Start building the attributes and linking them as well
+        '''
+
+        attribute_data = [] # It contains a list of AttributeUnitDescription
+        self._print_in_middle(Statuses.ATTRIBUTE)
+        attr_questions = AttributeQuestions()
+        self.question_generator(attr_questions, data_source)
+
+        selected_attributes = data_source[AttributeQuestions._1_ATTRIBUTE_TAG_NAMES].split()
+        selected_units = data_source[AttributeQuestions._3_UNIT_TAG_NAMES].split()
+        selected_desc = data_source[AttributeQuestions._5_DESCRIPTION_TAG_NAMES].split()
+
+        # Get attributes, units, description as dictionaries 
+        attr_as_dict = base_importer.attributes(selected_attributes)
+        unit_as_dict = base_importer.units(selected_units)
+        desc_as_dict = base_importer.descriptions(selected_desc)
+
+        # make attributes flat to display
+        self._print_in_middle('\nAttributes')
+        flat_attr = []
+        a_index = 0
+        for attr in attr_as_dict:
+            for value in attr_as_dict[attr]:
+                flat_attr.append(value)
+                print(str(a_index) + '.', value)
+                a_index += 1
+
+        # Make unit flat to display
+        self._print_in_middle('\nUnits')
+        flat_units = []
+        f_index = 0
+        for unit in unit_as_dict:
+            for value in unit_as_dict[unit]:
+                flat_units.append(value)
+                print(str(f_index) + '.', value)
+                f_index += 1
+        
+        # For each attribute choose unit tags
+        self._print_in_middle(Statuses.CHOOSE_UNIT)
+        for attr in flat_attr:
+            print(attr + ': ', end='')
+            units_for_attr = input().split()
+            for unit in units_for_attr:
+                a = base_importer.join_attr_unit(attr, flat_units[int(unit)])
+                attribute_data.append(a)
+
+        # Flat descriptions
+        self._print_in_middle('\nDescriptions')
+        flat_desc = []
+        d_index = 0
+        for d in desc_as_dict:
+            for value in desc_as_dict[d]:
+                flat_desc.append(value)
+                print(str(d_index) + '.', value )
+                d_index +=1
+                
+        # Show all attributes with units
+        # This code is repeated down below need to find a good place for it
+        self._print_in_middle('\nAttributes and their respective Unit Values')
+        for attr in range(len(attribute_data)):
+            print(str(attr) + '. ', Colors.OKGREEN, 'Attribute Name: ', Colors.ENDC, attribute_data[attr].attribute, 
+                    Colors.OKGREEN, ', Unit Value: ', Colors.ENDC, attribute_data[attr].unit_value)
+
+        self._print_in_middle(Statuses.CHOOSE_DESC)
+        for d in flat_desc:
+            print(d, ':', end='')
+            attr_unit = input().split()
+            for au in attr_unit:
+                base_importer.join_attr_desc(attribute_data[int(au)], d)
+
+        # Fetch units from database
+        self._print_in_middle('\nUnits available in Database')
+        units = Unit.get()
+        # show units
+        for unit in range(len(units)):
+            print(str(unit) + '.', units[unit]._type)
+
+        # Need to fix this latter on
+        # self._questions(AttributeQuestions._7_UNIT_IN_DATABASE)
+        self._questions('Does the listed units contains all the respective units for this dataset: (Y/N) ')
+        unit_available = input()
+        if unit_available == 'y' or unit_available == 'Y':
+            # This is repetition of code from above
+            self._print_in_middle('\nAttributes and their respective Unit Values')
+            for attr in range(len(attribute_data)):
+                print(str(attr) + '. ', Colors.OKGREEN, 'Attribute Name: ', Colors.ENDC, attribute_data[attr].attribute, 
+                    Colors.OKGREEN, ', Unit Value: ', Colors.ENDC, attribute_data[attr].unit_value)
+
+            self._questions(Statuses.CHOOSE_UNIT_ID, end='\n')
+
+            for unit in range(len(units)):
+                print(units[int(unit)]._type + ':', end='')
+                attr_unit_ids = input().split()
+                base_importer.join_attr_unit_type([attribute_data[int(i)] for i in attr_unit_ids], 
+                                                    units[int(unit)].id)
+
+        else:
+            # Need to give user an option here to create new Units for their datasets
+            pass
+
+        # Fetch sub themes from database
+        self._print_in_middle('\nSubTheme available in Database')
+        sub_themes = SubTheme.get_all()
+        # Show Sub Themes
+        for theme in range(len(sub_themes)):
+            print(str(theme) + '.', sub_themes[theme].name)
+
+        self._questions('Does the listed SubThemes contains all the respective themes for this dataset: (Y/N) ')
+        st_available = input()
+        if st_available == 'y' or st_available == 'Y':
+            # This is repetition of code from above, repeating 3rd time
+            self._print_in_middle('\nAttributes and their respective Unit Values')
+            for attr in range(len(attribute_data)):
+                print(str(attr) + '. ', Colors.OKGREEN, 'Attribute Name: ', Colors.ENDC, attribute_data[attr].attribute, 
+                    Colors.OKGREEN, ', Unit Value: ', Colors.ENDC, attribute_data[attr].unit_value)
+
+            self._questions(Statuses.CHOOSE_SUB_THEME, end='\n')
+            for theme in range(len(sub_themes)):
+                print(sub_themes[theme].name + ':', end='')
+                attr_theme_ids = input().split()
+                base_importer.join_attr_sub_theme([attribute_data[int(i)] for i in attr_theme_ids],
+                                                    sub_themes[theme].id)
+        else:
+            # Need to give user an option to be able create new sub theme and themes if necessary
+            pass
+
+        self._questions('Are attributes at the same level or a level below sensor tag: (Y/N) ')
+        attr_at_level = input()
+        self._questions('Enter Tag name of the first object: ')
+        root_tag = input()
+        attr_to_sensor_mapping = {}
+        if attr_at_level == 'y' or attr_at_level == 'Y':
+            r_json = ReadJson(None, None)
+            r_json.map_sensors_to_attributes(base_importer.dataset, '@SiteCode', '@SpeciesCode', 
+                                            attr_to_sensor_mapping, root_tag)
+            # print(values)
+        else:
+            # Need to loop through every sensor and map attributes manually to them
+            pass
+
+        # Stage Attribute commit
+        for attr in attribute_data:
+            a = Attributes(name=attr.attribute, sub_theme=attr.sub_theme, table_name=str(uuid.uuid4()), unit_value=attr.unit_value, description=attr.description, unit=attr.unit_type)
+            a.save()
+            attr.id = a.id
+
+        # base_importer.commit()
+
+        self._print_in_middle('Saved Attributes')
+        self._print_in_middle('Saving Sensor to Attributes relation')
+
+        '''
+        Map attributes to sensors
+        '''
+        for key in attr_to_sensor_mapping:
+            for value in attr_to_sensor_mapping[key]:
+                sensor_id = saved_sensors_ids[key]
+                for attr in attribute_data:
+                    if attr.attribute == value:
+                        a = SensorAttribute(sensor_id, attr.id)
+                        a.save()
+
+        base_importer.commit()
+
+        self._print_in_middle('Saved Attribute to Sensor Relation')
+        
+    def question_generator(self, obj, data_source):
+        for q in dir(obj):
+            if not q.startswith('__'):
+                t = getattr(obj, q)
+                self._questions(t)
+                data_source[t] = input()
 
     def _questions(self, q, end=''):
         print(Colors.BOLD, Colors.OKGREEN, q, Colors.ENDC, end=end)
-        return q
 
     def load_dataset(self, name, url, refresh_time, api_key, token_expiry):
         b = BaseImporter(name, url, refresh_time, api_key, token_expiry)
-        return b.dataset
+        return b
 
     def _print_dataset(self, dataset):
         _print = json.dumps(dataset, indent=2)
@@ -78,7 +261,7 @@ class CreateImporter(object):
                 print(to_show)
                 to_show = ''
                 count = 0
-                self._questions('Would you like to see next 20 lines (Y/N): ')
+                self._questions(Statuses.SHOW_MORE_DATA)
                 _next = input()
                 if _next != 'Y' and _next != 'y':
                     break
@@ -93,6 +276,14 @@ class CreateImporter(object):
     def _print_in_middle(self, v):
         print(Colors.BOLD, Colors.HEADER, v.center(self.terminal_width), Colors.ENDC)
 
+    def _print_dict(self, d):
+        self._print_in_box()
+
+        for k in d:
+            print(Colors.BOLD, k, Colors.FAIL, d[k], Colors.ENDC)
+
+        self._print_in_box()
+
 
 class Colors:
     HEADER = '\033[95m'
@@ -104,16 +295,66 @@ class Colors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-class Questions:
-    API_NAME = 'Enter API Name: '
-    API_URL = 'Enter API URL: '
-    API_REFRESH_TIME = 'Enter API Refresh Time in seconds: '
-    API_KEY = 'Enter API Key: '
-    API_TOKEN_EXPIRY = 'Enter token expiry in Date format e.g DD/MM/YYY HH:MM:SS : '
-    SENSOR_TAG_NAME = 'Provide Tag Name for Sensor: '
-    USE_VALUE_OF_TAG_AS_SENSOR_NAME = 'Use value of the Tag as Sensor Name: (Y/N) '
-    SENSOR_LOCATION_TAG_NAMES = 'Enter tag names for location of Sensor space seperated: '
+class Statuses:
+    SUMMARY = 'Summary'
+    STAGING_SENSOR = 'Staging API and Sensor for Commit'
+    BUILD_IMPORTER = 'Importer Builder'
+    SHOW_MORE_DATA = 'Would you like to see next 20 lines (Y/N): '
+    SAVE_SENSOR = 'Create Sensors in system (Y/N): '
+    SENSOR_SAVED = 'Sensor data has been saved'
+    ATTRIBUTE = 'Section for Adding Attributes'
+    CHOOSE_UNIT = 'For each attribute put IDs of unit shown (space seperated) on the left of unit'
+    CHOOSE_DESC = 'For each description put IDs of each Attribute and Unit combination'
+    CHOOSE_UNIT_ID = 'For each unit put IDs (space seperated) of each of the Attribute'
+    CHOOSE_SUB_THEME = 'For each sub theme put IDs (space seperated) for each of the Attribute'
+
+class APIQuestions:
+    _1_API_NAME = 'Enter API Name: '
+    _2_API_URL = 'Enter API URL: '
+    _3_API_REFRESH_TIME = 'Enter API Refresh Time in seconds: '
+    _4_API_KEY = 'Enter API Key: '
+    _5_API_TOKEN_EXPIRY = 'Enter token expiry in Date format e.g DD/MM/YYY HH:MM:SS : '
+
+class SensorQuestions:
+    _6_SENSOR_TAG_NAME = 'Provide Tag Name for Sensor: '
+    _7_USE_VALUE_OF_TAG_AS_SENSOR_NAME = 'Use value of the Tag as Sensor Name: (Y/N) '
+    _8_SENSOR_LOCATION_TAG_NAMES = 'Enter tag names for location of Sensor space seperated: '
+
+class AttributeQuestions:
+    _1_ATTRIBUTE_TAG_NAMES = 'Enter Attribute Tag names as space seperated list: '
+    _2_USE_VALUE_OF_TAG_AS_ATTRIBUTE_NAME = 'Use value of the Tag as Attribute Name: (Y/N) '
+    _3_UNIT_TAG_NAMES = 'Enter Unit tag names as space seperated list: '
+    _4_USE_VALUE_OF_TAG_AS_UNIT_VALUE = 'Use value of the Tag as Unit value: (Y/N) '
+    _5_DESCRIPTION_TAG_NAMES = 'Enter Description Tag names as space seperated list: '
+    _6_USE_VALUE_OF_TAG_AS_DESC_VALUE = 'Use value of the Tag as Description: (Y/N): '
+    # _7_UNIT_IN_DATABASE = 'Does the listed units contains all the respective units for this dataset: (Y/N) '
+
+def test_submit():
+    u = Unit('kg', 'Kilogram')
+    u2 = Unit('g', 'Grams')
+    u3 = Unit('km', 'KiloMeter')
+    u.save()
+    u2.save()
+    u3.save()
+
+    t = Theme('Environment')
+    t2 = Theme('Transport')
+    t.save()
+    t2.save()
+
+    st = SubTheme(t.id, 'Airquality')
+    st2 = SubTheme(t2.id, 'Traffic')
+    st.save()
+    st2.save()
+
+    db.session.commit()
+
+
 
 if __name__ == '__main__':
+    args = sys.argv[1:]
     c = CreateImporter()
+    if args[0] == 'init':
+        print('Adding Initial Values')
+        test_submit()
     c.builder()
