@@ -20,16 +20,8 @@ const styles = theme => ({
 });
 
 class ThemeListItem extends Component {
-  state = {
-    open: false,
-  };
-
-  handleClick = () => {
-    this.setState(state => ({ open: !state.open }));
-  };
-
   render() {
-    const { classes, sources } = this.props;
+    const { classes, sources, isSelected, onClick } = this.props;
 
     const sourceListItems = sources.map((source, i) => {
       return <SourceListItem key={i} {...source} />
@@ -37,9 +29,9 @@ class ThemeListItem extends Component {
 
     return (
       <div>
-        <ListItem button onClick={this.handleClick}>
+        <ListItem button onClick={onClick}>
           {
-            this.state.open
+            isSelected
               ? <ExpandMore color="secondary" />
               : <ChevronRight color="secondary"/>
           }
@@ -50,7 +42,7 @@ class ThemeListItem extends Component {
             <DatabaseIcon/>
           </ListItemIcon>
         </ListItem>
-        <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+        <Collapse in={isSelected} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {sourceListItems}
           </List>
@@ -63,6 +55,8 @@ class ThemeListItem extends Component {
 ThemeListItem.propTypes = {
   classes: PropTypes.object.isRequired,
   sources: PropTypes.array.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(ThemeListItem);
+export default withStyles(styles)(ThemeListItem)

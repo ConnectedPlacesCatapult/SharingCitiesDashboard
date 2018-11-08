@@ -1,4 +1,9 @@
-import { FETCH_SOURCES, FETCH_SOURCES_FULFILLED, FETCH_SOURCES_REJECTED } from './types';
+import {
+  FETCH_SOURCES,
+  FETCH_SOURCES_FULFILLED,
+  FETCH_SOURCES_REJECTED,
+  TOGGLE_SOURCE_SELECTED,
+} from './types';
 
 export function fetchSources() {
   return function (dispatch) {
@@ -20,5 +25,12 @@ export function fetchSources() {
         payload: e,
       })
     }
+  }
+}
+
+export function toggleSourceSelected(id) {
+  return {
+    type: TOGGLE_SOURCE_SELECTED,
+    payload: id,
   }
 }

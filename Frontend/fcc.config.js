@@ -26,7 +26,7 @@ module.exports = {
       }
     },
     "typography": {
-      useNextVariants: true,
+      useNextVariants: true, // to avoid deprecation warnings
       "fontFamily": "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
     }
   },
@@ -52,6 +52,8 @@ module.exports = {
       name: "Plot Builder",
     }
   ],
+
+  // tileLayers to be made available in OpenMap widgets
   tileLayers: [
     {
       name: 'OpenStreetMap.Mapnik',

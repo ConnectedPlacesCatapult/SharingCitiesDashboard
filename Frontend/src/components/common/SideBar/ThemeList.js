@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from "prop-types";
 import List from '@material-ui/core/List';
 import { connect } from 'react-redux';
-import { fetchThemes } from "./../../../actions/themesActions";
+import { fetchThemes, toggleThemeSelected } from "./../../../actions/themesActions";
 import { fetchSources } from "./../../../actions/sourcesActions";
+import _ from 'lodash';
 
 import ThemeListItem from './ThemeListItem';
 
@@ -14,10 +15,18 @@ class ThemeList extends Component {
   }
 
   render() {
-    const { themes, sources } = this.props;
+    const { themes, selectedThemes, toggleThemeSelected, sources } = this.props;
 
     const themeListItems = themes.map((theme, i) => {
-      return <ThemeListItem key={i} name={theme} sources={sources.filter((source) => source.theme === theme)} />
+      return (
+        <ThemeListItem
+          key={i}
+          name={theme}
+          sources={sources.filter((source) => source.theme === theme)}
+          isSelected={_.indexOf(selectedThemes, i) !== -1}
+          onClick={() => toggleThemeSelected(i)}
+        />
+      )
     });
 
     return (
@@ -30,19 +39,20 @@ class ThemeList extends Component {
 
 ThemeList.propTypes = {
   themes: PropTypes.array.isRequired,
+  selectedThemes: PropTypes.array.isRequired,
   sources: PropTypes.array.isRequired,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    themes: state.themes.themes,
-    sources: state.sources.sources,
-  }
-};
+const mapStateToProps = state => ({
+  themes: state.themes.themes,
+  selectedThemes: state.themes.selected,
+  sources: state.sources.sources,
+});
 
-const mapDispatchToProps = {
-  fetchThemes,
-  fetchSources,
-};
+const mapDispatchToProps = dispatch => ({
+  fetchThemes: () => dispatch(fetchThemes()),
+  toggleThemeSelected: id => dispatch(toggleThemeSelected(id)),
+  fetchSources: () => dispatch(fetchSources()),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(ThemeList);

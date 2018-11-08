@@ -1,5 +1,10 @@
 //import axios from "axios";
-import { FETCH_THEMES, FETCH_THEMES_FULFILLED, FETCH_THEMES_REJECTED } from "./types";
+import {
+  FETCH_THEMES,
+  FETCH_THEMES_FULFILLED,
+  FETCH_THEMES_REJECTED,
+  TOGGLE_THEME_SELECTED,
+} from "./types";
 
 export function fetchThemes() {
   return function(dispatch) {
@@ -37,5 +42,12 @@ export function fetchThemes() {
           payload: err,
         })
       })*/
+  }
+}
+
+export function toggleThemeSelected(id) {
+  return {
+    type: TOGGLE_THEME_SELECTED,
+    payload: id,
   }
 }

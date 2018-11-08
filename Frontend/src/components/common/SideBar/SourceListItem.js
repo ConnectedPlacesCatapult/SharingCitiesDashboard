@@ -44,6 +44,7 @@ class SourceListItem extends Component {
 
 SourceListItem.propTypes = {
   classes: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(SourceListItem);
