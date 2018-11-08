@@ -37,10 +37,11 @@ export default (state=initialState, action={}) => {
     }
 
     case TOGGLE_SOURCE_SELECTED: {
-      const index = _.indexOf(state.selected, action.payload);
-      const newSelected = (index !== -1)
+      // only allow one selected source for now but keep it in an array
+      const newSelected = (_.indexOf(state.selected, action.payload) !== -1)
         ? _.without(state.selected, action.payload)
-        : [...state.selected, action.payload]
+        : [action.payload]
+        //: [...state.selected, action.payload]
       ;
 
       return {

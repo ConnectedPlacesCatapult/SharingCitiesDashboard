@@ -43,8 +43,7 @@ export default (state=initialState, action={}) => {
     }
 
     case TOGGLE_THEME_SELECTED: {
-      const index = _.indexOf(state.selected, action.payload);
-      const newSelected = (index !== -1)
+      const newSelected = (_.indexOf(state.selected, action.payload) !== -1)
         ? _.without(state.selected, action.payload)
         : [...state.selected, action.payload]
       ;

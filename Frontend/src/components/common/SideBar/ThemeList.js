@@ -21,7 +21,8 @@ class ThemeList extends Component {
       return (
         <ThemeListItem
           key={i}
-          name={theme}
+          themeId={i}
+          themeName={theme}
           sources={sources.filter((source) => source.theme === theme)}
           isSelected={_.indexOf(selectedThemes, i) !== -1}
           onClick={() => toggleThemeSelected(i)}
@@ -41,6 +42,7 @@ ThemeList.propTypes = {
   themes: PropTypes.array.isRequired,
   selectedThemes: PropTypes.array.isRequired,
   sources: PropTypes.array.isRequired,
+  toggleThemeSelected: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({

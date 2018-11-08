@@ -10,6 +10,9 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import Collapse from '@material-ui/core/Collapse';
 import greyColor from '@material-ui/core/colors/grey';
+import { connect } from 'react-redux';
+import { toggleSourceSelected } from "./../../../actions/sourcesActions";
+import _ from 'lodash';
 
 import SourceListItem from './SourceListItem';
 
@@ -21,10 +24,19 @@ const styles = theme => ({
 
 class ThemeListItem extends Component {
   render() {
-    const { classes, sources, isSelected, onClick } = this.props;
+    const { classes, themeId, themeName, sources, isSelected, onClick, selectedSources, toggleSourceSelected } = this.props;
 
     const sourceListItems = sources.map((source, i) => {
-      return <SourceListItem key={i} {...source} />
+      const sourceId = themeId + "_" + i;
+
+      return (
+        <SourceListItem
+          key={i}
+          isSelected={_.indexOf(selectedSources, sourceId) !== -1}
+          onClick={() => toggleSourceSelected(sourceId)}
+          {...source}
+        />
+      )
     });
 
     return (
@@ -36,7 +48,7 @@ class ThemeListItem extends Component {
               : <ChevronRight color="secondary"/>
           }
           <ListItemText inset className={classes.listItemText}>
-            {this.props.name}
+            {themeName}
           </ListItemText>
           <ListItemIcon>
             <DatabaseIcon/>
@@ -54,9 +66,22 @@ class ThemeListItem extends Component {
 
 ThemeListItem.propTypes = {
   classes: PropTypes.object.isRequired,
+  themeId: PropTypes.number.isRequired,
+  themeName: PropTypes.string.isRequired,
   sources: PropTypes.array.isRequired,
+  selectedSources: PropTypes.array.isRequired,
   isSelected: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
+  toggleSourceSelected: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(ThemeListItem)
+const mapStateToProps = state => ({
+  selectedSources: state.sources.selected,
+});
+
+const mapDispatchToProps = dispatch => ({
+  toggleSourceSelected: id => dispatch(toggleSourceSelected(id)),
+});
+
+ThemeListItem = withStyles(styles)(ThemeListItem);
+export default connect(mapStateToProps, mapDispatchToProps)(ThemeListItem)

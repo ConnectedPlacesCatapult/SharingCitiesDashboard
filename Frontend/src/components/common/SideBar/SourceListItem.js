@@ -5,6 +5,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+import { connect } from 'react-redux';
+import { fetchData } from "../../../actions/dataActions";
+import {toggleSourceSelected} from "../../../actions/sourcesActions";
 
 const styles = theme => ({
   nested: {
@@ -16,22 +19,32 @@ const styles = theme => ({
 });
 
 class SourceListItem extends Component {
-  state = {
-    open: false,
-  };
-
   handleClick = () => {
-    this.setState(state => ({ open: !state.open }));
+    const { name, theme, meta, onClick, fetchData } = this.props;
+
+    // only handles whether source is selected or not
+    onClick();
+
+    // data needed for API call
+    const requestData = {
+      source: name,
+      theme,
+      meta,
+    };
+
+    console.log(requestData);
+
+    fetchData(requestData)
   };
 
   render() {
-    const { classes, name } = this.props;
+    const { classes, name, isSelected } = this.props;
 
     return (
       <div>
         <ListItem button className={classes.nested} onClick={this.handleClick}>
           {
-            this.state.open
+            isSelected
               ? <RadioButtonCheckedIcon fontSize="small" color="secondary" />
               : <RadioButtonUncheckedIcon fontSize="small" className={classes.darkColor} />
           }
@@ -45,6 +58,19 @@ class SourceListItem extends Component {
 SourceListItem.propTypes = {
   classes: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
+  meta: PropTypes.object.isRequired,
+  theme: PropTypes.string.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(SourceListItem);
+const mapStateToProps = (state) => ({
+
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchData: requestData => dispatch(fetchData(requestData)),
+});
+
+SourceListItem = withStyles(styles)(SourceListItem);
+export default connect(mapStateToProps, mapDispatchToProps)(SourceListItem);
