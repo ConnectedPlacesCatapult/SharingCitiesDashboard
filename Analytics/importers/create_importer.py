@@ -21,12 +21,39 @@ class CreateImporter(object):
         self.application = create_app()
         
     def builder(self):
+        attribute_data = [] # It contains a list of AttributeUnitDescription
         self._print_in_middle(Statuses.BUILD_IMPORTER)
-        data_source = {}
 
+        data_source, base_importer = self.load_show_dataset()
+        saved_sensors_ids = self.create_sensors(data_source, base_importer)
+        attr_as_dict, unit_as_dict, desc_as_dict = self.input_for_attributes(data_source, base_importer)
+
+        # make attributes and units flat to display
+        flat_attr = self.flat_attributes(attr_as_dict)
+        flat_units = self.flat_units(unit_as_dict)        
+        
+        # Merge units with attributes
+        self.merge_units_attributes(flat_attr, flat_units, attribute_data)
+        
+        # Flat descriptions and merge them with attributes
+        flat_desc = self.flat_description(desc_as_dict)
+        self.merge_attributes_description(flat_desc, base_importer, attribute_data)
+
+        self.merge_units(attribute_data, base_importer)
+        self.merge_subthemes(attribute_data, base_importer)
+
+        attr_to_sensor_mapping = self.map_sensor_to_attribute(base_importer)
+        self.attribute_to_commit(attribute_data)
+
+        self.stage_attribute_sensor_relation(attribute_data, attr_to_sensor_mapping)
+
+        self.commit(base_importer)
+
+    def load_show_dataset(self):
         '''
         Section for saving API
         '''
+        data_source = {}
         a_questions = APIQuestions()
         self.question_generator(a_questions, data_source)
 
@@ -34,7 +61,9 @@ class CreateImporter(object):
                                     data_source[APIQuestions._3_API_REFRESH_TIME], data_source[APIQuestions._4_API_KEY], 
                                     data_source[APIQuestions._5_API_TOKEN_EXPIRY])
         self._print_dataset(base_importer.dataset)
+        return data_source, base_importer
 
+    def create_sensors(self, data_source, base_importer):
         '''
         Section for Saving Sensors
         '''
@@ -46,7 +75,6 @@ class CreateImporter(object):
         if len(_location) > 1:
             lat, lon = _location
 
-        
         self._print_in_middle(Statuses.STAGING_SENSOR)
         self._print_in_middle(Statuses.SUMMARY)
         self._print_dict(data_source)
@@ -63,14 +91,15 @@ class CreateImporter(object):
                                     else False)
 
             self._print_in_middle(Statuses.SENSOR_SAVED)
+        else:
+            # What if user presses N or n or any other letter
+            pass
+        return saved_sensors_ids
 
-        
-
+    def input_for_attributes(self, data_source, base_importer):
         '''
         Start building the attributes and linking them as well
         '''
-
-        attribute_data = [] # It contains a list of AttributeUnitDescription
         self._print_in_middle(Statuses.ATTRIBUTE)
         attr_questions = AttributeQuestions()
         self.question_generator(attr_questions, data_source)
@@ -84,7 +113,9 @@ class CreateImporter(object):
         unit_as_dict = base_importer.units(selected_units)
         desc_as_dict = base_importer.descriptions(selected_desc)
 
-        # make attributes flat to display
+        return attr_as_dict, unit_as_dict, desc_as_dict
+
+    def flat_attributes(self, attr_as_dict):
         self._print_in_middle('\nAttributes')
         flat_attr = []
         a_index = 0
@@ -93,8 +124,9 @@ class CreateImporter(object):
                 flat_attr.append(value)
                 print(str(a_index) + '.', value)
                 a_index += 1
+        return flat_attr
 
-        # Make unit flat to display
+    def flat_units(self, unit_as_dict):
         self._print_in_middle('\nUnits')
         flat_units = []
         f_index = 0
@@ -103,8 +135,10 @@ class CreateImporter(object):
                 flat_units.append(value)
                 print(str(f_index) + '.', value)
                 f_index += 1
-        
-        # For each attribute choose unit tags
+
+        return flat_units
+
+    def merge_units_attributes(self, flat_attr, flat_units, attribute_data):
         self._print_in_middle(Statuses.CHOOSE_UNIT)
         for attr in flat_attr:
             print(attr + ': ', end='')
@@ -113,7 +147,7 @@ class CreateImporter(object):
                 a = base_importer.join_attr_unit(attr, flat_units[int(unit)])
                 attribute_data.append(a)
 
-        # Flat descriptions
+    def flat_description(self, desc_as_dict):
         self._print_in_middle('\nDescriptions')
         flat_desc = []
         d_index = 0
@@ -122,14 +156,10 @@ class CreateImporter(object):
                 flat_desc.append(value)
                 print(str(d_index) + '.', value )
                 d_index +=1
-                
-        # Show all attributes with units
-        # This code is repeated down below need to find a good place for it
-        self._print_in_middle('\nAttributes and their respective Unit Values')
-        for attr in range(len(attribute_data)):
-            print(str(attr) + '. ', Colors.OKGREEN, 'Attribute Name: ', Colors.ENDC, attribute_data[attr].attribute, 
-                    Colors.OKGREEN, ', Unit Value: ', Colors.ENDC, attribute_data[attr].unit_value)
+        return flat_desc
 
+    def merge_attributes_description(self, flat_desc, base_importer, attribute_data):
+        self._print_attribute_data(attribute_data)
         self._print_in_middle(Statuses.CHOOSE_DESC)
         for d in flat_desc:
             print(d, ':', end='')
@@ -137,6 +167,7 @@ class CreateImporter(object):
             for au in attr_unit:
                 base_importer.join_attr_desc(attribute_data[int(au)], d)
 
+    def merge_units(self, attribute_data, base_importer):
         # Fetch units from database
         self._print_in_middle('\nUnits available in Database')
         units = Unit.get()
@@ -144,16 +175,12 @@ class CreateImporter(object):
         for unit in range(len(units)):
             print(str(unit) + '.', units[unit]._type)
 
-        # Need to fix this latter on
-        # self._questions(AttributeQuestions._7_UNIT_IN_DATABASE)
         self._questions('Does the listed units contains all the respective units for this dataset: (Y/N) ')
         unit_available = input()
         if unit_available == 'y' or unit_available == 'Y':
             # This is repetition of code from above
             self._print_in_middle('\nAttributes and their respective Unit Values')
-            for attr in range(len(attribute_data)):
-                print(str(attr) + '. ', Colors.OKGREEN, 'Attribute Name: ', Colors.ENDC, attribute_data[attr].attribute, 
-                    Colors.OKGREEN, ', Unit Value: ', Colors.ENDC, attribute_data[attr].unit_value)
+            self._print_attribute_data(attribute_data)
 
             self._questions(Statuses.CHOOSE_UNIT_ID, end='\n')
 
@@ -167,6 +194,7 @@ class CreateImporter(object):
             # Need to give user an option here to create new Units for their datasets
             pass
 
+    def merge_subthemes(self, attribute_data, base_importer):
         # Fetch sub themes from database
         self._print_in_middle('\nSubTheme available in Database')
         sub_themes = SubTheme.get_all()
@@ -179,9 +207,7 @@ class CreateImporter(object):
         if st_available == 'y' or st_available == 'Y':
             # This is repetition of code from above, repeating 3rd time
             self._print_in_middle('\nAttributes and their respective Unit Values')
-            for attr in range(len(attribute_data)):
-                print(str(attr) + '. ', Colors.OKGREEN, 'Attribute Name: ', Colors.ENDC, attribute_data[attr].attribute, 
-                    Colors.OKGREEN, ', Unit Value: ', Colors.ENDC, attribute_data[attr].unit_value)
+            self._print_attribute_data(attribute_data)
 
             self._questions(Statuses.CHOOSE_SUB_THEME, end='\n')
             for theme in range(len(sub_themes)):
@@ -193,6 +219,7 @@ class CreateImporter(object):
             # Need to give user an option to be able create new sub theme and themes if necessary
             pass
 
+    def map_sensor_to_attribute(self, base_importer):
         self._questions('Are attributes at the same level or a level below sensor tag: (Y/N) ')
         attr_at_level = input()
         self._questions('Enter Tag name of the first object: ')
@@ -207,15 +234,18 @@ class CreateImporter(object):
             # Need to loop through every sensor and map attributes manually to them
             pass
 
+        return attr_to_sensor_mapping
+
+    def attribute_to_commit(self, attribute_data):
         # Stage Attribute commit
         for attr in attribute_data:
             a = Attributes(name=attr.attribute, sub_theme=attr.sub_theme, table_name=str(uuid.uuid4()), unit_value=attr.unit_value, description=attr.description, unit=attr.unit_type)
             a.save()
             attr.id = a.id
-
-        # base_importer.commit()
-
+        
         self._print_in_middle('Saved Attributes')
+
+    def stage_attribute_sensor_relation(self, attribute_data, attr_to_sensor_mapping):
         self._print_in_middle('Saving Sensor to Attributes relation')
 
         '''
@@ -229,8 +259,8 @@ class CreateImporter(object):
                         a = SensorAttribute(sensor_id, attr.id)
                         a.save()
 
+    def commit(self, base_importer):
         base_importer.commit()
-
         self._print_in_middle('Saved Attribute to Sensor Relation')
         
     def question_generator(self, obj, data_source):
@@ -246,6 +276,12 @@ class CreateImporter(object):
     def load_dataset(self, name, url, refresh_time, api_key, token_expiry):
         b = BaseImporter(name, url, refresh_time, api_key, token_expiry)
         return b
+
+    def _print_attribute_data(self, attribute_data):
+        self._print_in_middle('\nAttributes and their respective Unit Values')
+        for attr in range(len(attribute_data)):
+            print(str(attr) + '. ', Colors.OKGREEN, 'Attribute Name: ', Colors.ENDC, attribute_data[attr].attribute, 
+                    Colors.OKGREEN, ', Unit Value: ', Colors.ENDC, attribute_data[attr].unit_value)
 
     def _print_dataset(self, dataset):
         _print = json.dumps(dataset, indent=2)
