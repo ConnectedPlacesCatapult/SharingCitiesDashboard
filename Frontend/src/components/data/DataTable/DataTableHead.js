@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
@@ -7,13 +8,20 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Tooltip from "@material-ui/core/Tooltip";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 
+const styles = theme => ({
+  columnLabel: {
+    color: theme.palette.primary.light,
+    fontWeight: 600,
+  },
+});
+
 class DataTableHead extends React.Component {
   createSortHandler = property => event => {
     this.props.onRequestSort(event, property);
   };
 
   render() {
-    const { onSelectAllClick, order, orderBy, numSelected, columns, rowCount } = this.props;
+    const { classes, onSelectAllClick, order, orderBy, numSelected, columns, rowCount } = this.props;
 
     return (
       <TableHead>
@@ -42,6 +50,7 @@ class DataTableHead extends React.Component {
                     active={orderBy === column.id}
                     direction={order}
                     onClick={this.createSortHandler(column.id)}
+                    className={classes.columnLabel}
                   >
                     {column.label}
                   </TableSortLabel>
@@ -56,6 +65,7 @@ class DataTableHead extends React.Component {
 }
 
 DataTableHead.propTypes = {
+  classes: PropTypes.object.isRequired,
   columns: PropTypes.array.isRequired,
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
@@ -65,4 +75,4 @@ DataTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-export default DataTableHead;
+export default withStyles(styles)(DataTableHead)
