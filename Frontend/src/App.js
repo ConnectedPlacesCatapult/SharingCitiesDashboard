@@ -44,11 +44,12 @@ class App extends React.Component {
           <Router>
             <React.Fragment>
               <Route component={Header} />
-              <Switch>
+              <Route path="/" component={DataPage} />
+              {/*<Switch>
                 <Route exact path="/" component={DashboardPage} />
                 <Route path="/data" component={DataPage} />
                 <Route path="/build" component={BuilderPage} />
-              </Switch>
+              </Switch>*/}
             </React.Fragment>
           </Router>
         </MuiThemeProvider>

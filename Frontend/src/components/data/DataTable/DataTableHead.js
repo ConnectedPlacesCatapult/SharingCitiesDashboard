@@ -13,6 +13,37 @@ const styles = theme => ({
     color: theme.palette.primary.light,
     fontWeight: 600,
   },
+  overRideInternalStateStyles: {
+    color: theme.palette.primary.light,
+  },
+  checkBox: {
+    color: theme.palette.primary.main,
+  },
+  cellBorder: {
+    borderColor: theme.palette.background.default,
+  },
+
+
+  labelRoot: {
+    color: theme.palette.primary.light,
+    fontWeight: 600,
+    '&$focus': {
+      color: theme.palette.primary.light,
+    },
+    '&$hover': {
+      color: theme.palette.primary.light,
+    },
+  },
+  labelActive: {
+    color: theme.palette.primary.light,
+  },
+
+  focus: {
+
+  },
+  hover: {
+
+  }
 });
 
 class DataTableHead extends React.Component {
@@ -26,11 +57,12 @@ class DataTableHead extends React.Component {
     return (
       <TableHead>
         <TableRow>
-          <TableCell padding="checkbox">
+          <TableCell padding="checkbox" className={classes.cellBorder}>
             <Checkbox
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={numSelected === rowCount}
               onChange={onSelectAllClick}
+              className={classes.checkBox}
             />
           </TableCell>
           {columns.map((column, i) => {
@@ -40,6 +72,7 @@ class DataTableHead extends React.Component {
                 numeric={column.numeric}
                 padding={(i === 0) ? 'none' : 'default'}
                 sortDirection={orderBy === column.id ? order : false}
+                className={classes.cellBorder}
               >
                 <Tooltip
                   title="Sort"
@@ -50,7 +83,13 @@ class DataTableHead extends React.Component {
                     active={orderBy === column.id}
                     direction={order}
                     onClick={this.createSortHandler(column.id)}
-                    className={classes.columnLabel}
+                    //className={classes.columnLabel}
+                    classes={{
+                      root: classes.labelRoot,
+                      active: classes.labelActive,
+                      hover: classes.hover,
+                      focus: classes.focus,
+                    }}
                   >
                     {column.label}
                   </TableSortLabel>

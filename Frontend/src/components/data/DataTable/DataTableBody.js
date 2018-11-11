@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classNames from 'classnames';
 import { withStyles } from "@material-ui/core/styles";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
@@ -7,9 +8,15 @@ import TableRow from "@material-ui/core/TableRow";
 import Checkbox from "@material-ui/core/Checkbox";
 
 const styles = theme => ({
+  checkBox: {
+    color: theme.palette.primary.main,
+  },
   cellValue: {
     color: theme.palette.primary.main,
     fontWeight: 400,
+  },
+  cellBorder: {
+    borderColor: theme.palette.background.default,
   },
 });
 
@@ -53,7 +60,7 @@ class DataTableBody extends React.Component {
           scope="row"
           numeric={column.numeric}
           padding="none"
-          className={classes.cellValue}
+          className={classNames(classes.cellValue, classes.cellBorder)}
         >
           {rowData[column.id]}
         </TableCell>
@@ -62,7 +69,7 @@ class DataTableBody extends React.Component {
           key={i + 1}
           numeric={column.numeric}
           padding="default"
-          className={classes.cellValue}
+          className={classNames(classes.cellValue, classes.cellBorder)}
         >
           {rowData[column.id]}
         </TableCell>
@@ -75,7 +82,7 @@ class DataTableBody extends React.Component {
   };
 
   render() {
-    const { data, columns, order, orderBy, page, rowsPerPage } = this.props;
+    const { classes, data, columns, order, orderBy, page, rowsPerPage } = this.props;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
@@ -97,8 +104,14 @@ class DataTableBody extends React.Component {
                 key={key}
                 selected={selected}
               >
-                <TableCell padding="checkbox">
-                  <Checkbox checked={selected} />
+                <TableCell
+                  padding="checkbox"
+                  className={classes.cellBorder}
+                >
+                  <Checkbox
+                    checked={selected}
+                    className={classes.checkBox}
+                  />
                 </TableCell>
                 {this.generateCells(n)}
               </TableRow>
@@ -106,7 +119,10 @@ class DataTableBody extends React.Component {
           })}
         {emptyRows > 0 && (
           <TableRow style={{ height: 49 * emptyRows }}>
-            <TableCell colSpan={columns.length} />
+            <TableCell
+              colSpan={columns.length}
+              className={classNames(classes.cellValue, classes.cellBorder)}
+            />
           </TableRow>
         )}
       </TableBody>

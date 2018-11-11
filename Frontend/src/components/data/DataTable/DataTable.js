@@ -154,4 +154,5 @@ const mapDispatchToProps = dispatch => ({
 });
 
 DataTable = withStyles(styles)(DataTable);
+
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable)
