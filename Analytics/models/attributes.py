@@ -16,6 +16,18 @@ class Attributes(db.Model):
     timestamp = db.Column(db.DateTime)
 
     def __init__(self, name, table_name, sub_theme, unit, description='No Description', unit_value='1', timestamp=None):
+        if unit_value is None:
+            unit_value = 1
+
+        if unit is None:
+            unit = 1
+
+        if sub_theme is None:
+            sub_theme = 1
+
+        if description is None:
+            description = 'No Description'
+
         self.name = name
         self.table_name = table_name
         self.sub_theme_id = sub_theme
