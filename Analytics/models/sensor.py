@@ -6,15 +6,16 @@ class Sensor(db.Model):
     __tablename__ = 'sensor'
     # __bind_key__ = 'backend'
 
-    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    a_id = db.Column(db.Integer, db.ForeignKey('api.id'))
+    id = db.Column(db.Text, unique=True, nullable=False)
+    a_id = db.Column(db.Integer, db.ForeignKey('api.id'), primary_key=True)
     l_id = db.Column(db.Integer, db.ForeignKey('location.id'), primary_key=True)
     name = db.Column(db.String(255), nullable=False, primary_key=True)
     timestamp = db.Column(db.DateTime)
 
     # attributes = db.relationship('Attributes', backref='sensor', lazy=True)
 
-    def __init__(self, a_id, l_id, name, timestamp=None):
+    def __init__(self, id, a_id, l_id, name, timestamp=None):
+        self.id = id
         self.a_id = a_id
         self.l_id = l_id
         self.name = name
@@ -25,7 +26,7 @@ class Sensor(db.Model):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return 'Name: %s, Api Name: %s' % (self.name, self.a_id.name)
+        return 'Name: %s, Api Name: %d' % (self.name, self.a_id)
 
     def json(self):
         return {
@@ -49,3 +50,15 @@ class Sensor(db.Model):
 
     def get(self):
         return Sensor.query.filter_by(l_id=self.l_id, name=self.name).first()
+
+    @classmethod
+    def get_by_name(cls, name):
+        return Sensor.query.filter_by(name=name).first()
+
+    @classmethod
+    def get_by_name_loc(cls, name, loc_id):
+        return Sensor.query.filter_by(l_id=loc_id, name=name).first()
+
+    @classmethod
+    def get_by_name_api(cls, name, api_id):
+        return Sensor.query.filter_by(a_id=api_id, name=name).first()

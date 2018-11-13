@@ -66,24 +66,69 @@ class BaseImporter(object):
     def create_datasource(self, dataframe, sensor_tag: str, attribute_tag: list, 
                             unit_value: list, description: list, bespoke_unit_tag: list, 
                             bespoke_sub_theme: list, location_tag: location.Location, 
-                            sensor_prefix: str = None):
+                            sensor_prefix: str = None, check_sensor_exists_by_name: bool = False,
+                            check_sensor_exists_by_name_loc: bool = False,
+                            check_sensor_exists_by_name_api: bool = False):
+
+        # Check if API exists
         api_id = self.stage_api_commit()
+
         sensor_objects = []
         attr_objects = []
+        sensor_exists = set()
+        latitude, longitude = None, None
 
         # Save location and sensor
         sensors = dataframe[sensor_tag].tolist()
-        latitude = dataframe[location_tag.lat].tolist()
-        longitude = dataframe[location_tag.lon].tolist()
+
+        if location_tag is not None:
+            latitude = dataframe[location_tag.lat].tolist()
+            longitude = dataframe[location_tag.lon].tolist()
+        print(len(sensors), len(latitude), len(longitude))
 
         for i in range(len(sensors)):
-            loc = location.Location(latitude[i], longitude[i], WKTElement('POINT(%f %f)' % (latitude[i], longitude[i]), 4326))
-            loc.save()
+            # if sensor already exists dont save
+            if check_sensor_exists_by_name:
+                s_name = sensor_prefix + str(sensors[i]) if sensor_prefix is not None else str(sensors[i])
+                _sensor = Sensor.get_by_name(s_name)
+                if _sensor:
+                    sensor_objects.append(_sensor.id)
+                    continue
+            
+            if check_sensor_exists_by_name_loc:
+                s_name = sensor_prefix + str(sensors[i]) if sensor_prefix is not None else str(sensors[i])
+                _sensor = Sensor.get_by_name_loc(s_name, None) # This needs to be fixed
+                if _sensor:
+                    sensor_objects.append(_sensor.id)
+                    continue
 
-            sensor = Sensor(api_id, loc.id, sensors[i])
+            if check_sensor_exists_by_name_api:
+                s_name = sensor_prefix + str(sensors[i]) if sensor_prefix is not None else str(sensors[i])
+                _sensor = Sensor.get_by_name_api(s_name, api_id)
+                if _sensor:
+                    sensor_objects.append(_sensor.id)
+                    continue
+                
+            loc = location.Location.get_by_lat_lon(latitude[i], longitude[i])
+            if not loc:
+                loc = location.Location(latitude[i], longitude[i], WKTElement('POINT(%f %f)' % (latitude[i], longitude[i]), 4326))
+                loc.save()
+            
+            s_name = sensor_prefix + str(sensors[i]) if sensor_prefix is not None else str(sensors[i])
+            # Create hash and check if it is in the dictionary,
+            # if not in the dictionary then add it to the dict
+            _hash = abs(hash(str(api_id) + str(loc.id) + s_name))%(10**8)
+
+            if _hash in sensor_exists:
+                continue
+            sensor = Sensor(str(uuid.uuid4()), api_id, loc.id, s_name)
+            sensor_exists.add(_hash)
+            # Create hash and save it in dictionary
             sensor.save()
 
             sensor_objects.append(sensor.id)
+        print('len of sensor objects', len(sensor_objects))
+        # print(len(sensor_exists))
 
         for i in range(len(attribute_tag)):
             uv = None

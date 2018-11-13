@@ -47,3 +47,7 @@ class API(db.Model):
 
     def get(self):
         return API.query.filter_by(name=self.name, url=self.url).first()
+
+    @classmethod
+    def get_by_name(cls, name):
+        return API.query.filter_by(name=name).first()

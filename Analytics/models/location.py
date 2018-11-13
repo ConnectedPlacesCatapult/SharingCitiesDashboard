@@ -40,3 +40,11 @@ class Location(db.Model):
 
     def get(self):
         return Location.query.filter_by(lat=self.lat, lon=self.lon).first()
+
+    @classmethod
+    def get_by_id(cls, id):
+        return Location.query.filter_by(id=id).first()
+
+    @classmethod
+    def get_by_lat_lon(cls, lat, lon):
+        return Location.query.filter_by(lat=lat, lon=lon).first()

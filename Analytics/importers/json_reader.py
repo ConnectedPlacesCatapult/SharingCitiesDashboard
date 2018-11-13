@@ -75,9 +75,9 @@ class JsonObjects(object):
 # # # Just to test
 # if __name__ == '__main__':
 #     # j = JsonReader('http://api.erg.kcl.ac.uk/AirQuality/Annual/MonitoringObjective/GroupName=London/Year=2010/Json', '@SiteCode')
-#     j = JsonReader('https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&geometry=&outFields=*&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=pjson&token=m-N8ho-0WD3lCrZ5KjSFDFBUEp6McF4-u945j-YVqZ6K3f9Q6cCjP7gTeHRZjNza', 'displayFieldName')
+#     j = JsonReader('https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/1/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=pjson&token=-cX-YpzJn4nugvYm6lF8GPsSO9funt0Kn8wPLGgRYuclXv2biMsosU9MshecLhnm', 'displayFieldName')
 #     data = j.fetch_data()
 #     j.create_objects(data, ignore_object_tags=['fieldAliases', 'fields'])
 #     df = j.create_dataframe()
-#     j.print_to_csv(df, '/Users/hemanshu/Desktop/greenwich.csv')
+#     j.print_to_csv(df, '/Users/hemanshu/Desktop/greenwichocc.csv')
 
