@@ -27,7 +27,7 @@ class ConfigPanel extends React.Component {
       <div className={classes.root}>
         <Paper className={classes.paper}>
           <Typography variant="h6" className={classes.heading}>
-            ConfigPanel
+            Widget Creator
           </Typography>
           <TypeSelector />
         </Paper>

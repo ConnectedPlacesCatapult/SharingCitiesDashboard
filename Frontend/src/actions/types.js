@@ -10,8 +10,11 @@ export const FETCH_DATA_REJECTED = 'FETCH_DATA_REJECTED';
 export const PURGE_DATA = 'PURGE_DATA';
 
 // editor
-export const SET_CURRENT_WIDGET = 'SET_CURRENT_WIDGET';
+export const SET_PLOT_TYPE = 'SET_PLOT_TYPE';
+export const SET_WIDGET_TYPE = 'SET_WIDGET_TYPE';
 export const PURGE_EDITOR = 'PURGE_EDITOR';
+export const WIDGET_TYPE_MAP = 'map';
+export const WIDGET_TYPE_PLOT = 'plot';
 
 // grid
 export const FETCH_LAYOUT = 'FETCH_LAYOUT';
