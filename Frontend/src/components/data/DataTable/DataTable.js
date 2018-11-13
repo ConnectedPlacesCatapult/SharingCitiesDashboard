@@ -10,13 +10,13 @@ import DataTableToolbar from './DataTableToolbar';
 import DataTableHead from './DataTableHead';
 import DataTableBody from './DataTableBody';
 import DataTablePagination from './DataTablePagination';
-import OptionsSidePanel from './OptionsSidePanel';
-
 
 const styles = theme => ({
   root: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    // width: '70%',
+    // marginTop: theme.spacing.unit * 3,
+    // float: 'left',
+    flexGrow: 1,
   },
   tableWrapper: {
     overflowX: 'auto',
@@ -134,7 +134,6 @@ class DataTable extends React.Component {
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
           />
         </Paper>
-        <OptionsSidePanel />
       </div>
     )
   }

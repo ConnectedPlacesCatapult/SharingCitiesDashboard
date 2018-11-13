@@ -87,8 +87,8 @@ class DataTableHead extends React.Component {
                     classes={{
                       root: classes.labelRoot,
                       active: classes.labelActive,
-                      hover: classes.hover,
-                      focus: classes.focus,
+                      //hover: classes.hover,
+                      //focus: classes.focus,
                     }}
                   >
                     {column.label}

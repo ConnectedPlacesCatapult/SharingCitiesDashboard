@@ -1,27 +1,48 @@
 import React, { Component } from "react";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import SideBar from './../common/SideBar';
+import Modal from '@material-ui/core/Modal';
 import { connect } from 'react-redux';
 
+import SideBar from './../common/SideBar';
 import DataTable from './DataTable';
+import OptionsSidePanel from './OptionsSidePanel';
 import NoData from './NoData';
+import WidgetMaker from './WidgetMaker';
 
 const styles = theme => ({
   root: {
     display: 'flex',
+    clear: 'both',
   },
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
     height: '100vh',
-    overflow: 'auto'
+    overflow: 'auto',
   },
   appBarSpacer: theme.mixins.toolbar,
+  flexWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: theme.spacing.unit * 3,
+  },
 });
 
 class DataPage extends Component {
+  state = {
+    widgetModalOpen: false,
+  };
+
+  openWidgetMaker = () => {
+    this.setState({ widgetModalOpen: true })
+  };
+
+  handleWidgetMakerClose = () => {
+    this.setState({ widgetModalOpen: false })
+  };
+
   render() {
     const { classes, data } = this.props;
 
@@ -32,10 +53,21 @@ class DataPage extends Component {
           <div className={classes.appBarSpacer} />
           {
             data.fetched
-            ? <DataTable />
+            ? <div className={classes.flexWrapper}>
+                <DataTable />
+                <OptionsSidePanel
+                  openWidgetMaker={this.openWidgetMaker}
+                />
+              </div>
             : <NoData />
           }
         </main>
+        <Modal
+          open={this.state.widgetModalOpen}
+          onClose={this.handleWidgetMakerClose}
+        >
+          <WidgetMaker />
+        </Modal>
       </div>
     )
   }
