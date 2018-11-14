@@ -3,7 +3,7 @@ import {
   FETCH_SOURCES_FULFILLED,
   FETCH_SOURCES_REJECTED,
   TOGGLE_SOURCE_SELECTED,
-} from './types';
+} from './../constants';
 
 export function fetchSources() {
   return function (dispatch) {

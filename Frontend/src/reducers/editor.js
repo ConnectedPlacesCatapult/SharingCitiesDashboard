@@ -1,18 +1,34 @@
 import {
   PURGE_EDITOR,
+  SET_MAP_TILE_LAYER,
+  SET_PLOT_DESCRIPTION,
+  SET_PLOT_ENCODING,
   SET_PLOT_TYPE,
+  SET_WIDGET_NAME,
   SET_WIDGET_TYPE,
-  WIDGET_TYPE_MAP,
-  WIDGET_TYPE_PLOT,
-} from "./../actions/types";
+} from "./../constants";
 
 const initialState = {
-  title: null,
+  name: '',
   type: null,
-  spec: null,
-  data: null,
-  isHeatMap: false,
-  tileLayer: null,
+  plotConfig: {
+    spec: {
+      description: "",
+      mark: "",
+      encoding: {},
+    },
+    data: {
+      values: [],
+    },
+  },
+  mapConfig: {
+    isHeatMap: false,
+    tileLayer: null,
+    data: {
+      type: "FeatureCollection",
+      features: [],
+    },
+  },
 };
 
 export default (state=initialState, action={}) => {
@@ -21,51 +37,66 @@ export default (state=initialState, action={}) => {
       return initialState
     }
 
-    case SET_PLOT_TYPE: {
-      if (state.type === WIDGET_TYPE_PLOT) {
-        return {
-          ...state,
-          spec: {
-            ...state.spec,
-            mark: action.payload,
-          },
+    case SET_MAP_TILE_LAYER: {
+      return {
+        ...state,
+        mapConfig: {
+          ...state.mapConfig,
+          tileLayer: action.payload,
         }
       }
     }
 
+    case SET_PLOT_DESCRIPTION: {
+      return {
+        ...state,
+        plotConfig: {
+          ...state.plotConfig,
+          spec: {
+            ...state.plotConfig.spec,
+            description: action.payload,
+          }
+        },
+      }
+    }
+
+    case SET_PLOT_ENCODING: {
+      return {
+        ...state,
+        plotConfig: {
+          ...state.plotConfig,
+          spec: {
+            ...state.plotConfig.spec,
+            encoding: action.payload,
+          }
+        }
+      }
+    }
+
+    case SET_PLOT_TYPE: {
+      return {
+        ...state,
+        plotConfig: {
+          ...state.plotConfig,
+          spec: {
+            ...state.plotConfig.spec,
+            mark: action.payload,
+          }
+        },
+      }
+    }
+
+    case SET_WIDGET_NAME: {
+      return {
+        ...state,
+        name: action.payload,
+      }
+    }
+
     case SET_WIDGET_TYPE: {
-      switch (action.payload) {
-        case WIDGET_TYPE_PLOT: {
-
-          console.log('plot');
-
-          return {
-            ...state,
-            type: action.payload,
-            spec: {
-              description: "",
-              mark: "",
-              encoding: {},
-            },
-            data: {
-              values: [],
-            },
-          }
-        }
-
-        case WIDGET_TYPE_MAP: {
-          return {
-            ...state,
-            type: action.payload,
-            isHeatMap: false,
-            tileLayer: null,
-            spec: null,
-            data: {
-              type: "FeatureCollection",
-              features: [],
-            }
-          }
-        }
+      return {
+        ...state,
+        type: action.payload,
       }
     }
   }

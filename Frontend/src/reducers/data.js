@@ -3,7 +3,7 @@ import {
   FETCH_DATA_FULFILLED,
   FETCH_DATA_REJECTED,
   PURGE_DATA,
-} from "./../actions/types";
+} from "./../constants";
 
 const initialState = {
   data: [],

@@ -4,7 +4,7 @@ import {
   FETCH_THEMES_FULFILLED,
   FETCH_THEMES_REJECTED,
   TOGGLE_THEME_SELECTED,
-} from "./types";
+} from "./../constants";
 
 export function fetchThemes() {
   return function(dispatch) {

@@ -54,7 +54,7 @@ module.exports = {
   ],
 
   // tileLayers to be made available in OpenMap widgets
-  tileLayers: [
+  leafletTileLayers: [
     {
       name: 'OpenStreetMap.Mapnik',
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -71,4 +71,15 @@ module.exports = {
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
     },
   ],
+  vegaLitePlotTypes: [
+    'bar',
+    'line',
+    'pie',
+    'scatter',
+  ],
+  widgetEditorDefaults: {
+    widgetType: 'plot',
+    plotType: 'bar',
+    tileLayer: 'OpenStreetMap.Mapnik',
+  }
 };

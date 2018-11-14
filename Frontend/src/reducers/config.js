@@ -1,4 +1,8 @@
-import { FETCH_CONFIG, FETCH_CONFIG_FULFILLED, FETCH_CONFIG_REJECTED } from "../actions/types";
+import {
+  FETCH_CONFIG,
+  FETCH_CONFIG_FULFILLED,
+  FETCH_CONFIG_REJECTED
+} from "./../constants";
 
 const initialState = {
   config: {},

@@ -1,47 +1,73 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from '@material-ui/core/FormLabel';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Radio from '@material-ui/core/Radio';
+
+
 import Button from "@material-ui/core/Button";
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Collapse from '@material-ui/core/Collapse';
 import { connect } from 'react-redux';
-import { purgeEditor, setPlotType, setWidgetType } from "../../../actions/editorActions";
+import { setWidgetType } from "../../../actions/editorActions";
 
 import PlotConfig from './PlotConfig';
 import MapConfig from './MapConfig';
 
 const styles = theme => ({
   root: {
-
+    //display: 'flex',
   },
+  formControl: {
+    margin: theme.spacing.unit * 3,
+  },
+  group: {
+    margin: `${theme.spacing.unit}px 0`,
+  },
+
+
+
   widgetTypeSelector: {
     display: 'flex',
   },
   widgetTypeButton: {
-    margin: `${theme.spacing.unit}px auto`,
+    margin: `${theme.spacing.unit}px`,
+    marginLeft: 0,
   },
 });
 
 class TypeSelector extends React.Component {
-  state = {
-    widgetType: 'plot',
-  };
-
   setWidgetType = e => {
-    this.setState({ widgetType: e.currentTarget.value });
-
     this.props.setWidgetType(e.currentTarget.value)
   };
 
+  handleChange = e => {
+    this.props.setWidgetType(e.target.value)
+  };
+
   render() {
-    const { classes, data, editor } = this.props;
+    const { classes, editor } = this.props;
 
     return (
       <div className={classes.root}>
-        <div className={classes.widgetTypeSelector}>
+        <FormControl component="fieldset" className={classes.formControl}>
+          <FormLabel component="legend">Widget Type</FormLabel>
+          <RadioGroup
+            aria-label="Gender"
+            name="gender1"
+            className={classes.group}
+            value={editor.type}
+            onChange={this.handleChange}
+          >
+            <FormControlLabel value="plot" control={<Radio />} label="Plot" />
+            <FormControlLabel value="map" control={<Radio />} label="Map" />
+          </RadioGroup>
+        </FormControl>
+
+
+
+        {/*<div className={classes.widgetTypeSelector}>
           <Button
             className={classes.widgetTypeButton}
             onClick={this.setWidgetType}
@@ -60,9 +86,9 @@ class TypeSelector extends React.Component {
           >
             Map
           </Button>
-        </div>
+        </div>*/}
         {
-          this.state.widgetType === 'plot'
+          editor.type === 'plot'
           ? <PlotConfig />
           : <MapConfig />
         }
@@ -73,19 +99,15 @@ class TypeSelector extends React.Component {
 
 TypeSelector.propTypes = {
   classes: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
   editor: PropTypes.object.isRequired,
-  purgeEditor: PropTypes.func.isRequired,
   setWidgetType: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  data: state.data,
   editor: state.editor,
 });
 
 const mapDispatchToProps = dispatch => ({
-  purgeEditor: () => dispatch(purgeEditor()),
   setWidgetType: type => dispatch(setWidgetType(type)),
 });
 

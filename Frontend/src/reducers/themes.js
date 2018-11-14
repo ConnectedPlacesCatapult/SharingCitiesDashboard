@@ -5,7 +5,7 @@ import {
   FETCH_THEMES_FULFILLED,
   FETCH_THEMES_REJECTED,
   TOGGLE_THEME_SELECTED,
-} from "../actions/types";
+} from "./../constants";
 
 const initialState = {
   themes: [],

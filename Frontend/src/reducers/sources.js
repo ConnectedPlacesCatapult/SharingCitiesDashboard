@@ -1,5 +1,11 @@
-import { FETCH_SOURCES, FETCH_SOURCES_FULFILLED, FETCH_SOURCES_REJECTED, TOGGLE_SOURCE_SELECTED } from "../actions/types";
 import _ from "lodash";
+
+import {
+  FETCH_SOURCES,
+  FETCH_SOURCES_FULFILLED,
+  FETCH_SOURCES_REJECTED,
+  TOGGLE_SOURCE_SELECTED
+} from "./../constants";
 
 const initialState = {
   sources: [],

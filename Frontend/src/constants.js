@@ -10,12 +10,13 @@ export const FETCH_DATA_REJECTED = 'FETCH_DATA_REJECTED';
 export const PURGE_DATA = 'PURGE_DATA';
 
 // editor
+export const SET_MAP_TILE_LAYER = 'SET_MAP_TILE_LAYER';
+export const SET_PLOT_DESCRIPTION = 'SET_PLOT_DESCRIPTION';
+export const SET_PLOT_ENCODING = 'SET_PLOT_ENCODING';
 export const SET_PLOT_TYPE = 'SET_PLOT_TYPE';
+export const SET_WIDGET_NAME = 'SET_WIDGET_NAME';
 export const SET_WIDGET_TYPE = 'SET_WIDGET_TYPE';
-export const INITIALIZE_EDITOR = 'INITIALIZE_EDITOR';
 export const PURGE_EDITOR = 'PURGE_EDITOR';
-export const WIDGET_TYPE_MAP = 'map';
-export const WIDGET_TYPE_PLOT = 'plot';
 
 // grid
 export const FETCH_LAYOUT = 'FETCH_LAYOUT';

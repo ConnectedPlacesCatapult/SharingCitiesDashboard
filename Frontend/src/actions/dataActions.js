@@ -3,7 +3,7 @@ import {
   FETCH_DATA_FULFILLED,
   FETCH_DATA_REJECTED,
   PURGE_DATA,
-} from "./types";
+} from "./../constants";
 
 export function fetchData(requestData) {
   return function (dispatch) {

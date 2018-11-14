@@ -1,4 +1,8 @@
-import { FETCH_LAYOUT, FETCH_LAYOUT_FULFILLED, FETCH_LAYOUT_REJECTED } from "./types";
+import {
+  FETCH_LAYOUT,
+  FETCH_LAYOUT_FULFILLED,
+  FETCH_LAYOUT_REJECTED
+} from "./../constants";
 
 export function fetchLayout() {
   return function (dispatch) {

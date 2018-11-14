@@ -1,4 +1,8 @@
-import { FETCH_WIDGETS, FETCH_WIDGETS_FULFILLED, FETCH_WIDGETS_REJECTED } from "./../actions/types";
+import {
+  FETCH_WIDGETS,
+  FETCH_WIDGETS_FULFILLED,
+  FETCH_WIDGETS_REJECTED
+} from "./../constants";
 
 const initialState = {
   widgets: [],
