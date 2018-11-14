@@ -1,12 +1,11 @@
 from db import db
 
-def ModelClass(classname):
+def ModelClass(tablename):
     table = {
-        'id': db.Column(db.Integer, primary_key=True),
-        's_id': db.Column(db.Integer, db.ForeignKey('sensor.id')),
+        'id': db.Column(db.Integer, primary_key=True, autoincrement=True),
+        's_id': db.Column(db.Text),
         'value': db.Column(db.Text),
         'timestamp': db.Column(db.DateTime)
-        # '__bind_key__': 'backend'
     }
 
-    return type(classname, (db.Model,), table)
+    return type(tablename, (db.Model,), table)

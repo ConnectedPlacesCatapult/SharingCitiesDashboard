@@ -19,22 +19,26 @@ BASE_URL = ('https://maps.london.gov.uk/gla/rest/services/apps/' +
             '&queryByDistance=&returnExtentsOnly=false&datumTransformation=' +
             '&parameterValues=&rangeValues=&f=pjson&token=')
 REFRESH_TIME = 20
-# API_KEY = 'm-N8ho-0WD3lCrZ5KjSFDFBUEp6McF4-u945j-YVqZ6K3f9Q6cCjP7gTeHRZjNza'
-API_KEY = '-cX-YpzJn4nugvYm6lF8GPsSO9funt0Kn8wPLGgRYuclXv2biMsosU9MshecLhnm'
+API_KEY = 'Ntf-GWx7TI040brFY_xC30LwUUAZsE_J4xTd2GPD1BKtVas9kGeViB9sI-qqZS2e'
 TOKEN_EXPIRY = '01/01/2019 00:00:00' # Seconds after which token would expire in this case 1 year
 URL = BASE_URL + API_KEY
+REFRESH_URL = 'https://maps.london.gov.uk/gla/tokens/generateToken'
 
 class GreenwichMeta(BaseImporter):
     def __init__(self):
         super().__init__(API_NAME, URL, REFRESH_TIME, API_KEY, TOKEN_EXPIRY)
 
     def _create_datasource(self):
+        super()._create_datasource()
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
         loc = Location('latitude', 'longitude')
         self.create_datasource(dataframe= self.df, sensor_tag='lotcode', attribute_tag=['baycount', 'baytype'], 
                                 unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[], 
                                 location_tag=loc, sensor_prefix='smart_parking_')
+
+    def _refresh_token(self, *args):
+        print('Token expired Refresh it manually')
 
 
 API_NAME_OCC = 'Greenwich_SmartParking_OCC'
@@ -51,6 +55,7 @@ class GreenwichOCC(BaseImporter):
         super().__init__(API_NAME_OCC, URL_OCC, REFRESH_TIME, API_KEY, TOKEN_EXPIRY)
 
     def _create_datasource(self):
+        super()._create_datasource()
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
         names = self.df['lotcode'].tolist()
@@ -69,3 +74,6 @@ class GreenwichOCC(BaseImporter):
         self.create_datasource(dataframe= self.df, sensor_tag='lotcode', attribute_tag=['free', 'isoffline', 'occupied'], 
                                 unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[], location_tag=loc,
                                 sensor_prefix='smart_parking_')
+
+    def _refresh_token(self, *args):
+        print('Token expired Refresh it manually')

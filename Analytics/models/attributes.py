@@ -6,7 +6,7 @@ class Attributes(db.Model):
     __tablename__ = 'attributes'
     # __bind_key__ = 'backend'
 
-    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    id = db.Column(db.Text, unique=True, nullable=False)
     name = db.Column(db.String(255), nullable=False, primary_key=True)
     table_name = db.Column(db.String(255), nullable=False)
     sub_theme_id = db.Column(db.Integer, db.ForeignKey('subtheme.id'), nullable=False)
@@ -15,7 +15,7 @@ class Attributes(db.Model):
     description = db.Column(db.Text, nullable=True)
     timestamp = db.Column(db.DateTime)
 
-    def __init__(self, name, table_name, sub_theme, unit, description='No Description', unit_value='1', timestamp=None):
+    def __init__(self, id, name, table_name, sub_theme, unit, description='No Description', unit_value='1', timestamp=None):
         if unit_value is None:
             unit_value = 1
 
@@ -28,6 +28,7 @@ class Attributes(db.Model):
         if description is None:
             description = 'No Description'
 
+        self.id = id
         self.name = name
         self.table_name = table_name
         self.sub_theme_id = sub_theme
@@ -62,6 +63,18 @@ class Attributes(db.Model):
         except IntegrityError as ie:
             db.session.rollback()
             print(self.name, 'attribute with Unit ID:', str(self.unit_id), 'and Unit Value:', self.unit_value, 'already exists')
+            return self.get_by_name_unit_unitvalue()
 
     def commit(self):
         db.session.commit()
+
+    def get_by_name_unit_unitvalue(self):
+        return Attributes.query.filter_by(name=self.name).filter_by(unit_id=self.unit_id).filter_by(unit_value=str(self.unit_value)).first()
+
+    @classmethod
+    def get_by_name(cls, name):
+        return Attributes.query.filter_by(name=name).first()
+
+    @classmethod
+    def get_all(cls):
+        return Attributes.query.all()

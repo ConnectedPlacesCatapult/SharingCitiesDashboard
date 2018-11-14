@@ -8,7 +8,7 @@ class SensorAttribute(db.Model):
     # s_id = db.Column(db.Integer, db.ForeignKey('sensor.id'), nullable=False, primary_key=True)
     # a_id = db.Column(db.Integer, db.ForeignKey('attributes.id'), nullable=False, primary_key=True)
     s_id = db.Column(db.Text, nullable=False, primary_key=True)
-    a_id = db.Column(db.Integer, nullable=False, primary_key=True)
+    a_id = db.Column(db.Text, nullable=False, primary_key=True)
     timestamp = db.Column(db.DateTime)
 
     def __init__(self, s_id, a_id, timestamp=None):
