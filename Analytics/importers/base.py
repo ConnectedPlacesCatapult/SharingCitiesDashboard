@@ -20,6 +20,15 @@ from models.attribute_data import ModelClass
 from datetime import datetime
 from sqlalchemy.exc import ProgrammingError
 
+def get_config:
+    try:
+        with open("config.yml", 'r') as ymlfile:
+            config = yaml.load(ymlfile)
+    except FileNotFoundError:
+        print("Ensure that you have provided a config.yml file")
+    else:
+        break
+    return(config)
 
 class BaseImporter(object):
     def __init__(self, api_name, url, refresh_time, api_key, token_expiry):

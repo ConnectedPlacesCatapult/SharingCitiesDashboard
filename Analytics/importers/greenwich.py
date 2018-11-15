@@ -1,28 +1,20 @@
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from importers.base import BaseImporter, Location
+from importers.base import BaseImporter, Location, get_config
 from models.sensor import Sensor
 from models import location
 
+config = get_config()
+config = config['test']['greenwich_meta']
 
-API_NAME = 'Greenwich_SmartParking_Meta'
-BASE_URL = ('https://maps.london.gov.uk/gla/rest/services/apps/' + 
-            'smart_parking_demo_service_01/MapServer/0/query?where=1%3D1&text=' +
-            '&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope' +
-            '&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=' +
-            '&outFields=*&returnGeometry=true&returnTrueCurves=false' +
-            '&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false' +
-            '&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=' +
-            '&outStatistics=&returnZ=false&returnM=false&gdbVersion=' +
-            '&returnDistinctValues=false&resultOffset=&resultRecordCount=' +
-            '&queryByDistance=&returnExtentsOnly=false&datumTransformation=' +
-            '&parameterValues=&rangeValues=&f=pjson&token=')
-REFRESH_TIME = 20
-API_KEY = 'Ntf-GWx7TI040brFY_xC30LwUUAZsE_J4xTd2GPD1BKtVas9kGeViB9sI-qqZS2e'
-TOKEN_EXPIRY = '01/01/2019 00:00:00' # Seconds after which token would expire in this case 1 year
+API_NAME = config['API_NAME']
+BASE_URL = config['BASE_URL']
+REFRESH_TIME = config['REFRESH_TIME']
+API_KEY = config['API_KEY']
+TOKEN_EXPIRY = config['TOKEN_EXPIRY'] # Seconds after which token would expire in this case 1 year
 URL = BASE_URL + API_KEY
-REFRESH_URL = 'https://maps.london.gov.uk/gla/tokens/generateToken'
+REFRESH_URL = config['REFRESH_URL']
 
 class GreenwichMeta(BaseImporter):
     def __init__(self):
@@ -41,15 +33,13 @@ class GreenwichMeta(BaseImporter):
         print('Token expired Refresh it manually')
 
 
-API_NAME_OCC = 'Greenwich_SmartParking_OCC'
-BASE_URL_OCC = ('https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/1/query?' +
-                'where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=' +
-                '&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true' +
-                '&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false' +
-                '&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false' +
-                '&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=' +
-                '&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=pjson&token=')
+config = get_config()
+config = config['test']['greenwich_occ']
+
+API_NAME_OCC = config['API_NAME']
+BASE_URL_OCC = config['BASE_URL']
 URL_OCC = BASE_URL_OCC + API_KEY
+
 class GreenwichOCC(BaseImporter):
     def __init__(self):
         super().__init__(API_NAME_OCC, URL_OCC, REFRESH_TIME, API_KEY, TOKEN_EXPIRY)
