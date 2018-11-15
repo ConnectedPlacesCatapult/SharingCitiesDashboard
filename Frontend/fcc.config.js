@@ -78,8 +78,14 @@ module.exports = {
     'scatter',
   ],
   widgetEditorDefaults: {
+    widgetName: 'New Widget',
     widgetType: 'plot',
     plotType: 'bar',
-    tileLayer: 'OpenStreetMap.Mapnik',
+    mapTileLayer: 'OpenStreetMap.Mapnik',
+    mapZoom: 13,
+    mapCenter: {
+      lat: 51.505,
+      lng: -0.09,
+    },
   }
 };

@@ -10,7 +10,12 @@ export const FETCH_DATA_REJECTED = 'FETCH_DATA_REJECTED';
 export const PURGE_DATA = 'PURGE_DATA';
 
 // editor
+export const SET_MAP_CAN_MAP = 'SET_MAP_CAN_MAP';
+export const SET_MAP_CENTER = 'SET_MAP_CENTER';
+export const SET_MAP_DATA = 'SET_MAP_DATA';
 export const SET_MAP_TILE_LAYER = 'SET_MAP_TILE_LAYER';
+export const SET_MAP_ZOOM = 'SET_MAP_ZOOM';
+export const SET_PLOT_DATA = 'SET_PLOT_DATA';
 export const SET_PLOT_DESCRIPTION = 'SET_PLOT_DESCRIPTION';
 export const SET_PLOT_ENCODING = 'SET_PLOT_ENCODING';
 export const SET_PLOT_TYPE = 'SET_PLOT_TYPE';

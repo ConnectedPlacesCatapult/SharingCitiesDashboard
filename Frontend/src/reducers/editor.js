@@ -1,6 +1,11 @@
 import {
   PURGE_EDITOR,
+  SET_MAP_CAN_MAP,
+  SET_MAP_CENTER,
+  SET_MAP_DATA,
   SET_MAP_TILE_LAYER,
+  SET_MAP_ZOOM,
+  SET_PLOT_DATA,
   SET_PLOT_DESCRIPTION,
   SET_PLOT_ENCODING,
   SET_PLOT_TYPE,
@@ -11,6 +16,7 @@ import {
 const initialState = {
   name: '',
   type: null,
+  canMap: false,
   plotConfig: {
     spec: {
       description: "",
@@ -22,12 +28,14 @@ const initialState = {
     },
   },
   mapConfig: {
-    isHeatMap: false,
-    tileLayer: null,
+    center: [],
     data: {
       type: "FeatureCollection",
       features: [],
     },
+    isHeatMap: false,
+    tileLayer: null,
+    zoom: 0,
   },
 };
 
@@ -37,12 +45,85 @@ export default (state=initialState, action={}) => {
       return initialState
     }
 
+    case SET_MAP_CAN_MAP: {
+      return {
+        ...state,
+        canMap: action.payload,
+      }
+    }
+
+    case SET_MAP_CENTER: {
+      return {
+        ...state,
+        mapConfig: {
+          ...state.mapConfig,
+          center: [action.payload.lat, action.payload.lng],
+        },
+      }
+    }
+
+    case SET_MAP_DATA: {
+      const formatted = action.payload.map((feature, i) => {
+        function getProperties(feature) {
+          return Object.keys(feature)
+            .filter(key => !['lat', 'lon'].includes(key))
+            .reduce((obj, key) => {
+              obj[key] = feature[key];
+              return obj;
+            }, {})
+        }
+
+        return {
+          type: "Feature",
+          properties: getProperties(feature),
+          geometry: {
+            type: "Point",
+            coordinates: [feature.lon, feature.lat],
+          },
+        }
+      });
+
+      return {
+        ...state,
+        mapConfig: {
+          ...state.mapConfig,
+          data: {
+            ...state.mapConfig.data,
+            features: formatted,
+          }
+        }
+      }
+    }
+
     case SET_MAP_TILE_LAYER: {
       return {
         ...state,
         mapConfig: {
           ...state.mapConfig,
           tileLayer: action.payload,
+        }
+      }
+    }
+
+    case SET_MAP_ZOOM: {
+      return {
+        ...state,
+        mapConfig: {
+          ...state.mapConfig,
+          zoom: action.payload,
+        }
+      }
+    }
+
+    case SET_PLOT_DATA: {
+      return {
+        ...state,
+        plotConfig: {
+          ...state.plotConfig,
+          data: {
+            ...state.plotConfig.data,
+            values: action.payload,
+          }
         }
       }
     }
@@ -67,7 +148,13 @@ export default (state=initialState, action={}) => {
           ...state.plotConfig,
           spec: {
             ...state.plotConfig.spec,
-            encoding: action.payload,
+            encoding:  {
+              ...state.plotConfig.spec.encoding,
+              [action.payload.axis]: {
+                field: action.payload.field,
+                type: action.payload.type,
+              },
+            },
           }
         }
       }

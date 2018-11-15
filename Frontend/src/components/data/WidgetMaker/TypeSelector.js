@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from '@material-ui/core/FormLabel';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Radio from '@material-ui/core/Radio';
+// import FormControl from "@material-ui/core/FormControl";
+// import FormLabel from '@material-ui/core/FormLabel';
+// import RadioGroup from '@material-ui/core/RadioGroup';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import Radio from '@material-ui/core/Radio';
 
 
 import Button from "@material-ui/core/Button";
@@ -19,12 +19,12 @@ const styles = theme => ({
   root: {
     //display: 'flex',
   },
-  formControl: {
+  /*formControl: {
     margin: theme.spacing.unit * 3,
   },
   group: {
     margin: `${theme.spacing.unit}px 0`,
-  },
+  },*/
 
 
 
@@ -42,16 +42,16 @@ class TypeSelector extends React.Component {
     this.props.setWidgetType(e.currentTarget.value)
   };
 
-  handleChange = e => {
+  /*handleChange = e => {
     this.props.setWidgetType(e.target.value)
-  };
+  };*/
 
   render() {
     const { classes, editor } = this.props;
 
     return (
       <div className={classes.root}>
-        <FormControl component="fieldset" className={classes.formControl}>
+        {/*<FormControl component="fieldset" className={classes.formControl}>
           <FormLabel component="legend">Widget Type</FormLabel>
           <RadioGroup
             aria-label="Gender"
@@ -63,11 +63,11 @@ class TypeSelector extends React.Component {
             <FormControlLabel value="plot" control={<Radio />} label="Plot" />
             <FormControlLabel value="map" control={<Radio />} label="Map" />
           </RadioGroup>
-        </FormControl>
+        </FormControl>*/}
 
 
 
-        {/*<div className={classes.widgetTypeSelector}>
+        <div className={classes.widgetTypeSelector}>
           <Button
             className={classes.widgetTypeButton}
             onClick={this.setWidgetType}
@@ -83,10 +83,11 @@ class TypeSelector extends React.Component {
             value="map"
             variant="contained"
             color="primary"
+            disabled={!editor.canMap}
           >
             Map
           </Button>
-        </div>*/}
+        </div>
         {
           editor.type === 'plot'
           ? <PlotConfig />

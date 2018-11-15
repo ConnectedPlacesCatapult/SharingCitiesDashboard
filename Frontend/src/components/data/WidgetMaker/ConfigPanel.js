@@ -6,7 +6,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from '@material-ui/core/Typography';
 import Color from "color";
 import { connect } from 'react-redux';
-import { initializeEditor} from "./../../../actions/editorActions";
+import { initializeEditor } from "./../../../actions/editorActions";
 
 import TypeSelector from './TypeSelector';
 
