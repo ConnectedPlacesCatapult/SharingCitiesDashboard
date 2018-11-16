@@ -20,16 +20,17 @@ from models.attribute_data import ModelClass
 from datetime import datetime
 from sqlalchemy.exc import ProgrammingError, IntegrityError, InvalidRequestError
 from utility import convert_unix_to_timestamp, convert_to_date
+import yaml
 
-def get_config:
+def get_config():
+    config = None
     try:
-        with open("config.yml", 'r') as ymlfile:
+        with open("importers/config.yml", 'r') as ymlfile:
             config = yaml.load(ymlfile)
     except FileNotFoundError:
         print("Ensure that you have provided a config.yml file")
-    else:
-        break
-    return(config)
+
+    return config
 
 class BaseImporter(object):
     def __init__(self, api_name, url, refresh_time, api_key, api_class, token_expiry):
@@ -50,7 +51,7 @@ class BaseImporter(object):
         raise NotImplementedError
 
     def load_dataset(self):
-        data = requests.get(self.url + self.api_key)
+        data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key)
         self.dataset = json.loads(data.text)
         return self.dataset, data.status_code
 

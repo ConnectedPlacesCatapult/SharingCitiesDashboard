@@ -2,5 +2,4 @@ __pycache__/
 settings.py
 migrations/
 localtest.py
-api_keys.py
 config.yml

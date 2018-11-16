@@ -4,7 +4,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from importers.base import BaseImporter, Location, get_config
 from models.sensor import Sensor
 from models import location
-from importers.api_keys import GREENWICH_API_KEY
 
 config = get_config()
 config = config['test']['greenwich_meta']
@@ -14,12 +13,11 @@ BASE_URL = config['BASE_URL']
 REFRESH_TIME = config['REFRESH_TIME']
 API_KEY = config['API_KEY']
 TOKEN_EXPIRY = config['TOKEN_EXPIRY'] # Seconds after which token would expire in this case 1 year
-URL = BASE_URL + API_KEY
 REFRESH_URL = config['REFRESH_URL']
 
 class GreenwichMeta(BaseImporter):
     def __init__(self):
-        super().__init__(API_NAME, BASE_URL, REFRESH_TIME, GREENWICH_API_KEY, 'importers.greenwich.GreenwichMeta', TOKEN_EXPIRY)
+        super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, 'importers.greenwich.GreenwichMeta', TOKEN_EXPIRY)
 
     def _create_datasource(self):
         super()._create_datasource()
@@ -39,11 +37,10 @@ config = config['test']['greenwich_occ']
 
 API_NAME_OCC = config['API_NAME']
 BASE_URL_OCC = config['BASE_URL']
-URL_OCC = BASE_URL_OCC + API_KEY
 
 class GreenwichOCC(BaseImporter):
     def __init__(self):
-        super().__init__(API_NAME_OCC, BASE_URL_OCC, REFRESH_TIME, GREENWICH_API_KEY, 'importers.greenwich.GreenwichOCC', TOKEN_EXPIRY)
+        super().__init__(API_NAME_OCC, BASE_URL_OCC, REFRESH_TIME, API_KEY, 'importers.greenwich.GreenwichOCC', TOKEN_EXPIRY)
 
     def _create_datasource(self):
         super()._create_datasource()
