@@ -1,5 +1,6 @@
 from db import db
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 class SensorAttribute(db.Model):
     __tablename__ = 'sensorattribute'
@@ -21,7 +22,7 @@ class SensorAttribute(db.Model):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return 'Sensor ID: %d, Attribute Id: %d' % (self.s_id, self.a_id)
+        return 'Sensor ID: %s, Attribute Id: %s' % (self.s_id, self.a_id)
     
     def json(self):
         return {
@@ -31,8 +32,12 @@ class SensorAttribute(db.Model):
         }
 
     def save(self):
-        db.session.add(self)
-        db.session.flush()
+        try:
+            db.session.add(self)
+            db.session.flush()
+        except IntegrityError:
+            db.session.rollback()
+            print('Sensor ID: %s, Attribute Id: %s already exists' % (self.s_id, self.a_id))
 
     def commit(self):
         db.session.commit()

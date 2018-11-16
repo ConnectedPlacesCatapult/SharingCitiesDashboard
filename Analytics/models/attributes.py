@@ -64,6 +64,7 @@ class Attributes(db.Model):
             db.session.rollback()
             print(self.name, 'attribute with Unit ID:', str(self.unit_id), 'and Unit Value:', self.unit_value, 'already exists')
             return self.get_by_name_unit_unitvalue()
+        return self
 
     def commit(self):
         db.session.commit()

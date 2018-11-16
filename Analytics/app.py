@@ -27,6 +27,8 @@ def create_app(**config_overrides):
     from models.sensor_attribute import SensorAttribute 
     from models.theme import Theme, SubTheme
 
+    db.create_all()
+
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
 

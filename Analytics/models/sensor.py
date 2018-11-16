@@ -1,6 +1,7 @@
 from db import db
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import FlushError
 
 class Sensor(db.Model):
     __tablename__ = 'sensor'
@@ -41,9 +42,13 @@ class Sensor(db.Model):
         try:
             db.session.add(self)
             db.session.flush()
-        except IntegrityError as ie:
+        except (IntegrityError, FlushError) as ie:
+            print(ie)
             db.session.rollback()
-            print(self.name, 'sensor already exists with Attribute ID:', str(self.a_id), 'and Location ID:', str(self.l_id))
+            print(self.name, 'sensor already exists with API ID:', str(self.a_id), 'and Location ID:', str(self.l_id))
+            return self.get_by_api_location_name()
+        
+        return self
 
     def save_all(self):
         db.session.add(self)
@@ -62,3 +67,6 @@ class Sensor(db.Model):
     @classmethod
     def get_by_name_api(cls, name, api_id):
         return Sensor.query.filter_by(a_id=api_id, name=name).first()
+
+    def get_by_api_location_name(self):
+        return Sensor.query.filter_by(a_id=self.a_id, name=self.name, l_id=self.l_id).first()

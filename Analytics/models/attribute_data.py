@@ -2,9 +2,9 @@ from db import db
 
 def ModelClass(tablename):
     table = {
-        'id': db.Column(db.Integer, primary_key=True, autoincrement=True),
-        's_id': db.Column(db.Text),
-        'value': db.Column(db.Text),
+        's_id': db.Column(db.Text, primary_key=True),
+        'value': db.Column(db.Text, primary_key=True),
+        'api_timestamp': db.Column(db.DateTime, primary_key=True),
         'timestamp': db.Column(db.DateTime)
     }
 

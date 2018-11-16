@@ -18,16 +18,18 @@ import uuid
 from geoalchemy2.elements import WKTElement
 from models.attribute_data import ModelClass
 from datetime import datetime
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import ProgrammingError, IntegrityError, InvalidRequestError
+from utility import convert_unix_to_timestamp, convert_to_date
 
 
 class BaseImporter(object):
-    def __init__(self, api_name, url, refresh_time, api_key, token_expiry):
+    def __init__(self, api_name, url, refresh_time, api_key, api_class, token_expiry):
         self.api_name = api_name
         self.url = url
         self.refresh_time = refresh_time
         self.api_key = api_key
         self.token_expiry = token_expiry
+        self.api_class = api_class
 
     def _create_datasource(self):
         _, status_code = self.load_dataset()
@@ -39,7 +41,7 @@ class BaseImporter(object):
         raise NotImplementedError
 
     def load_dataset(self):
-        data = requests.get(self.url)
+        data = requests.get(self.url + self.api_key)
         self.dataset = json.loads(data.text)
         return self.dataset, data.status_code
 
@@ -78,11 +80,12 @@ class BaseImporter(object):
     def create_datasource(self, dataframe, sensor_tag: str, attribute_tag: list, 
                             unit_value: list, description: list, bespoke_unit_tag: list, 
                             bespoke_sub_theme: list, location_tag: location.Location, 
-                            data_tag: list = [], sensor_prefix: str = None, 
+                            data_tag: list = [], sensor_prefix: str = None, api_timestamp_tag: str = None, 
                             check_sensor_exists_by_name: bool = False,
                             check_sensor_exists_by_name_loc: bool = False,
                             check_sensor_exists_by_name_api: bool = False):
 
+        # db.session.expunge_all()
         # Check if API exists
         api_id = self.stage_api_commit()
 
@@ -138,7 +141,8 @@ class BaseImporter(object):
             sensor = Sensor(str(uuid.uuid4()), api_id, loc.id, s_name)
             sensor_exists.add(_hash)
             # Create hash and save it in dictionary
-            sensor.save()
+            sensor = sensor.save()
+            # print(_s)
 
             sensor_objects[sensor.name] = sensor
 
@@ -181,7 +185,7 @@ class BaseImporter(object):
                 sa.save()
 
         self.create_tables(attr_objects)
-        self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, sensor_prefix)
+        self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, sensor_prefix, api_timestamp_tag)
 
     def save_attributes(self, attribute: str, unit_value: str, 
                         bespoke_unit_tag: int, bespoke_sub_theme: int,
@@ -195,28 +199,53 @@ class BaseImporter(object):
     def create_tables(self, attributes):
         for attr in attributes:
             try:
-                db.session.execute('CREATE TABLE %s (id SERIAL PRIMARY KEY, s_id TEXT, value TEXT, timestamp TIMESTAMP WITHOUT TIME ZONE )' % (attr.table_name))
-            except ProgrammingError:
+                db.session.execute('CREATE TABLE %s (s_id TEXT NOT NULL, value TEXT NOT NULL, api_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL, timestamp TIMESTAMP WITHOUT TIME ZONE, PRIMARY KEY(s_id, value, api_timestamp))' % (attr.table_name))
+            except ProgrammingError as e:
                 db.session.rollback()
                 print(attr.table_name.replace('-', '_'), 'already exists')
             # print(ModelClass(attr.table_name))
         # db.session.commit()
 
-    def insert_data(self, attr_objects, sensor_objects: dict, dataframe, sensor_tag, sensor_prefix):
+    def insert_data(self, attr_objects, sensor_objects: dict, dataframe, 
+                    sensor_tag, sensor_prefix, api_timestamp_tag):
+        db.metadata.clear()
         sensors = dataframe[sensor_tag].tolist()
         for attr in attr_objects:
             model = ModelClass(attr.table_name)
             values = dataframe[attr.name].tolist()
+
+            api_timestamp = []
+            if api_timestamp_tag is not None:
+                api_timestamp = dataframe[api_timestamp_tag].tolist()
             for i in range(len(values)):
                 sensor_name = sensors[i]
                 sensor_id = sensor_objects[sensor_prefix + str(sensor_name)].id
+
+                a_date = None
+                if len(api_timestamp) > 0 and api_timestamp[i]:
+                    a_date = convert_unix_to_timestamp(str(api_timestamp[i]))
+                    _, a_date = convert_to_date(a_date)
+
                 m = model()
                 m.s_id = sensor_id
                 m.value = values[i]
+                m.api_timestamp = a_date if a_date is not None else datetime.utcnow() 
                 m.timestamp = datetime.utcnow()
-                db.session.add(m)
 
-        db.session.commit()
+                try:
+                    db.session.add(m)
+                except IntegrityError:
+                    db.session.rollback()
+                    print('Sensor Name:', sensor_prefix + str(sensor_name), 'With Value: ', str(m.value), 'and Timestamp:', str(m.api_timestamp), 'already exists')
+
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            print('Unable to save certain values as they already are in the system, check logs')
+
+        # db.session.expire_all()
+
         
     '''
     This method accepts name of sensor tag
@@ -337,12 +366,13 @@ class BaseImporter(object):
         api = API(name=self.api_name, 
                     url=self.url, refresh_time=self.refresh_time,
                     token_expiry=self.token_expiry,
-                    api_key=self.api_key)
-        _api = api.get()
+                    api_key=self.api_key, api_class=self.api_class)
+        # _api = api.get()
+        _api = api.save()
 
-        if not _api:
-            api.save()
-            return api.id
+        # if not _api:
+        #     api.save()
+        #     return api.id
         
         return _api.id
 
