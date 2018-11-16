@@ -28,7 +28,7 @@ class MapWidget extends React.Component {
     }
   }
 
-  tileLayer = this.props.config.tileLayers.find((layer) => layer.name === this.props.tileLayer);
+  tileLayer = this.props.config.leafletTileLayers.find((layer) => layer.name === this.props.tileLayer);
 
   render() {
     const { classes, theme } = this.props;

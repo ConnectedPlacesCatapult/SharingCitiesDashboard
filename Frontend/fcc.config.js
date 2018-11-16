@@ -45,12 +45,6 @@ module.exports = {
       component: "DataPage",
       name: "Data Viewer",
     },
-    {
-      path: "/builder",
-      exact: false,
-      component: "BuilderPage",
-      name: "Plot Builder",
-    }
   ],
 
   // tileLayers to be made available in OpenMap widgets
