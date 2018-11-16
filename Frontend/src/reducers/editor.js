@@ -40,6 +40,7 @@ const initialState = {
     tileLayer: null,
     zoom: 0,
   },
+  alertConfig: {},
 };
 
 export default (state=initialState, action={}) => {
