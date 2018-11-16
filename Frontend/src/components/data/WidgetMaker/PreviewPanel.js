@@ -3,8 +3,10 @@ import PropTypes from "prop-types";
 import classNames from 'classnames';
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
+import FormControl from "@material-ui/core/FormControl";
+import Input from "@material-ui/core/Input";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import TitleIcon from '@material-ui/icons/Title';
-import TextField from '@material-ui/core/TextField'
 import { connect } from 'react-redux';
 import { setWidgetName } from "../../../actions/editorActions";
 
@@ -21,9 +23,17 @@ const styles = theme => ({
   paper: {
 
   },
+  formControl: {
+    margin: theme.spacing.unit,
+    minWidth: theme.spacing.unit * 20,
+  },
   textField: {
 
   },
+  input: {
+    color: theme.palette.primary.main,
+    borderColor: theme.palette.primary.secondary,
+  }
 });
 
 class PreviewPanel extends React.Component {
@@ -36,14 +46,24 @@ class PreviewPanel extends React.Component {
 
     return (
       <Paper className={classNames(classes.root, classes.paper)}>
-        <TitleIcon />
-        <TextField
-          id="standard-bare"
-          className={classes.textField}
-          defaultValue={editor.name}
-          margin="normal"
-          onChange={this.setWidgetName}
-        />
+
+        <FormControl className={classes.formControl}>
+          <Input
+            id="widget-name"
+            className={classes.textField}
+            defaultValue={editor.name}
+            onChange={this.setWidgetName}
+            inputProps={{
+              root: classes.input,
+              className: classes.input
+            }}
+            startAdornment={
+              <InputAdornment position="start">
+                <TitleIcon color="primary" />
+              </InputAdornment>
+            }
+          />
+        </FormControl>
         {
           editor.type === 'plot'
           ? <PlotPreview />

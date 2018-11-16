@@ -17,11 +17,15 @@ class PlotPreview extends React.Component {
   render() {
     const { classes, editor } = this.props;
 
+    const spec = {
+      ...editor.plotConfig.spec,
+
+    };
+
     return (
       <div className={classes.root}>
         <VegaLite
-          className={classes.widget}
-          spec={editor.plotConfig.spec}
+          spec={spec}
           data={editor.plotConfig.data}
         />
       </div>

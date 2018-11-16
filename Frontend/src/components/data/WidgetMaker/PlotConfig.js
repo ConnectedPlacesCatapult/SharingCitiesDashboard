@@ -51,18 +51,19 @@ class PlotConfig extends React.Component {
   render() {
     const { classes, config, editor, meta } = this.props;
 
-    const menuItems = config.vegaLitePlotTypes.map((plotType, i) => {
+    const typeItems = config.vegaLitePlotTypes.map((plotType, i) => {
       return <MenuItem key={i} value={plotType}>{plotType}</MenuItem>
     });
 
     const nonNumericColumns = meta.columns.filter(column => !column.numeric);
     const numericColumns = meta.columns.filter(column => column.numeric);
+    const nonGeoNumericColumns = numericColumns.filter((column) => !['lat', 'lon'].includes(column.id));
 
     const labelItems = nonNumericColumns.map((column, i) => {
       return <MenuItem key={i} value={column.id}>{column.label}</MenuItem>
     });
 
-    const valueItems = numericColumns.map((column, i) => {
+    const valueItems = nonGeoNumericColumns.map((column, i) => {
       return <MenuItem key={i} value={column.id}>{column.label}</MenuItem>
     });
 
@@ -78,7 +79,7 @@ class PlotConfig extends React.Component {
               id: 'plot-type',
             }}
           >
-            {menuItems}
+            {typeItems}
           </Select>
         </FormControl>
         <Divider className={classes.spacer} />

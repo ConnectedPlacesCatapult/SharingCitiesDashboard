@@ -65,6 +65,7 @@ class DataPage extends Component {
         <Modal
           open={this.state.widgetModalOpen}
           onClose={this.handleWidgetMakerClose}
+          disableAutoFocus={true}
         >
           <WidgetMaker />
         </Modal>

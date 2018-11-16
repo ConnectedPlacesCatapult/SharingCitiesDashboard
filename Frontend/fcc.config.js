@@ -87,5 +87,6 @@ module.exports = {
       lat: 51.505,
       lng: -0.09,
     },
+    mapShowHeatmap: false,
   }
 };

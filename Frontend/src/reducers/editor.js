@@ -3,6 +3,8 @@ import {
   SET_MAP_CAN_MAP,
   SET_MAP_CENTER,
   SET_MAP_DATA,
+  SET_MAP_HEATMAP_ATTRIBUTE,
+  SET_MAP_SHOW_HEATMAP,
   SET_MAP_TILE_LAYER,
   SET_MAP_ZOOM,
   SET_PLOT_DATA,
@@ -33,7 +35,8 @@ const initialState = {
       type: "FeatureCollection",
       features: [],
     },
-    isHeatMap: false,
+    showHeatmap: false,
+    heatmapAttribute: null,
     tileLayer: null,
     zoom: 0,
   },
@@ -91,6 +94,26 @@ export default (state=initialState, action={}) => {
             ...state.mapConfig.data,
             features: formatted,
           }
+        }
+      }
+    }
+
+    case SET_MAP_HEATMAP_ATTRIBUTE: {
+      return {
+        ...state,
+        mapConfig: {
+          ...state.mapConfig,
+          heatmapAttribute: action.payload,
+        }
+      }
+    }
+
+    case SET_MAP_SHOW_HEATMAP: {
+      return {
+        ...state,
+        mapConfig: {
+          ...state.mapConfig,
+          showHeatmap: action.payload,
         }
       }
     }

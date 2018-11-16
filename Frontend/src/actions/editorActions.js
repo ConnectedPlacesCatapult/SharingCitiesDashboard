@@ -3,6 +3,8 @@ import {
   SET_MAP_CAN_MAP,
   SET_MAP_CENTER,
   SET_MAP_DATA,
+  SET_MAP_HEATMAP_ATTRIBUTE,
+  SET_MAP_SHOW_HEATMAP,
   SET_MAP_TILE_LAYER,
   SET_MAP_ZOOM,
   SET_PLOT_DATA,
@@ -34,6 +36,7 @@ export function initializeEditor() {
     const data = currentState.data.data;
     const nonNumericColumns = currentState.data.meta.columns.filter(column => !column.numeric);
     const numericColumns = currentState.data.meta.columns.filter(column => column.numeric);
+    const nonGeoNumericColumns = numericColumns.filter((column) => !['lat', 'lon'].includes(column.id));
 
     dispatch({
       type: SET_WIDGET_NAME,
@@ -68,7 +71,7 @@ export function initializeEditor() {
       type: SET_PLOT_ENCODING,
       payload: {
         axis: "y",
-        field: numericColumns[0].id,
+        field: nonGeoNumericColumns[0].id,
         type: "quantitative",
       }
     });
@@ -86,6 +89,16 @@ export function initializeEditor() {
     dispatch({
       type: SET_MAP_DATA,
       payload: data,
+    });
+
+    dispatch({
+      type: SET_MAP_HEATMAP_ATTRIBUTE,
+      payload: nonGeoNumericColumns[0].id,
+    });
+
+    dispatch({
+      type: SET_MAP_SHOW_HEATMAP,
+      payload: defaults.mapShowHeatmap,
     });
 
     dispatch({
@@ -117,6 +130,20 @@ export function setMapCenter(center) {
   return {
     type: SET_MAP_CENTER,
     payload: center,
+  }
+}
+
+export function setMapHeatmapAttribute(attr) {
+  return {
+    type: SET_MAP_HEATMAP_ATTRIBUTE,
+    payload: attr,
+  }
+}
+
+export function setMapShowHeatmap(showHeatmap) {
+  return {
+    type: SET_MAP_SHOW_HEATMAP,
+    payload: showHeatmap,
   }
 }
 
