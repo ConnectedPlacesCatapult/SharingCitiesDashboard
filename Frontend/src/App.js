@@ -9,7 +9,6 @@ import { fetchConfig } from "./actions/configActions";
 import Header from './components/common/Header';
 import DashboardPage from './components/dashboard/DashboardPage';
 import DataPage from './components/data/DataPage';
-import BuilderPage from './components/builder/BuilderPage';
 
 // default/fallback font
 require('typeface-roboto');
@@ -48,7 +47,6 @@ class App extends React.Component {
               <Switch>
                 <Route exact path="/" component={DashboardPage} />
                 <Route path="/data" component={DataPage} />
-                <Route path="/build" component={BuilderPage} />
               </Switch>
             </React.Fragment>
           </Router>

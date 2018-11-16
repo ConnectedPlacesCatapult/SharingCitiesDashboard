@@ -43,7 +43,7 @@ module.exports = {
       path: "/data",
       exact: false,
       component: "DataPage",
-      name: "Data Viewer",
+      name: "Data Tools",
     },
   ],
 

@@ -12,6 +12,7 @@ import { setWidgetName } from "../../../actions/editorActions";
 
 import MapPreview from './MapPreview';
 import PlotPreview from './PlotPreview';
+import AlertPreview from './AlertPreview';
 
 const styles = theme => ({
   root: {
@@ -64,11 +65,9 @@ class PreviewPanel extends React.Component {
             }
           />
         </FormControl>
-        {
-          editor.type === 'plot'
-          ? <PlotPreview />
-          : <MapPreview />
-        }
+        { editor.type === 'plot' && <PlotPreview /> }
+        { editor.type === 'map' && <MapPreview /> }
+        { editor.type === 'alert' && <AlertPreview /> }
       </Paper>
     )
   }
