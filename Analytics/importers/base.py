@@ -95,67 +95,127 @@ class BaseImporter(object):
                             check_sensor_exists_by_name_loc: bool = False,
                             check_sensor_exists_by_name_api: bool = False):
 
-        # db.session.expunge_all()
-        # Check if API exists
         api_id = self.stage_api_commit()
-
-        sensor_objects = {}
-        attr_objects = []
-        sensor_exists = set()
+        
+        # Location tag
         latitude, longitude = None, None
-
-        # Save location and sensor
-        sensors = dataframe[sensor_tag].tolist()
 
         if location_tag is not None:
             latitude = dataframe[location_tag.lat].tolist()
             longitude = dataframe[location_tag.lon].tolist()
-        # print(len(sensors), len(latitude), len(longitude))
+
+        # Save location and sensor
+        sensor_objects = self.save_sensors(dataframe[sensor_tag].tolist(), latitude, longitude, api_id,
+                                        sensor_prefix,
+                                        check_sensor_exists_by_name=check_sensor_exists_by_name,
+                                        check_sensor_exists_by_name_loc=check_sensor_exists_by_name_loc,
+                                        check_sensor_exists_by_name_api=check_sensor_exists_by_name_api)
+
+        # Save Attributes
+        attr_objects = self.save_attributes(attribute_tag, unit_value, description, 
+                                            bespoke_unit_tag, bespoke_sub_theme)
+
+        # Save attribute and sensor relation
+        self.save_attr_sensor(attr_objects, sensor_objects.values())
+
+        self.create_tables(attr_objects)
+        self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, sensor_prefix, api_timestamp_tag)
+
+    def create_datasource_with_values(self, dataframe, sensor_tag, attribute_tag, value_tag,
+                                        latitude_tag, longitude_tag, description_tag, 
+                                        api_timestamp_tag = None,
+                                        unit_tag = None, unit_value_tag = None, 
+                                        unit_id = 1, unit_value = 1, sub_theme = 1):
+        api_id = self.stage_api_commit()
+        _unit = None
+        _unit_value = None
+
+        sensors = dataframe[sensor_tag].tolist()
+        attributes = dataframe[attribute_tag].tolist()
+        # values = dataframe[value_tag].tolist()
+        latitude = dataframe[latitude_tag].tolist()
+        longitude = dataframe[longitude_tag].tolist()
+        description = dataframe[description_tag].tolist()
+
+        if unit_tag is None:
+            _unit = unit_id
+        else:
+            _unit = dataframe[unit_tag].tolist()
+
+        if unit_value_tag is None:
+            _unit_value = unit_value
+        else:
+            _unit_value = dataframe[unit_value_tag].tolist()
+
+        sensor_objects = self.save_sensors(sensors, latitude, longitude, api_id, None, 
+                                            check_sensor_exists_by_name= False,
+                                            check_sensor_exists_by_name_loc= False,
+                                            check_sensor_exists_by_name_api=False)
+        attr_objects = self.save_attributes(attributes, 
+                                            _unit_value if isinstance(_unit_value, list) else [_unit_value],
+                                            description,
+                                            _unit if isinstance(_unit, list) else [_unit],
+                                            [sub_theme])
+
+        self.save_attr_sensor(attr_objects, sensor_objects.values())
+        self.create_tables(attr_objects)
+        self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, '', api_timestamp_tag, value_tag)
+
+        
+
+    def save_sensors(self, sensors: list, latitude: list, longitude: list, api_id, sensor_prefix, **kwargs) -> dict:
+        sensor_objects = {}
+        sensor_exists = set()
 
         for i in range(len(sensors)):
             # if sensor already exists dont save
-            if check_sensor_exists_by_name:
+            if kwargs['check_sensor_exists_by_name']:
                 s_name = sensor_prefix + str(sensors[i]) if sensor_prefix is not None else str(sensors[i])
                 _sensor = Sensor.get_by_name(s_name)
                 if _sensor:
                     sensor_objects[_sensor.name] = _sensor
                     continue
             
-            if check_sensor_exists_by_name_loc:
+            if kwargs['check_sensor_exists_by_name_loc']:
                 s_name = sensor_prefix + str(sensors[i]) if sensor_prefix is not None else str(sensors[i])
                 _sensor = Sensor.get_by_name_loc(s_name, None) # This needs to be fixed
                 if _sensor:
                     sensor_objects[_sensor.name] = _sensor
                     continue
 
-            if check_sensor_exists_by_name_api:
+            if kwargs['check_sensor_exists_by_name_api']:
                 s_name = sensor_prefix + str(sensors[i]) if sensor_prefix is not None else str(sensors[i])
                 _sensor = Sensor.get_by_name_api(s_name, api_id)
                 if _sensor:
                     sensor_objects[_sensor.name] = _sensor
                     continue
-            
-            # Use hashing strategy for saving location as well
-            loc = location.Location.get_by_lat_lon(latitude[i], longitude[i])
-            if not loc:
-                loc = location.Location(latitude[i], longitude[i], WKTElement('POINT(%f %f)' % (latitude[i], longitude[i]), 4326))
-                loc.save()
+
+            loc = self.save_location(float(latitude[i]), float(longitude[i]))
             
             s_name = sensor_prefix + str(sensors[i]) if sensor_prefix is not None else str(sensors[i])
-            # Create hash and check if it is in the dictionary,
-            # if not in the dictionary then add it to the dict
-            _hash = abs(hash(str(api_id) + str(loc.id) + s_name))%(10**8)
-
+            _hash = self._hash_it(str(api_id), str(loc.id), s_name)
             if _hash in sensor_exists:
                 continue
+
             sensor = Sensor(str(uuid.uuid4()), api_id, loc.id, s_name)
             sensor_exists.add(_hash)
-            # Create hash and save it in dictionary
-            sensor = sensor.save()
-            # print(_s)
 
+            sensor = sensor.save()
             sensor_objects[sensor.name] = sensor
 
+        return sensor_objects
+
+    def save_location(self, latitude: float, longitude: float):
+        loc = location.Location.get_by_lat_lon(latitude, longitude)
+        if not loc:
+            loc = location.Location(latitude, longitude, WKTElement('POINT(%f %f)' % (latitude, longitude), 4326))
+            loc.save()
+        return loc
+
+    def save_attributes(self, attribute_tag: list, unit_value: list, description:list, 
+                        bespoke_unit_tag: list, bespoke_sub_theme: list) -> list:
+        attr_objects = []
+        attr_exists = set()
         for i in range(len(attribute_tag)):
             uv = None
             but = None
@@ -185,19 +245,17 @@ class BaseImporter(object):
                 if len(bespoke_sub_theme) > 0:
                     bst = bespoke_sub_theme[0]
 
-            a = self.save_attributes(attribute_tag[i], uv, but, bst, des)
+            _hash = self._hash_it(str(attribute_tag[i]), str(but), str(uv))
+            if _hash in attr_exists:
+                continue
+
+            a = self.stage_attributes(attribute_tag[i], uv, but, bst, des)
             attr_objects.append(a)
+            attr_exists.add(_hash)
 
-        # save attribute and sensor relation
-        for sensor in sensor_objects.values():
-            for attr in attr_objects:
-                sa = SensorAttribute(sensor.id, attr.id)
-                sa.save()
+        return attr_objects
 
-        self.create_tables(attr_objects)
-        self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, sensor_prefix, api_timestamp_tag)
-
-    def save_attributes(self, attribute: str, unit_value: str, 
+    def stage_attributes(self, attribute: str, unit_value: str, 
                         bespoke_unit_tag: int, bespoke_sub_theme: int,
                         description: str):
         a = Attributes(id=str(uuid.uuid4()), name=attribute, table_name=(attribute + '_' + str(uuid.uuid4()).replace('-', '_')), 
@@ -206,6 +264,12 @@ class BaseImporter(object):
         a = a.save()
         return a
 
+    def save_attr_sensor(self, attrs, sensors):
+        for sensor in sensors:
+            for attr in attrs:
+                sa = SensorAttribute(sensor.id, attr.id)
+                sa.save()
+
     def create_tables(self, attributes):
         for attr in attributes:
             try:
@@ -213,20 +277,30 @@ class BaseImporter(object):
             except ProgrammingError as e:
                 db.session.rollback()
                 print(attr.table_name.replace('-', '_'), 'already exists')
-            # print(ModelClass(attr.table_name))
-        # db.session.commit()
 
     def insert_data(self, attr_objects, sensor_objects: dict, dataframe, 
-                    sensor_tag, sensor_prefix, api_timestamp_tag):
+                    sensor_tag, sensor_prefix, api_timestamp_tag, attr_value_tag = None):
         db.metadata.clear()
         sensors = dataframe[sensor_tag].tolist()
-        for attr in attr_objects:
-            model = ModelClass(attr.table_name)
-            values = dataframe[attr.name].tolist()
+        value_exists = set()
 
-            api_timestamp = []
-            if api_timestamp_tag is not None:
-                api_timestamp = dataframe[api_timestamp_tag].tolist()
+        api_timestamp = []
+        if api_timestamp_tag is not None:
+            api_timestamp = dataframe[api_timestamp_tag].tolist()
+
+        _values = []
+        if attr_value_tag is not None:
+            _values = dataframe[attr_value_tag].tolist()
+
+        for attr in attr_objects:
+            model = ModelClass(attr.table_name.lower())
+            values = []
+
+            if attr_value_tag is None:
+                values = dataframe[attr.name].tolist()
+            else:
+                values = _values
+
             for i in range(len(values)):
                 sensor_name = sensors[i]
                 sensor_id = sensor_objects[sensor_prefix + str(sensor_name)].id
@@ -235,12 +309,21 @@ class BaseImporter(object):
                 if len(api_timestamp) > 0 and api_timestamp[i]:
                     a_date = convert_unix_to_timestamp(str(api_timestamp[i]))
                     _, a_date = convert_to_date(a_date)
+                
+                if a_date is None:
+                    a_date = datetime.utcnow()
+
+                # _hash = self._hash_it(sensor_prefix + str(sensor_name), str(values[i]), str(a_date))
+                # if _hash in value_exists:
+                #     continue
 
                 m = model()
                 m.s_id = sensor_id
                 m.value = values[i]
-                m.api_timestamp = a_date if a_date is not None else datetime.utcnow() 
+                m.api_timestamp = a_date
                 m.timestamp = datetime.utcnow()
+
+                # value_exists.add(_hash)
 
                 try:
                     db.session.add(m)
@@ -254,161 +337,36 @@ class BaseImporter(object):
             db.session.rollback()
             print('Unable to save certain values as they already are in the system, check logs')
 
-        # db.session.expire_all()
+    def _hash_it(self, *args):
+        to_hash = ''
+        for a in args:
+            to_hash += a
 
-        
-    '''
-    This method accepts name of sensor tag
-    and list of name of location tag, if the list 
-    contains only one item then it will be considered 
-    as a geometry object
-    '''
-    def sensors(self, sensor: str, location: list, use_value_of_tag: bool):
-        api_id = self.stage_api_commit()
-        sensors_with_id = {}
-
-        if use_value_of_tag:
-            sensors_with_id = self.value_as_sensor(api_id, location, sensor)
-        else:
-            self.tag_as_sensor(api_id, location, sensor)
-            
-        return sensors_with_id
-
-    def tag_as_sensor(self, api_id, location, sensor) -> list:
-        values = []
-        sensor_created = []
-        location_values = ReadJson(None, location)
-        location_values.get_location_by_tag_names(self.dataset, values)
-
-        for loc in values:
-            location_id = self.stage_location_commit(loc)
-            _sensor = Sensor(a_id=api_id, l_id=location_id, 
-                            name=sensor)
-            _sensor.save()
-            sensor_created.append(_sensor.id)
-        return sensor_created
-
-    def value_as_sensor(self, api_id, location, sensor) -> dict:
-        values = {}
-        # return dictionary to reference later
-        sensor_created = {}
-        sensor_values = ReadJson(sensor, location)
-        sensor_values.get_sensor_by_tag_name(self.dataset, values)
-        
-        for key in values:
-            location_id = self.stage_location_commit(values[key])
-            _sensor = Sensor(api_id, location_id, key)
-            _sensor.save()
-            sensor_created[key] = _sensor.id
-
-        return sensor_created
-
-    def attributes(self, attribute_tag: list, as_tag=False) -> dict:
-        values = {}
-        if not as_tag:
-            values = self.get_values(attribute_tag)
-        else:
-            pass
-        return values
-
-    def units(self, unit_tag: list, as_tag=False) -> dict:
-        values = {}
-        if not as_tag:
-            values = self.get_values(unit_tag)
-        else:
-            pass
-        return values
-
-    def descriptions(self, description_tag: list, as_tag=False) -> dict:
-        values = {}
-        if not as_tag:
-            values = self.get_values(description_tag)
-        else:
-            pass
-        return values
-
-    def merged_attr_unit_desc(self, attr: str, unit: str, desc: str):
-        pass
-
-    def get_values(self, tags) -> dict:
-        values = set()
-        _values = {}
-        for tag in tags:
-            a = ReadJson(tag, None)
-            a.get_values_by_tag_name(self.dataset, values)
-            _values[tag] = values
-            values = set()
-        
-        return _values
-    
-    def join_attr_unit(self, attribute: str, unit: str):
-        # List of AttributeUnitData objects
-        a = AttributeUnitDescription()
-        a.attribute = attribute
-        a.unit_value = unit
-        return a
-
-    def join_attr_desc(self, attribute, description: str):
-        '''
-        attribute: should be an object of AttributeUnitDescription
-        '''
-        attribute.description = description
-
-    def join_attr_unit_type(self, attribute: list, unit: int):
-        '''
-        attribute: should be a list of AttributeUnitDescription objects
-        '''
-        for a in attribute:
-            a.unit_type = unit
-
-        # return attribute
-
-    def join_attr_sub_theme(self, attribute: list, subtheme: int):
-        '''
-        attribute: should be a list of AttributeUnitDescription objects
-        '''
-        for a in attribute:
-            a.sub_theme = subtheme
-
-        # return attribute
+        return abs(hash(to_hash))%(10**8)
 
     def stage_api_commit(self):
         api = API(name=self.api_name, 
                     url=self.url, refresh_time=self.refresh_time,
                     token_expiry=self.token_expiry,
                     api_key=self.api_key, api_class=self.api_class)
-        # _api = api.get()
         _api = api.save()
-
-        # if not _api:
-        #     api.save()
-        #     return api.id
-        
         return _api.id
 
-    def stage_location_commit(self, location):
-        loc = location.get()
-
-        if not loc:
-            location.save()
-            return location.id
-
-        return loc.id
 
     def create_unit(self, _type, description):
         unit = Unit(_type=_type, description=description)
         unit.save()
-        return unit.id
+        return unit
 
     def create_theme(self, name):
         theme = Theme(name=name)
         theme.save()
-        return theme.id
+        return theme
 
     def create_subtheme(self, theme_id, name):
         sub_theme = SubTheme(t_id=theme_id, name=name)
         sub_theme.save()
-        return sub_theme.id
+        return sub_theme
 
     def commit(self):
         db.session.commit()

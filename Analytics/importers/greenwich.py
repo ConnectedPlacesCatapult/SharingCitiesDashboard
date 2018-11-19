@@ -14,10 +14,11 @@ REFRESH_TIME = config['REFRESH_TIME']
 API_KEY = config['API_KEY']
 TOKEN_EXPIRY = config['TOKEN_EXPIRY'] # Seconds after which token would expire in this case 1 year
 REFRESH_URL = config['REFRESH_URL']
+API_CLASS = config['API_CLASS']
 
 class GreenwichMeta(BaseImporter):
     def __init__(self):
-        super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, 'importers.greenwich.GreenwichMeta', TOKEN_EXPIRY)
+        super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, API_CLASS, TOKEN_EXPIRY)
 
     def _create_datasource(self):
         super()._create_datasource()
@@ -37,10 +38,11 @@ config = config['test']['greenwich_occ']
 
 API_NAME_OCC = config['API_NAME']
 BASE_URL_OCC = config['BASE_URL']
+API_CLASS_OCC = config['API_CLASS']
 
 class GreenwichOCC(BaseImporter):
     def __init__(self):
-        super().__init__(API_NAME_OCC, BASE_URL_OCC, REFRESH_TIME, API_KEY, 'importers.greenwich.GreenwichOCC', TOKEN_EXPIRY)
+        super().__init__(API_NAME_OCC, BASE_URL_OCC, REFRESH_TIME, API_KEY, API_CLASS_OCC, TOKEN_EXPIRY)
 
     def _create_datasource(self):
         super()._create_datasource()
