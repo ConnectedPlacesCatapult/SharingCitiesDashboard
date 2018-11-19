@@ -26,6 +26,21 @@ To circumvent this challenge, we have developed a tool that enables users to cre
 ## Modules
 
 ### Analytics
+
+To date, the analytics module contains all the code for the server-side of the project. Broadly speaking this includes:
+
+ - Database management
+
+ Current schema
+ ![](schema.png)
+
+
+
+ - Importers 
+ - Schedulers
+ - Analytics
+
+
 ### Front end
 
 ## Quick-start
