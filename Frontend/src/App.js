@@ -1,12 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { connect } from 'react-redux';
 import { fetchConfig } from "./actions/configActions";
 
 // base components
-import Header from './components/common/Header';
 import DashboardPage from './components/dashboard/DashboardPage';
 import DataPage from './components/data/DataPage';
 
@@ -40,16 +39,12 @@ class App extends React.Component {
       return (
         <MuiThemeProvider theme={localTheme}>
           <CssBaseline />
-          <Router>
-            <React.Fragment>
-              <Route component={Header} />
-              {/*<Route path="/" component={DataPage} />*/}
-              <Switch>
-                <Route exact path="/" component={DashboardPage} />
-                <Route path="/data" component={DataPage} />
-              </Switch>
-            </React.Fragment>
-          </Router>
+          <BrowserRouter>
+            <Switch>
+              <Route exact path="/" component={DashboardPage} />
+              <Route path="/data" component={DataPage} />
+            </Switch>
+          </BrowserRouter>
         </MuiThemeProvider>
       )
     }
@@ -71,4 +66,4 @@ const mapDispatchToProps = {
   fetchConfig,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App)

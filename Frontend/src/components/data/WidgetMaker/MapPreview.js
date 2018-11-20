@@ -2,7 +2,17 @@ import React from 'react';
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { darken, lighten } from "@material-ui/core/styles/colorManipulator";
-import { CircleMarker, FeatureGroup, GeoJSON, LayersControl, Map, Marker, Popup, TileLayer, Circle} from 'react-leaflet';
+import {
+  CircleMarker,
+  FeatureGroup,
+  GeoJSON,
+  LayersControl,
+  Map,
+  Marker,
+  Popup,
+  TileLayer,
+  Circle,
+} from 'react-leaflet';
 import HeatmapLayer from 'react-leaflet-heatmap-layer';
 import { connect } from 'react-redux';
 

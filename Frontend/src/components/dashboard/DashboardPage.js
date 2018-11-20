@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
+import Header from './../common/Header';
 import GridLayout from './GridLayout';
 
 const styles = theme => ({
@@ -28,10 +29,11 @@ class DashboardPage extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, location } = this.props;
 
     return (
       <div className={classes.root}>
+        <Header location={location} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <GridLayout />
@@ -45,4 +47,4 @@ DashboardPage.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(DashboardPage);
+export default withStyles(styles)(DashboardPage)

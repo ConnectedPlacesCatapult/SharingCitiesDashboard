@@ -13,10 +13,10 @@ export function fetchConfig() {
         type: FETCH_CONFIG_FULFILLED,
         payload: STATIC_CONFIG_DATA,
       })
-    } catch (e) {
+    } catch (error) {
       dispatch({
         type: FETCH_CONFIG_REJECTED,
-        payload: e,
+        payload: error,
       })
     }
   }

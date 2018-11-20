@@ -4,8 +4,8 @@ import {
   FETCH_LAYOUT_REJECTED
 } from "./../constants";
 
-export function fetchLayout() {
-  return function (dispatch) {
+export const fetchLayout = () => {
+  return (dispatch, getState) => {
     dispatch({
       type: FETCH_LAYOUT,
     });
@@ -18,11 +18,11 @@ export function fetchLayout() {
         payload: STATIC_LAYOUT_DATA,
       })
     }
-    catch (e) {
+    catch (error) {
       dispatch({
         type: FETCH_LAYOUT_REJECTED,
-        payload: e,
+        payload: error,
       })
     }
   }
-}
+};

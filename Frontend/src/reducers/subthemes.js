@@ -1,14 +1,13 @@
-import _ from "lodash";
-
+import _ from 'lodash';
 import {
-  FETCH_SOURCES,
-  FETCH_SOURCES_FULFILLED,
-  FETCH_SOURCES_REJECTED,
-  TOGGLE_SOURCE_SELECTED
-} from "./../constants";
+  FETCH_SUBTHEMES,
+  FETCH_SUBTHEMES_FULFILLED,
+  FETCH_SUBTHEMES_REJECTED,
+  TOGGLE_SUBTHEME_SELECTED,
+} from "../constants";
 
 const initialState = {
-  sources: [],
+  subthemes: [],
   fetching: false,
   fetched: false,
   error: null,
@@ -17,23 +16,23 @@ const initialState = {
 
 export default (state=initialState, action={}) => {
   switch (action.type) {
-    case FETCH_SOURCES: {
+    case FETCH_SUBTHEMES: {
       return {
         ...state,
         fetching: true,
       }
     }
 
-    case FETCH_SOURCES_FULFILLED: {
+    case FETCH_SUBTHEMES_FULFILLED: {
       return {
         ...state,
+        subthemes: action.payload,
         fetching: false,
         fetched: true,
-        sources: action.payload,
       }
     }
 
-    case FETCH_SOURCES_REJECTED: {
+    case FETCH_SUBTHEMES_REJECTED: {
       return {
         ...state,
         fetching: false,
@@ -42,12 +41,10 @@ export default (state=initialState, action={}) => {
       }
     }
 
-    case TOGGLE_SOURCE_SELECTED: {
-      // only allow one selected source for now but keep it in an array
+    case TOGGLE_SUBTHEME_SELECTED: {
       const newSelected = (_.indexOf(state.selected, action.payload) !== -1)
         ? _.without(state.selected, action.payload)
         : [action.payload]
-        //: [...state.selected, action.payload]
       ;
 
       return {

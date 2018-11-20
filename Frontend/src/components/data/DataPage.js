@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import { connect } from 'react-redux';
 
+import Header from './../common/Header';
 import SideBar from './../common/SideBar';
 import DataTable from './DataTable';
 import OptionsSidePanel from './OptionsSidePanel';
@@ -44,10 +45,11 @@ class DataPage extends Component {
   };
 
   render() {
-    const { classes, data } = this.props;
+    const { classes, location, data } = this.props;
 
     return (
       <div className={classes.root}>
+        <Header location={location} />
         <SideBar />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
@@ -89,4 +91,4 @@ const mapDispatchToProps = dispatch => ({
 
 DataPage = withStyles(styles)(DataPage);
 
-export default connect(mapStateToProps, mapDispatchToProps)(DataPage);
+export default connect(mapStateToProps, mapDispatchToProps)(DataPage)

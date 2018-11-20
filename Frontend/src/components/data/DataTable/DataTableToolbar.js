@@ -38,7 +38,7 @@ const styles = theme => ({
 
 class DataTableToolbar extends React.Component {
   render() {
-    const { classes, numSelected, sourceName } = this.props;
+    const { classes, numSelected, subthemeName } = this.props;
 
     return (
       <Toolbar className={classNames(classes.root, { [classes.highlight]: numSelected > 0, })}>
@@ -49,7 +49,7 @@ class DataTableToolbar extends React.Component {
             </Typography>
           ) : (
             <Typography variant="h6" id="tableTitle">
-              {sourceName}
+              {subthemeName}
             </Typography>
           )}
         </div>
@@ -77,7 +77,7 @@ class DataTableToolbar extends React.Component {
 DataTableToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired,
-  sourceName: PropTypes.string.isRequired,
+  subthemeName: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(DataTableToolbar)

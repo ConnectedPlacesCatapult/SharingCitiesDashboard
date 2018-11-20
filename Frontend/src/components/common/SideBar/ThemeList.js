@@ -3,19 +3,19 @@ import PropTypes from "prop-types";
 import List from '@material-ui/core/List';
 import { connect } from 'react-redux';
 import { fetchThemes, toggleThemeSelected } from "./../../../actions/themesActions";
-import { fetchSources } from "./../../../actions/sourcesActions";
 import _ from 'lodash';
 
 import ThemeListItem from './ThemeListItem';
 
 class ThemeList extends Component {
-  componentWillMount() {
-    this.props.fetchThemes();
-    this.props.fetchSources();
+  constructor(props) {
+    super(props);
+
+    props.fetchThemes()
   }
 
   render() {
-    const { themes, selectedThemes, toggleThemeSelected, sources } = this.props;
+    const { themes, selectedThemes, toggleThemeSelected } = this.props;
 
     const themeListItems = themes.map((theme, i) => {
       return (
@@ -23,7 +23,6 @@ class ThemeList extends Component {
           key={i}
           themeId={i}
           themeName={theme}
-          sources={sources.filter((source) => source.theme === theme)}
           isSelected={_.indexOf(selectedThemes, i) !== -1}
           onClick={() => toggleThemeSelected(i)}
         />
@@ -41,20 +40,20 @@ class ThemeList extends Component {
 ThemeList.propTypes = {
   themes: PropTypes.array.isRequired,
   selectedThemes: PropTypes.array.isRequired,
-  sources: PropTypes.array.isRequired,
+  fetchThemes: PropTypes.func.isRequired,
   toggleThemeSelected: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   themes: state.themes.themes,
   selectedThemes: state.themes.selected,
-  sources: state.sources.sources,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchThemes: () => dispatch(fetchThemes()),
-  toggleThemeSelected: id => dispatch(toggleThemeSelected(id)),
-  fetchSources: () => dispatch(fetchSources()),
-});
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchThemes: () => dispatch(fetchThemes()),
+    toggleThemeSelected: id => dispatch(toggleThemeSelected(id)),
+  }
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(ThemeList);
+export default connect(mapStateToProps, mapDispatchToProps)(ThemeList)

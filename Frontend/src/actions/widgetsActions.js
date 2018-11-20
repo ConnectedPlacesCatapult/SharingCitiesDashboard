@@ -4,8 +4,8 @@ import {
   FETCH_WIDGETS_REJECTED
 } from "./../constants";
 
-export function fetchWidgets() {
-  return function (dispatch) {
+export const fetchWidgets = () => {
+  return (dispatch, getState) => {
     dispatch({
       type: FETCH_WIDGETS,
     });
@@ -18,11 +18,11 @@ export function fetchWidgets() {
         payload: STATIC_WIDGET_DATA,
       })
     }
-    catch (e) {
+    catch (error) {
       dispatch({
         type: FETCH_WIDGETS_REJECTED,
-        payload: e,
+        payload: error,
       })
     }
   }
-}
+};

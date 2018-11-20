@@ -4,7 +4,7 @@ import config from './reducers/config';
 import data from './reducers/data';
 import editor from './reducers/editor';
 import layout from './reducers/layout';
-import sources from './reducers/sources';
+import subthemes from './reducers/subthemes';
 import themes from './reducers/themes';
 import user from './reducers/user';
 import widgets from './reducers/widgets';
@@ -14,7 +14,7 @@ export default combineReducers({
   data,
   editor,
   layout,
-  sources,
+  subthemes,
   themes,
   user,
   widgets,

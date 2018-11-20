@@ -11,10 +11,7 @@ import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import Modal from '@material-ui/core/Modal';
 import LoginForm from './LoginForm';
-
-// ToDo :: needs tying in with the config reducer
-// ToDo :: replace dynamic with static routes?
-import { routes } from './../../../fcc.config';
+import { connect } from 'react-redux';
 
 // ToDo :: add this to config and define a default logo (somewhere)
 const bgImage = require('./../../images/Lisbon-logo-med.png');
@@ -89,9 +86,9 @@ class Header extends Component {
   };
 
   render() {
-    const {classes, location} = this.props;
+    const { classes, location, config } = this.props;
 
-    const pageLinks = routes.map((route, i) => (
+    const pageLinks = config.routes.map((route, i) => (
       <NavLink
         key={i}
         exact={route.exact}
@@ -137,6 +134,17 @@ class Header extends Component {
 
 Header.propTypes = {
   classes: PropTypes.object.isRequired,
+  config: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(Header);
+const mapStateToProps = state => ({
+  config: state.config.config,
+});
+
+const mapDispatchToProps = dispatch => ({
+
+});
+
+Header = withStyles(styles)(Header);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header)

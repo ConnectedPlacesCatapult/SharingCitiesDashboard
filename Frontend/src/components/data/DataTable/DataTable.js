@@ -101,7 +101,7 @@ class DataTable extends React.Component {
         <Paper>
           <DataTableToolbar
             numSelected={selected.length}
-            sourceName={data.source}
+            subthemeName={data.subtheme}
           />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">

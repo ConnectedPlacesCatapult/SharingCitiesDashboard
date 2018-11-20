@@ -26,11 +26,9 @@ const canMap = record => {
   return true
 };
 
-export function initializeEditor() {
-
-  // ToDo :: this needs to remember stuff rather than jusyt overwrite it every time
-
-  return function(dispatch, getState) {
+// ToDo :: this needs to remember stuff rather than just overwrite it every time
+export const initializeEditor = () => {
+  return (dispatch, getState) => {
     const currentState = getState();
     const defaults = currentState.config.config.widgetEditorDefaults;
     const data = currentState.data.data;
@@ -111,80 +109,58 @@ export function initializeEditor() {
       payload: defaults.mapCenter,
     });
   }
-}
+};
 
-export function purgeEditor() {
-  return {
-    type: PURGE_EDITOR,
-  }
-}
+export const purgeEditor = () => ({
+  type: PURGE_EDITOR,
+});
 
-export function setMapTileLayer(tileLayer) {
-  return {
-    type: SET_MAP_TILE_LAYER,
-    payload: tileLayer,
-  }
-}
+export const setMapTileLayer = tileLayer => ({
+  type: SET_MAP_TILE_LAYER,
+  payload: tileLayer,
+});
 
-export function setMapCenter(center) {
-  return {
-    type: SET_MAP_CENTER,
-    payload: center,
-  }
-}
+export const setMapCenter = (lat, lng) => ({
+  type: SET_MAP_CENTER,
+  payload: { lat, lng },
+});
 
-export function setMapHeatmapAttribute(attr) {
-  return {
-    type: SET_MAP_HEATMAP_ATTRIBUTE,
-    payload: attr,
-  }
-}
+export const setMapHeatmapAttribute = attr => ({
+  type: SET_MAP_HEATMAP_ATTRIBUTE,
+  payload: attr,
+});
 
-export function setMapShowHeatmap(showHeatmap) {
-  return {
-    type: SET_MAP_SHOW_HEATMAP,
-    payload: showHeatmap,
-  }
-}
+export const setMapShowHeatmap = showHeatmap => ({
+  type: SET_MAP_SHOW_HEATMAP,
+  payload: showHeatmap,
+});
 
-export function setMapZoom(zoom) {
-  return {
-    type: SET_MAP_ZOOM,
-    payload: zoom,
-  }
-}
+export const setMapZoom = zoom => ({
+  type: SET_MAP_ZOOM,
+  payload: zoom,
+});
 
-export function setPlotDescription(desc = '') {
-  return {
-    type: SET_PLOT_DESCRIPTION,
-    payload: desc,
-  }
-}
+export const setPlotDescription = (desc='') => ({
+  type: SET_PLOT_DESCRIPTION,
+  payload: desc,
+});
 
-export function setPlotEncoding(enc = {}) {
-  return {
-    type: SET_PLOT_ENCODING,
-    payload: enc,
-  }
-}
+export const setPlotEncoding = (enc={}) => ({
+  type: SET_PLOT_ENCODING,
+  payload: enc,
+});
 
-export function setPlotType(type) {
-  return {
-    type: SET_PLOT_TYPE,
-    payload: type,
-  }
-}
+export const setPlotType = type => ({
+  type: SET_PLOT_TYPE,
+  payload: type,
+});
 
-export function setWidgetName(name = '') {
-  return {
-    type: SET_WIDGET_NAME,
-    payload: name,
-  }
-}
+export const setWidgetName = (name='') => ({
+  type: SET_WIDGET_NAME,
+  payload: name,
+});
 
-export function setWidgetType(type) {
-  return {
-    type: SET_WIDGET_TYPE,
-    payload: type,
-  }
-}
+export const setWidgetType = type => ({
+  type: SET_WIDGET_TYPE,
+  payload: type,
+});

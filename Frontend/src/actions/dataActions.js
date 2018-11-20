@@ -5,11 +5,11 @@ import {
   PURGE_DATA,
 } from "./../constants";
 
-export function fetchData(requestData) {
-  return function (dispatch) {
+export const fetchData = request => {
+  return (dispatch, getState) => {
     dispatch({
       type: FETCH_DATA,
-      payload: requestData,
+      payload: request,
     });
 
     try {
@@ -17,20 +17,18 @@ export function fetchData(requestData) {
 
       dispatch({
         type: FETCH_DATA_FULFILLED,
-        payload: STATIC_DATA[requestData.source],
+        payload: STATIC_DATA[request.subtheme],
       })
     }
-    catch (e) {
+    catch (error) {
       dispatch({
         type: FETCH_DATA_REJECTED,
-        payload: e,
+        payload: error,
       })
     }
   }
-}
+};
 
-export function purgeData() {
-  return {
-    type: PURGE_DATA,
-  }
-}
+export const purgeData = () => ({
+  type: PURGE_DATA,
+});

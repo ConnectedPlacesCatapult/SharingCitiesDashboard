@@ -6,30 +6,9 @@ import {
   TOGGLE_THEME_SELECTED,
 } from "./../constants";
 
-export function fetchThemes() {
-  return function(dispatch) {
-    dispatch({
-      type: FETCH_THEMES
-    });
-
-    // ToDo: Plug this into a real API
-    // ToDo: For now just pulling in data from a JSON file
-    try {
-      const STATIC_THEME_DATA = require('./../data/tempThemes');
-
-      dispatch({
-        type: FETCH_THEMES_FULFILLED,
-        payload: STATIC_THEME_DATA,
-      })
-    }
-    catch (e) {
-      dispatch({
-        type: FETCH_THEMES_REJECTED,
-        payload: e,
-      })
-    }
-
-    /*axios.get('./../data/dataThemes.json')
+export const fetchThemes = () => {
+  // ToDo :: use axios once API is plugged in
+  /*axios.get('./../data/dataThemes.json')
       .then((response) => {
         dispatch({
           type: FETCH_THEMES_FULFILLED,
@@ -42,12 +21,29 @@ export function fetchThemes() {
           payload: err,
         })
       })*/
-  }
-}
 
-export function toggleThemeSelected(id) {
-  return {
-    type: TOGGLE_THEME_SELECTED,
-    payload: id,
+  return (dispatch, getState) => {
+    dispatch({
+      type: FETCH_THEMES,
+    });
+
+    try {
+      const STATIC_THEME_DATA = require('./../data/tempThemes');
+
+      dispatch({
+        type: FETCH_THEMES_FULFILLED,
+        payload: STATIC_THEME_DATA,
+      })
+    } catch (error) {
+      dispatch({
+        type: FETCH_THEMES_REJECTED,
+        payload: error,
+      })
+    }
   }
-}
+};
+
+export const toggleThemeSelected = themeId => ({
+  type: TOGGLE_THEME_SELECTED,
+  payload: themeId,
+});
