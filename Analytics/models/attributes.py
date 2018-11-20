@@ -59,7 +59,6 @@ class Attributes(db.Model):
     def save(self):
         try:
             db.session.add(self)
-            db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
             print(self.name, 'attribute with Unit ID:', str(self.unit_id), 'and Unit Value:', self.unit_value, 'already exists')

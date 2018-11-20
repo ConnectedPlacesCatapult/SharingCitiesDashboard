@@ -18,8 +18,6 @@ class KCLAirQuality(BaseImporter):
     def _create_datasource(self):
         super()._create_datasource()
         self.df = self.create_dataframe(object_separator='@SiteCode')
-        # self.df.to_csv('/Users/hemanshu/Desktop/kcl.csv', index=False)
-        
 
         self.create_datasource_with_values(dataframe=self.df, sensor_tag='@SiteCode', attribute_tag='@SpeciesCode', 
                                             value_tag='@Value', latitude_tag='@Latitude', longitude_tag='@Longitude',

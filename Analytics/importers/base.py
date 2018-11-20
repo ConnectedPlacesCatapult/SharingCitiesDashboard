@@ -132,7 +132,6 @@ class BaseImporter(object):
 
         sensors = dataframe[sensor_tag].tolist()
         attributes = dataframe[attribute_tag].tolist()
-        # values = dataframe[value_tag].tolist()
         latitude = dataframe[latitude_tag].tolist()
         longitude = dataframe[longitude_tag].tolist()
         description = dataframe[description_tag].tolist()
@@ -203,6 +202,7 @@ class BaseImporter(object):
             sensor = sensor.save()
             sensor_objects[sensor.name] = sensor
 
+        db.session.flush()
         return sensor_objects
 
     def save_location(self, latitude: float, longitude: float):
@@ -253,6 +253,7 @@ class BaseImporter(object):
             attr_objects.append(a)
             attr_exists.add(_hash)
 
+        db.session.flush()
         return attr_objects
 
     def stage_attributes(self, attribute: str, unit_value: str, 
@@ -269,6 +270,7 @@ class BaseImporter(object):
             for attr in attrs:
                 sa = SensorAttribute(sensor.id, attr.id)
                 sa.save()
+        db.session.flush()
 
     def create_tables(self, attributes):
         for attr in attributes:
@@ -295,6 +297,7 @@ class BaseImporter(object):
         for attr in attr_objects:
             model = ModelClass(attr.table_name.lower())
             values = []
+            models = []
 
             if attr_value_tag is None:
                 values = dataframe[attr.name].tolist()
@@ -322,14 +325,11 @@ class BaseImporter(object):
                 m.value = values[i]
                 m.api_timestamp = a_date
                 m.timestamp = datetime.utcnow()
+                models.append(m)
 
                 # value_exists.add(_hash)
 
-                try:
-                    db.session.add(m)
-                except IntegrityError:
-                    db.session.rollback()
-                    print('Sensor Name:', sensor_prefix + str(sensor_name), 'With Value: ', str(m.value), 'and Timestamp:', str(m.api_timestamp), 'already exists')
+            db.session.add_all(models)
 
         try:
             db.session.commit()

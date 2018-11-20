@@ -12,7 +12,7 @@ API_NAME = config['API_NAME']
 BASE_URL = config['BASE_URL']
 REFRESH_TIME = config['REFRESH_TIME']
 API_KEY = config['API_KEY']
-TOKEN_EXPIRY = config['TOKEN_EXPIRY'] # Seconds after which token would expire in this case 1 year
+TOKEN_EXPIRY = config['TOKEN_EXPIRY']
 REFRESH_URL = config['REFRESH_URL']
 API_CLASS = config['API_CLASS']
 
@@ -49,14 +49,32 @@ class GreenwichOCC(BaseImporter):
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
         names = self.df['lotcode'].tolist()
+        name_set = set()
+        location_sensor = {}
+        sensor_location = {}
         latitude = []
         longitude = []
 
         for s in names:
-            _s = Sensor.get_by_name('smart_parking_' + str(s))
-            _l = location.Location.get_by_id(_s.l_id)
-            latitude.append(_l.lat)
-            longitude.append(_l.lon)
+            name_set.add('smart_parking_' + str(s))
+
+        sensors = Sensor.get_by_name_in(name_set)
+        loc_ids = []
+        for s in sensors:
+            loc_ids.append(s.l_id)
+            location_sensor[s.l_id] = s
+        locations = location.Location.get_by_id_in(loc_ids)
+
+        for loc in locations:
+            if loc.id in location_sensor:
+                _sensor = location_sensor[loc.id]
+                sensor_location[_sensor.name] = loc
+       
+        for s in names:
+            _s = 'smart_parking_' + str(s)
+            if _s in sensor_location:
+                latitude.append(sensor_location[_s].lat)
+                longitude.append(sensor_location[_s].lon)
 
         self.df['latitude'] = latitude
         self.df['longitude'] = longitude

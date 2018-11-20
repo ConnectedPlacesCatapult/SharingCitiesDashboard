@@ -34,7 +34,6 @@ class SensorAttribute(db.Model):
     def save(self):
         try:
             db.session.add(self)
-            db.session.flush()
         except IntegrityError:
             db.session.rollback()
             print('Sensor ID: %s, Attribute Id: %s already exists' % (self.s_id, self.a_id))

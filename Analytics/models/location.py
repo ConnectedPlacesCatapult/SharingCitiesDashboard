@@ -46,5 +46,9 @@ class Location(db.Model):
         return Location.query.filter_by(id=id).first()
 
     @classmethod
+    def get_by_id_in(cls, ids):
+        return db.session.query(Location).filter(Location.id.in_((ids))).all()
+
+    @classmethod
     def get_by_lat_lon(cls, lat, lon):
         return Location.query.filter_by(lat=lat, lon=lon).first()
