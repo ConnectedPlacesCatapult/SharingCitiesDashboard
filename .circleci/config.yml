@@ -21,10 +21,12 @@ jobs:
           name: Setup Dependencies
           command: npm install
 
-      # - save_cache: # special step to save the dependency cache
-      #     key: dependency-cache-{{ checksum "package.json" }}
-      #     paths:
-      #       - ./node_modules
+      - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
         
       # run tests!
-      - run: npm test
+      - run: 
+      - run: npm cache clean
+      - run: npm start -- --reset-cache
