@@ -8,7 +8,7 @@ jobs:
     working_directory: ~/SharingCitiesDashboard/Frontend
 
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:11
     branches:
       only:
         - master # list of branches to build
