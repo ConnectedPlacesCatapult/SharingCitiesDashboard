@@ -8,3 +8,4 @@ flask-migrate
 flask-script
 pandas
 numpy
+geoalchemy2
