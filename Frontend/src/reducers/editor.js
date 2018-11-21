@@ -1,9 +1,9 @@
 import {
   PURGE_EDITOR,
-  SET_MAP_CAN_MAP,
   SET_MAP_CENTER,
   SET_MAP_DATA,
   SET_MAP_HEATMAP_ATTRIBUTE,
+  SET_MAP_IS_MAPPABLE,
   SET_MAP_SHOW_HEATMAP,
   SET_MAP_TILE_LAYER,
   SET_MAP_ZOOM,
@@ -18,7 +18,7 @@ import {
 const initialState = {
   name: '',
   type: null,
-  canMap: false,
+  isMappable: false,
   plotConfig: {
     spec: {
       description: "",
@@ -47,13 +47,6 @@ export default (state=initialState, action={}) => {
   switch (action.type) {
     case PURGE_EDITOR: {
       return initialState
-    }
-
-    case SET_MAP_CAN_MAP: {
-      return {
-        ...state,
-        canMap: action.payload,
-      }
     }
 
     case SET_MAP_CENTER: {
@@ -106,6 +99,13 @@ export default (state=initialState, action={}) => {
           ...state.mapConfig,
           heatmapAttribute: action.payload,
         }
+      }
+    }
+
+    case SET_MAP_IS_MAPPABLE: {
+      return {
+        ...state,
+        isMappable: action.payload,
       }
     }
 

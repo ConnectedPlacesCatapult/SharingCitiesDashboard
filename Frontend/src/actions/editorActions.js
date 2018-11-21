@@ -1,9 +1,9 @@
 import {
   PURGE_EDITOR,
-  SET_MAP_CAN_MAP,
   SET_MAP_CENTER,
   SET_MAP_DATA,
   SET_MAP_HEATMAP_ATTRIBUTE,
+  SET_MAP_IS_MAPPABLE,
   SET_MAP_SHOW_HEATMAP,
   SET_MAP_TILE_LAYER,
   SET_MAP_ZOOM,
@@ -15,7 +15,7 @@ import {
   SET_WIDGET_TYPE,
 } from "./../constants";
 
-const canMap = record => {
+const isMappable = record => {
   const requiredKeys = ['lat', 'lon'];
   const presentKeys = Object.keys(record);
 
@@ -80,8 +80,8 @@ export const initializeEditor = () => {
     });
 
     dispatch({
-      type: SET_MAP_CAN_MAP,
-      payload: canMap(data[0])
+      type: SET_MAP_IS_MAPPABLE,
+      payload: isMappable(data[0])
     });
 
     dispatch({
@@ -115,14 +115,19 @@ export const purgeEditor = () => ({
   type: PURGE_EDITOR,
 });
 
+export const setMapIsMappable = isMappable => ({
+  type: SET_MAP_IS_MAPPABLE,
+  payload: isMappable,
+});
+
 export const setMapTileLayer = tileLayer => ({
   type: SET_MAP_TILE_LAYER,
   payload: tileLayer,
 });
 
-export const setMapCenter = (lat, lng) => ({
+export const setMapCenter = (center) => ({
   type: SET_MAP_CENTER,
-  payload: { lat, lng },
+  payload: center,
 });
 
 export const setMapHeatmapAttribute = attr => ({
@@ -138,6 +143,11 @@ export const setMapShowHeatmap = showHeatmap => ({
 export const setMapZoom = zoom => ({
   type: SET_MAP_ZOOM,
   payload: zoom,
+});
+
+export const setPlotData = (data=[]) => ({
+  type: SET_PLOT_DATA,
+  payload: data,
 });
 
 export const setPlotDescription = (desc='') => ({

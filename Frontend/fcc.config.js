@@ -7,6 +7,7 @@ module.exports = {
   localeStyleSheet:'./styles/lisbon.css',
 
   // overrides for MaterialUI default theme
+  // ToDo :: change palette type to 'dark' and update styles accordingly
   localeThemeData: {
     "palette": {
      //"type": "dark",
@@ -72,15 +73,15 @@ module.exports = {
     'scatter',
   ],
   widgetEditorDefaults: {
-    widgetName: 'New Widget',
-    widgetType: 'plot',
     plotType: 'bar',
-    mapTileLayer: 'OpenStreetMap.Mapnik',
-    mapZoom: 13,
     mapCenter: {
       lat: 51.505,
       lng: -0.09,
     },
     mapShowHeatmap: false,
+    mapTileLayer: 'CartoDB.DarkMatter',
+    mapZoom: 13,
+    widgetName: 'New Widget',
+    widgetType: 'plot',
   }
 };

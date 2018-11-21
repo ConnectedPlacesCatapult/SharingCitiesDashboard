@@ -48,7 +48,7 @@ class TypeSelector extends React.Component {
             value="map"
             variant="contained"
             color="primary"
-            disabled={!editor.canMap}
+            disabled={!editor.isMappable}
           >
             Map
           </Button>

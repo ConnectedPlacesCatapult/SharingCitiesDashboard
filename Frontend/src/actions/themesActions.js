@@ -1,4 +1,4 @@
-//import axios from "axios";
+import axios from "axios";
 import {
   FETCH_THEMES,
   FETCH_THEMES_FULFILLED,
