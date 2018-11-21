@@ -6,38 +6,29 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:7.10
+      - image: circleci/node:8
     branches:
       only:
         - master # list of branches to build
         - /testintegrations/ # or regexes
-        
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
 
-    working_directory: ~/repo/Frontend
+    working_directory: ~/Frontend
     
 
     steps:
       - checkout
 
       # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+      - restore_cache: # special step to restore the dependency cache
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Setup Dependencies
+          command: npm install
 
-      - run: yarn install
-
-      - save_cache:
+      - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "package.json" }}
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - ./node_modules
         
       # run tests!
-      - run: yarn test
-
-
+      - run: npm test
