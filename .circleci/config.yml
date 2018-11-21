@@ -27,6 +27,4 @@ jobs:
             - ./node_modules
         
       # run tests!
-      - run: 
-      - run: npm cache clean
-      - run: npm start -- --reset-cache
+      - run: npm test
