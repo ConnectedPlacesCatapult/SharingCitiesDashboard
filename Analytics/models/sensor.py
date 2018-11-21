@@ -41,7 +41,7 @@ class Sensor(db.Model):
     def save(self):
         try:
             db.session.add(self)
-            # db.session.flush()
+            db.session.flush()
         except (IntegrityError, FlushError) as ie:
             db.session.rollback()
             print(self.name, 'sensor already exists with API ID:', str(self.a_id), 'and Location ID:', str(self.l_id))
