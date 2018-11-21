@@ -5,7 +5,7 @@
 version: 2
 jobs:
   build:
-    #working_directory: ~/repo
+    working_directory: ~/SharingCitiesDashboard/Frontend
 
     docker:
       - image: circleci/node:8
@@ -18,7 +18,6 @@ jobs:
       - checkout
 
       - run:
-          command "cp Frontend/package.json package.json"
           name: Setup Dependencies
           command: npm install
 
