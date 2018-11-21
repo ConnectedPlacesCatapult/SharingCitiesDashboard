@@ -9,12 +9,17 @@ jobs:
       # specify the version you desire here
       - image: circleci/node:7.10
       
+    branches:
+      only:
+     - master # list of branches to build
+     - /testintegrations/ # or regexes
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
 
     working_directory: ~/SharingCitiesDashboard/Frontend
+    
 
     steps:
       - checkout
