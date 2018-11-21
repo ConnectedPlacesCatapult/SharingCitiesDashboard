@@ -5,6 +5,8 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/SharingCitiesDashboard/Frontend
+
     docker:
       - image: circleci/node:8
     branches:
@@ -12,15 +14,9 @@ jobs:
         - master # list of branches to build
         - /testintegrations/ # or regexes
 
-    working_directory: ~/Frontend
-    
-
     steps:
       - checkout
 
-      # Download and cache dependencies
-      - restore_cache: # special step to restore the dependency cache
-          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Setup Dependencies
           command: npm install
