@@ -35,7 +35,7 @@ class Sensor(db.Model):
             'Api id': self.a_id,
             'Location id': self.l_id,
             'Name': self.name,
-            'Timestamp': self.timestamp
+            'Timestamp': str(self.timestamp)
         }
 
     def save(self):
@@ -56,8 +56,16 @@ class Sensor(db.Model):
         return Sensor.query.filter_by(l_id=self.l_id, name=self.name).first()
 
     @classmethod
+    def get_all(self):
+        return Sensor.query.all()
+
+    @classmethod
     def get_by_name(cls, name):
         return Sensor.query.filter_by(name=name).first()
+
+    @classmethod
+    def get_by_id(cls, id):
+        return Sensor.query.filter_by(id=id).first()
 
     @classmethod
     def get_by_name_loc(cls, name, loc_id):

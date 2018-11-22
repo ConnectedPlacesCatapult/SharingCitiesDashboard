@@ -3,6 +3,7 @@ from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from resources.analytics import Analytics
+from resources.request_for_data import RequestForData
 from db import db
 
 def create_app(**config_overrides):
@@ -13,7 +14,6 @@ def create_app(**config_overrides):
     
     db.init_app(app)
     db.app = app
-    # db.Model.metadata.reflect(db.engine)
     
     from models.operation import Operation
     from models.request_analytics import RequestAnalytics
@@ -31,5 +31,6 @@ def create_app(**config_overrides):
 
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
+    api.add_resource(RequestForData, '/data')
 
     return app

@@ -1,0 +1,199 @@
+"""
+API for retrieving data from backend
+Note: If no parameters are passed then by default all the themes are returned
+@params
+	Parameters can be passed with url using get requests
+	theme: accepts an integer id and return subthemes for that theme
+	subtheme: accepts an integer id and returns all the attributes 
+				associated with the subtheme
+	attribute: accepts name of attributes, more then one attribute names 
+				can be passed as comma separated values
+	attributedata: works in similar way to attribute but instead of returing
+					attribute details it return data associated with the 
+					attribute
+	sensor: accepts an id of the sensor and return its details, also accept a 
+			value 'all' which would return all the sensor in the system
+	sensorname: accepts the name of the sensor, works same as attribute can 
+				return information about multiple sensor names when passed as
+				comma separated string
+	limit: accepts an integer and would return only those number of records
+			default is 30
+	offset: accepts an integer and default is 30, used when one would want to
+			skip few records, useful in pagination
+	fromdate: accepts a date in YYYY-MM-DD format, start date of the records
+	todate: accepts a date in YYYY-MM-DD formart, end date of the records
+	operation: when mathematical calculation needs to be perfomed
+
+	Note: fromdate and todate both needs to be present in order for date filtering to work
+
+	Few example queries:
+		{URL}?sensor='<id-of-sensor>' // Retriving a single sensor
+		{URL}?sensor=all 			  // Retriving all the sensors
+		{URL}?sensorname='<name-of-sensor>' // Retriving by name
+		{URL}?sensor='<name1>,<name2>' // To retrieve multiple records
+		{URL}?attributedata='<name-of-attribute>&limit=60&offset=60' // Retrieve records but increase limit and skip 60
+		{URL}?attributedata='<name1><name2>&limit=60&offset=60&fromdate=2018-11-22&todate=2018-11-24'
+
+"""
+
+
+from flask_restful import Resource, reqparse
+from db import db
+from models.theme import Theme
+from models.attributes import Attributes
+from models.theme import SubTheme
+from models.attribute_data import ModelClass
+from models.sensor import Sensor
+from sqlalchemy import desc
+from datetime import datetime
+
+LIMIT = 30
+OFFSET = 30
+
+class RequestForData(Resource):
+	parser = reqparse.RequestParser()
+	parser.add_argument('theme', type=str)
+	parser.add_argument('subtheme', type=str)
+	parser.add_argument('attribute', type=str)
+	parser.add_argument('attributedata', type=str)
+	parser.add_argument('sensor', type=str)
+	parser.add_argument('sensorname', type=str)
+	parser.add_argument('limit', type=int)
+	parser.add_argument('offset', type=int)
+	parser.add_argument('fromdate', type=str)
+	parser.add_argument('todate', type=str)
+	parser.add_argument('operation', 
+						type=str,
+						choices=('mean', 'median', 'sum'))
+
+	def get(self):
+		args = self.parser.parse_args()
+		theme, subtheme, attribute_data, sensor, sensor_name, attributes = None, None, None, None, None, []
+
+		if 'theme' in args:
+			theme = args['theme']
+
+		if 'subtheme' in args:
+			subtheme = args['subtheme']
+
+		if 'attributedata' in args:
+			attribute_data = args['attributedata']
+
+		if 'attribute' in args and args['attribute'] is not None:
+			_attributes = args['attribute']
+			if _attributes != '':
+				attributes = _attributes.split(',')
+
+		if 'sensor' in args and args['sensor'] is not None:
+			sensor = args['sensor']
+			if sensor != '':
+				if sensor == 'all':
+					sensors = Sensor.get_all()
+					return [a.json() for a in sensors], 200
+				else:
+					return (Sensor.get_by_id(sensor)).json(), 200
+
+		if 'sensorname' in args and args['sensorname'] is not None:
+			sensor_name = args['sensorname']
+			if sensor_name != '':
+				_sensors = sensor_name.split(',')
+				_by_name = Sensor.get_by_name_in(_sensors)
+				return [a.json() for a in _by_name], 200
+
+		if theme is None and subtheme is None \
+			and len(attributes) == 0 and attribute_data is None \
+			and sensor is None and sensor_name is None:
+			themes = Theme.get_all()
+			return [a.json() for a in themes], 200
+
+		if attribute_data is not None:
+			global LIMIT, OFFSET
+			data = None
+			if 'limit' in args and args['limit'] is not None:
+				LIMIT = args['limit']
+
+			if 'offset' in args and args['offset'] is not None:
+				OFFSET = args['offset']
+
+			if ('fromdate' in args and args['fromdate'] is not None 
+				and 'todate' in args and args['todate'] is not None):
+				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
+												args['fromdate'], args['todate'])
+			else:
+				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET)
+
+			return data, 200
+
+		if attributes:
+			_attrs = []
+			attr = Attributes.get_by_name_in(attributes)
+			for a in attr:
+				_attrs.append(a.json())
+			return _attrs, 200
+
+		if subtheme is not None and subtheme != '':
+			attributes = Attributes.get_by_sub_theme_id(subtheme)
+			return [a.json() for a in attributes], 200
+
+		if theme is not None and theme != '':
+			subthemes = SubTheme.get_by_theme_id(theme)
+			return [a.json() for a in subthemes], 200
+
+		return {
+			"error": "error occured while processing request"
+		}, 400
+
+
+	'''
+	@Params
+		attribute_name: is string passed as parameter with the URL
+		limit: Default is 30, number of records to be returned
+		offset: From where the records needs to start
+		Filters:
+			fromdate: Format for passing date is YYYY-MM-DD
+			todate: Format for the passing the is YYYY-MM-DD
+		operation: Mathematical operations that can be performed on data
+					accepted values are: 'mean', 'median', 'sum'
+					(More to be added)
+	'''
+	def get_attribute_data(self, attribute_name, limit, offset,
+							fromdate=None, todate=None, operation=None):
+		# clearing previous metadata
+		db.metadata.clear()
+		attrs = attribute_name.split(',')
+
+		attributes = Attributes.get_by_name_in(attrs)
+		data = []
+		for attribute in attributes:
+			model = ModelClass(attribute.table_name.lower())
+			count = db.session.query(model).count()
+			values = []
+			if fromdate is not None and todate is not None:
+				values = db.session.query(model) \
+						.filter(model.api_timestamp >= fromdate) \
+						.filter(model.api_timestamp <= todate) \
+						.limit(limit).offset(abs(count - offset)) \
+						.all()
+			else:
+				values = db.session.query(model).limit(limit) \
+								.offset(abs(count - offset)).all()
+			_common = {
+					'Attribute_Table': attribute.table_name,
+					'Attribute_Name': attribute.name,
+					'Attribute_Description': attribute.description,
+					'Attribute_Unit_Value': attribute.unit_value,
+					'Total_Records': count
+					}
+			temp = []
+			for i in range(len(values)-1, -1, -1):
+				temp.append({
+					'Sensor_id': values[i].s_id,
+					'Value': values[i].value,
+					'Timestamp': str(values[i].api_timestamp)
+				})
+			_common['Attribute_Values'] = temp
+			data.append(_common)
+				
+		return data
+
+		
