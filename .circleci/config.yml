@@ -16,10 +16,15 @@ jobs:
 
     steps:
       - checkout
+      - run: |
+            cp Frontend/package.json package.json
+            rm Frontend/package.json
 
       - run:
           name: Setup Dependencies
           command: npm install
+
+      
 
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "package.json" }}
