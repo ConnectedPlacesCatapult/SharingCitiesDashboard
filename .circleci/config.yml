@@ -16,9 +16,9 @@ jobs:
 
     steps:
       - checkout
-      # - run: |
-      #       cp package.json ../package.json
-      #       rm Frontend/package.json
+      - run: |
+            cp package.json ../package.json
+            rm package.json
 
       - run:
           name: Setup Dependencies
