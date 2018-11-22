@@ -22,12 +22,12 @@ jobs:
       - run: |
             ls -lrt
 
-      - run: |
-            cd Frontend
-            ls -lrt
+      # - run: |
+      #       cd Frontend
+      #       ls -lrt
 
-      - run: |
-            cd ../
+      # - run: |
+      #       cd ../
 
       - run: |
             cp Frontend/package.json package.json
