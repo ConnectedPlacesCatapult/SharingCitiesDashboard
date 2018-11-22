@@ -5,7 +5,7 @@
 version: 2
 jobs:
   build:
-    #working_directory: ~/SharingCitiesDashboard/Frontend
+    working_directory: ~/SharingCitiesDashboard/Frontend
 
     docker:
       - image: circleci/node:11
@@ -16,10 +16,8 @@ jobs:
 
     steps:
       - checkout
-
-    working_directory: ~/SharingCitiesDashboard/Frontend
-    
       - run: |
+            pwd
             cp package.json ../package.json
             rm package.json
 
