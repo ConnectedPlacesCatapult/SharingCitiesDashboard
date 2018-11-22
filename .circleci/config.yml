@@ -5,7 +5,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/SharingCitiesDashboard/Frontend
+    working_directory: ~/SharingCitiesDashboard
 
     docker:
       - image: circleci/node:11
@@ -23,8 +23,8 @@ jobs:
             ls -lrt
 
       - run: |
-            cp package.json ../package.json
-            rm package.json
+            cp Frontend/package.json package.json
+            rm Frontend/package.json
 
       - run:
           name: Setup Dependencies
