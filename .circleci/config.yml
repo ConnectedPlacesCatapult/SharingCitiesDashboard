@@ -5,17 +5,20 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/SharingCitiesDashboard/Frontend
+    #working_directory: ~/SharingCitiesDashboard/Frontend
 
     docker:
       - image: circleci/node:11
     branches:
       only:
-        - master # list of branches to build
+        #- master # list of branches to build
         - /testintegrations2/ # or regexes
 
     steps:
       - checkout
+
+    working_directory: ~/SharingCitiesDashboard/Frontend
+    
       - run: |
             cp package.json ../package.json
             rm package.json
