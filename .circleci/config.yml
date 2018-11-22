@@ -18,6 +18,8 @@ jobs:
       - checkout
       - run: |
             pwd
+
+      - run: |
             cp package.json ../package.json
             rm package.json
 
