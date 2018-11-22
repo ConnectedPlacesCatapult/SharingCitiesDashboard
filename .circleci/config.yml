@@ -20,7 +20,7 @@ jobs:
             pwd
 
       - run: |
-            ls - lrt
+            ls -lrt
 
       - run: |
             cp package.json ../package.json
