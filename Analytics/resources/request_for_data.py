@@ -46,6 +46,7 @@ from models.attribute_data import ModelClass
 from models.sensor import Sensor
 from sqlalchemy import desc
 from datetime import datetime
+import statistics
 
 LIMIT = 30
 OFFSET = 30
@@ -109,18 +110,23 @@ class RequestForData(Resource):
 		if attribute_data is not None:
 			global LIMIT, OFFSET
 			data = None
+			operation = None
 			if 'limit' in args and args['limit'] is not None:
 				LIMIT = args['limit']
 
 			if 'offset' in args and args['offset'] is not None:
 				OFFSET = args['offset']
 
+			if 'operation' in args and args['operation'] is not None:
+				operation = args['operation']
+
 			if ('fromdate' in args and args['fromdate'] is not None 
 				and 'todate' in args and args['todate'] is not None):
 				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
-												args['fromdate'], args['todate'])
+												args['fromdate'], args['todate'], operation)
 			else:
-				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET)
+				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
+
 
 			return data, 200
 
@@ -169,14 +175,24 @@ class RequestForData(Resource):
 			count = db.session.query(model).count()
 			values = []
 			if fromdate is not None and todate is not None:
-				values = db.session.query(model) \
-						.filter(model.api_timestamp >= fromdate) \
-						.filter(model.api_timestamp <= todate) \
-						.limit(limit).offset(abs(count - offset)) \
-						.all()
+				if operation is None:
+					values = db.session.query(model) \
+							.filter(model.api_timestamp >= fromdate) \
+							.filter(model.api_timestamp <= todate) \
+							.limit(limit).offset(abs(count - offset)) \
+							.all()
+				else:
+					values = db.session.query(model) \
+							.filter(model.api_timestamp >= fromdate) \
+							.filter(model.api_timestamp <= todate) \
+							.all()
 			else:
-				values = db.session.query(model).limit(limit) \
-								.offset(abs(count - offset)).all()
+				if operation is None:
+					values = db.session.query(model).limit(limit) \
+									.offset(abs(count - offset)).all()
+				else:
+					values = db.session.query(model).all()
+
 			_common = {
 					'Attribute_Table': attribute.table_name,
 					'Attribute_Name': attribute.name,
@@ -185,13 +201,25 @@ class RequestForData(Resource):
 					'Total_Records': count
 					}
 			temp = []
-			for i in range(len(values)-1, -1, -1):
-				temp.append({
-					'Sensor_id': values[i].s_id,
-					'Value': values[i].value,
-					'Timestamp': str(values[i].api_timestamp)
-				})
-			_common['Attribute_Values'] = temp
+			if operation is None:
+				for i in range(len(values)-1, -1, -1):
+					temp.append({
+						'Sensor_id': values[i].s_id,
+						'Value': values[i].value,
+						'Timestamp': str(values[i].api_timestamp)
+					})
+				_common['Attribute_Values'] = temp
+			else:
+				_values = [v.value for v in values]
+				_int_values = list(map(float, _values))
+				_operation_result = 0
+				if operation == 'sum':
+					_operation_result = sum(_int_values)
+				elif operation == 'mean':
+					_operation_result = sum(_int_values) / len(_int_values)
+				elif operation == 'median':
+					_operation_result = statistics.median(_int_values)
+				_common['Result_' + operation] = _operation_result
 			data.append(_common)
 				
 		return data
