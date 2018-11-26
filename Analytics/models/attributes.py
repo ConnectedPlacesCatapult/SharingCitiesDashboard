@@ -79,6 +79,10 @@ class Attributes(db.Model):
         return db.session.query(Attributes).filter(Attributes.name.in_((names))).all()
 
     @classmethod
+    def get_by_id_in(cls, ids):
+        return db.session.query(Attributes).filter(Attributes.id.in_((ids))).all()
+
+    @classmethod
     def get_all(cls):
         return Attributes.query.all()
 

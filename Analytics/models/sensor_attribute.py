@@ -41,3 +41,7 @@ class SensorAttribute(db.Model):
     def commit(self):
         db.session.commit()
 
+    @classmethod
+    def get_by_id_in(cls, ids):
+        return db.session.query(SensorAttribute).filter(SensorAttribute.s_id.in_((ids))).all()
+

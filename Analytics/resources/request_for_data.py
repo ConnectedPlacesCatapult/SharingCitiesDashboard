@@ -43,6 +43,7 @@ from models.theme import Theme
 from models.attributes import Attributes
 from models.theme import SubTheme
 from models.attribute_data import ModelClass
+from models.sensor_attribute import SensorAttribute
 from models.sensor import Sensor
 from sqlalchemy import desc
 from datetime import datetime
@@ -59,6 +60,7 @@ class RequestForData(Resource):
 	parser.add_argument('attributedata', type=str)
 	parser.add_argument('sensor', type=str)
 	parser.add_argument('sensorname', type=str)
+	parser.add_argument('sensorattribute', type=str)
 	parser.add_argument('limit', type=int)
 	parser.add_argument('offset', type=int)
 	parser.add_argument('fromdate', type=str)
@@ -69,7 +71,7 @@ class RequestForData(Resource):
 
 	def get(self):
 		args = self.parser.parse_args()
-		theme, subtheme, attribute_data, sensor, sensor_name, attributes = None, None, None, None, None, []
+		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes = None, None, None, None, None, None, []
 
 		if 'theme' in args:
 			theme = args['theme']
@@ -101,9 +103,19 @@ class RequestForData(Resource):
 				_by_name = Sensor.get_by_name_in(_sensors)
 				return [a.json() for a in _by_name], 200
 
+		if 'sensorattribute' in args and args['sensorattribute'] is not None:
+			sensor_attribute = args['sensorattribute']
+			if sensor_attribute != '':
+				_sen_attrs_ids = sensor_attribute.split(',')
+				_sen_attrs = SensorAttribute.get_by_id_in(_sen_attrs_ids)
+				attrs_ids = [_id.a_id for _id in _sen_attrs]
+				_attributes = Attributes.get_by_id_in(attrs_ids)
+				return [a.json() for a in _attributes], 200
+
+
 		if theme is None and subtheme is None \
 			and len(attributes) == 0 and attribute_data is None \
-			and sensor is None and sensor_name is None:
+			and sensor is None and sensor_name is None and sensor_attribute is None:
 			themes = Theme.get_all()
 			return [a.json() for a in themes], 200
 
