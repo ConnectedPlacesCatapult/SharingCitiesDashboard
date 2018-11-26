@@ -16,7 +16,7 @@ class AddDatasource(Command):
 
 	def run(self, get_datasources, add_datasource):
 		config = get_config()
-		config = config['test']
+		config = config[config['environment']]
 		_importers = {}
 		for c in config:
 			_importers[config[c]['API_NAME']] = config[c]['API_CLASS']
@@ -25,7 +25,7 @@ class AddDatasource(Command):
 
 		if get_datasources:
 			return
-		
+
 		_p, _c = _importers[add_datasource].rsplit('.', 1)
 		_class = getattr(importlib.import_module(_p), _c)
 		_object = _class()
