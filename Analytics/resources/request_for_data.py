@@ -16,6 +16,8 @@ Note: If no parameters are passed then by default all the themes are returned
 	sensorname: accepts the name of the sensor, works same as attribute can 
 				return information about multiple sensor names when passed as
 				comma separated string
+	sensorattribute: accepts the id(s) of the sensor and returns the attributes 
+					associated with the sensor
 	limit: accepts an integer and would return only those number of records
 			default is 30
 	offset: accepts an integer and default is 30, used when one would want to
@@ -54,20 +56,21 @@ OFFSET = 30
 
 class RequestForData(Resource):
 	parser = reqparse.RequestParser()
-	parser.add_argument('theme', type=str)
-	parser.add_argument('subtheme', type=str)
-	parser.add_argument('attribute', type=str)
-	parser.add_argument('attributedata', type=str)
-	parser.add_argument('sensor', type=str)
-	parser.add_argument('sensorname', type=str)
-	parser.add_argument('sensorattribute', type=str)
-	parser.add_argument('limit', type=int)
-	parser.add_argument('offset', type=int)
-	parser.add_argument('fromdate', type=str)
-	parser.add_argument('todate', type=str)
+	parser.add_argument('theme', type=str, store_missing=False)
+	parser.add_argument('subtheme', type=str, store_missing=False)
+	parser.add_argument('attribute', type=str, store_missing=False)
+	parser.add_argument('attributedata', type=str, store_missing=False)
+	parser.add_argument('sensor', type=str, store_missing=False)
+	parser.add_argument('sensorname', type=str, store_missing=False)
+	parser.add_argument('sensorattribute', type=str, store_missing=False)
+	parser.add_argument('limit', type=int, store_missing=False)
+	parser.add_argument('offset', type=int, store_missing=False)
+	parser.add_argument('fromdate', type=str, store_missing=False)
+	parser.add_argument('todate', type=str, store_missing=False)
 	parser.add_argument('operation', 
 						type=str,
-						choices=('mean', 'median', 'sum'))
+						choices=('mean', 'median', 'sum'),
+						store_missing=False)
 
 	def get(self):
 		args = self.parser.parse_args()
