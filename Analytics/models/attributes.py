@@ -52,8 +52,7 @@ class Attributes(db.Model):
             'Sub Theme id': self.sub_theme_id,
             'Unit': self.unit_id,
             'Unit Value': self.unit_value,
-            'Description': self.description,
-            'timestamp': self.timestamp
+            'Description': self.description
         }
 
     def save(self):
@@ -74,8 +73,23 @@ class Attributes(db.Model):
 
     @classmethod
     def get_by_name(cls, name):
-        return Attributes.query.filter_by(name=name).first()
+        return Attributes.query.filter_by(name=name).all()
+
+    @classmethod
+    def get_by_name_in(cls, names):
+        return db.session.query(Attributes).filter(Attributes.name.in_((names))).all()
+
+    @classmethod
+    def get_by_id_in(cls, ids):
+        return db.session.query(Attributes).filter(Attributes.id.in_((ids))).all()
 
     @classmethod
     def get_all(cls):
         return Attributes.query.all()
+
+    @classmethod
+    def get_by_sub_theme_id(cls, sub_theme_id):
+        return Attributes.query.filter_by(sub_theme_id=sub_theme_id).all()
+
+
+

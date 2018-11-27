@@ -1,8 +1,7 @@
 from importers.base import BaseImporter, Location, get_config
 
-
 config = get_config()
-config = config['test']['air_quality']
+config = config[config['environment']]['air_quality']
 
 API_NAME = config['API_NAME']
 BASE_URL = config['BASE_URL']

@@ -158,7 +158,8 @@ class BaseImporter(object):
 
         self.save_attr_sensor(attr_objects, sensor_objects.values())
         self.create_tables(attr_objects)
-        self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, '', api_timestamp_tag, value_tag)
+        self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, '', 
+                            api_timestamp_tag, value_tag, attribute_tag, unit_value_tag)
 
         
 
@@ -281,7 +282,8 @@ class BaseImporter(object):
                 print(attr.table_name.replace('-', '_'), 'already exists')
 
     def insert_data(self, attr_objects, sensor_objects: dict, dataframe, 
-                    sensor_tag, sensor_prefix, api_timestamp_tag, attr_value_tag = None):
+                    sensor_tag, sensor_prefix, api_timestamp_tag, attr_value_tag = None, 
+                    attribute_tag=None, unit_value_tag=None):
         db.metadata.clear()
         sensors = dataframe[sensor_tag].tolist()
         value_exists = set()
@@ -290,11 +292,11 @@ class BaseImporter(object):
         if api_timestamp_tag is not None:
             api_timestamp = dataframe[api_timestamp_tag].tolist()
 
-        _values = []
-        if attr_value_tag is not None:
-            _values = dataframe[attr_value_tag].tolist()
-
         for attr in attr_objects:
+            _values = []
+            if attr_value_tag is not None:
+                _dataframe = dataframe[(dataframe[attribute_tag]  == attr.name) & (dataframe[unit_value_tag]  == attr.unit_value)]
+                _values = _dataframe[attr_value_tag].tolist()
             model = ModelClass(attr.table_name.lower())
             values = []
             models = []

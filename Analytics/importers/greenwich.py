@@ -6,7 +6,7 @@ from models.sensor import Sensor
 from models import location
 
 config = get_config()
-config = config['test']['greenwich_meta']
+config = config[config['environment']]['greenwich_meta']
 
 API_NAME = config['API_NAME']
 BASE_URL = config['BASE_URL']
@@ -34,7 +34,7 @@ class GreenwichMeta(BaseImporter):
 
 
 config = get_config()
-config = config['test']['greenwich_occ']
+config = config[config['environment']]['greenwich_occ']
 
 API_NAME_OCC = config['API_NAME']
 BASE_URL_OCC = config['BASE_URL']

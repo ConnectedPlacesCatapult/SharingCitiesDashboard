@@ -1,3 +1,4 @@
+import json
 from db import db
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
@@ -21,11 +22,13 @@ class Theme(db.Model):
     def __repr__(self):
         return 'Theme name: %s' % self.name
 
+    def __str__(self):
+        return self.json()
+
     def json(self):
         return {
             'id': self.id,
-            'Name': self.name,
-            'Timestamp': self.timestamp
+            'Name': self.name
         }
 
     def save(self):
@@ -70,8 +73,7 @@ class SubTheme(db.Model):
         return {
             'id': self.id,
             'Theme id': self.t_id,
-            'Name': self.name,
-            'Timestamp': self.timestamp
+            'Name': self.name
         }
     
     def save(self):
