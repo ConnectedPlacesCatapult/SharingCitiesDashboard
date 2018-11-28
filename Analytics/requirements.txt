@@ -9,3 +9,5 @@ flask-script
 pandas
 numpy
 geoalchemy2
+scipy
+scikit-learn
