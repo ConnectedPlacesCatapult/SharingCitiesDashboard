@@ -5,11 +5,13 @@ RUN apt-get install -y libpq-dev python-dev libxml2-dev libxslt1-dev libldap2-de
 RUN apt-get install -y python3 python3-dev python3-pip
 COPY Analytics/requirements.txt /
 RUN sudo apt-get update && apt-get -y install postgresql postgresql-client postgresql-contrib
+RUN sudo apt-get -y install postgis
 RUN pip3 install -r /requirements.txt
 USER postgres
 RUN    /etc/init.d/postgresql start &&\
     psql --command "CREATE USER root WITH SUPERUSER PASSWORD 'root';" &&\
-    createdb -O root test_analytics
+    createdb -O root test_analytics &&\
+    psql -d test_analytics -c "CREATE EXTENSION postgis;"
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.5/main/pg_hba.conf
 USER root
 
