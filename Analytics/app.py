@@ -12,6 +12,7 @@ def create_app(**config_overrides):
     api = Api(app)
     
     db.init_app(app)
+    db.app = app
 
     from models.operation import Operation
     from models.request_analytics import RequestAnalytics
