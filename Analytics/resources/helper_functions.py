@@ -1,15 +1,7 @@
-import os
-import pandas as pd
-from matplotlib import pyplot as plt
 import numpy as np
 from scipy.optimize import minimize              
-from itertools import product
 from sklearn.model_selection import TimeSeriesSplit 
 from sklearn.metrics import mean_squared_error
-from sklearn.metrics import mean_absolute_error
-from scipy import signal
-from scipy.special import comb
-from scipy.optimize import least_squares
 from resources.holt_winters import HoltWinters
 
 def mean_absolute_percentage_error(y_true, y_pred): 
