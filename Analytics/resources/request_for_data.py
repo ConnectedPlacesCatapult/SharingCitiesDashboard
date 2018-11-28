@@ -35,11 +35,14 @@ Note: If no parameters are passed then by default all the themes are returned
 		{URL}?sensor='<name1>,<name2>' // To retrieve multiple records
 		{URL}?attributedata='<name-of-attribute>&limit=60&offset=60' // Retrieve records but increase limit and skip 60
 		{URL}?attributedata='<name1><name2>&limit=60&offset=60&fromdate=2018-11-22&todate=2018-11-24'
+		{URL}?attributedata='<name1>&predictions=True' // To calculate predictions for all sensors for that attribute. Defaults to 100 time points
+		{URL}?attributedata='<name1>&sensorid='<id-of-sensor>'&predictions=True' // To calculate predictions for a sensor for that attribute. Defaults to 100 time points
+		{URL}?attributedata='<name1>&n_predictions='<desired number of predictions>'&predictions=True' // To calculate predictions for n_pred time points. 		
 
 """
 
 
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, inputs
 from db import db
 from models.theme import Theme
 from models.attributes import Attributes
@@ -49,6 +52,7 @@ from models.sensor_attribute import SensorAttribute
 from models.sensor import Sensor
 from sqlalchemy import desc
 from datetime import datetime
+from resources.predict import predict
 import statistics
 
 LIMIT = 30
@@ -71,10 +75,13 @@ class RequestForData(Resource):
 						type=str,
 						choices=('mean', 'median', 'sum'),
 						store_missing=False)
+	parser.add_argument('sensorid', type=str)
+	parser.add_argument('n_predictions', type=int, store_missing = False)
+	parser.add_argument('predictions', type=inputs.boolean, store_missing = False)
 
 	def get(self):
 		args = self.parser.parse_args()
-		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes = None, None, None, None, None, None, []
+		theme, subtheme, attribute_data, sensor, sensor_name, attributes, sensorid, n_predictions, predictions = None, None, None, None, None, [], None, 100, None
 
 		if 'theme' in args:
 			theme = args['theme']
@@ -115,6 +122,16 @@ class RequestForData(Resource):
 				_attributes = Attributes.get_by_id_in(attrs_ids)
 				return [a.json() for a in _attributes], 200
 
+		if 'predictions' in args:
+			predictions = args['predictions']
+			if predictions >=100:
+				predictions = 100
+
+		if 'n_predictions' in args:
+			n_predictions = args['n_predictions']
+
+		if 'sensorid' in args:
+			sensorid = args['sensorid']
 
 		if theme is None and subtheme is None \
 			and len(attributes) == 0 and attribute_data is None \
@@ -139,9 +156,16 @@ class RequestForData(Resource):
 				and 'todate' in args and args['todate'] is not None):
 				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
 												args['fromdate'], args['todate'], operation)
+				if predictions:
+					data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
+														sensor_id = sensorid,
+														n_pred = n_predictions))
 			else:
 				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-
+				if predictions:
+					data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
+														sensor_id = sensorid,
+														n_pred = n_predictions))
 
 			return data, 200
 
@@ -239,4 +263,69 @@ class RequestForData(Resource):
 				
 		return data
 
+		
+	'''
+	@Params
+		attribute_table: is string passed as parameter with the URL
+		sensor_id: is string passed as parameter with the URL
+		
+	'''
+	def get_predictions(self, attribute_table, sensor_id, n_pred):
+		db.metadata.clear()
+
+		_data = []
+		_timestamps = []
+		_limit = 10000
+
+		model = ModelClass(attribute_table.lower())
+
+
+		if db.session.query(model).count() < 3000:
+			pred_data =  {
+							"Predictions": "not enough data to make reliable predictions"
+						}
+			return pred_data
+		else:
+		# check for sensor_id
+			if sensor_id:
+				values = db.session.query(model) \
+							.filter(model.s_id == sensor_id) \
+							.limit(_limit) \
+							.all()
+				if len(values) < 3000:
+					pred_data =  {
+								"Predictions": "not enough data to make reliable predictions"
+								}
+					return pred_data
+			else:	
+				values = db.session.query(model) \
+							.limit(_limit) \
+							.all()
+				if len(values) < 3000:
+					pred_data =  {
+								"Predictions": "not enough data to make reliable predictions"
+								}
+					return pred_data
+
+			for val in values:
+				_data.append(float(val.value))
+				_timestamps.append(val.api_timestamp)
+
+
+			_pred, _mape = predict(_data, _timestamps, n_pred)
+
+			if sensor_id:
+				_sensorid = sensor_id
+			else:
+				_sensorid = "All sensors"
+
+			pred_data =  {
+						"Sensor_id": _sensorid,
+						"Forcasting_engine": "Additive Holt-Winters method",
+						"Mean_Absolute_Percentage_Error": _mape,
+						"Predictions": _pred
+						}
+
+		return pred_data
+			
 		
