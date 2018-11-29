@@ -6,6 +6,7 @@ psycopg2
 flask-sqlalchemy
 flask-migrate
 flask-script
+flask-cors
 pandas
 numpy
 geoalchemy2

@@ -5,11 +5,13 @@ from flask_migrate import Migrate
 from resources.analytics import Analytics
 from resources.request_for_data import RequestForData
 from db import db
+from flask_cors import CORS
 
 def create_app(**config_overrides):
     app = Flask(__name__)
     app.config.from_pyfile('settings.py')
     app.config.update(config_overrides)
+    cors = CORS(app, resources={r"/*": {"origins":"*"}})
     api = Api(app)
     
     db.init_app(app)
