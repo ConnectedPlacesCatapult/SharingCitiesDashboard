@@ -91,5 +91,9 @@ class Attributes(db.Model):
     def get_by_sub_theme_id(cls, sub_theme_id):
         return Attributes.query.filter_by(sub_theme_id=sub_theme_id).all()
 
+    @classmethod
+    def _get_by_name_unit_unitvalue(cls, name, unit_id, unit_value):
+        return Attributes.query.filter_by(name=name).filter_by(unit_id=unit_id).filter_by(unit_value=str(unit_value)).first()
+
 
 

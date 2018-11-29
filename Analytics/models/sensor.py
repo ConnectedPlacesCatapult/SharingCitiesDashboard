@@ -42,7 +42,7 @@ class Sensor(db.Model):
         try:
             db.session.add(self)
             db.session.flush()
-        except (IntegrityError, FlushError) as ie:
+        except IntegrityError:
             db.session.rollback()
             print(self.name, 'sensor already exists with API ID:', str(self.a_id), 'and Location ID:', str(self.l_id))
             return self.get_by_api_location_name()
@@ -81,3 +81,10 @@ class Sensor(db.Model):
 
     def get_by_api_location_name(self):
         return Sensor.query.filter_by(a_id=self.a_id, name=self.name, l_id=self.l_id).first()
+
+    @classmethod
+    def _get_by_api_location_name(cls, a_id, name, l_id):
+        return Sensor.query.filter_by(a_id=a_id, name=name, l_id=l_id).first()
+
+
+

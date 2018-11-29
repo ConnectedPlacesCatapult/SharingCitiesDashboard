@@ -11,7 +11,7 @@ import yaml
 
 
 config = get_config()
-config = config['test']['tfl_bike_points']
+config = config[config['environment']]['tfl_bike_points']
 
 API_NAME = config['API_NAME']
 BASE_URL = config['BASE_URL']

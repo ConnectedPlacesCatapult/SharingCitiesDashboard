@@ -4,6 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from importers.base import BaseImporter, Location, get_config
 from models.sensor import Sensor
 from models import location
+from db import db
 
 config = get_config()
 config = config[config['environment']]['greenwich_meta']
@@ -27,7 +28,8 @@ class GreenwichMeta(BaseImporter):
         loc = Location('latitude', 'longitude')
         self.create_datasource(dataframe= self.df, sensor_tag='lotcode', attribute_tag=['baycount', 'baytype'], 
                                 unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[], 
-                                location_tag=loc, sensor_prefix='smart_parking_', api_timestamp_tag='run_time_stamp')
+                                location_tag=loc, sensor_prefix='smart_parking_', api_timestamp_tag='run_time_stamp',
+                                is_dependent=True)
 
     def _refresh_token(self, *args):
         print('Token expired Refresh it manually')
@@ -81,7 +83,8 @@ class GreenwichOCC(BaseImporter):
         loc = Location('latitude', 'longitude')
         self.create_datasource(dataframe= self.df, sensor_tag='lotcode', attribute_tag=['free', 'isoffline', 'occupied'], 
                                 unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[], location_tag=loc,
-                                sensor_prefix='smart_parking_', api_timestamp_tag='run_time_stamp')
+                                sensor_prefix='smart_parking_', api_timestamp_tag='run_time_stamp', is_dependent=True)
 
     def _refresh_token(self, *args):
         print('Token expired Refresh it manually')
+

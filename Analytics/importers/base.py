@@ -21,6 +21,7 @@ from datetime import datetime
 from sqlalchemy.exc import ProgrammingError, IntegrityError, InvalidRequestError
 from utility import convert_unix_to_timestamp, convert_to_date
 import yaml
+import sqlalchemy
 
 def get_config():
     config = None
@@ -93,7 +94,7 @@ class BaseImporter(object):
                             data_tag: list = [], sensor_prefix: str = None, api_timestamp_tag: str = None, 
                             check_sensor_exists_by_name: bool = False,
                             check_sensor_exists_by_name_loc: bool = False,
-                            check_sensor_exists_by_name_api: bool = False):
+                            check_sensor_exists_by_name_api: bool = False, is_dependent: bool=False):
 
         api_id = self.stage_api_commit()
         
@@ -109,7 +110,8 @@ class BaseImporter(object):
                                         sensor_prefix,
                                         check_sensor_exists_by_name=check_sensor_exists_by_name,
                                         check_sensor_exists_by_name_loc=check_sensor_exists_by_name_loc,
-                                        check_sensor_exists_by_name_api=check_sensor_exists_by_name_api)
+                                        check_sensor_exists_by_name_api=check_sensor_exists_by_name_api,
+                                        is_dependent=is_dependent)
 
         # Save Attributes
         attr_objects = self.save_attributes(attribute_tag, unit_value, description, 
@@ -197,13 +199,23 @@ class BaseImporter(object):
             if _hash in sensor_exists:
                 continue
 
+            if 'is_dependent' in kwargs:
+                if kwargs['is_dependent']:
+                    _sensor = Sensor._get_by_api_location_name(a_id=api_id, l_id=loc.id, name=s_name)
+                    if _sensor:
+                        sensor_objects[_sensor.name] = _sensor
+                        sensor_exists.add(_hash)
+                        print(s_name, 'sensor already exists with API ID:', str(api_id), 'and Location ID:', str(loc.id))
+                        continue
+
             sensor = Sensor(str(uuid.uuid4()), api_id, loc.id, s_name)
             sensor_exists.add(_hash)
 
             sensor = sensor.save()
             sensor_objects[sensor.name] = sensor
 
-        db.session.flush()
+
+        # db.session.flush()
         return sensor_objects
 
     def save_location(self, latitude: float, longitude: float):
@@ -254,12 +266,17 @@ class BaseImporter(object):
             attr_objects.append(a)
             attr_exists.add(_hash)
 
-        db.session.flush()
+        # db.session.flush()
         return attr_objects
 
     def stage_attributes(self, attribute: str, unit_value: str, 
                         bespoke_unit_tag: int, bespoke_sub_theme: int,
                         description: str):
+        _a = Attributes._get_by_name_unit_unitvalue(attribute, bespoke_unit_tag, unit_value)
+        if _a:
+            print(attribute, 'attribute with Unit ID:', str(bespoke_unit_tag), 'and Unit Value:', unit_value, 'already exists')
+            return _a
+
         a = Attributes(id=str(uuid.uuid4()), name=attribute, table_name=(attribute + '_' + str(uuid.uuid4()).replace('-', '_')), 
                         sub_theme=bespoke_sub_theme, unit=bespoke_unit_tag, 
                         unit_value=unit_value, description=description)
@@ -269,16 +286,27 @@ class BaseImporter(object):
     def save_attr_sensor(self, attrs, sensors):
         for sensor in sensors:
             for attr in attrs:
+                _sa = SensorAttribute._get_by_sid_aid(sensor.id, attr.id)
+                if _sa:
+                    print('Sensor ID: %s, Attribute Id: %s already exists' % (_sa.s_id, _sa.a_id))
+                    continue
+
                 sa = SensorAttribute(sensor.id, attr.id)
                 sa.save()
-        db.session.flush()
+        # db.session.flush()
 
     def create_tables(self, attributes):
+        table_query = db.session.execute("select * from pg_catalog.pg_tables")
+        table_tuples = table_query.fetchall()
+        tables = set()
+        for t in table_tuples:
+            tables.add(t[1])
+
         for attr in attributes:
-            try:
+            if attr.table_name.lower() not in tables:
                 db.session.execute('CREATE TABLE %s (s_id TEXT NOT NULL, value TEXT NOT NULL, api_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL, timestamp TIMESTAMP WITHOUT TIME ZONE, PRIMARY KEY(s_id, value, api_timestamp))' % (attr.table_name))
-            except ProgrammingError as e:
-                db.session.rollback()
+                print('Created Table', attr.table_name.lower())
+            else:
                 print(attr.table_name.replace('-', '_'), 'already exists')
 
     def insert_data(self, attr_objects, sensor_objects: dict, dataframe, 
@@ -287,6 +315,7 @@ class BaseImporter(object):
         db.metadata.clear()
         sensors = dataframe[sensor_tag].tolist()
         value_exists = set()
+        _classes = []
 
         api_timestamp = []
         if api_timestamp_tag is not None:
@@ -295,9 +324,14 @@ class BaseImporter(object):
         for attr in attr_objects:
             _values = []
             if attr_value_tag is not None:
-                _dataframe = dataframe[(dataframe[attribute_tag]  == attr.name) & (dataframe[unit_value_tag]  == attr.unit_value)]
-                _values = _dataframe[attr_value_tag].tolist()
+                if unit_value_tag is not None:
+                    _dataframe = dataframe[(dataframe[attribute_tag]  == attr.name) & (dataframe[unit_value_tag]  == attr.unit_value)]
+                    _values = _dataframe[attr_value_tag].tolist()
+                else:
+                    _dataframe = dataframe[dataframe[attribute_tag] == attr.name]
+                    _values = _dataframe[attr_value_tag].tolist()
             model = ModelClass(attr.table_name.lower())
+            _classes.append(model)
             values = []
             models = []
 
@@ -335,6 +369,9 @@ class BaseImporter(object):
 
         try:
             db.session.commit()
+            for _class in _classes:
+                sqlalchemy.orm.instrumentation.unregister_class(_class)
+                del _class._decl_class_registry[_class.__name__]
         except IntegrityError:
             db.session.rollback()
             print('Unable to save certain values as they already are in the system, check logs')

@@ -37,7 +37,7 @@ class MilanAPI(BaseImporter):
 								'dimmer_read', 'dimmer_default', 'dimmer_set', 'do2',
 								'tilt_angle', 'connected_device', 'energy_delivered',
 								'di4', 'di5', 'energy_consumed', 'do1', 'di1', 'di2', 'di3'], 
-								unit_value=[], bespoke_unit_tag=[], description=['device_description'],
+								unit_value=[], bespoke_unit_tag=[], description=['No Description'],
 								bespoke_sub_theme=[], location_tag=loc, sensor_prefix='Lampione_', 
 								api_timestamp_tag='datetime')
 	
