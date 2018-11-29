@@ -11,8 +11,8 @@ jobs:
       - image: circleci/node:11
     branches:
       only:
-        #- master # list of branches to build
-        - /testintegrations2/ # or regexes
+        - master # list of branches to build
+        #- /testintegrations2/ # or regexes
 
     steps:
       - checkout
