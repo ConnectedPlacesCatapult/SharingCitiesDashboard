@@ -324,12 +324,15 @@ class BaseImporter(object):
         for attr in attr_objects:
             _values = []
             if attr_value_tag is not None:
+                _dataframe = None
                 if unit_value_tag is not None:
                     _dataframe = dataframe[(dataframe[attribute_tag]  == attr.name) & (dataframe[unit_value_tag]  == attr.unit_value)]
-                    _values = _dataframe[attr_value_tag].tolist()
                 else:
                     _dataframe = dataframe[dataframe[attribute_tag] == attr.name]
-                    _values = _dataframe[attr_value_tag].tolist()
+                
+                _values = _dataframe[attr_value_tag].tolist()
+                sensors = _dataframe[sensor_tag].tolist()
+
             model = ModelClass(attr.table_name.lower())
             _classes.append(model)
             values = []
