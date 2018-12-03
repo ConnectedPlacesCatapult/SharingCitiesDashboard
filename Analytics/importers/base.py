@@ -329,7 +329,7 @@ class BaseImporter(object):
                     _dataframe = dataframe[(dataframe[attribute_tag]  == attr.name) & (dataframe[unit_value_tag]  == attr.unit_value)]
                 else:
                     _dataframe = dataframe[dataframe[attribute_tag] == attr.name]
-                
+
                 _values = _dataframe[attr_value_tag].tolist()
                 sensors = _dataframe[sensor_tag].tolist()
 
@@ -355,9 +355,9 @@ class BaseImporter(object):
                 if a_date is None:
                     a_date = datetime.utcnow()
 
-                # _hash = self._hash_it(sensor_prefix + str(sensor_name), str(values[i]), str(a_date))
-                # if _hash in value_exists:
-                #     continue
+                _hash = self._hash_it(sensor_prefix + str(sensor_name), str(values[i]), str(a_date))
+                if _hash in value_exists:
+                    continue
 
                 m = model()
                 m.s_id = sensor_id
@@ -365,10 +365,17 @@ class BaseImporter(object):
                 m.api_timestamp = a_date
                 m.timestamp = datetime.utcnow()
                 models.append(m)
+                db.session.add(m)
+                
+                try:
+                    db.session.commit()
+                except IntegrityError:
+                    db.session.rollback()
+                    print('Sensor id: %s with value %s at time %s already exists' % (sensor_id, values[i], a_date))
 
-                # value_exists.add(_hash)
+                value_exists.add(_hash)
 
-            db.session.add_all(models)
+            # db.session.add_all(models)
 
         try:
             db.session.commit()
