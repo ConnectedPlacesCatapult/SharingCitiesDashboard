@@ -51,4 +51,11 @@ class Location(db.Model):
 
     @classmethod
     def get_by_lat_lon(cls, lat, lon):
-        return Location.query.filter_by(lat=lat, lon=lon).first()
+        loc = None
+        try:
+            loc = Location.query.filter_by(lat=lat, lon=lon).first()
+        except Exception:
+            print('yes the exception is here')
+        return loc
+
+

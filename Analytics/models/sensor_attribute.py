@@ -46,3 +46,7 @@ class SensorAttribute(db.Model):
     def get_by_id_in(cls, ids):
         return db.session.query(SensorAttribute).filter(SensorAttribute.s_id.in_((ids))).all()
 
+    @classmethod
+    def _get_by_sid_aid(cls, s_id, a_id):
+        return SensorAttribute.query.filter_by(s_id=s_id).filter_by(a_id=a_id).first()
+
