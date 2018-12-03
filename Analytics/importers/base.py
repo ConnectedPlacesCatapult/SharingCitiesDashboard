@@ -279,7 +279,7 @@ class BaseImporter(object):
 
         a = Attributes(id=str(uuid.uuid4()), name=attribute, table_name=(attribute + '_' + str(uuid.uuid4()).replace('-', '_')), 
                         sub_theme=bespoke_sub_theme, unit=bespoke_unit_tag, 
-                        unit_value=unit_value, description=description)
+                        unit_value=str(unit_value), description=description)
         a = a.save()
         return a
 
@@ -365,17 +365,18 @@ class BaseImporter(object):
                 m.api_timestamp = a_date
                 m.timestamp = datetime.utcnow()
                 models.append(m)
-                db.session.add(m)
                 
                 try:
-                    db.session.commit()
+                    if i%10 == 0:
+                        db.session.add_all(models)
+                        db.session.commit()
                 except IntegrityError:
                     db.session.rollback()
                     print('Sensor id: %s with value %s at time %s already exists' % (sensor_id, values[i], a_date))
 
                 value_exists.add(_hash)
 
-            # db.session.add_all(models)
+            db.session.add_all(models)
 
         try:
             db.session.commit()
