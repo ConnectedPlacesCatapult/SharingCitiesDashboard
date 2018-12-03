@@ -10,5 +10,3 @@ flask-cors
 pandas
 numpy
 geoalchemy2
-scipy
-scikit-learn
