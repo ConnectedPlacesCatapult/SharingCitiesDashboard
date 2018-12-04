@@ -1,3 +1,27 @@
+'''
+Helper Class
+It is a utility class that converts json files into dataframes, which can then be treated as tables 
+using pandas library.
+
+The class gives option to ignore certain, tags, values and objects which when provided will not be included 
+in the final dataframe.
+
+The class requires an url and object_seperator (name of the tag the marks the start of the next record)
+e.g
+    {
+        "@SpeciesCode": "NO2",
+        "@MeasurementDateGMT": "2018-11-30 00:00:00",
+        "@Value": "7.8"
+    },
+    {
+        "@SpeciesCode": "NO2",
+        "@MeasurementDateGMT": "2018-11-30 01:00:00",
+        "@Value": ""
+    }
+In the example above the object separator is @SpeciesCode
+It is a recursive algorithm that doesn't the depth of the json structure and flatens it to a tabular structure
+'''
+
 import json
 import requests
 import pandas as pd

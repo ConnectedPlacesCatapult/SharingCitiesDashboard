@@ -1,3 +1,10 @@
+'''
+TFL Bike points importer
+
+The importer gets extended from BaseImporter and doesn't have any bespoke code apart from defining the 
+structure of the api, like sensor, attributes, data tables and values
+'''
+
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 

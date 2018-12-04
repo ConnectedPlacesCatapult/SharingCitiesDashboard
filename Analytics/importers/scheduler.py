@@ -1,3 +1,19 @@
+'''
+Helper Class
+
+This class is responsible for getting the data from apis as per their refresh time.
+The class creates a main process and invokes one process for individual importers, once that is done it 
+goes to sleep for 24 hours.
+Those individual processes now are responsible to call the apis and save the data, and go to sleep for the 
+refresh time period.
+If in the day the child process gets killed it will get reinstated the next day when the parent process checks 
+for the active process and reinstantiate the dead ones
+**However if the parent process gets killed it needs to be run manually (This needs to be fixed, by running the 
+process as a service)**
+
+The process can be run from terminal python scheduler.py
+'''
+
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 

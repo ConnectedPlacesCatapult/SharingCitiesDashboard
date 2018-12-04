@@ -1,3 +1,6 @@
+'''
+Data table to store information about Themes
+'''
 import json
 from db import db
 from datetime import datetime

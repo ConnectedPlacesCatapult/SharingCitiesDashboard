@@ -4,6 +4,12 @@ Script to delete datasource
 It is a handy script to delete datasource, while creating and new importers
 The script only takes one argument the name of the API that needs to be deleted
 
+Importers can be deleted:
+	python manage.py remove -id <Name-of-the-importer>
+
+Name of the importer can be found:
+	python manage.py remove -d True
+
 """
 
 import os, sys

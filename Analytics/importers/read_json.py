@@ -1,3 +1,6 @@
+'''
+Old json converter
+'''
 import json
 from models.location import Location
 

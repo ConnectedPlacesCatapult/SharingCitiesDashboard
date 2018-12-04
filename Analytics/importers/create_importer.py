@@ -1,3 +1,10 @@
+'''
+Experimental way of adding the importers without creating the respective python files
+
+It is incomplete and can be taken forward
+It can be run using:
+    python create_importer.py init
+'''
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 

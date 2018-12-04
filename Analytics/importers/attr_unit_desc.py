@@ -1,3 +1,8 @@
+'''
+Helper Class
+It acts as an helper class to store the information listed in the constructor.
+It minimizes the use of variables required to hold the data in BaseImporter class
+'''
 import sys
 
 class AttributeUnitDescription(object):

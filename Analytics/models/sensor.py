@@ -1,3 +1,6 @@
+'''
+Data table to store information about Sensors
+'''
 from db import db
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
