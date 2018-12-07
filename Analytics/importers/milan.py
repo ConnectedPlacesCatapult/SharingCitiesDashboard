@@ -28,7 +28,7 @@ class MilanAPI(BaseImporter):
 	def __init__(self):
 		super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, API_CLASS, TOKEN_EXPIRY)
 
-	def _create_datasource(self):
+	def _create_datasource(self, headers=None):
 		super()._create_datasource()
 		columns = ['device_title', 'device_eui', 'device_description', 
 					'driver_type', 'code', 'max_tilt', 'temperature', 'dimmer_perc',

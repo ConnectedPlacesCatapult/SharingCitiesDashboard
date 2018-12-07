@@ -43,7 +43,7 @@ class KCLAirQuality(BaseImporter):
 	def __init__(self):
 		super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, API_CLASS, TOKEN_EXPIRY)
 
-	def _create_datasource(self):
+	def _create_datasource(self, headers=None):
 		# Get SiteCodes and Location
 		url = 'http://api.erg.kcl.ac.uk/AirQuality/Annual/MonitoringObjective/GroupName=London/Year=2010/Json'
 		j_reader = JsonReader(url=url, object_seperator='@SiteCode')

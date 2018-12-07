@@ -1,0 +1,105 @@
+environment: 'test'
+production:
+    greenwich_meta:
+        API_NAME:
+        BASE_URL:
+        REFRESH_TIME:
+        API_KEY:
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+    greenwich_occ:
+        API_NAME:
+        BASE_URL:
+        REFRESH_TIME:
+        API_KEY:
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+    lisbon:
+        API_NAME:
+        BASE_URL:
+        REFRESH_TIME:
+        API_KEY:
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+    milan:
+        API_NAME:
+        BASE_URL:
+        REFRESH_TIME:
+        API_KEY:
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+test:
+    greenwich_meta:
+        API_NAME: "Greenwich_SmartParking_Meta"
+        BASE_URL: 
+            > 
+                https://maps.london.gov.uk/gla/rest/services/apps/
+                smart_parking_demo_service_01/MapServer/0/query?where=1%3D1&text=
+                &objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope
+                &inSR=&spatialRel=esriSpatialRelIntersects&relationParam=
+                &outFields=*&returnGeometry=true&returnTrueCurves=false
+                &maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false
+                &returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=
+                &outStatistics=&returnZ=false&returnM=false&gdbVersion=
+                &returnDistinctValues=false&resultOffset=&resultRecordCount=
+                &queryByDistance=&returnExtentsOnly=false&datumTransformation=
+                &parameterValues=&rangeValues=&f=pjson&token=
+        REFRESH_TIME: 300
+        API_KEY: "<Enter the Key>"
+        TOKEN_EXPIRY: "01/01/2019 00:00:00"
+        REFRESH_URL: "https://maps.london.gov.uk/gla/tokens/generateToken"
+        API_CLASS: "importers.greenwich.GreenwichMeta"
+    greenwich_occ:
+        API_NAME: "Greenwich_SmartParking_OCC"
+        BASE_URL: 
+            >
+                https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/1/query?
+                where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=
+                &spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true
+                &returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false
+                &returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false
+                &returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=
+                &returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=pjson&token=
+        REFRESH_TIME:
+        API_KEY:
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+        API_CLASS: "importers.greenwich.GreenwichOCC"
+    air_quality:
+        API_NAME: "Air_Quality_KCL"
+        BASE_URL: 
+            >
+                http://api.erg.kcl.ac.uk/AirQuality/Data/Site/SiteCode=%s/StartDate=%s/EndDate=%s/Json
+        REFRESH_TIME: 3600
+        API_KEY: ""
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+        API_CLASS: "importers.air_quality.KCLAirQuality"
+    tfl_bike_points:
+       API_NAME: "TfL_BikePoints"
+       BASE_URL:
+           >
+               https://api.tfl.gov.uk/BikePoint/
+       REFRESH_TIME: 300
+       API_KEY: ""
+       TOKEN_EXPIRY:
+       REFRESH_URL:
+       API_CLASS: "importers.tfl_bike_points.TfL_BikePoints"
+    lisbon:
+        API_NAME:
+        BASE_URL:
+        REFRESH_TIME:
+        API_KEY:
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+        API_CLASS:
+    milan:
+        API_NAME: "Milan_API"
+        BASE_URL: "http://supernovalora.a2asmartcity.io/api/v2/devices"
+        REFRESH_TIME: 3600
+        API_KEY: ""
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+        API_CLASS: "importers.milan.MilanAPI" 
+
+  
