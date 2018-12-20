@@ -6,16 +6,25 @@ from resources.holt_winters import HoltWinters
 
 def mean_absolute_percentage_error(y_true, y_pred): 
     """
-    Returns MAPE
-    """  
-    y_true = y_true[y_true != 0]
-    y_pred = y_pred[y_pred != 0]
+    MAPE can be problematic as it doesnt account for missing values and there's a danger of dividing 
+    by zero. Both these cases are excluded from the computation by subsetting the y_true and y_pred arrays
+    """
+    y_true, y_pred = np.array(y_true), np.array(y_pred)
 
+    mask_na = ~np.isnan(y_true)
+    y_true = y_true[mask_na]
+    y_pred = y_pred[mask_na]
+    
+    mask_zeros = y_true != 0
+    y_true = y_true[mask_zeros]
+    y_pred = y_pred[mask_zeros]
+
+        
     return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 
 def prediction_mape_holtwinters(data, errors, alpha_final, beta_final, gamma_final):
     """
-    Returns prediction MAPE by performing 70/10 split on data 
+    Returns prediction MAPE for the holt-winters class by reffiting the model on a 70/30 split on data 
     """
     pred_data_fit = data.iloc[0:int((len(data)/100.) * 70)]
     pred_data_test = data.iloc[int((len(data)/100.) * 70):len(data)]
@@ -107,3 +116,22 @@ def detrending(dataset, column):
     ads_diff = np.log(dataset[column]) - np.log(dataset[column]).shift(1)
     ads_diff = ads_diff.fillna(method='bfill').fillna(method='ffill')
     return ads_diff
+
+def is_number(s):
+    """
+    Checks for number
+    """
+    try:
+        float(s)
+        return True
+    except ValueError:
+        pass
+ 
+    try:
+        import unicodedata
+        unicodedata.numeric(s)
+        return True
+    except (TypeError, ValueError):
+        pass
+ 
+    return False

@@ -53,6 +53,7 @@ from models.sensor import Sensor
 from sqlalchemy import desc
 from datetime import datetime
 from resources.predict import predict
+from resources.helper_functions import is_number
 import statistics
 
 LIMIT = 30
@@ -163,10 +164,17 @@ class RequestForData(Resource):
 			else:
 				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
 				if predictions:
-					data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
-														sensor_id = sensorid,
-														n_pred = n_predictions))
-
+					#### Ceck for data
+					if data[0]["Total_Records"] != 0:
+					#### Check for non numeric data
+						if is_number(data[0]["Attribute_Values"][0]["Value"]):
+							data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
+																sensor_id = sensorid,
+																n_pred = n_predictions))
+						else:
+							pass
+					else:
+						pass
 			return data, 200
 
 		if attributes:
@@ -280,7 +288,7 @@ class RequestForData(Resource):
 		model = ModelClass(attribute_table.lower())
 
 
-		if db.session.query(model).count() < 3000:
+		if db.session.query(model).count() < 1000:
 			pred_data =  {
 							"Predictions": "not enough data to make reliable predictions"
 						}
@@ -292,7 +300,7 @@ class RequestForData(Resource):
 							.filter(model.s_id == sensor_id) \
 							.limit(_limit) \
 							.all()
-				if len(values) < 3000:
+				if len(values) < 1000:
 					pred_data =  {
 								"Predictions": "not enough data to make reliable predictions"
 								}
@@ -301,7 +309,7 @@ class RequestForData(Resource):
 				values = db.session.query(model) \
 							.limit(_limit) \
 							.all()
-				if len(values) < 3000:
+				if len(values) < 1000:
 					pred_data =  {
 								"Predictions": "not enough data to make reliable predictions"
 								}
@@ -312,7 +320,7 @@ class RequestForData(Resource):
 				_timestamps.append(val.api_timestamp)
 
 
-			_pred, _mape = predict(_data, _timestamps, n_pred)
+			_pred, _mape, _method = predict(_data, _timestamps, n_pred)
 
 			if sensor_id:
 				_sensorid = sensor_id
@@ -321,7 +329,7 @@ class RequestForData(Resource):
 
 			pred_data =  {
 						"Sensor_id": _sensorid,
-						"Forcasting_engine": "Additive Holt-Winters method",
+						"Forcasting_engine": _method,
 						"Mean_Absolute_Percentage_Error": _mape,
 						"Predictions": _pred
 						}

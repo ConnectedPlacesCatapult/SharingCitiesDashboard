@@ -6,8 +6,9 @@ psycopg2
 flask-sqlalchemy
 flask-migrate
 flask-script
-pandas
+pandas==0.20.3
 numpy
 geoalchemy2
 scipy
 scikit-learn
+fbprophet
