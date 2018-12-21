@@ -56,7 +56,7 @@ class DataPage extends Component {
           {
             data.fetched
             ? <div className={classes.flexWrapper}>
-                <DataTable />
+                {/*<DataTable />*/}
                 <OptionsSidePanel
                   openWidgetMaker={this.openWidgetMaker}
                 />

@@ -10,7 +10,9 @@ class ThemeList extends Component {
   constructor(props) {
     super(props);
 
-    props.fetchThemes()
+    if (!props.themes.length) {
+      props.fetchThemes()
+    }
   }
 
   render() {

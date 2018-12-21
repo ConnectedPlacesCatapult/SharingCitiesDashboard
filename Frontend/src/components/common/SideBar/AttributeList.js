@@ -17,7 +17,9 @@ class AttributeList extends React.Component {
   constructor(props) {
     super(props);
 
-    props.fetchAttributes(props.themeId, props.subthemeId)
+    if (!props.themes.find(theme => theme.id === props.themeId).subthemes.find(subtheme => subtheme.id === props.subthemeId).attributes.length) {
+      props.fetchAttributes(props.themeId, props.subthemeId)
+    }
   }
 
   render() {

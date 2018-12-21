@@ -1,31 +1,51 @@
+import axios from "axios";
 import {
-  FETCH_DATA,
-  FETCH_DATA_FULFILLED,
-  FETCH_DATA_REJECTED,
+  DISCARD_ATTRIBUTE_DATA,
+  FETCH_ATTRIBUTE_DATA,
+  FETCH_ATTRIBUTE_DATA_FULFILLED,
+  FETCH_ATTRIBUTE_DATA_REJECTED,
   PURGE_DATA,
 } from "./../constants";
 
-export const fetchData = request => {
+export const discardAttributeData = (themeId, subthemeId, attributeId, attributeName) => ({
+  type: DISCARD_ATTRIBUTE_DATA,
+  payload: { themeId, subthemeId, attributeId, attributeName },
+});
+
+export const fetchAttributeData = (themeId, subthemeId, attributeId, attributeName) => {
   return (dispatch, getState) => {
+    const currentState = getState();
+    const config = currentState.config.config;
+
     dispatch({
-      type: FETCH_DATA,
-      payload: request,
+      type: FETCH_ATTRIBUTE_DATA,
     });
 
-    try {
-      const STATIC_DATA = require('./../data/tempData');
-
-      dispatch({
-        type: FETCH_DATA_FULFILLED,
-        payload: STATIC_DATA[request.subtheme],
+    axios({
+      url: config.apiRoot,
+      method: 'get',
+      params: {
+        attributedata: attributeName,
+      },
+    })
+      .then((response) => {
+        dispatch({
+          type: FETCH_ATTRIBUTE_DATA_FULFILLED,
+          payload: {
+            themeId,
+            subthemeId,
+            attributeId,
+            attributeName,
+            data: response.data,
+          },
+        })
       })
-    }
-    catch (error) {
-      dispatch({
-        type: FETCH_DATA_REJECTED,
-        payload: error,
+      .catch((err) => {
+        dispatch({
+          type: FETCH_ATTRIBUTE_DATA_REJECTED,
+          payload: err,
+        })
       })
-    }
   }
 };
 

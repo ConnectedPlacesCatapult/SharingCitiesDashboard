@@ -30,6 +30,8 @@ class DataTable extends React.Component {
   constructor(props) {
     super(props);
 
+
+
     this.state = {
       order: props.data.meta.order,
       orderBy: props.data.meta.orderBy,

@@ -10,7 +10,9 @@ class SubthemeList extends React.Component {
   constructor(props) {
     super(props);
 
-    props.fetchSubthemes(props.themeId)
+    if (!props.themes.find(theme => theme.id === props.themeId).subthemes.length) {
+      props.fetchSubthemes(props.themeId)
+    }
   }
 
   render() {

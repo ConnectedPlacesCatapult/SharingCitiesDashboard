@@ -1,15 +1,13 @@
 import {
-  FETCH_DATA,
-  FETCH_DATA_FULFILLED,
-  FETCH_DATA_REJECTED,
+  DISCARD_ATTRIBUTE_DATA,
+  FETCH_ATTRIBUTE_DATA,
+  FETCH_ATTRIBUTE_DATA_FULFILLED,
+  FETCH_ATTRIBUTES_REJECTED,
   PURGE_DATA,
 } from "./../constants";
 
 const initialState = {
   data: [],
-  source: null,
-  theme: null,
-  meta: null,
   fetching: false,
   fetched: false,
   error: null,
@@ -17,24 +15,41 @@ const initialState = {
 
 export default (state=initialState, action={}) => {
   switch (action.type) {
-    case FETCH_DATA: {
+    case DISCARD_ATTRIBUTE_DATA: {
+      const newData = state.data.filter((attr) => attr.name !== action.payload.attributeName);
+
       return {
         ...state,
-        ...action.payload,
+        data: newData,
+      }
+    }
+
+    case FETCH_ATTRIBUTE_DATA: {
+      return {
+        ...state,
         fetching: true,
       }
     }
 
-    case FETCH_DATA_FULFILLED: {
+    case FETCH_ATTRIBUTE_DATA_FULFILLED: {
+      const payloadData = action.payload.data.map(attr => ({
+        table: attr['Attribute_Table'],
+        name: attr['Attribute_Name'],
+        description: attr['Attribute_Description'],
+        unitValue: attr['Attribute_Unit_Value'],
+        totalRecords: attr['Total_Records'],
+        values: attr['Attribute_Values'],
+      }));
+
       return {
         ...state,
         fetching: false,
         fetched: true,
-        data: action.payload,
+        data: [...state.data, ...payloadData],
       }
     }
 
-    case FETCH_DATA_REJECTED: {
+    case FETCH_ATTRIBUTES_REJECTED: {
       return {
         ...state,
         fetching: false,
