@@ -1,7 +1,7 @@
 module.exports = {
 
   // root uri of the API
-  apiRoot: 'https://heregoestheapiaddress.mkay/',
+  apiRoot: 'http://172.16.2.123:5000/data',
 
   // optionally include localisation stylesheet (good for @font-face stuff)
   localeStyleSheet:'./styles/lisbon.css',

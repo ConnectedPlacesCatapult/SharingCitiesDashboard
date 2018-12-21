@@ -38,7 +38,7 @@ class ThemeListItem extends React.Component {
           </ListItemIcon>
         </ListItem>
         <Collapse in={isSelected} timeout="auto" unmountOnExit>
-          <SubThemeList themeId={themeId} themeName={themeName} />
+          <SubThemeList themeId={themeId} />
         </Collapse>
       </React.Fragment>
     )
