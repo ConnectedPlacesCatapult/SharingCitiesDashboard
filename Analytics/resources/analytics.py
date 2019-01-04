@@ -51,11 +51,11 @@ class Analytics(Resource):
 
     parser.add_argument('dataRangeFrom',
                         type=str,
-                        required=False)
+                        required=False, store_missing=False)
 
     parser.add_argument('dataRangeTo',
                         type=str,
-                        required=False)
+                        required=False, store_missing=False)
 
     def post(self):
         data = str(self.parser.parse_args()).replace('"', '')
