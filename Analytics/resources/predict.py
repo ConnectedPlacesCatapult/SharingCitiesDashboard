@@ -43,6 +43,9 @@ def predict(values, timestamp, n_pred):
 		df = df.reset_index()
 		df = df.rename(index=str, columns={'api_timestamp': 'ds', 'value': 'y'})
 
+		#### prophet fails with inf values. Replacing them with nan
+		df.replace([np.inf, -np.inf], np.nan)
+		
 		#### Instantiate the prophet object and fit 
 		m = Prophet()
 		m.fit(df)
@@ -84,66 +87,6 @@ def predict(values, timestamp, n_pred):
 
 	except Exception as e:
 		#### TODO log the error
-		try:
-			forecasting_engine = 'Holt-Winters'
-
-			df = df.resample(pred_freq).mean()
-			df = df.fillna(method='ffill').fillna(method='ffill')
-			df.dropna(inplace=True)
-			
-			#### Optimise alpha, beta, gamma by cross validation
-			x = [0, 0, 0] 
-			opt = minimize(timeseriesCVscore, x0=x, 
-			               args=(df.value), 
-			               method=None, bounds = ((0, 1), (0, 1), (0, 1))
-			              )
-
-
-			alpha_final, beta_final, gamma_final = opt.x
-
-			#### Optimise slen by taking the minimum mean_squared_error
-			errors = []
-			for x in np.arange(1,len(df), 20):
-			    try:
-
-			        model = HoltWinters(df.value, slen = int(x), 
-			                            alpha = alpha_final, 
-			                            beta = beta_final, 
-			                            gamma = gamma_final, 
-			                            n_preds = 0, scaling_factor = 1)
-			        model.triple_exponential_smoothing()
-
-			        error = mean_squared_error(df, model.result)
-			        errors.append(error)
-			    except Exception:
-			        pass
-
-			
-			model = HoltWinters(df.value, slen = np.arange(1,len(df), 20)[np.argmin(errors)], 
-			                    alpha = alpha_final, 
-			                    beta = beta_final, 
-			                    gamma = gamma_final, 
-			                    n_preds = n_pred, scaling_factor = 1)
-			model.triple_exponential_smoothing() 
-
-			temp = []
-			pred_timestamps = pd.date_range(start = df.index[-1], end= df.index[-1] +n_pred, freq=pred_freq)
-
-			for i, j in enumerate(range(len(df)-1,len(model.result))):
-				temp.append({
-					'Value': np.round(model.result[j],3),
-					'Value_Upper':  np.round(model.UpperBond[j],3),
-					'Value_Lower':  np.round(model.LowerBond[j],3),
-					'Timestamp': str(pred_timestamps[i])
-				})
-
-			mape = np.round(prediction_mape_holtwinters(df.value, errors, alpha_final, beta_final, gamma_final),3)
-
-
-			return temp, mape, forecasting_engine
-
-		except Exception as e:
-			print(str(e))
-			#### TODO log the error
 			return None, None, None
+
 

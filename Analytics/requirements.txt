@@ -13,3 +13,4 @@ geoalchemy2
 scipy
 scikit-learn
 fbprophet
+holidays==0.9.8
