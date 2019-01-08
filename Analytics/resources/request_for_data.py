@@ -25,6 +25,9 @@ Note: If no parameters are passed then by default all the themes are returned
 	fromdate: accepts a date in YYYY-MM-DD format, start date of the records
 	todate: accepts a date in YYYY-MM-DD formart, end date of the records
 	operation: when mathematical calculation needs to be perfomed
+	grouped: boolean specifying whether the sensor records are to be grouped at hourly intervals
+		per_sensor: boolean specifying whether the sensor records are to be grouped at hourly intervals and 
+					per individual sensor. Defaults to False
 
 	Note: fromdate and todate both needs to be present in order for date filtering to work
 
@@ -35,11 +38,11 @@ Note: If no parameters are passed then by default all the themes are returned
 		{URL}?sensor='<name1>,<name2>' // To retrieve multiple records
 		{URL}?attributedata='<name-of-attribute>&limit=60&offset=60' // Retrieve records but increase limit and skip 60
 		{URL}?attributedata='<name1><name2>&limit=60&offset=60&fromdate=2018-11-22&todate=2018-11-24'
-
+		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=True // Retrieves records and groups the data at hourly intervals
 """
 
 
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, inputs
 from db import db
 from models.theme import Theme
 from models.attributes import Attributes
@@ -50,6 +53,8 @@ from models.sensor import Sensor
 from sqlalchemy import desc
 from datetime import datetime
 import statistics
+from resources.request_grouped import request_grouped_data
+
 
 LIMIT = 30
 OFFSET = 30
@@ -71,10 +76,12 @@ class RequestForData(Resource):
 						type=str,
 						choices=('mean', 'median', 'sum'),
 						store_missing=False)
+	parser.add_argument('grouped', type=inputs.boolean, store_missing=False)
+	parser.add_argument('per_sensor', type=inputs.boolean, store_missing=False)
 
 	def get(self):
 		args = self.parser.parse_args()
-		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes = None, None, None, None, None, None, []
+		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, grouped, per_attribute = None, None, None, None, None, None, [], None, False
 
 		if 'theme' in args:
 			theme = args['theme']
@@ -115,6 +122,11 @@ class RequestForData(Resource):
 				_attributes = Attributes.get_by_id_in(attrs_ids)
 				return [a.json() for a in _attributes], 200
 
+		if 'grouped' in args:
+			grouped = args['grouped']
+
+		if 'per_sensor' in args:
+			per_sensor = args['per_sensor']
 
 		if theme is None and subtheme is None \
 			and len(attributes) == 0 and attribute_data is None \
@@ -140,8 +152,11 @@ class RequestForData(Resource):
 				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
 												args['fromdate'], args['todate'], operation)
 			else:
-				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-
+				if grouped:
+					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
+					data = request_grouped_data(data, per_sensor=per_sensor)
+				else:
+					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
 
 			return data, 200
 
@@ -203,10 +218,17 @@ class RequestForData(Resource):
 							.all()
 			else:
 				if operation is None:
-					values = db.session.query(model).limit(limit) \
-									.offset(abs(count - offset)).all()
+
+					### refactored the query to fetch the latest values by default
+					values = db.session.query(model).order_by(desc(model.api_timestamp)).limit(limit).all() # \
+
+					# values = db.session.query(model).limit(limit) \
+					# 				.offset(abs(count - offset)).all()
+
 				else:
 					values = db.session.query(model).all()
+
+
 
 			_common = {
 					'Attribute_Table': attribute.table_name,
@@ -236,7 +258,7 @@ class RequestForData(Resource):
 					_operation_result = statistics.median(_int_values)
 				_common['Result_' + operation] = _operation_result
 			data.append(_common)
-				
+
 		return data
 
 		
