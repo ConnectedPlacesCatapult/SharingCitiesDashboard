@@ -81,7 +81,7 @@ class RequestForData(Resource):
 
 	def get(self):
 		args = self.parser.parse_args()
-		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, grouped, per_attribute = None, None, None, None, None, None, [], None, False
+		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, grouped, per_attribute, per_sensor = None, None, None, None, None, None, [], None, None, None
 
 		if 'theme' in args:
 			theme = args['theme']
