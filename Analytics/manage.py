@@ -8,6 +8,7 @@ from drop_datasource import DropDatasource
 from add_datasource import AddDatasource
 
 application = create_app()
+
 manager = Manager(app=application)
 manager.add_command('db', MigrateCommand)
 

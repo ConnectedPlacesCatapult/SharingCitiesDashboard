@@ -38,7 +38,6 @@ Note: If no parameters are passed then by default all the themes are returned
 
 """
 
-
 from flask_restful import Resource, reqparse, inputs
 from db import db
 from models.theme import Theme
@@ -76,6 +75,7 @@ class RequestForData(Resource):
 	parser.add_argument('sensorid', type=str)
 	parser.add_argument('n_predictions', type=int, store_missing = False)
 	parser.add_argument('predictions', type=inputs.boolean, store_missing = False)
+
 
 	def get(self):
 		args = self.parser.parse_args()
