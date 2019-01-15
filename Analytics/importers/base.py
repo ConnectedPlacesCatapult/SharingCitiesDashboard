@@ -1,3 +1,23 @@
+'''
+Base Importer
+All the importers needs to be extended from this class
+The class provides methods to save API, Sensor, Attributes, Location and Data Tables
+All the methods provided here can be overridden or can be extended by calling the super method 
+from base class and then extending it in Child class
+All new common functionality can be added to this base class, which then automatically be inherited 
+by all the child classes.
+
+Params:
+    api_name: The name of the API, it needs to be unique, else database waring would be received
+    url: The url which needs to be pinged to get the data, periodically
+    refresh_time: After how many seconds the API needs to be pinged
+    api_key: Key to access the API (if any)
+    api_class: The full path of the class from package to class name like importers.air_quality.KCLAirQuality
+    token_expiry: Time in which token will get expired, so that new token can be renewed again
+                **(This functionality is not implemented yet and needs to implemented in database and Scheduler)**
+
+'''
+
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -42,8 +62,8 @@ class BaseImporter(object):
         self.token_expiry = token_expiry
         self.api_class = api_class
 
-    def _create_datasource(self):
-        _, status_code = self.load_dataset()
+    def _create_datasource(self, headers=None):
+        _, status_code = self.load_dataset(headers)
         if status_code != 200:
             self._refresh_token()
 
@@ -51,8 +71,8 @@ class BaseImporter(object):
         # This method needs to be overriden in child classes
         raise NotImplementedError
 
-    def load_dataset(self):
-        data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key)
+    def load_dataset(self, headers=None):
+        data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
         self.dataset = json.loads(data.text)
         return self.dataset, data.status_code
 
@@ -123,6 +143,23 @@ class BaseImporter(object):
         self.create_tables(attr_objects)
         self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, sensor_prefix, api_timestamp_tag)
 
+    '''
+    This follows the same logic as the method above, the only difference it that it considers
+    values of the tags as sensors, attributes and data values instead of the tags themselves
+    e.g
+        A      B      C
+        BG1    NO2    22
+        BG2    SO2    23
+
+    Consider this short data table in method above the column heading are the Attributes and their data are 
+    their values
+    So the values get saved like Attribute 'B' and Value 'NO2'
+
+    In this method the values of the column are Attributes and Column C contain values of Column B
+    So the values get saved like Attribute 'NO2' and Value '22'
+
+    That is why it has an additional value tag
+    '''
     def create_datasource_with_values(self, dataframe, sensor_tag, attribute_tag, value_tag,
                                         latitude_tag, longitude_tag, description_tag, 
                                         api_timestamp_tag = None,
@@ -372,7 +409,8 @@ class BaseImporter(object):
                         db.session.commit()
                 except IntegrityError:
                     db.session.rollback()
-                    print('Sensor id: %s with value %s at time %s already exists' % (sensor_id, values[i], a_date))
+                    # To improve logging uncomment the line below
+                    # print('Sensor id: %s with value %s at time %s already exists' % (sensor_id, values[i], a_date))
 
                 value_exists.add(_hash)
 

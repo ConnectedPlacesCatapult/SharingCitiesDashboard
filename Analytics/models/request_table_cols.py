@@ -1,3 +1,6 @@
+'''
+Data class to store information about using what columns user want to perform analytics
+'''
 from db import db
 from datetime import datetime
 

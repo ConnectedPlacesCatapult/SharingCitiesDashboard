@@ -1,3 +1,11 @@
+'''
+Milan Importer
+The class inherits from BaseImporter and doesn't contain any bespoke code 
+apart from converting the data from json to tabular format but using BaseImporter methods
+
+The api doesn't have any credentials and doesn't have any key or token expiry
+'''
+
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -20,7 +28,7 @@ class MilanAPI(BaseImporter):
 	def __init__(self):
 		super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, API_CLASS, TOKEN_EXPIRY)
 
-	def _create_datasource(self):
+	def _create_datasource(self, headers=None):
 		super()._create_datasource()
 		columns = ['device_title', 'device_eui', 'device_description', 
 					'driver_type', 'code', 'max_tilt', 'temperature', 'dimmer_perc',

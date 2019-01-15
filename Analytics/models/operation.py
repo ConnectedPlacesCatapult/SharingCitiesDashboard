@@ -1,3 +1,6 @@
+'''
+Data class for storing data about what is operation requested by user while performing analytics
+'''
 from db import db
 from datetime import datetime
 
