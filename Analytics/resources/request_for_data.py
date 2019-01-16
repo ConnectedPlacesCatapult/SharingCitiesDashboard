@@ -169,6 +169,7 @@ class RequestForData(Resource):
 																sensor_id = sensorid,
 																n_pred = n_predictions))
 						else:
+							print("Cannot predict non-numeric data")
 							pass
 					else:
 						pass

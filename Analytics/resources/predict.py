@@ -1,7 +1,4 @@
-from resources.holt_winters import HoltWinters
-from resources.helper_functions import mean_absolute_percentage_error, timeseriesCVscore, prediction_mape_holtwinters
-from scipy.optimize import minimize              
-from sklearn.metrics import mean_squared_error 
+from resources.helper_functions import mean_absolute_percentage_error
 import numpy as np
 import pandas as pd
 from fbprophet import Prophet
