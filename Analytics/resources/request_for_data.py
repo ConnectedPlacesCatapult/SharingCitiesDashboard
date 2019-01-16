@@ -53,7 +53,7 @@ from models.sensor import Sensor
 from sqlalchemy import desc
 from datetime import datetime
 import statistics
-from resources.request_grouped import request_grouped_data
+from resources.request_grouped import request_grouped_data, request_harmonised_data
 
 
 LIMIT = 30
@@ -77,11 +77,15 @@ class RequestForData(Resource):
 						choices=('mean', 'median', 'sum'),
 						store_missing=False)
 	parser.add_argument('grouped', type=inputs.boolean, store_missing=False)
+	parser.add_argument('harmonising_method', 
+						type=str,
+						choices=('resampling_ffill', 'ffill'),
+						store_missing=False)
 	parser.add_argument('per_sensor', type=inputs.boolean, store_missing=False)
 
 	def get(self):
 		args = self.parser.parse_args()
-		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, grouped, per_attribute, per_sensor = None, None, None, None, None, None, [], None, None, None
+		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, grouped, harmonising_method, per_sensor = None, None, None, None, None, None, [], None, None, None
 
 		if 'theme' in args:
 			theme = args['theme']
@@ -125,6 +129,9 @@ class RequestForData(Resource):
 		if 'grouped' in args:
 			grouped = args['grouped']
 
+		if 'harmonising_method' in args:
+			harmonising_method = args['harmonising_method']
+
 		if 'per_sensor' in args:
 			per_sensor = args['per_sensor']
 
@@ -153,8 +160,12 @@ class RequestForData(Resource):
 												args['fromdate'], args['todate'], operation)
 			else:
 				if grouped:
-					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-					data = request_grouped_data(data, per_sensor=per_sensor)
+					if harmonising_method:
+						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
+						data = request_harmonised_data(data, per_sensor=per_sensor, harmonising_method=harmonising_method)
+					else:
+						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
+						data = request_grouped_data(data, per_sensor=per_sensor)
 				else:
 					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
 
