@@ -79,7 +79,7 @@ class RequestForData(Resource):
 	parser.add_argument('grouped', type=inputs.boolean, store_missing=False)
 	parser.add_argument('harmonising_method', 
 						type=str,
-						choices=('resampling_ffill', 'ffill'),
+						choices=('ffill'),
 						store_missing=False)
 	parser.add_argument('per_sensor', type=inputs.boolean, store_missing=False)
 
@@ -162,7 +162,7 @@ class RequestForData(Resource):
 				if grouped:
 					if harmonising_method:
 						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-						data = request_harmonised_data(data, per_sensor=per_sensor, harmonising_method=harmonising_method)
+						data = request_harmonised_data(data, harmonising_method=harmonising_method)
 					else:
 						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
 						data = request_grouped_data(data, per_sensor=per_sensor)

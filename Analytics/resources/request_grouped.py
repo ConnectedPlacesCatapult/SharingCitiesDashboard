@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+import numpy as np
 from models.sensor import Sensor
 from models.location import Location
 
@@ -86,7 +87,9 @@ def request_grouped_data(data, per_sensor):
 
 	return data
 
-def request_harmonised_data(data, per_sensor, harmonising_method):
+def request_harmonised_data(data, harmonising_method):
+	per_sensor=True
+
 	df = pd.read_json(json.dumps(data), orient = 'records')
 	harm_df = pd.DataFrame(columns=['Attribute_Name','Attribute_Table',
                                         'Sensor_id', 'Timestamp', 'Value'])
@@ -109,27 +112,8 @@ def request_harmonised_data(data, per_sensor, harmonising_method):
 
 		### append to dataframe
 		harm_df = harm_df.append(harm_df_temp,ignore_index=True)
-
-		### set datetime index
-		harm_df['Timestamp'] = pd.to_datetime(harm_df['Timestamp'])
-		harm_df = harm_df.set_index('Timestamp')
 		harm_df.Value = harm_df.Value.astype(float)
 
-	if harmonising_method == 'ffill':
-		# print('HERE!!!!')
-		# for name, group in df.groupby('Attribute_Name'):
-  #   		ind = group.index
-    		
-		return json.loads(harm_df.to_json(orient='records'))
-
-	if not per_sensor:
-		### Using the median to preserve the data type during groupby aggregation
-		harm_df = harm_df.groupby([pd.Grouper(freq='1H'), 'Attribute_Name']).median()
-		harm_df.reset_index(inplace=True)
-
-	else:
-		harm_df = harm_df.groupby([pd.Grouper(freq='1H'), 'Attribute_Name', 'Sensor_id']).median()
-		harm_df.reset_index(inplace=True)
 
 		### get coordinates and sensor names in readable format  
 		_sensor_names = []
@@ -158,7 +142,39 @@ def request_harmonised_data(data, per_sensor, harmonising_method):
 		harm_df = pd.merge(harm_df.reset_index(drop=True),temp, 
 		                           on ='Sensor_id', how='left')
 
-	data = json.loads(harm_df.to_json(orient='records'))
 
+	## set datetime index
+	# harm_df['Timestamp'] = pd.to_datetime(harm_df['Timestamp'])
+	# harm_df = harm_df.set_index('Timestamp')
+
+	### get attribute with the highest number of records (=proxy for greater frequency)
+	_value_len = 0
+	for name, group in harm_df.groupby('Attribute_Name'):
+		_benchmark_attr = name
+		_temp = len(np.unique(group.index))
+		if _temp > _value_len:
+			_value_len = _temp
+			_benchmark_attr = name
+
+	### make it the attribute which will be used for benchmarikg all other attributes
+	_df = harm_df[harm_df.Attribute_Name == _benchmark_attr]
+	_benchmark_attr_index = _df.index.unique()
+	_df.reset_index(inplace=True)
+
+	### loop through all other attributes and sensors
+	for i in np.delete(harm_df.Attribute_Name.unique(),
+			np.argwhere(harm_df.Attribute_Name.unique()==_benchmark_attr)):
+		for sensor in harm_df.Sensor_id.unique():
+			_temp_df = harm_df[(harm_df.Attribute_Name == i) & (harm_df.Sensor_id == sensor)] 
+
+			### relate _temp_df to the benchmarking index (it gets the closest value by default) 
+			_temp_df = _temp_df.asof(_benchmark_attr_index)
+			_temp_df.reset_index(inplace=True)
+			_df = _df.append(_temp_df)
+
+	### clean the dataset of nan's (originating by the records that dont match the benchmark daterange)
+	_df.dropna(inplace=True)
+
+	data = json.loads(harm_df.to_json(orient='records'))
 
 	return data
