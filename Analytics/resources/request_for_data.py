@@ -38,7 +38,10 @@ Note: If no parameters are passed then by default all the themes are returned
 		{URL}?sensor='<name1>,<name2>' // To retrieve multiple records
 		{URL}?attributedata='<name-of-attribute>&limit=60&offset=60' // Retrieve records but increase limit and skip 60
 		{URL}?attributedata='<name1><name2>&limit=60&offset=60&fromdate=2018-11-22&todate=2018-11-24'
-		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=True // Retrieves records and groups the data at hourly intervals
+		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=True&freq='1H' // Retrieves records and groups the data at hourly intervals
+		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=False&freq='1H' // Retrieves records and groups the data from all sensors of same attribute at hourly intervals
+		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&harmonising_method=ffill // Harmonisies all attributes in the query to match the attribute with the most records
+
 """
 
 
@@ -77,6 +80,9 @@ class RequestForData(Resource):
 						choices=('mean', 'median', 'sum'),
 						store_missing=False)
 	parser.add_argument('grouped', type=inputs.boolean, store_missing=False)
+	parser.add_argument('freq', type=str,
+						choices=('W', '1D', '1H', '1Min'),
+						store_missing=False)
 	parser.add_argument('harmonising_method', 
 						type=str,
 						choices=('ffill'),
@@ -85,7 +91,7 @@ class RequestForData(Resource):
 
 	def get(self):
 		args = self.parser.parse_args()
-		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, grouped, harmonising_method, per_sensor = None, None, None, None, None, None, [], None, None, None
+		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, grouped, harmonising_method, per_sensor, freq = None, None, None, None, None, None, [], None, None, None, '1H'
 
 		if 'theme' in args:
 			theme = args['theme']
@@ -135,6 +141,9 @@ class RequestForData(Resource):
 		if 'per_sensor' in args:
 			per_sensor = args['per_sensor']
 
+		if 'freq' in args:
+			freq = args['freq']
+
 		if theme is None and subtheme is None \
 			and len(attributes) == 0 and attribute_data is None \
 			and sensor is None and sensor_name is None and sensor_attribute is None:
@@ -165,7 +174,7 @@ class RequestForData(Resource):
 						data = request_harmonised_data(data, harmonising_method=harmonising_method)
 					else:
 						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-						data = request_grouped_data(data, per_sensor=per_sensor)
+						data = request_grouped_data(data, per_sensor=per_sensor, freq=freq)
 				else:
 					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
 

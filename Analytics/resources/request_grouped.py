@@ -5,7 +5,7 @@ from models.sensor import Sensor
 from models.location import Location
 
 """
-This function groupes sensor data having different temporal frequencies by grouping at 
+This function groups sensor data having different temporal frequencies by grouping at 
 hourly intervals. The grouping is based on the median of all sensor values that fall within
 the hourly interval for three reasons: a) The purpose of this function is to provide the 
 frontend with a convenient form of visualising the data. as such, it is not used in any subsequent 
@@ -17,7 +17,7 @@ analytics b) Median is more robust to outliers and c) Median preserves the origi
 	or per attribute
 """
 
-def request_grouped_data(data, per_sensor):
+def request_grouped_data(data, per_sensor, freq):
 	df = pd.read_json(json.dumps(data), orient = 'records')
 	harm_df = pd.DataFrame(columns=['Attribute_Name','Attribute_Table',
                                         'Sensor_id', 'Timestamp', 'Value'])
@@ -48,11 +48,11 @@ def request_grouped_data(data, per_sensor):
 
 		if not per_sensor:
 			### Using the median to preserve the data type during groupby aggregation
-			harm_df = harm_df.groupby([pd.Grouper(freq='1H'), 'Attribute_Name']).median()
+			harm_df = harm_df.groupby([pd.Grouper(freq=freq), 'Attribute_Name']).median()
 			harm_df.reset_index(inplace=True)
 
 		else:
-			harm_df = harm_df.groupby([pd.Grouper(freq='1H'), 'Attribute_Name', 'Sensor_id']).median()
+			harm_df = harm_df.groupby([pd.Grouper(freq=freq), 'Attribute_Name', 'Sensor_id']).median()
 			harm_df.reset_index(inplace=True)
 
 			### get coordinates and sensor names in readable format  
@@ -144,8 +144,8 @@ def request_harmonised_data(data, harmonising_method):
 
 
 	## set datetime index
-	# harm_df['Timestamp'] = pd.to_datetime(harm_df['Timestamp'])
-	# harm_df = harm_df.set_index('Timestamp')
+	harm_df['Timestamp'] = pd.to_datetime(harm_df['Timestamp'])
+	harm_df = harm_df.set_index('Timestamp')
 
 	### get attribute with the highest number of records (=proxy for greater frequency)
 	_value_len = 0
@@ -175,6 +175,6 @@ def request_harmonised_data(data, harmonising_method):
 	### clean the dataset of nan's (originating by the records that dont match the benchmark daterange)
 	_df.dropna(inplace=True)
 
-	data = json.loads(harm_df.to_json(orient='records'))
+	data = json.loads(_df.to_json(orient='records'))
 
 	return data
