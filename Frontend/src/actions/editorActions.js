@@ -32,9 +32,9 @@ export const initializeEditor = () => {
     const currentState = getState();
     const defaults = currentState.config.config.widgetEditorDefaults;
     const data = currentState.data.data;
-    const nonNumericColumns = currentState.data.meta.columns.filter(column => !column.numeric);
+    /*const nonNumericColumns = currentState.data.meta.columns.filter(column => !column.numeric);
     const numericColumns = currentState.data.meta.columns.filter(column => column.numeric);
-    const nonGeoNumericColumns = numericColumns.filter((column) => !['lat', 'lon'].includes(column.id));
+    const nonGeoNumericColumns = numericColumns.filter((column) => !['lat', 'lon'].includes(column.id));*/
 
     dispatch({
       type: SET_WIDGET_NAME,
@@ -56,23 +56,23 @@ export const initializeEditor = () => {
       payload: data,
     });
 
-    dispatch({
+    /*dispatch({
       type: SET_PLOT_ENCODING,
       payload: {
         axis: "x",
         field: nonNumericColumns[0].id,
         type: "ordinal",
       }
-    });
+    });*/
 
-    dispatch({
+    /*dispatch({
       type: SET_PLOT_ENCODING,
       payload: {
         axis: "y",
         field: nonGeoNumericColumns[0].id,
         type: "quantitative",
       }
-    });
+    });*/
 
     dispatch({
       type: SET_MAP_TILE_LAYER,
@@ -89,10 +89,10 @@ export const initializeEditor = () => {
       payload: data,
     });
 
-    dispatch({
+    /*dispatch({
       type: SET_MAP_HEATMAP_ATTRIBUTE,
       payload: nonGeoNumericColumns[0].id,
-    });
+    });*/
 
     dispatch({
       type: SET_MAP_SHOW_HEATMAP,

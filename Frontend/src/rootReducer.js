@@ -7,6 +7,8 @@ import layout from './reducers/layout';
 import themes from './reducers/themes';
 import user from './reducers/user';
 import widgets from './reducers/widgets';
+import plot from './reducers/plot';
+import vegaLite from './reducers/vegaLite';
 
 export default combineReducers({
   config,
@@ -16,4 +18,6 @@ export default combineReducers({
   themes,
   user,
   widgets,
+  plot,
+  vegaLite,
 });

@@ -54,7 +54,7 @@ class DataPage extends Component {
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           {
-            data.fetched
+            data.fetched && data.data.length
             ? <div className={classes.flexWrapper}>
                 {/*<DataTable />*/}
                 <OptionsSidePanel

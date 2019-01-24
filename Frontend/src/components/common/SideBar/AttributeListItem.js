@@ -6,7 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import { connect } from 'react-redux';
-import { discardAttributeData, fetchAttributeData } from "../../../actions/dataActions";
+import { fetchAttributeData } from "../../../actions/dataActions";
 
 const styles = theme => ({
   root: {
@@ -22,17 +22,11 @@ const styles = theme => ({
 
 class AttributeListItem extends React.Component {
   handleClick = () => {
-    const { themeId, subthemeId, attributeId, attributeName, discardAttributeData, fetchAttributeData, isSelected, onClick } = this.props;
-
-    // toggle whether data state includes this attribute's data
-    if (isSelected) {
-      discardAttributeData(themeId, subthemeId, attributeId, attributeName)
-    } else {
-      fetchAttributeData(themeId, subthemeId, attributeId, attributeName);
-    }
-
     // toggle isSelected
-    onClick();
+    this.props.onClick();
+
+    // fire off call for fresh data
+    this.props.fetchAttributeData(true, true);
   };
 
   render() {
@@ -60,7 +54,6 @@ AttributeListItem.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
-  discardAttributeData: PropTypes.func.isRequired,
   fetchAttributeData: PropTypes.func.isRequired,
 };
 
@@ -69,8 +62,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  discardAttributeData: (themeId, subthemeId, attributeId, attributeName) => dispatch(discardAttributeData(themeId, subthemeId, attributeId, attributeName)),
-  fetchAttributeData: (themeId, subthemeId, attributeId, attributeName) => dispatch(fetchAttributeData(themeId, subthemeId, attributeId, attributeName)),
+  fetchAttributeData: (grouped, perSensor) => dispatch(fetchAttributeData(grouped, perSensor)),
 });
 
 AttributeListItem = withStyles(styles)(AttributeListItem);

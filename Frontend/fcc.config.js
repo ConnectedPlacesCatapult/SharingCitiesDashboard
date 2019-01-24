@@ -1,10 +1,10 @@
 module.exports = {
 
   // root uri of the API
-  apiRoot: 'http://172.16.2.123:5000/data',
+  apiRoot: "http://172.16.2.123:5000/data",
 
   // optionally include localisation stylesheet (good for @font-face stuff)
-  localeStyleSheet:'./styles/lisbon.css',
+  localeStyleSheet: "./styles/lisbon.css",
 
   // overrides for MaterialUI default theme
   // ToDo :: change palette type to 'dark' and update styles accordingly
@@ -51,37 +51,94 @@ module.exports = {
   // tileLayers to be made available in OpenMap widgets
   leafletTileLayers: [
     {
-      name: 'OpenStreetMap.Mapnik',
-      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      name: "OpenStreetMap.Mapnik",
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     },
     {
-      name: 'CartoDB.DarkMatter',
-      url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      name: "CartoDB.DarkMatter",
+      url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
     },
     {
-      name: 'Esri.WorldImagery',
-      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      name: "Esri.WorldImagery",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
     },
   ],
-  vegaLitePlotTypes: [
-    'bar',
-    'line',
-    'pie',
-    'scatter',
-  ],
+  vega: {
+    schema: "https://vega.github.io/schema/vega-lite/v2.json",
+    defaultWidth: 640,
+    defaultHeight: 480,
+    defaultPlotType: "bar",
+    plotTypes: [
+      "bar",
+      "circle",
+      "square",
+      "tick",
+      "line",
+      "area",
+      "point",
+      "rule",
+      "geoshape",
+      "text",
+    ],
+    encodingChannels: [
+      "x",
+      "y",
+      "x2",
+      "y2",
+      "longitude",
+      "latitude",
+      "longitude2",
+      "latitude2",
+      "color",
+      "opacity",
+      "fillOpacity",
+      "strokeOpacity",
+      "strokeWidth",
+      "size",
+      "shape",
+      "text",
+      "tooltip",
+      "href",
+      "key",
+      "order",
+      "detail",
+      "row",
+      "column",
+    ],
+    encodingChannelFields: [
+      "field",
+      "type",
+      "bin",
+      "timeUnit",
+      "aggregate",
+    ],
+    encodingChannelTypes: [
+      "quantitative",
+      "temporal",
+      "ordinal",
+      "nominal",
+    ],
+    encodingChannelAggregates: [
+      "mean",
+      "sum",
+      "median",
+      "min",
+      "max",
+    ],
+  },
   widgetEditorDefaults: {
-    plotType: 'bar',
+    plotType: "bar",
     mapCenter: {
       lat: 51.505,
       lng: -0.09,
     },
     mapShowHeatmap: false,
-    mapTileLayer: 'CartoDB.DarkMatter',
+    mapTileLayer: "CartoDB.DarkMatter",
     mapZoom: 13,
-    widgetName: 'New Widget',
-    widgetType: 'plot',
+    widgetName: "New Widget",
+    widgetType: "plot",
   }
 };

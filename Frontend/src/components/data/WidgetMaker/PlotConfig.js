@@ -55,17 +55,17 @@ class PlotConfig extends React.Component {
       return <MenuItem key={i} value={plotType}>{plotType}</MenuItem>
     });
 
-    const nonNumericColumns = meta.columns.filter(column => !column.numeric);
-    const numericColumns = meta.columns.filter(column => column.numeric);
-    const nonGeoNumericColumns = numericColumns.filter((column) => !['lat', 'lon'].includes(column.id));
+    // const nonNumericColumns = meta.columns.filter(column => !column.numeric);
+    // const numericColumns = meta.columns.filter(column => column.numeric);
+    // const nonGeoNumericColumns = numericColumns.filter((column) => !['lat', 'lon'].includes(column.id));
 
-    const labelItems = nonNumericColumns.map((column, i) => {
+    /*const labelItems = nonNumericColumns.map((column, i) => {
       return <MenuItem key={i} value={column.id}>{column.label}</MenuItem>
-    });
+    });*/
 
-    const valueItems = nonGeoNumericColumns.map((column, i) => {
+    /*const valueItems = nonGeoNumericColumns.map((column, i) => {
       return <MenuItem key={i} value={column.id}>{column.label}</MenuItem>
-    });
+    });*/
 
     return (
       <form className={classes.root}>
@@ -87,26 +87,28 @@ class PlotConfig extends React.Component {
           <InputLabel>Labels</InputLabel>
           <Select
             onChange={this.setPlotLabels}
-            value={editor.spec.encoding.x.field}
+            //value={editor.spec.encoding.x.field}
+            value={null}
             inputProps={{
               name: 'labels',
               id: 'plot-labels',
             }}
           >
-            {labelItems}
+            {/*{labelItems}*/}
           </Select>
         </FormControl>
         <FormControl htmlFor="plot-values" className={classes.formControl}>
           <InputLabel>Values</InputLabel>
           <Select
             onChange={this.setPlotValues}
-            value={editor.spec.encoding.y.field}
+            //value={editor.spec.encoding.y.field}
+            value={null}
             inputProps={{
               name: 'labels',
               id: 'plot-values',
             }}
           >
-            {valueItems}
+            {/*{valueItems}*/}
           </Select>
         </FormControl>
       </form>
@@ -118,7 +120,7 @@ PlotConfig.propTypes = {
   classes: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
   editor: PropTypes.object.isRequired,
-  meta: PropTypes.object.isRequired,
+  //meta: PropTypes.object.isRequired,
   setPlotDescription: PropTypes.func.isRequired,
   setPlotEncoding: PropTypes.func.isRequired,
   setPlotType: PropTypes.func.isRequired,
@@ -127,7 +129,7 @@ PlotConfig.propTypes = {
 const mapStateToProps = state => ({
   config: state.config.config,
   editor: state.editor.plotConfig,
-  meta: state.data.meta,
+  //meta: state.data.meta,
 });
 
 const mapDispatchToProps = dispatch => ({
