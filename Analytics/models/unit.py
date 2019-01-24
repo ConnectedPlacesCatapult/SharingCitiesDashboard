@@ -1,3 +1,6 @@
+'''
+Data class to store information about Units of values
+'''
 from db import db
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError

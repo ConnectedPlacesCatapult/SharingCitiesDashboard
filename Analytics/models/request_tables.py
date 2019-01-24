@@ -1,3 +1,6 @@
+'''
+Data class to store information about the tables requested to perform analytics upon
+'''
 from db import db
 from datetime import datetime
 

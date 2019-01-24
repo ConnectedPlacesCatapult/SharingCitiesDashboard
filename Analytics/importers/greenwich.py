@@ -1,3 +1,16 @@
+'''
+GreenwichMeta and GreenwichOCC Importer
+The file has two importers.
+
+GreenwichOCC is dependent upon GreenwichMeta, thus GreenwichMeta needs to be imported first 
+before importing GreenwichOCC.
+
+Both the classes share the same API key.
+The classes doesn't have any bespoke code apart from calling urls and converting them into dataframes.
+Once that is done it calls the create_datasource method of the base class which saves the sensors, attributes,
+location, creates data tables and saves values.
+'''
+
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -21,7 +34,7 @@ class GreenwichMeta(BaseImporter):
     def __init__(self):
         super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, API_CLASS, TOKEN_EXPIRY)
 
-    def _create_datasource(self):
+    def _create_datasource(self, headers=None):
         super()._create_datasource()
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
@@ -46,7 +59,7 @@ class GreenwichOCC(BaseImporter):
     def __init__(self):
         super().__init__(API_NAME_OCC, BASE_URL_OCC, REFRESH_TIME, API_KEY, API_CLASS_OCC, TOKEN_EXPIRY)
 
-    def _create_datasource(self):
+    def _create_datasource(self, headers=None):
         super()._create_datasource()
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 

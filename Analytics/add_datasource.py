@@ -1,3 +1,14 @@
+'''
+Helper Class
+
+This class can be used to add any importer to the database and retrieve information about them
+The importers can be added:
+	python manage.py add -ad <Name-Of-The-Importer>
+
+The name of the importer can be found:
+	python manage.py add -gd True
+'''
+
 from flask_script import Command, Option
 from importers.base import get_config
 import importlib

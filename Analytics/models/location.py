@@ -1,3 +1,6 @@
+'''
+Data class for storing information about Location
+'''
 from db import db
 from datetime import datetime
 from sqlalchemy import and_

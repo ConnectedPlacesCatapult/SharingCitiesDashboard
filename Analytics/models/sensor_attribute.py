@@ -1,3 +1,6 @@
+'''
+Data class to store relation of Sensor and Attribute
+'''
 from db import db
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError

@@ -53,6 +53,8 @@ from models.theme import SubTheme
 from models.attribute_data import ModelClass
 from models.sensor_attribute import SensorAttribute
 from models.sensor import Sensor
+from resources.predict import predict
+from resources.helper_functions import is_number
 from sqlalchemy import desc
 from datetime import datetime
 import statistics
@@ -88,10 +90,13 @@ class RequestForData(Resource):
 						choices=('ffill'),
 						store_missing=False)
 	parser.add_argument('per_sensor', type=inputs.boolean, store_missing=False)
+	parser.add_argument('sensorid', type=str)
+	parser.add_argument('n_predictions', type=int, store_missing = False)
+	parser.add_argument('predictions', type=inputs.boolean, store_missing = False)
 
 	def get(self):
 		args = self.parser.parse_args()
-		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, grouped, harmonising_method, per_sensor, freq = None, None, None, None, None, None, [], None, None, None, '1H'
+		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, sensorid, n_predictions, predictions, grouped, harmonising_method, per_sensor, freq = None, None, None, None, None, None, [], None, 100, None, None, None, None, '1H'
 
 		if 'theme' in args:
 			theme = args['theme']
@@ -144,6 +149,17 @@ class RequestForData(Resource):
 		if 'freq' in args:
 			freq = args['freq']
 
+		if 'predictions' in args:
+			predictions = args['predictions']
+			if predictions >=100:
+				predictions = 100
+
+		if 'n_predictions' in args:
+			n_predictions = args['n_predictions']
+
+		if 'sensorid' in args:
+			sensorid = args['sensorid']
+
 		if theme is None and subtheme is None \
 			and len(attributes) == 0 and attribute_data is None \
 			and sensor is None and sensor_name is None and sensor_attribute is None:
@@ -167,6 +183,10 @@ class RequestForData(Resource):
 				and 'todate' in args and args['todate'] is not None):
 				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
 												args['fromdate'], args['todate'], operation)
+				if predictions:
+					data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
+														sensor_id = sensorid,
+														n_pred = n_predictions))
 			else:
 				if grouped:
 					if harmonising_method:
@@ -178,6 +198,20 @@ class RequestForData(Resource):
 				else:
 					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
 
+				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
+				if predictions:
+					#### Ceck for data
+					if data[0]["Total_Records"] != 0:
+					#### Check for non numeric data
+						if is_number(data[0]["Attribute_Values"][0]["Value"]):
+							data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
+																sensor_id = sensorid,
+																n_pred = n_predictions))
+						else:
+							print("Cannot predict non-numeric data")
+							pass
+					else:
+						pass
 			return data, 200
 
 		if attributes:
@@ -281,4 +315,67 @@ class RequestForData(Resource):
 
 		return data
 
+	'''
+		@Params
+			attribute_table: is string passed as parameter with the URL
+			sensor_id: is string passed as parameter with the URL
+			
+	'''
+	def get_predictions(self, attribute_table, sensor_id, n_pred):
+		db.metadata.clear()
+
+		_data = []
+		_timestamps = []
+		_limit = 10000
+
+		model = ModelClass(attribute_table.lower())
+
+
+		if db.session.query(model).count() < 100:
+			pred_data =  {
+							"Predictions": "not enough data to make reliable predictions"
+						}
+			return pred_data
+		else:
+		# check for sensor_id
+			if sensor_id:
+				values = db.session.query(model) \
+							.filter(model.s_id == sensor_id) \
+							.limit(_limit) \
+							.all()
+				if len(values) < 100:
+					pred_data =  {
+								"Predictions": "not enough data to make reliable predictions"
+								}
+					return pred_data
+			else:	
+				values = db.session.query(model) \
+							.limit(_limit) \
+							.all()
+				if len(values) < 100:
+					pred_data =  {
+								"Predictions": "not enough data to make reliable predictions"
+								}
+					return pred_data
+
+			for val in values:
+				_data.append(float(val.value))
+				_timestamps.append(val.api_timestamp)
+
+
+			_pred, _mape, _method = predict(_data, _timestamps, n_pred)
+
+			if sensor_id:
+				_sensorid = sensor_id
+			else:
+				_sensorid = "All sensors"
+
+			pred_data =  {
+						"Sensor_id": _sensorid,
+						"Forcasting_engine": _method,
+						"Mean_Absolute_Percentage_Error": _mape,
+						"Predictions": _pred
+						}
+
+		return pred_data
 		

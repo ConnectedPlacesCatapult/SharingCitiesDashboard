@@ -1,3 +1,6 @@
+'''
+Old way to maintaining sensor attribute relation
+'''
 from db import db
 
 sensor_attribute = db.Table('sensor_attribute',

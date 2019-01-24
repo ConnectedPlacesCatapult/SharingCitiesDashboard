@@ -7,6 +7,10 @@ flask-sqlalchemy
 flask-migrate
 flask-script
 flask-cors
-pandas
+pandas==0.20.3
 numpy
 geoalchemy2
+scipy
+scikit-learn
+fbprophet
+holidays==0.9.8

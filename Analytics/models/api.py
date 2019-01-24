@@ -1,4 +1,6 @@
-
+'''
+Data class for storing information about API
+'''
 from db import db
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError

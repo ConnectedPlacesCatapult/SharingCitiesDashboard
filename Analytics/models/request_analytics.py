@@ -1,3 +1,6 @@
+'''
+Data table to store data about Analytics Request
+'''
 from db import db
 from datetime import datetime
 

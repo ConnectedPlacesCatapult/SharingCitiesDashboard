@@ -1,3 +1,24 @@
+'''
+Air Quality Importer
+
+It inherits from the base class and passes the required parameters to the base class constructor
+
+The class uses 
+	http://api.erg.kcl.ac.uk/AirQuality/Annual/MonitoringObjective/GroupName=London/Year=2010/Json
+	to fetch the Sensor names which are SiteCodes from the API.
+	It then gets the latest data after every hour and saves it in database
+	@SiteCode: The sensor name
+	@Latitude: The latitude tag for location
+	@Longitude: The Longitude tag for location
+
+	Using the list of @SiteCode it calls the 
+		http://api.erg.kcl.ac.uk/AirQuality/Data/Site/SiteCode=%s/StartDate=%s/EndDate=%s/Json
+	and adds current date and next date. Once it has all the data for all the Sites, it makes a dataframe
+	and calls create_datasource_with_values method of base class to save Sensor, attributes and data to the 
+	database.
+	Refresh Time is 1 Hour but can also be changed to 24 hour as then we get all the data in one go.
+'''
+
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -22,7 +43,7 @@ class KCLAirQuality(BaseImporter):
 	def __init__(self):
 		super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, API_CLASS, TOKEN_EXPIRY)
 
-	def _create_datasource(self):
+	def _create_datasource(self, headers=None):
 		# Get SiteCodes and Location
 		url = 'http://api.erg.kcl.ac.uk/AirQuality/Annual/MonitoringObjective/GroupName=London/Year=2010/Json'
 		j_reader = JsonReader(url=url, object_seperator='@SiteCode')
