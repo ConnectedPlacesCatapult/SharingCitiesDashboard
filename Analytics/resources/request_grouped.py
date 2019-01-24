@@ -44,13 +44,16 @@ def request_grouped_data(data, per_sensor, freq):
 		### set datetime index
 		harm_df['Timestamp'] = pd.to_datetime(harm_df['Timestamp'])
 		harm_df = harm_df.set_index('Timestamp')
+
+
+		### TODO add informative message in the case the user provides an atribute with non-numeric attributes. 
+		### Related to issue #109 
 		harm_df.Value = harm_df.Value.astype(float)
 
 		if not per_sensor:
 			### Using the median to preserve the data type during groupby aggregation
 			harm_df = harm_df.groupby([pd.Grouper(freq=freq), 'Attribute_Name']).median()
 			harm_df.reset_index(inplace=True)
-
 		else:
 			harm_df = harm_df.groupby([pd.Grouper(freq=freq), 'Attribute_Name', 'Sensor_id']).median()
 			harm_df.reset_index(inplace=True)
