@@ -93,12 +93,13 @@ def request_harmonised_data(data, harmonising_method):
 	df = pd.read_json(json.dumps(data), orient = 'records')
 	harm_df = pd.DataFrame(columns=['Attribute_Name','Attribute_Table',
                                         'Sensor_id', 'Timestamp', 'Value'])
-    ## Get the attributes
+    ### Get the attributes
 	for attribute in range(len(df)):
+
 		attr = df.iloc[attribute].Attribute_Name
 		attr_table = df.iloc[attribute].Attribute_Table
-		attr_values = df.iloc[attribute].Attribute_Values
-		    
+		attr_values = df.iloc[attribute].Attribute_Values    
+
 
 		harm_df_temp = pd.DataFrame(columns=['Attribute_Name','Attribute_Table',
 		                                'Sensor_id', 'Timestamp', 'Value'])
@@ -112,8 +113,9 @@ def request_harmonised_data(data, harmonising_method):
 
 		### append to dataframe
 		harm_df = harm_df.append(harm_df_temp,ignore_index=True)
-		harm_df.Value = harm_df.Value.astype(float)
 
+		### Commenting out the dtype conversion: related to issue #109 
+		# harm_df.Value = harm_df.Value.astype(float)
 
 		### get coordinates and sensor names in readable format  
 		_sensor_names = []
@@ -149,9 +151,11 @@ def request_harmonised_data(data, harmonising_method):
 
 	### get attribute with the highest number of records (=proxy for greater frequency)
 	_value_len = 0
+	_benchmark_attr = harm_df['Attribute_Name'].iloc[0]
+
 	for name, group in harm_df.groupby('Attribute_Name'):
-		_benchmark_attr = name
 		_temp = len(np.unique(group.index))
+
 		if _temp > _value_len:
 			_value_len = _temp
 			_benchmark_attr = name
@@ -172,8 +176,19 @@ def request_harmonised_data(data, harmonising_method):
 			_temp_df.reset_index(inplace=True)
 			_df = _df.append(_temp_df)
 
+
+
 	### clean the dataset of nan's (originating by the records that dont match the benchmark daterange)
 	_df.dropna(inplace=True)
+
+	### check for missing attributes resulting from non overlapping temporal windows
+	miss_attr = set(_df.Attribute_Name.unique().tolist()).symmetric_difference( harm_df.Attribute_Name.unique().tolist())
+	if bool(miss_attr):
+		### if found, append it to the dataframe as is
+		for i in miss_attr:
+			_df = _df.append(harm_df[harm_df.Attribute_Name == i].reset_index())
+	else:
+		pass
 
 	data = json.loads(_df.to_json(orient='records'))
 
