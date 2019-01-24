@@ -190,7 +190,6 @@ class RequestForData(Resource):
 			else:
 				if grouped:
 					if harmonising_method:
-						print('here')
 						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
 						data = request_harmonised_data(data, harmonising_method=harmonising_method)
 					else:
