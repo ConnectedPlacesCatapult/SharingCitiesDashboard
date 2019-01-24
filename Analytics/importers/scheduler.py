@@ -44,7 +44,7 @@ class Scheduler(object):
                         processes.pop(api.name)
 
                     # api.refresh_time
-                    p = Process(target=self.crawl_datasource, args=(api.url + api.api_key, api.api_class, api.refresh_time, api.name))
+                    p = Process(target=self.crawl_datasource, args=(api.api_class, api.refresh_time, api.name))
                     processes[api.name] = p
                     p.start()
 
@@ -58,15 +58,15 @@ class Scheduler(object):
             print('Main Process awaits to check for new importers.....')
             sleep(86400)
         
-    def crawl_datasource(self, url, class_name, time_interval, api_name):
+    def crawl_datasource(self, class_name, time_interval, api_name):
         while True:
-            p = Process(target=self.fetch_data, args=(url, class_name, api_name))
+            p = Process(target=self.fetch_data, args=(class_name, api_name))
             p.start()
             p.join()
         
             sleep(int(time_interval))
     
-    def fetch_data(self, url, class_name, api_name):
+    def fetch_data(self, class_name, api_name):
         import sys, os
         from pathlib import Path
         import time
