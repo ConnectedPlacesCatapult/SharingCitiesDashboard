@@ -25,6 +25,9 @@ Note: If no parameters are passed then by default all the themes are returned
 	fromdate: accepts a date in YYYY-MM-DD format, start date of the records
 	todate: accepts a date in YYYY-MM-DD formart, end date of the records
 	operation: when mathematical calculation needs to be perfomed
+	grouped: boolean specifying whether the sensor records are to be grouped at hourly intervals
+		per_sensor: boolean specifying whether the sensor records are to be grouped at hourly intervals and 
+					per individual sensor. Defaults to False
 
 	Note: fromdate and todate both needs to be present in order for date filtering to work
 
@@ -35,6 +38,9 @@ Note: If no parameters are passed then by default all the themes are returned
 		{URL}?sensor='<name1>,<name2>' // To retrieve multiple records
 		{URL}?attributedata='<name-of-attribute>&limit=60&offset=60' // Retrieve records but increase limit and skip 60
 		{URL}?attributedata='<name1><name2>&limit=60&offset=60&fromdate=2018-11-22&todate=2018-11-24'
+		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=True&freq='1H' // Retrieves records and groups the data at hourly intervals
+		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=False&freq='1H' // Retrieves records and groups the data from all sensors of same attribute at hourly intervals
+		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&harmonising_method=ffill // Harmonisies all attributes in the query to match the attribute with the most records
 
 """
 
@@ -52,6 +58,8 @@ from resources.helper_functions import is_number
 from sqlalchemy import desc
 from datetime import datetime
 import statistics
+from resources.request_grouped import request_grouped_data, request_harmonised_data
+
 
 LIMIT = 30
 OFFSET = 30
@@ -73,13 +81,22 @@ class RequestForData(Resource):
 						type=str,
 						choices=('mean', 'median', 'sum'),
 						store_missing=False)
+	parser.add_argument('grouped', type=inputs.boolean, store_missing=False)
+	parser.add_argument('freq', type=str,
+						choices=('W', '1D', '1H', '1Min'),
+						store_missing=False)
+	parser.add_argument('harmonising_method', 
+						type=str,
+						choices=('ffill'),
+						store_missing=False)
+	parser.add_argument('per_sensor', type=inputs.boolean, store_missing=False)
 	parser.add_argument('sensorid', type=str)
 	parser.add_argument('n_predictions', type=int, store_missing = False)
 	parser.add_argument('predictions', type=inputs.boolean, store_missing = False)
 
 	def get(self):
 		args = self.parser.parse_args()
-		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, sensorid, n_predictions, predictions = None, None, None, None, None, None, [], None, 100, None
+		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, sensorid, n_predictions, predictions, grouped, harmonising_method, per_sensor, freq = None, None, None, None, None, None, [], None, 100, None, None, None, None, '1H'
 
 		if 'theme' in args:
 			theme = args['theme']
@@ -120,6 +137,18 @@ class RequestForData(Resource):
 				_attributes = Attributes.get_by_id_in(attrs_ids)
 				return [a.json() for a in _attributes], 200
 
+		if 'grouped' in args:
+			grouped = args['grouped']
+
+		if 'harmonising_method' in args:
+			harmonising_method = args['harmonising_method']
+
+		if 'per_sensor' in args:
+			per_sensor = args['per_sensor']
+
+		if 'freq' in args:
+			freq = args['freq']
+
 		if 'predictions' in args:
 			predictions = args['predictions']
 			if predictions >=100:
@@ -159,7 +188,16 @@ class RequestForData(Resource):
 														sensor_id = sensorid,
 														n_pred = n_predictions))
 			else:
-				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
+				if grouped:
+					if harmonising_method:
+						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
+						data = request_harmonised_data(data, harmonising_method=harmonising_method)
+					else:
+						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
+						data = request_grouped_data(data, per_sensor=per_sensor, freq=freq)
+				else:
+					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
+
 				if predictions:
 					#### Ceck for data
 					if data[0]["Total_Records"] != 0:
@@ -233,10 +271,17 @@ class RequestForData(Resource):
 							.all()
 			else:
 				if operation is None:
-					values = db.session.query(model).limit(limit) \
-									.offset(abs(count - offset)).all()
+
+					### refactored the query to fetch the latest values by default
+					values = db.session.query(model).order_by(desc(model.api_timestamp)).limit(limit).all() # \
+
+					# values = db.session.query(model).limit(limit) \
+					# 				.offset(abs(count - offset)).all()
+
 				else:
 					values = db.session.query(model).all()
+
+
 
 			_common = {
 					'Attribute_Table': attribute.table_name,
@@ -266,7 +311,7 @@ class RequestForData(Resource):
 					_operation_result = statistics.median(_int_values)
 				_common['Result_' + operation] = _operation_result
 			data.append(_common)
-				
+
 		return data
 
 	'''
