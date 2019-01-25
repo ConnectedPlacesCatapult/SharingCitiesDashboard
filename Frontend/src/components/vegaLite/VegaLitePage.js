@@ -64,6 +64,22 @@ const styles = theme => ({
   button: {
 
   },
+  encodingWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  channelWrapper: {
+    border: '1px solid #000',
+    margin: theme.spacing.unit,
+    padding: theme.spacing.unit,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  definitionWrapper: {
+    border: '1px solid #000',
+    margin: theme.spacing.unit,
+    padding: theme.spacing.unit,
+  },
   plotWrapper: {
     display: 'flex',
     flexDirection: 'row',
@@ -142,8 +158,6 @@ class VegaLitePage extends React.Component {
         break;
       }
     }
-
-    console.log("called?", freeDefinition);
 
     // ToDo :: catch here if no freeDefinition
 
@@ -315,64 +329,73 @@ class VegaLitePage extends React.Component {
   };
 
   getEncodingChannels = () => {
+    const { classes } = this.props;
+    const { spec } = this.state;
+
     let channelNodes = [];
 
-    for (let [i, channel] of Object.keys(this.state.spec.encoding).entries()) {
+    for (let [i, channel] of Object.keys(spec.encoding).entries()) {
 
-      const channelData = Object.entries(this.state.spec.encoding[channel]);
+      const channelData = Object.entries(spec.encoding[channel]);
 
-      const channelFields = channelData.map((pair, i) => {
+      const channelDefinitions = channelData.map((pair, i) => {
         let field = pair[0];
         let value = pair[1];
 
         return (
-          <div key={i}>
+          <div key={i} className={classes.definitionWrapper}>
             <IconButton
-              className={this.props.classes.button}
+              className={classes.button}
               onClick={() => this.deleteEncodingChannelDefinition(channel, field)}
             >
               <DeleteIcon />
             </IconButton>
-            <Select
-              value={field}
-              onChange={this.updateEncodingChannelField(channel, field)}
-            >
-              {this.getEncodingChannelFieldMenuItems(channel, field)}
-            </Select>
+            <FormControl className={classes.formControl}>
+              <Select
+                value={field}
+                onChange={this.updateEncodingChannelField(channel, field)}
+              >
+                {this.getEncodingChannelFieldMenuItems(channel, field)}
+              </Select>
+            </FormControl>
 
-            <Select
-              value={value}
-              onChange={this.updateEncodingChannelValue(channel, field)}
-            >
-              {this.getEncodingChannelValueMenuItems(channel, field)}
-            </Select>
+            <FormControl className={classes.formControl}>
+              <Select
+                value={value}
+                onChange={this.updateEncodingChannelValue(channel, field)}
+              >
+                {this.getEncodingChannelValueMenuItems(channel, field)}
+              </Select>
+            </FormControl>
           </div>
         )
       });
 
       let node = (
-        <FormControl key={i} className={this.props.classes.formControl}>
-          <InputLabel className={this.props.classes.inputLabel}>Channel</InputLabel>
+        <div className={classes.channelWrapper} key={i}>
+          <InputLabel className={classes.inputLabel}>Channel</InputLabel>
           <Button
-            className={this.props.classes.button}
+            className={classes.button}
+            onClick={() => this.deleteEncodingChannel(channel)}
+          >
+            Delete channel
+          </Button>
+          <FormControl className={classes.formControl}>
+            <Select
+              value={channel}
+              onChange={this.updateEncodingChannel(channel)}
+            >
+              {this.getEncodingChannelMenuItems(channel)}
+            </Select>
+          </FormControl>
+          {channelDefinitions}
+          <Button
+            className={classes.button}
             onClick={() => this.addEncodingChannelDefinition(channel)}
           >
             Add definition
           </Button>
-          <IconButton
-            className={this.props.classes.button}
-            onClick={() => this.deleteEncodingChannel(channel)}
-          >
-            <DeleteIcon />
-          </IconButton>
-          <Select
-            value={channel}
-            onChange={this.updateEncodingChannel(channel)}
-          >
-            {this.getEncodingChannelMenuItems(channel)}
-          </Select>
-          {channelFields}
-        </FormControl>
+        </div>
       );
 
       channelNodes = [...channelNodes, node]
@@ -420,15 +443,15 @@ class VegaLitePage extends React.Component {
                 {this.markMenuItems}
               </Select>
             </FormControl>
-            <FormControl className={classes.formControl}>
+            <div className={classes.encodingWrapper}>
               <FormLabel className={classes.formLabel}>Encoding</FormLabel>
+              {this.getEncodingChannels()}
               <Button
                 onClick={this.addEncodingChannel}
               >
                 Add channel
               </Button>
-              {this.getEncodingChannels()}
-            </FormControl>
+            </div>
           </form>
         </div>
         <div className={classes.plotWrapper}>
