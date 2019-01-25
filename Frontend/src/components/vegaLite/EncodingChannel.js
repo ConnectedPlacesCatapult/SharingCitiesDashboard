@@ -73,6 +73,7 @@ class EncodingChannel extends React.Component {
         </Button>
         <FormControl className={classes.formControl}>
           <Select
+            className={classes.select}
             value={channel}
             onChange={this.handleChannelChange}
           >

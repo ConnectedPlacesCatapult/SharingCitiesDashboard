@@ -28,6 +28,7 @@ const styles = theme => ({
     margin: theme.spacing.unit,
     display: 'flex',
     flexDirection: 'column',
+    backgroundColor: theme.palette.background.paper,
   },
   plotForm: {
 
@@ -39,10 +40,10 @@ const styles = theme => ({
 
   },
   textField: {
-
+    margin: theme.spacing.unit,
   },
   select: {
-
+    margin: theme.spacing.unit,
   },
   menuItem: {
 

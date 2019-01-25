@@ -7,6 +7,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+import TextField from "@material-ui/core/TextField";
 
 // vega
 import {
@@ -69,6 +70,7 @@ class Definition extends React.Component {
         </IconButton>
         <FormControl className={classes.formControl}>
           <Select
+            className={classes.select}
             value={field}
             onChange={this.handleFieldChange}
           >
@@ -77,12 +79,22 @@ class Definition extends React.Component {
         </FormControl>
 
         <FormControl className={classes.formControl}>
-          <Select
-            value={value}
-            onChange={this.handleValueChange}
-          >
-            {valueMenuItems}
-          </Select>
+          {field === "title" ? (
+            <TextField
+              label="title"
+              className={classes.textField}
+              value={value}
+              onChange={this.handleValueChange}
+            />
+          ) : (
+            <Select
+              className={classes.select}
+              value={value}
+              onChange={this.handleValueChange}
+            >
+              {valueMenuItems}
+            </Select>
+          )}
         </FormControl>
       </div>
     )
