@@ -103,14 +103,16 @@ export const VEGA_LITE_MARKS = [
 export const VEGA_LITE_ENCODING_CHANNELS = [
   "x",
   "y",
+  "color",
+  "tooltip",
   //"x2",
   //"y2",
   "longitude",
   "latitude",
   "longitude2",
   "latitude2",
-  "color",
-  "opacity",
+  //"color",
+  //"opacity",
   "fillOpacity",
   "strokeOpacity",
   "strokeWidth",
@@ -183,9 +185,9 @@ export const VEGA_LITE_FIELDS = (() => {
   return [
     {
       name: "field",
-      type: String,
-      required: false,
-      default: "",
+      type: "DataFieldName",
+      required: true,
+      default: "Timestamp",
     },
     {
       name: "type",

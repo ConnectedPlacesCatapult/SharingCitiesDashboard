@@ -17,6 +17,7 @@ const initialState = {
       "x": {
         "field": "Timestamp",
         "type": "temporal",
+        "timeUnit": "year",
       },
       "y": {
         "field": "Value",

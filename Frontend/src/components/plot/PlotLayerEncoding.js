@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import PlotLayerEncodingChannel from './PlotLayerEncodingChannel';
-
 // redux
 import { connect } from 'react-redux';
 import {
@@ -40,7 +38,7 @@ const styles = theme => ({
 });
 
 class PlotLayerEncoding extends React.Component {
-  addPlotLayerEncodingChannel = (layerIndex, channelKey) => e => {
+  addPlotLayerEncodingChannel = (layerIndex, channelKey) => {
     this.props.addPlotLayerEncodingChannel(layerIndex, channelKey)
   };
 
