@@ -217,7 +217,7 @@ export const VEGA_LITE_FIELDS = (() => {
       name: "title",
       type: String,
       required: false,
-      default: undefined,
+      default: "",
     },
     //"scale",
     //"axis",
