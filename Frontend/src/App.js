@@ -8,10 +8,6 @@ import { fetchConfig } from "./actions/configActions";
 // base components
 import DashboardPage from './components/dashboard/DashboardPage';
 import DataPage from './components/data/DataPage';
-//import VegaPage from './components/vega/VegaPage';
-import PlotPage from './components/plot/PlotPage';
-import TempPage from './components/temp/TempPage';
-import VegaLitePage from './components/vegaLite/VegaLitePage';
 
 // default/fallback font
 require('typeface-roboto');
@@ -41,28 +37,18 @@ class App extends React.Component {
       const localTheme = createMuiTheme(config.localeThemeData || {});
 
       return (
-        <div>
-          <CssBaseline />
-          <VegaLitePage />
-        </div>
-      );
-
-      /*return (
         <MuiThemeProvider theme={localTheme}>
           <div>
           <CssBaseline />
-          <TempPage />
           <BrowserRouter>
             <Switch>
               <Route exact path="/" component={DashboardPage} />
               <Route path="/data" component={DataPage} />
-              <Route path="/plot" component={PlotPage} />
-              <Route path="/temp" component={TempPage} />
             </Switch>
           </BrowserRouter>
           </div>
         </MuiThemeProvider>
-      )*/
+      )
     }
 
     return <div>Loading...</div>

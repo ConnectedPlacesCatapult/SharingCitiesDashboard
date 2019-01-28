@@ -57,11 +57,11 @@ AttributeListItem.propTypes = {
   fetchAttributeData: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data.data,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   fetchAttributeData: (grouped, perSensor) => dispatch(fetchAttributeData(grouped, perSensor)),
 });
 

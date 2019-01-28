@@ -8,7 +8,7 @@ module.exports = {
 
   // overrides for MaterialUI default theme
   // ToDo :: change palette type to 'dark' and update styles accordingly
-  localeThemeData: {
+  /*localeThemeData: {
     "palette": {
      //"type": "dark",
       "primary": {
@@ -30,7 +30,7 @@ module.exports = {
       useNextVariants: true, // to avoid deprecation warnings
       "fontFamily": "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
     }
-  },
+  },*/
 
   // currently used by the common/Header component to define links
   routes: [
@@ -71,63 +71,6 @@ module.exports = {
     defaultWidth: 640,
     defaultHeight: 480,
     defaultPlotType: "bar",
-    plotTypes: [
-      "bar",
-      "circle",
-      "square",
-      "tick",
-      "line",
-      "area",
-      "point",
-      "rule",
-      "geoshape",
-      "text",
-    ],
-    encodingChannels: [
-      "x",
-      "y",
-      "x2",
-      "y2",
-      "longitude",
-      "latitude",
-      "longitude2",
-      "latitude2",
-      "color",
-      "opacity",
-      "fillOpacity",
-      "strokeOpacity",
-      "strokeWidth",
-      "size",
-      "shape",
-      "text",
-      "tooltip",
-      "href",
-      "key",
-      "order",
-      "detail",
-      "row",
-      "column",
-    ],
-    encodingChannelFields: [
-      "field",
-      "type",
-      "bin",
-      "timeUnit",
-      "aggregate",
-    ],
-    encodingChannelTypes: [
-      "quantitative",
-      "temporal",
-      "ordinal",
-      "nominal",
-    ],
-    encodingChannelAggregates: [
-      "mean",
-      "sum",
-      "median",
-      "min",
-      "max",
-    ],
   },
   widgetEditorDefaults: {
     plotType: "bar",
