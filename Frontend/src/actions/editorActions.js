@@ -1,5 +1,10 @@
 import {
   PURGE_EDITOR,
+  SET_WIDGET_NAME,
+  SET_WIDGET_TYPE,
+  SET_PLOT_DATA,
+  SET_PLOT_PROPERTY,
+  SET_PLOT_ENCODING,
   SET_MAP_CENTER,
   SET_MAP_DATA,
   SET_MAP_HEATMAP_ATTRIBUTE,
@@ -7,12 +12,6 @@ import {
   SET_MAP_SHOW_HEATMAP,
   SET_MAP_TILE_LAYER,
   SET_MAP_ZOOM,
-  SET_PLOT_DATA,
-  SET_PLOT_DESCRIPTION,
-  SET_PLOT_ENCODING,
-  SET_PLOT_TYPE,
-  SET_WIDGET_NAME,
-  SET_WIDGET_TYPE,
 } from "./../constants";
 
 const isMappable = record => {
@@ -32,9 +31,6 @@ export const initializeEditor = () => {
     const currentState = getState();
     const defaults = currentState.config.config.widgetEditorDefaults;
     const data = currentState.data.data;
-    /*const nonNumericColumns = currentState.data.meta.columns.filter(column => !column.numeric);
-    const numericColumns = currentState.data.meta.columns.filter(column => column.numeric);
-    const nonGeoNumericColumns = numericColumns.filter((column) => !['lat', 'lon'].includes(column.id));*/
 
     dispatch({
       type: SET_WIDGET_NAME,
@@ -47,32 +43,9 @@ export const initializeEditor = () => {
     });
 
     dispatch({
-      type: SET_PLOT_TYPE,
-      payload: defaults.plotType,
-    });
-
-    dispatch({
       type: SET_PLOT_DATA,
       payload: data,
     });
-
-    /*dispatch({
-      type: SET_PLOT_ENCODING,
-      payload: {
-        axis: "x",
-        field: nonNumericColumns[0].id,
-        type: "ordinal",
-      }
-    });*/
-
-    /*dispatch({
-      type: SET_PLOT_ENCODING,
-      payload: {
-        axis: "y",
-        field: nonGeoNumericColumns[0].id,
-        type: "quantitative",
-      }
-    });*/
 
     dispatch({
       type: SET_MAP_TILE_LAYER,
@@ -115,6 +88,34 @@ export const purgeEditor = () => ({
   type: PURGE_EDITOR,
 });
 
+export const setWidgetName = (name='') => ({
+  type: SET_WIDGET_NAME,
+  payload: name,
+});
+
+export const setWidgetType = type => ({
+  type: SET_WIDGET_TYPE,
+  payload: type,
+});
+
+export const setPlotData = (data=[]) => ({
+  type: SET_PLOT_DATA,
+  payload: data,
+});
+
+export const setPlotProperty = (property, value) => ({
+  type: SET_PLOT_PROPERTY,
+  payload: {
+    property,
+    value,
+  },
+});
+
+export const setPlotEncoding = (encoding) => ({
+  type: SET_PLOT_ENCODING,
+  payload: encoding,
+});
+
 export const setMapIsMappable = isMappable => ({
   type: SET_MAP_IS_MAPPABLE,
   payload: isMappable,
@@ -143,34 +144,4 @@ export const setMapShowHeatmap = showHeatmap => ({
 export const setMapZoom = zoom => ({
   type: SET_MAP_ZOOM,
   payload: zoom,
-});
-
-export const setPlotData = (data=[]) => ({
-  type: SET_PLOT_DATA,
-  payload: data,
-});
-
-export const setPlotDescription = (desc='') => ({
-  type: SET_PLOT_DESCRIPTION,
-  payload: desc,
-});
-
-export const setPlotEncoding = (enc={}) => ({
-  type: SET_PLOT_ENCODING,
-  payload: enc,
-});
-
-export const setPlotType = type => ({
-  type: SET_PLOT_TYPE,
-  payload: type,
-});
-
-export const setWidgetName = (name='') => ({
-  type: SET_WIDGET_NAME,
-  payload: name,
-});
-
-export const setWidgetType = type => ({
-  type: SET_WIDGET_TYPE,
-  payload: type,
 });

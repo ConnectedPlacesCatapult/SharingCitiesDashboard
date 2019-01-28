@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Definition from './Definition';
+import PlotEncodingChannelDefinition from './PlotEncodingChannelDefinition';
 
 // material-ui
 import FormControl from "@material-ui/core/FormControl";
@@ -13,9 +13,9 @@ import InputLabel from "@material-ui/core/InputLabel";
 // vega
 import {
   VEGA_LITE_ENCODING_CHANNELS,
-} from "../../constants";
+} from "./../../../constants";
 
-class EncodingChannel extends React.Component {
+class PlotEncodingChannel extends React.Component {
   handleDeleteClick = () => {
     this.props.deleteEncodingChannel(this.props.channel)
   };
@@ -46,7 +46,7 @@ class EncodingChannel extends React.Component {
 
     const definitionNodes = Object.entries(encoding[channel]).map((definition, i) => {
       return (
-        <Definition
+        <PlotEncodingChannelDefinition
           key={i}
           classes={classes}
           encoding={encoding}
@@ -94,7 +94,7 @@ class EncodingChannel extends React.Component {
   }
 }
 
-EncodingChannel.propTypes = {
+PlotEncodingChannel.propTypes = {
   classes: PropTypes.object.isRequired,
   encoding: PropTypes.object.isRequired,
   channel: PropTypes.string.isRequired,
@@ -106,4 +106,4 @@ EncodingChannel.propTypes = {
   getPermittedDefinitionFieldValues: PropTypes.func.isRequired,
 };
 
-export default EncodingChannel
+export default PlotEncodingChannel

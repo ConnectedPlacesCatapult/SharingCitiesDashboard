@@ -1,16 +1,22 @@
 import React from 'react';
 import PropTypes from "prop-types";
-import classNames from 'classnames';
-import { withStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Typography from '@material-ui/core/Typography';
-import Color from "color";
-import { connect } from 'react-redux';
-import { initializeEditor } from "./../../../actions/editorActions";
 
 import TypeSelector from './TypeSelector';
 
-const styles = theme => ({
+// material-ui
+import { withStyles } from "@material-ui/core/styles";
+import Paper from "@material-ui/core/Paper";
+import Typography from '@material-ui/core/Typography';
+
+// redux
+import { connect } from 'react-redux';
+import { initializeEditor } from "./../../../actions/editorActions";
+
+// misc utils
+import classNames from 'classnames';
+import Color from "color";
+
+const styles = (theme) => ({
   root: {
     padding: theme.spacing.unit * 2,
   },
@@ -48,14 +54,15 @@ ConfigPanel.propTypes = {
   initializeEditor: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
 
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   initializeEditor: () => dispatch(initializeEditor()),
 });
 
 ConfigPanel = withStyles(styles)(ConfigPanel);
+ConfigPanel = connect(mapStateToProps, mapDispatchToProps)(ConfigPanel);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ConfigPanel)
+export default ConfigPanel

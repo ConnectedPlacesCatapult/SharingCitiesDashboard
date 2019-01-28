@@ -12,9 +12,9 @@ import TextField from "@material-ui/core/TextField";
 // vega
 import {
   VEGA_LITE_FIELDS,
-} from "../../constants";
+} from "./../../../constants";
 
-class Definition extends React.Component {
+class PlotEncodingChannelDefinition extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -101,7 +101,7 @@ class Definition extends React.Component {
   }
 }
 
-Definition.propTypes = {
+PlotEncodingChannelDefinition.propTypes = {
   classes: PropTypes.object.isRequired,
   encoding: PropTypes.object.isRequired,
   channel: PropTypes.string.isRequired,
@@ -112,4 +112,4 @@ Definition.propTypes = {
   getPermittedDefinitionFieldValues: PropTypes.func.isRequired,
 };
 
-export default Definition
+export default PlotEncodingChannelDefinition

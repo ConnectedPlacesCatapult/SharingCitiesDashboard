@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 
 import ConfigPanel from './ConfigPanel';
 import PreviewPanel from './PreviewPanel';
 
-const styles = theme => ({
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = (theme) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
@@ -13,7 +15,6 @@ const styles = theme => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    //width: theme.spacing.unit * 150,
   },
 });
 
@@ -34,4 +35,6 @@ WidgetMaker.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(WidgetMaker)
+WidgetMaker = withStyles(styles)(WidgetMaker);
+
+export default WidgetMaker

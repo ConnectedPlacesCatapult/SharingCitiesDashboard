@@ -1,5 +1,10 @@
 import {
   PURGE_EDITOR,
+  SET_WIDGET_NAME,
+  SET_WIDGET_TYPE,
+  SET_PLOT_DATA,
+  SET_PLOT_PROPERTY,
+  SET_PLOT_ENCODING,
   SET_MAP_CENTER,
   SET_MAP_DATA,
   SET_MAP_HEATMAP_ATTRIBUTE,
@@ -7,12 +12,6 @@ import {
   SET_MAP_SHOW_HEATMAP,
   SET_MAP_TILE_LAYER,
   SET_MAP_ZOOM,
-  SET_PLOT_DATA,
-  SET_PLOT_DESCRIPTION,
-  SET_PLOT_ENCODING,
-  SET_PLOT_TYPE,
-  SET_WIDGET_NAME,
-  SET_WIDGET_TYPE,
 } from "./../constants";
 
 const initialState = {
@@ -21,9 +20,25 @@ const initialState = {
   isMappable: false,
   plotConfig: {
     spec: {
-      description: "",
-      mark: "",
-      encoding: {},
+      "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+      width: 640,
+      height: 480,
+      title: "plot title",
+      data: {
+        values: [],
+      },
+      mark: "point",
+      encoding: {
+        "x": {
+          "field": "Timestamp",
+          "type": "temporal",
+          "timeUnit": "year",
+        },
+        "y": {
+          "field": "Value",
+          "type": "quantitative",
+        },
+      },
     },
     data: {
       values: [],
@@ -47,6 +62,59 @@ export default (state=initialState, action={}) => {
   switch (action.type) {
     case PURGE_EDITOR: {
       return initialState
+    }
+
+    case SET_WIDGET_NAME: {
+      return {
+        ...state,
+        name: action.payload,
+      }
+    }
+
+    case SET_WIDGET_TYPE: {
+      return {
+        ...state,
+        type: action.payload,
+      }
+    }
+
+    case SET_PLOT_DATA: {
+      return {
+        ...state,
+        plotConfig: {
+          ...state.plotConfig,
+          data: {
+            ...state.plotConfig.data,
+            values: action.payload,
+          }
+        }
+      }
+    }
+
+    case SET_PLOT_PROPERTY: {
+      return {
+        ...state,
+        plotConfig: {
+          ...state.plotConfig,
+          spec: {
+            ...state.plotConfig.spec,
+            [action.payload.property]: action.payload.value,
+          },
+        },
+      }
+    }
+
+    case SET_PLOT_ENCODING: {
+      return {
+        ...state,
+        plotConfig: {
+          ...state.plotConfig,
+          spec: {
+            ...state.plotConfig.spec,
+            encoding: action.payload,
+          }
+        }
+      }
     }
 
     case SET_MAP_CENTER: {
@@ -139,77 +207,6 @@ export default (state=initialState, action={}) => {
       }
     }
 
-    case SET_PLOT_DATA: {
-      return {
-        ...state,
-        plotConfig: {
-          ...state.plotConfig,
-          data: {
-            ...state.plotConfig.data,
-            values: action.payload,
-          }
-        }
-      }
-    }
-
-    case SET_PLOT_DESCRIPTION: {
-      return {
-        ...state,
-        plotConfig: {
-          ...state.plotConfig,
-          spec: {
-            ...state.plotConfig.spec,
-            description: action.payload,
-          }
-        },
-      }
-    }
-
-    case SET_PLOT_ENCODING: {
-      return {
-        ...state,
-        plotConfig: {
-          ...state.plotConfig,
-          spec: {
-            ...state.plotConfig.spec,
-            encoding:  {
-              ...state.plotConfig.spec.encoding,
-              [action.payload.axis]: {
-                field: action.payload.field,
-                type: action.payload.type,
-              },
-            },
-          }
-        }
-      }
-    }
-
-    case SET_PLOT_TYPE: {
-      return {
-        ...state,
-        plotConfig: {
-          ...state.plotConfig,
-          spec: {
-            ...state.plotConfig.spec,
-            mark: action.payload,
-          }
-        },
-      }
-    }
-
-    case SET_WIDGET_NAME: {
-      return {
-        ...state,
-        name: action.payload,
-      }
-    }
-
-    case SET_WIDGET_TYPE: {
-      return {
-        ...state,
-        type: action.payload,
-      }
-    }
   }
 
   return state
