@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from "prop-types";
+
+// material-ui
 import { withStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -9,15 +11,17 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import InputLabel from "@material-ui/core/InputLabel";
+
+// redux
 import { connect } from 'react-redux';
 import {
   setMapHeatmapAttribute,
   setMapShowHeatmap,
   setMapTileLayer
 } from "../../../actions/editorActions";
-import InputLabel from "@material-ui/core/InputLabel";
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -35,33 +39,27 @@ const styles = theme => ({
 });
 
 class MapConfig extends React.Component {
-  setMapTileLayer = e => {
+  setMapTileLayer = (e) => {
     this.props.setMapTileLayer(e.target.value)
   };
 
-  setMapShowHeatmap = e => {
+  setMapShowHeatmap = (e) => {
     this.props.setMapShowHeatmap(e.target.checked)
   };
 
-  setMapHeatmapAttribute = e => {
+  setMapHeatmapAttribute = (e) => {
     this.props.setMapHeatmapAttribute(e.target.value)
   };
 
-
-
   render() {
-    const { classes, config, editor, meta } = this.props;
-
-    const nonNumericColumns = meta.columns.filter(column => !column.numeric);
-    const numericColumns = meta.columns.filter(column => column.numeric);
-    const nonGeoNumericColumns = numericColumns.filter((column) => !['lat', 'lon'].includes(column.id));
+    const { classes, config, data, editor } = this.props;
 
     const menuItems = config.leafletTileLayers.map((tileLayer, i) => {
       return <MenuItem key={i} value={tileLayer.name}>{tileLayer.name}</MenuItem>
     });
 
-    const attributeItems = nonGeoNumericColumns.map((column, i) => {
-      return <MenuItem key={i} value={column.id}>{column.label}</MenuItem>
+    const attributeItems = Object.keys(data.data[0]).map((field, i) => {
+      return <MenuItem key={i} value={field}>{field}</MenuItem>
     });
 
     return (
@@ -121,8 +119,8 @@ class MapConfig extends React.Component {
 MapConfig.propTypes = {
   classes: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired,
   editor: PropTypes.object.isRequired,
-  meta: PropTypes.object.isRequired,
   setMapHeatmapAttribute: PropTypes.func.isRequired,
   setMapShowHeatmap: PropTypes.func.isRequired,
   setMapTileLayer: PropTypes.func.isRequired,
@@ -130,16 +128,17 @@ MapConfig.propTypes = {
 
 const mapStateToProps = state => ({
   config: state.config.config,
+  data: state.data,
   editor: state.editor.mapConfig,
-  meta: state.data.meta,
 });
 
 const mapDispatchToProps = dispatch => ({
-  setMapHeatmapAttribute: attr => dispatch(setMapHeatmapAttribute(attr)),
-  setMapShowHeatmap: showHeatmap => dispatch(setMapShowHeatmap(showHeatmap)),
-  setMapTileLayer: tileLayer => dispatch(setMapTileLayer(tileLayer)),
+  setMapHeatmapAttribute: (attr) => dispatch(setMapHeatmapAttribute(attr)),
+  setMapShowHeatmap: (showHeatmap) => dispatch(setMapShowHeatmap(showHeatmap)),
+  setMapTileLayer: (tileLayer) => dispatch(setMapTileLayer(tileLayer)),
 });
 
 MapConfig = withStyles(styles)(MapConfig);
+MapConfig = connect(mapStateToProps, mapDispatchToProps)(MapConfig);
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapConfig)
+export default MapConfig

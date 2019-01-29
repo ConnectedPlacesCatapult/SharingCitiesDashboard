@@ -44,7 +44,7 @@ class TypeSelector extends React.Component {
             variant="contained"
             color="primary"
           >
-            Chart
+            Plot
           </Button>
           <Button
             className={classes.widgetTypeButton}

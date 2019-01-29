@@ -23,7 +23,6 @@ const initialState = {
       "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
       width: 640,
       height: 480,
-      title: "plot title",
       data: {
         values: [],
       },
@@ -32,7 +31,6 @@ const initialState = {
         "x": {
           "field": "Timestamp",
           "type": "temporal",
-          "timeUnit": "year",
         },
         "y": {
           "field": "Value",
@@ -131,7 +129,7 @@ export default (state=initialState, action={}) => {
       const formatted = action.payload.map((feature, i) => {
         function getProperties(feature) {
           return Object.keys(feature)
-            .filter(key => !['lat', 'lon'].includes(key))
+            .filter(key => !['Latitude', 'Longitude'].includes(key))
             .reduce((obj, key) => {
               obj[key] = feature[key];
               return obj;
@@ -143,7 +141,7 @@ export default (state=initialState, action={}) => {
           properties: getProperties(feature),
           geometry: {
             type: "Point",
-            coordinates: [feature.lon, feature.lat],
+            coordinates: [feature["Longitude"], feature["Latitude"]],
           },
         }
       });

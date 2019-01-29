@@ -8,11 +8,20 @@ import Select from "@material-ui/core/Select";
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import TextField from "@material-ui/core/TextField";
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Typography from '@material-ui/core/Typography';
 
 // vega
 import {
   VEGA_LITE_FIELDS,
 } from "./../../../constants";
+import InputLabel from "@material-ui/core/InputLabel";
+
+// misc utils
+import classNames from "classnames";
 
 class PlotEncodingChannelDefinition extends React.Component {
   constructor(props) {
@@ -32,7 +41,7 @@ class PlotEncodingChannelDefinition extends React.Component {
   };
 
   render() {
-    const { classes, encoding, channel, field, value } = this.props;
+    const { classes, encoding, channel, field, value, expanded } = this.props;
 
     const fieldMenuItems = VEGA_LITE_FIELDS.map((fieldObject, i) => {
       return (
@@ -60,53 +69,76 @@ class PlotEncodingChannelDefinition extends React.Component {
     });
 
     return (
-      <div className={classes.definitionWrapper}>
-        <IconButton
-          className={classes.button}
-          color="secondary"
-          onClick={this.handleDeleteClick}
+      <ExpansionPanel
+        expanded={expanded}
+        onChange={this.props.handleDefinitionPanelClick(`panel${this.props.i}`)}
+        className={classNames(classes.root, classes.expansionPanel)}
+      >
+        <ExpansionPanelSummary
+          className={classes.expansionPanelSummary}
+          expandIcon={<ExpandMoreIcon />}
         >
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-        <FormControl className={classes.formControl}>
-          <Select
-            className={classes.select}
-            value={field}
-            onChange={this.handleFieldChange}
-          >
-            {fieldMenuItems}
-          </Select>
-        </FormControl>
+          <Typography className={classes.expansionPanelHeader}>Definition {this.props.i + 1}</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails
+          className={classes.expansionPanelDetails}
+        >
 
-        <FormControl className={classes.formControl}>
-          {field === "title" ? (
-            <TextField
-              label="title"
-              className={classes.textField}
-              value={value}
-              onChange={this.handleValueChange}
-            />
-          ) : (
-            <Select
-              className={classes.select}
-              value={value}
-              onChange={this.handleValueChange}
-            >
-              {valueMenuItems}
-            </Select>
-          )}
-        </FormControl>
-      </div>
+          <IconButton
+            className={classes.button}
+            color="secondary"
+            onClick={this.handleDeleteClick}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+
+          <div className={classes.inline}>
+
+            <FormControl className={classes.formControl}>
+              <Select
+                className={classes.select}
+                value={field}
+                onChange={this.handleFieldChange}
+              >
+                {fieldMenuItems}
+              </Select>
+            </FormControl>
+
+            <FormControl className={classes.formControl}>
+              {field === "title" ? (
+                <TextField
+                  label="title"
+                  className={classes.textField}
+                  value={value}
+                  onChange={this.handleValueChange}
+                />
+              ) : (
+                <Select
+                  className={classes.select}
+                  value={value}
+                  onChange={this.handleValueChange}
+                >
+                  {valueMenuItems}
+                </Select>
+              )}
+            </FormControl>
+
+          </div>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
     )
   }
 }
 
 PlotEncodingChannelDefinition.propTypes = {
+  i: PropTypes.number.isRequired,
   classes: PropTypes.object.isRequired,
   encoding: PropTypes.object.isRequired,
   channel: PropTypes.string.isRequired,
+  expanded: PropTypes.bool.isRequired,
   field: PropTypes.string.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
+  handleDefinitionPanelClick: PropTypes.func.isRequired,
   deleteDefinition: PropTypes.func.isRequired,
   updateDefinition: PropTypes.func.isRequired,
   getPermittedDefinitionFieldValues: PropTypes.func.isRequired,

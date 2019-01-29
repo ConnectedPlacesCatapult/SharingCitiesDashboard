@@ -5,12 +5,15 @@ import PlotEncodingChannel from './PlotEncodingChannel';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
+import FormGroup from "@material-ui/core/FormGroup";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import AddIcon from '@material-ui/icons/Add';
 import Select from "@material-ui/core/Select";
+import Divider from "@material-ui/core/Divider";
 
 // redux
 import { connect } from 'react-redux';
@@ -28,74 +31,58 @@ import {
 
 const styles = (theme) => ({
   root: {
-    margin: theme.spacing.unit,
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: theme.palette.background.paper,
-  },
-  plotForm: {
-
-  },
-  form: {
-
   },
   formControl: {
-
+    margin: theme.spacing.unit,
+    minWidth: theme.spacing.unit * 20,
   },
   textField: {
     margin: theme.spacing.unit,
   },
   select: {
-    margin: theme.spacing.unit,
-  },
-  menuItem: {
-
+    //margin: theme.spacing.unit,
   },
   button: {
     margin: theme.spacing.unit,
   },
-  formSegment: {
-    margin: theme.spacing.unit,
-    marginLeft: 0,
-    padding: theme.spacing.unit,
-    border: '1px solid #000',
+  spacer: {
+    margin: `${theme.spacing.unit}px 0`,
   },
-  detailsWrapper: {
-
-  },
-  markWrapper: {
-
-  },
-  encodingWrapper: {
+  inline: {
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
-  channelWrapper: {
-    border: '1px solid #000',
-    margin: theme.spacing.unit,
-    marginLeft: 0,
-    padding: theme.spacing.unit,
+  inputLabel: {
+
+  },
+  expansionPanelsWrapper: {
+    margin: `${theme.spacing.unit * 2}px ${theme.spacing.unit}px ${theme.spacing.unit}px`,
+  },
+  expansionPanel: {
+    //margin: theme.spacing.unit,
+  },
+  expansionPanelSummary: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  expansionPanelDetails: {
     display: 'flex',
     flexDirection: 'column',
   },
-  definitionWrapper: {
-    border: '1px solid #000',
-    margin: theme.spacing.unit,
-    padding: theme.spacing.unit,
-  },
-  plotWrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  spec: {
-    border: '1px solid black',
-  },
-  plot: {
+  expansionPanelHeader: {
 
   },
 });
 
 class PlotConfig extends React.Component {
+  state = {
+    expandedChannel: null,
+  };
+
   getPermittedDefinitionFieldValues = (field) => {
     const currentFieldObject = VEGA_LITE_FIELDS.find((fieldObject) => fieldObject.name === field);
 
@@ -126,6 +113,12 @@ class PlotConfig extends React.Component {
     }
 
     return values
+  };
+
+  handleChannelPanelClick = (panel) => (e, expandedChannel) => {
+    this.setState({
+      expandedChannel: expandedChannel ? panel : false,
+    })
   };
 
   updateSpecProperty = (property) => (e) => {
@@ -248,9 +241,12 @@ class PlotConfig extends React.Component {
       return (
         <PlotEncodingChannel
           key={i}
+          i={i}
           classes={classes}
           encoding={editor.plotConfig.spec.encoding}
           channel={channel}
+          expanded={this.state.expandedChannel === `panel${i}`}
+          handleChannelPanelClick={this.handleChannelPanelClick}
           deleteEncodingChannel={this.deleteEncodingChannel}
           updateEncodingChannel={this.updateEncodingChannel}
           addDefinition={this.addDefinition}
@@ -262,70 +258,78 @@ class PlotConfig extends React.Component {
     });
 
     return (
-      <div className={classes.root}>
-        <div className={classes.plotForm}>
-          <form className={classes.form}>
-            <div className={classes.formSegment}>
-              <FormLabel className={classes.formLabel}>Details</FormLabel>
-              <div className={classes.detailsWrapper}>
-                <FormControl className={classes.formControl}>
-                  <TextField
-                    className={classes.textField}
-                    label="title"
-                    value={editor.plotConfig.spec.title}
-                    onChange={this.updateSpecProperty('title')}
-                  />
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                  <TextField
-                    className={classes.textField}
-                    label="width"
-                    value={editor.plotConfig.spec.width}
-                    onChange={this.updateSpecProperty('width')}
-                  />
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                  <TextField
-                    className={classes.textField}
-                    label="height"
-                    value={editor.plotConfig.spec.height}
-                    onChange={this.updateSpecProperty('height')}
-                  />
-                </FormControl>
-              </div>
-            </div>
-            <div className={classes.formSegment}>
-              <FormLabel className={classes.formLabel}>Mark</FormLabel>
-              <div className={classes.markWrapper}>
-                <FormControl className={classes.formControl}>
-                  <Select
-                    className={classes.select}
-                    label="mark"
-                    value={editor.plotConfig.spec.mark}
-                    onChange={this.updateSpecProperty('mark')}
-                  >
-                    {markMenuItems}
-                  </Select>
-                </FormControl>
-              </div>
-            </div>
-            <div className={classes.formSegment}>
-              <FormLabel className={classes.formLabel}>Encoding</FormLabel>
-              <div className={classes.encodingWrapper}>
-                {encodingChannelNodes}
-              </div>
-              <Button
-                className={classes.button}
-                variant="contained"
-                color="primary"
-                onClick={this.addEncodingChannel}
-              >
-                Add channel
-              </Button>
-            </div>
-          </form>
+      <FormGroup className={classes.root}>
+
+        <Divider className={classes.spacer} />
+
+        <FormLabel className={classes.formLabel}>Dimensions</FormLabel>
+
+        <div className={classes.inline}>
+
+          <FormControl htmlFor="plot-width" className={classes.formControl}>
+            <TextField
+              className={classes.textField}
+              label="width"
+              value={editor.plotConfig.spec.width}
+              onChange={this.updateSpecProperty('width')}
+              inputProps={{
+                name: 'plotWidth',
+                id: 'plot-width',
+              }}
+            />
+          </FormControl>
+
+          <FormControl htmlFor="plot-height" className={classes.formControl}>
+            <TextField
+              className={classes.textField}
+              label="height"
+              value={editor.plotConfig.spec.height}
+              onChange={this.updateSpecProperty('height')}
+              inputProps={{
+                name: 'plotHeight',
+                id: 'plot-height',
+              }}
+            />
+          </FormControl>
+
         </div>
-      </div>
+
+        <Divider className={classes.spacer} />
+
+        <FormLabel className={classes.formLabel}>Mark</FormLabel>
+        <FormControl htmlFor="plot-mark" className={classes.formControl}>
+          <Select
+            className={classes.select}
+            label="mark"
+            value={editor.plotConfig.spec.mark}
+            onChange={this.updateSpecProperty('mark')}
+            inputProps={{
+              name: 'plotMark',
+              id: 'plot-mark',
+            }}
+          >
+            {markMenuItems}
+          </Select>
+        </FormControl>
+
+        <Divider className={classes.spacer} />
+
+        <FormLabel className={classes.formLabel}>Encoding Channels</FormLabel>
+
+        <div className={classes.expansionPanelsWrapper}>
+          {encodingChannelNodes}
+        </div>
+
+        <IconButton
+          className={classes.button}
+          variant="contained"
+          color="secondary"
+          onClick={this.addEncodingChannel}
+        >
+          <AddIcon fontSize="small" />
+        </IconButton>
+
+      </FormGroup>
     )
   }
 }
