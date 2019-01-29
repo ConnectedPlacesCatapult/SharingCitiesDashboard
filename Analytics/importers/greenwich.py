@@ -101,3 +101,87 @@ class GreenwichOCC(BaseImporter):
     def _refresh_token(self, *args):
         print('Token expired Refresh it manually')
 
+config = get_config()
+config_kiwi = config[config['environment']]['greenwich_kiwi']
+
+API_NAME_KIWI = config_kiwi['API_NAME']
+BASE_URL_KIWI = config_kiwi['BASE_URL']
+API_CLASS_KIWI = config_kiwi['API_CLASS']
+REFRESH_TIME_KIWI = config_kiwi['REFRESH_TIME']
+API_KEY_KIWI = config_kiwi['API_KEY']
+TOKEN_EXPIRY_KIWI = config_kiwi['TOKEN_EXPIRY']
+
+class GreenwichKiwiPump(BaseImporter):
+    def __init__(self):
+        super().__init__(API_NAME_KIWI, BASE_URL_KIWI, REFRESH_TIME_KIWI, API_KEY_KIWI, API_CLASS_KIWI, TOKEN_EXPIRY_KIWI)
+
+    def _create_datasource(self, headers=None):
+        super()._create_datasource()
+        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+
+        ### Hardcoding the location 
+        self.df['latitude'] =  51.485034
+        self.df['longitude'] = -0.001097 
+        self.df['attribute'] = 'ernest_dense_pumps'
+        self.df['description'] = 'Ernest Dense Boiler room pumps'
+        
+        ### Faking a sensor id since the api returns data only from one sensor
+        ### Need to modify it when the api starts sourcing data from more sensors
+        self.df['tag'] = 0
+        
+        self.create_datasource_with_values(dataframe=self.df, sensor_tag='tag', attribute_tag='attribute', 
+                                            value_tag='value_kw', latitude_tag='latitude', longitude_tag='longitude',
+                                            description_tag='description', api_timestamp_tag='time_',
+                                          unit_id = 4, sub_theme = 3)
+
+    def _refresh_token(self, *args):
+        print('Token expired Refresh it manually')
+
+config = get_config()
+config_kiwi_house = config[config['environment']]['greenwich_kiwi_house']
+
+API_NAME_KIWI_HOUSE = config_kiwi_house['API_NAME']
+BASE_URL_KIWI_HOUSE = config_kiwi_house['BASE_URL']
+API_CLASS_KIWI_HOUSE = config_kiwi_house['API_CLASS']
+REFRESH_TIME_KIWI_HOUSE = config_kiwi_house['REFRESH_TIME']
+API_KEY_KIWI_HOUSE = config_kiwi_house['API_KEY']
+TOKEN_EXPIRY_KIWI_HOUSE = config_kiwi_house['TOKEN_EXPIRY']
+
+class GreenwichWholeHouse(BaseImporter):
+    def __init__(self):
+        super().__init__(API_NAME_KIWI_HOUSE, BASE_URL_KIWI_HOUSE, REFRESH_TIME_KIWI_HOUSE, API_KEY_KIWI_HOUSE, API_CLASS_KIWI_HOUSE, TOKEN_EXPIRY_KIWI_HOUSE)
+
+    def _create_datasource(self, headers=None):
+        super()._create_datasource()
+        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+
+        ### Hardcoding the location 
+        self.df['latitude'] = 51.484216
+        self.df['longitude'] = 0.002162
+        self.df['description'] = 'residential house energy consumption'
+        
+        ### Faking a sensor id since the api returns data only from one sensor
+        ### Need to modify it when the api starts sourcing data from more sensors
+        self.df['tag'] = 0
+
+        #### the attribute names are too big for name+hashing as table names.
+        self.df.rename(index=str, columns={'power_wm_sid_761573_wholehouse': 'power_sid_761573',
+                       'light_avg_lux_sid_400191_e_room': 'avg_lux_sid_400191',
+                       'temp_avg_degc_sid_400191_e_room' : 'temp_sid_400191'}, 
+                      inplace=True)
+        
+        loc = Location('latitude', 'longitude')
+        
+        self.create_datasource(dataframe=self.df, sensor_tag='tag', attribute_tag=['power_sid_761573',
+                                                                                  'avg_lux_sid_400191',
+                                                                                  'temp_sid_400191'], 
+                                            unit_value=[4,5,6],bespoke_sub_theme=[3,3,1], 
+                               bespoke_unit_tag=[4,5,6],
+                               location_tag=loc,
+                               description=['description','description','description'],
+                               api_timestamp_tag='time',
+                               sensor_prefix='',
+                               is_dependent=True)
+
+    def _refresh_token(self, *args):
+        print('Token expired Refresh it manually')
