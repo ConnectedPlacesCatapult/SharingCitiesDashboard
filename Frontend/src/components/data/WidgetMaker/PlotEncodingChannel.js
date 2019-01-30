@@ -4,9 +4,11 @@ import PropTypes from 'prop-types';
 import PlotEncodingChannelDefinition from './PlotEncodingChannelDefinition';
 
 // material-ui
+import FormLabel from "@material-ui/core/FormLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import Select from "@material-ui/core/Select";
@@ -23,7 +25,7 @@ import {
 
 // misc utils
 import classNames from 'classnames';
-import FormLabel from "@material-ui/core/FormLabel";
+import Divider from "@material-ui/core/Divider";
 
 class PlotEncodingChannel extends React.Component {
   state = {
@@ -113,23 +115,27 @@ class PlotEncodingChannel extends React.Component {
             {definitionNodes}
           </div>
 
-          <IconButton
-            className={classes.button}
+          <Button
             variant="contained"
             color="primary"
+            className={classes.button}
             onClick={this.handleAddDefinitionClick}
           >
-            <AddIcon fontSize="small" />
-          </IconButton>
+            Add Definition
+            <AddIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
+          </Button>
 
-          <IconButton
-            className={classes.button}
+          <Divider className={classes.spacer} />
+
+          <Button
             variant="contained"
             color="secondary"
+            className={classes.button}
             onClick={this.handleDeleteClick}
           >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+            Delete Channel
+            <DeleteIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
+          </Button>
 
         </ExpansionPanelDetails>
       </ExpansionPanel>

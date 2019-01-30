@@ -10,7 +10,8 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
-import IconButton from '@material-ui/core/IconButton';
+// import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 //import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd'
 import Select from "@material-ui/core/Select";
@@ -30,6 +31,9 @@ import {
   VEGA_LITE_MARKS,
 } from "./../../../constants";
 
+// misc utils
+import classNames from 'classnames';
+
 const styles = (theme) => ({
   root: {
     display: 'flex',
@@ -48,6 +52,15 @@ const styles = (theme) => ({
   button: {
     margin: theme.spacing.unit,
     flexGrow: 0,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  iconSmall: {
+    fontSize: 20,
   },
   spacer: {
     margin: `${theme.spacing.unit}px 0`,
@@ -155,6 +168,10 @@ class PlotConfig extends React.Component {
   };
 
   updateEncodingChannel = (oldChannel, newChannel) => {
+    if (oldChannel === newChannel) {
+      return
+    }
+
     const updatedEncoding = {...this.props.editor.plotConfig.spec.encoding};
     updatedEncoding[newChannel] = updatedEncoding[oldChannel];
 
@@ -322,14 +339,15 @@ class PlotConfig extends React.Component {
           {encodingChannelNodes}
         </div>
 
-        <IconButton
-          className={classes.button}
+        <Button
           variant="contained"
-          color="secondary"
+          color="primary"
+          className={classes.button}
           onClick={this.addEncodingChannel}
         >
-          <AddIcon fontSize="small" />
-        </IconButton>
+          Add Channel
+          <AddIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
+        </Button>
 
       </FormGroup>
     )

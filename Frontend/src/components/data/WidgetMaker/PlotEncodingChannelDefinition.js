@@ -6,7 +6,9 @@ import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
+import InputLabel from "@material-ui/core/InputLabel";
 import TextField from "@material-ui/core/TextField";
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -18,7 +20,6 @@ import Typography from '@material-ui/core/Typography';
 import {
   VEGA_LITE_FIELDS,
 } from "./../../../constants";
-import InputLabel from "@material-ui/core/InputLabel";
 
 // misc utils
 import classNames from "classnames";
@@ -83,15 +84,6 @@ class PlotEncodingChannelDefinition extends React.Component {
         <ExpansionPanelDetails
           className={classes.expansionPanelDetails}
         >
-
-          <IconButton
-            className={classes.button}
-            color="secondary"
-            onClick={this.handleDeleteClick}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-
           <div className={classes.inline}>
 
             <FormControl className={classes.formControl}>
@@ -124,6 +116,17 @@ class PlotEncodingChannelDefinition extends React.Component {
             </FormControl>
 
           </div>
+
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+            onClick={this.handleDeleteClick}
+          >
+            Delete Definition
+            <DeleteIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
+          </Button>
+
         </ExpansionPanelDetails>
       </ExpansionPanel>
     )
