@@ -106,6 +106,28 @@ Description:
             "value_kw": 19
            }
 
+    Importer GreenwichSiemens imports data from gla_gis.gisapdata.sharingcities_siemens_energy layer. 
+    
+    example resposnse:
+
+      {
+       "attributes": {
+        "date_time": 1518114600000,
+        "b1_heat_value": 316,
+        "b1_flow_value": null,
+        "b1_temp_out_value": null,
+        "b1_temp_back_value": null,
+        "b2_heat_value": 350.30000000000001,
+        "b2_flow_value": null,
+        "b2_temp_out_value": null,
+        "b2_temp_back_value": null,
+        "b3_heat_value": 183.09999999999999,
+        "b3_flow_value": null,
+        "b3_temp_out_value": null,
+        "b3_temp_back_value": null,
+        "run_time_stamp": 1538728002000
+       }
+      }
 '''
 
 import os, sys
@@ -368,6 +390,69 @@ class GreenwichWholeHouse(BaseImporter):
                                location_tag=loc,
                                description=['description','description','description'],
                                api_timestamp_tag='time',
+                               sensor_prefix='',
+                               is_dependent=True)
+
+    def _refresh_token(self, *args):
+        print('Token expired Refresh it manually')
+
+config = get_config()
+config_siemens= config[config['environment']]['greenwich_siemens']
+
+API_NAME_SIEMENS = config_siemens['API_NAME']
+BASE_URL_SIEMENS = config_siemens['BASE_URL']
+API_CLASS_SIEMENS = config_siemens['API_CLASS']
+REFRESH_TIME_SIEMENS = config_siemens['REFRESH_TIME']
+TOKEN_EXPIRY_SIEMENS = config_siemens['TOKEN_EXPIRY']
+
+class GreenwichSiemens(BaseImporter):
+    def __init__(self):
+        super().__init__(API_NAME_SIEMENS, BASE_URL_SIEMENS, REFRESH_TIME_SIEMENS, API_KEY, API_CLASS_SIEMENS, TOKEN_EXPIRY_SIEMENS)
+
+    def _create_datasource(self, headers=None):
+        super()._create_datasource()
+        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+
+        ### Hardcoding the location. As there is no information on the location of the sensor
+        ### the centroid coordinates of Greenwich is used
+        self.df['latitude'] = 51.482877
+        self.df['longitude'] = -0.007516
+        self.df['description'] = 'siemens energy'
+        
+        ### Faking a sensor id since the api returns data only from one sensor
+        ### Need to modify it when the api starts sourcing data from more sensors
+        self.df['tag'] = 0
+
+        ### As of current behaviour _create_datasource method fails if the dataframe passed contains null values
+        ### eg:  displayFieldName   date_time   b1_heat_value   b1_flow_value  
+        ###      0  1521480600000   20  null
+        ### The only way to import would be to drop the nulls but this will drop the row all together.
+        ### We could choose a default value for nulls like -999 but there must be a more flexible way.
+        ### For now (illustrative purposes) we just drop
+        self.df.dropna(inplace=True)
+
+
+
+
+        loc = Location('latitude', 'longitude')
+        
+        self.create_datasource(dataframe=self.df, sensor_tag='tag', attribute_tag=['b1_heat_value',
+                                                                                  'b1_flow_value',
+                                                                                  'b1_temp_out_value',
+                                                                                  'b1_temp_back_value',
+                                                                                  'b2_heat_value',
+                                                                                  'b2_flow_value',
+                                                                                  'b2_temp_out_value',
+                                                                                  'b2_temp_back_value',
+                                                                                  'b3_heat_value',
+                                                                                  'b3_flow_value',
+                                                                                  'b3_temp_out_value',
+                                                                                  'b3_temp_back_value'], 
+                                            unit_value=[],bespoke_sub_theme=[], 
+                               bespoke_unit_tag=[],
+                               location_tag=loc,
+                               description=[],
+                               api_timestamp_tag='run_time_stamp',
                                sensor_prefix='',
                                is_dependent=True)
 
