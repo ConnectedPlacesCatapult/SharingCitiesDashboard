@@ -7,7 +7,6 @@ import PlotEncodingChannelDefinition from './PlotEncodingChannelDefinition';
 import FormLabel from "@material-ui/core/FormLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
-import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
@@ -15,8 +14,10 @@ import Select from "@material-ui/core/Select";
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
+import Divider from "@material-ui/core/Divider";
 
 // vega
 import {
@@ -25,7 +26,6 @@ import {
 
 // misc utils
 import classNames from 'classnames';
-import Divider from "@material-ui/core/Divider";
 
 class PlotEncodingChannel extends React.Component {
   state = {
@@ -125,11 +125,16 @@ class PlotEncodingChannel extends React.Component {
             <AddIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
           </Button>
 
-          <Divider className={classes.spacer} />
+        </ExpansionPanelDetails>
+
+        <Divider className={classes.spacer} />
+
+        <ExpansionPanelActions>
 
           <Button
             variant="contained"
             color="secondary"
+            size="small"
             className={classes.button}
             onClick={this.handleDeleteClick}
           >
@@ -137,7 +142,8 @@ class PlotEncodingChannel extends React.Component {
             <DeleteIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
           </Button>
 
-        </ExpansionPanelDetails>
+        </ExpansionPanelActions>
+
       </ExpansionPanel>
     )
   }

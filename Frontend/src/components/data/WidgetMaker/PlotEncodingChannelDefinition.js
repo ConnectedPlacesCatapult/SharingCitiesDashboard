@@ -5,16 +5,16 @@ import PropTypes from 'prop-types';
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
-import InputLabel from "@material-ui/core/InputLabel";
 import TextField from "@material-ui/core/TextField";
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 
 // vega
 import {
@@ -79,7 +79,10 @@ class PlotEncodingChannelDefinition extends React.Component {
           className={classes.expansionPanelSummary}
           expandIcon={<ExpandMoreIcon />}
         >
-          <Typography className={classes.expansionPanelHeader}>Definition {this.props.i + 1}</Typography>
+
+          {/*<Typography className={classes.expansionPanelHeader}>Definition {this.props.i + 1}</Typography>*/}
+          <Typography className={classes.expansionPanelHeader}>{field} :: {value}</Typography>
+
         </ExpansionPanelSummary>
         <ExpansionPanelDetails
           className={classes.expansionPanelDetails}
@@ -99,7 +102,8 @@ class PlotEncodingChannelDefinition extends React.Component {
             <FormControl className={classes.formControl}>
               {field === "title" ? (
                 <TextField
-                  label="title"
+                  //label="title"
+                  placeholder="title"
                   className={classes.textField}
                   value={value}
                   onChange={this.handleValueChange}
@@ -117,9 +121,16 @@ class PlotEncodingChannelDefinition extends React.Component {
 
           </div>
 
+        </ExpansionPanelDetails>
+
+        <Divider className={classes.spacer} />
+
+        <ExpansionPanelActions>
+
           <Button
             variant="contained"
             color="secondary"
+            size="small"
             className={classes.button}
             onClick={this.handleDeleteClick}
           >
@@ -127,7 +138,8 @@ class PlotEncodingChannelDefinition extends React.Component {
             <DeleteIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
           </Button>
 
-        </ExpansionPanelDetails>
+        </ExpansionPanelActions>
+
       </ExpansionPanel>
     )
   }

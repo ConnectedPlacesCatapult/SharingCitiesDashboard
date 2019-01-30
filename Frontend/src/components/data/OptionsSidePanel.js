@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+// material-ui
 import { withStyles } from '@material-ui/core/styles';
 import Paper from "@material-ui/core/Paper";
 import Typography from '@material-ui/core/Typography';
@@ -9,7 +11,7 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import BarChartIcon from '@material-ui/icons/BarChart';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     marginLeft: theme.spacing.unit * 2,
   },
@@ -17,7 +19,7 @@ const styles = theme => ({
     padding: theme.spacing.unit * 2,
   },
   heading: {
-    color: 'white',
+    //color: 'white',
   },
   actionButtons: {
     display: 'flex',
@@ -52,15 +54,15 @@ class OptionsSidePanel extends React.Component {
             Actions
           </Typography>
           <div className={classes.actionButtons}>
-            <Button variant="contained" color="secondary" className={classes.actionButton}>
+            <Button variant="contained" color="primary" className={classes.actionButton}>
               <SaveAltIcon className={classes.actionButtonIcon} />
               Export Data
             </Button>
-            <Button variant="contained" color="secondary" className={classes.actionButton}>
+            <Button variant="contained" color="primary" className={classes.actionButton}>
               <ShowChartIcon className={classes.actionButtonIcon} />
               Forecast Data
             </Button>
-            <Button variant="contained" color="secondary" className={classes.actionButton} onClick={this.props.openWidgetMaker}>
+            <Button variant="contained" color="primary" className={classes.actionButton} onClick={this.props.openWidgetMaker}>
               <BarChartIcon className={classes.actionButtonIcon} />
               Create Widget
             </Button>
@@ -75,4 +77,6 @@ OptionsSidePanel.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(OptionsSidePanel)
+OptionsSidePanel = withStyles(styles)(OptionsSidePanel);
+
+export default OptionsSidePanel

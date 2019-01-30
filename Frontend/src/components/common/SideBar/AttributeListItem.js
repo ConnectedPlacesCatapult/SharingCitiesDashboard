@@ -1,14 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+// material-ui
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+
+// redux
 import { connect } from 'react-redux';
 import { fetchAttributeData } from "../../../actions/dataActions";
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
 
   },
@@ -66,5 +70,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 AttributeListItem = withStyles(styles)(AttributeListItem);
+AttributeListItem = connect(mapStateToProps, mapDispatchToProps)(AttributeListItem);
 
-export default connect(mapStateToProps, mapDispatchToProps)(AttributeListItem)
+export default AttributeListItem

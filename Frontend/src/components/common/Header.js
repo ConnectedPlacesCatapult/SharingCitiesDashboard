@@ -1,26 +1,33 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+
+import LoginForm from './LoginForm';
+
+// material-ui
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from '@material-ui/core/Typography';
 import Button from "@material-ui/core/Button";
-import { NavLink } from "react-router-dom";
-import { Login as LoginIcon } from 'mdi-material-ui'
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import Modal from '@material-ui/core/Modal';
-import LoginForm from './LoginForm';
+import { Login as LoginIcon } from 'mdi-material-ui'
+
+// router
+import { NavLink } from "react-router-dom";
+
+// redux
 import { connect } from 'react-redux';
 
 // ToDo :: add this to config and define a default logo (somewhere)
 const bgImage = require('./../../images/Lisbon-logo-med.png');
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     zIndex: theme.zIndex.drawer + 1,
     margin: '30px 0',
-    backgroundColor: theme.palette.primary.light,
+    //backgroundColor: theme.palette.primary.light,
     boxShadow: "none",
   },
   logoImage: {
@@ -62,20 +69,16 @@ const styles = theme => ({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: theme.spacing.unit * 50,
-    backgroundColor: theme.palette.background.paper,
+    //backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing.unit * 4,
   },
 });
 
-class Header extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      loginModalOpen: false,
-    }
-  }
+class Header extends React.Component {
+  state = {
+    loginModalOpen: false,
+  };
 
   handleModalOpen = () => {
     this.setState({ loginModalOpen: true });
@@ -137,14 +140,15 @@ Header.propTypes = {
   config: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   config: state.config.config,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 
 });
 
 Header = withStyles(styles)(Header);
+Header = connect(mapStateToProps, mapDispatchToProps)(Header);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header)
+export default Header

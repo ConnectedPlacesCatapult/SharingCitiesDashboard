@@ -25,67 +25,6 @@ const isMappable = record => {
   return true
 };
 
-/**
- * {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [-105.00341892242432, 39.75383843460583],
-                    [-105.0008225440979, 39.751891803969535]
-                ]
-            },
-            "properties": {
-                "popupContent": "This is a free bus line that will take you across downtown.",
-                "underConstruction": false
-            },
-            "id": 1
-        }
- * @param data
- *
- *
- *
- *
- *
- *
- *
- * {
-  "Timestamp": 1543795200000,
-  "Attribute_Name": "SO2",
-  "Sensor_id": "3004cb8a-2e0d-4d7c-b4ac-5985d83418c1",
-  "Value": 6.5,
-  "Name": "LB5",
-  "Latitude": 51.485486774,
-  "Longitude": -0.1245452348
-}
- */
-
-const convertToFeatureList = (data) => {
-  return data.map((record, i) => {
-    const otherKeys = Object.keys(record).filter(key => !["Latitude", "Longitude"].includes(key));
-    const otherProperties = otherKeys.map((prop) => {
-      return {
-        [prop]: record[prop]
-      }
-    });
-
-    return {
-      type: "feature",
-      id: i,
-      geometry: {
-        type: "Point",
-        coordinates: [record["Longitude"], record["Latitude"]],
-      },
-      properties: {
-        ...otherProperties,
-      },
-    }
-  })
-};
-
 // ToDo :: this needs to remember stuff rather than just overwrite it every time
 export const initializeEditor = () => {
   return (dispatch, getState) => {

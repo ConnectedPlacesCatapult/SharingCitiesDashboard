@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from "prop-types";
+
+// material-ui
 import { withStyles } from "@material-ui/core/styles";
+
+//redux
 import { connect } from 'react-redux';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     display: 'flex',
   },
@@ -15,7 +19,7 @@ const styles = theme => ({
 
 class AlertPreview extends React.Component {
   render() {
-    const {classes, config, editor} = this.props;
+    const {classes} = this.props;
 
     return (
       <div className={classes.root}>
@@ -36,10 +40,11 @@ const mapStateToProps = state => ({
   editor: state.editor,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 
 });
 
 AlertPreview = withStyles(styles)(AlertPreview);
+AlertPreview = connect(mapStateToProps, mapDispatchToProps)(AlertPreview);
 
-export default connect(mapStateToProps, mapDispatchToProps)(AlertPreview)
+export default AlertPreview

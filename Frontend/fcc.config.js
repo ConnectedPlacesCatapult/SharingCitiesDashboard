@@ -8,9 +8,9 @@ module.exports = {
 
   // overrides for MaterialUI default theme
   // ToDo :: change palette type to 'dark' and update styles accordingly
-  /*localeThemeData: {
+  localeThemeData: {
     "palette": {
-     //"type": "dark",
+     "type": "dark",
       "primary": {
         "light": "#d3edea",
         "main": "#81cfc7",
@@ -30,7 +30,7 @@ module.exports = {
       useNextVariants: true, // to avoid deprecation warnings
       "fontFamily": "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
     }
-  },*/
+  },
 
   // currently used by the common/Header component to define links
   routes: [

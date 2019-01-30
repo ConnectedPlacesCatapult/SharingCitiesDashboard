@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from "prop-types";
+
+// material-ui
 import { withStyles } from "@material-ui/core/styles";
+
+// redux
 import { connect } from 'react-redux';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
 
   },
@@ -27,15 +31,16 @@ AlertConfig.propTypes = {
   editor: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   config: state.config.config,
   editor: state.editor.plotConfig,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 
 });
 
 AlertConfig = withStyles(styles)(AlertConfig);
+AlertConfig = connect(mapStateToProps, mapDispatchToProps)(AlertConfig);
 
-export default connect(mapStateToProps, mapDispatchToProps)(AlertConfig)
+export default AlertConfig

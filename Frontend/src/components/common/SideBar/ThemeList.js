@@ -1,12 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from "prop-types";
-import List from '@material-ui/core/List';
-import { connect } from 'react-redux';
-import { fetchThemes, toggleThemeSelected } from "./../../../actions/themesActions";
 
 import ThemeListItem from './ThemeListItem';
 
-class ThemeList extends Component {
+// material-ui
+import List from '@material-ui/core/List';
+
+// redux
+import { connect } from 'react-redux';
+import { fetchThemes, toggleThemeSelected } from "./../../../actions/themesActions";
+
+class ThemeList extends React.Component {
   constructor(props) {
     super(props);
 
@@ -44,15 +48,15 @@ ThemeList.propTypes = {
   toggleThemeSelected: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   themes: state.themes.themes,
 });
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchThemes: () => dispatch(fetchThemes()),
-    toggleThemeSelected: id => dispatch(toggleThemeSelected(id)),
-  }
-};
+const mapDispatchToProps = (dispatch) => ({
+  fetchThemes: () => dispatch(fetchThemes()),
+  toggleThemeSelected: (id) => dispatch(toggleThemeSelected(id)),
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ThemeList)
+ThemeList = connect(mapStateToProps, mapDispatchToProps)(ThemeList);
+
+export default ThemeList

@@ -16,4 +16,4 @@ export default combineReducers({
   themes,
   user,
   widgets,
-});
+})

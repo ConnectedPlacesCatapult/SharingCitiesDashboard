@@ -1,5 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import MapWidget from "./MapWidget";
+import PlotWidget from "./PlotWidget";
+
+// material-ui
 import { withStyles } from '@material-ui/core/styles';
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -9,10 +14,7 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import InfoIcon from '@material-ui/icons/Info';
 import OpenWithIcon from '@material-ui/icons/OpenWith';
 
-import MapWidget from "./MapWidget";
-import PlotWidget from "./PlotWidget";
-
-const styles = theme => ({
+const styles = (theme) => ({
   widget: {
     borderRadius: '3px',
     padding: theme.spacing.unit,
@@ -23,7 +25,7 @@ const styles = theme => ({
   },
   widgetTitle: {
     flexGrow: 1,
-    color: theme.palette.common.white,
+    //color: theme.palette.common.white,
     float: 'left',
   },
   widgetButtons: {
@@ -46,10 +48,6 @@ const styles = theme => ({
 });
 
 class Widget extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { classes, title, isStatic, type, data } = this.props;
 
@@ -107,4 +105,6 @@ Widget.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(Widget);
+Widget = withStyles(styles, { withTheme: true })(Widget);
+
+export default Widget

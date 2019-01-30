@@ -38,8 +38,8 @@ const styles = (theme) => ({
 
   },
   input: {
-    color: theme.palette.primary.main,
-    borderColor: theme.palette.primary.secondary,
+    //color: theme.palette.primary.main,
+    //borderColor: theme.palette.primary.secondary,
   }
 });
 

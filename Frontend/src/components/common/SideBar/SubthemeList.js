@@ -1,10 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import List from '@material-ui/core/List';
-import { connect } from 'react-redux';
-import { fetchSubthemes, toggleSubthemeSelected } from "../../../actions/themesActions";
 
 import SubthemeListItem from './SubthemeListItem';
+
+// material-ui
+import List from '@material-ui/core/List';
+
+// redux
+import { connect } from 'react-redux';
+import {
+  fetchSubthemes,
+  toggleSubthemeSelected
+} from "../../../actions/themesActions";
 
 class SubthemeList extends React.Component {
   constructor(props) {
@@ -47,13 +54,15 @@ SubthemeList.propTypes = {
   toggleSubthemeSelected: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   themes: state.themes.themes,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchSubthemes: themeId => dispatch(fetchSubthemes(themeId)),
+const mapDispatchToProps = (dispatch) => ({
+  fetchSubthemes: (themeId) => dispatch(fetchSubthemes(themeId)),
   toggleSubthemeSelected: (themeId, subthemeId) => dispatch(toggleSubthemeSelected(themeId, subthemeId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubthemeList)
+SubthemeList = connect(mapStateToProps, mapDispatchToProps)(SubthemeList);
+
+export default SubthemeList

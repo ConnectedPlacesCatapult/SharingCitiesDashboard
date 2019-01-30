@@ -7,6 +7,9 @@ import TypeSelector from './TypeSelector';
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import Button from '@material-ui/core/Button';
+import SaveIcon from '@material-ui/icons/Save';
 
 // redux
 import { connect } from 'react-redux';
@@ -21,10 +24,25 @@ const styles = (theme) => ({
     padding: theme.spacing.unit * 2,
   },
   paper: {
-    backgroundColor: Color(theme.palette.primary.dark).alpha(0.95).rgb().string(),
+    //backgroundColor: Color(theme.palette.primary.dark).alpha(0.95).rgb().string(),
   },
   heading: {
-    color: 'white',
+    //color: 'white',
+  },
+  spacer: {
+    margin: `${theme.spacing.unit}px 0`,
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  iconSmall: {
+    fontSize: 20,
   },
 });
 
@@ -44,6 +62,15 @@ class ConfigPanel extends React.Component {
           Widget Creator
         </Typography>
         <TypeSelector />
+        <Divider className={classes.spacer} />
+        <Button
+          className={classes.button}
+          variant="contained"
+          size="small"
+        >
+          Save Widget
+          <SaveIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
+        </Button>
       </Paper>
     )
   }

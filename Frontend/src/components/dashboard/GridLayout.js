@@ -1,18 +1,23 @@
 import React from 'react';
 import PropTypes from "prop-types";
-import { withStyles } from '@material-ui/core/styles';
-import RGL, { WidthProvider } from "react-grid-layout";
-import { connect } from 'react-redux';
-import { fetchLayout } from "./../../actions/layoutActions";
-import { fetchWidgets } from './../../actions/widgetsActions';
 
 import Widget from './Widget';
 
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+
+// grid-layout
+import RGL, { WidthProvider } from "react-grid-layout";
 // ToDo :: overwrite some of the original base styles
 import './../../../node_modules/react-grid-layout/css/styles.css';
 import './../../../node_modules/react-resizable/css/styles.css';
 
-const styles = theme => ({
+// redux
+import { connect } from 'react-redux';
+import { fetchLayout } from "./../../actions/layoutActions";
+import { fetchWidgets } from './../../actions/widgetsActions';
+
+const styles = (theme) => ({
   root: {
     display: 'flex',
     marginTop: theme.spacing.unit * 2,
@@ -40,9 +45,7 @@ class GridLayout extends React.Component {
   }
 
   onLayoutChange(layout) {
-    this.setState({ layout }, () => {
-      //console.log(this.state.layout)
-    });
+    this.setState({ layout });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -86,17 +89,17 @@ GridLayout.propTypes = {
   layout: PropTypes.array.isRequired,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    layout: state.layout.layout,
-    widgets: state.widgets.widgets,
-  }
-};
+const mapStateToProps = (state) => ({
+  layout: state.layout.layout,
+  widgets: state.widgets.widgets,
+});
 
-const mapDispatchToProps = {
-  fetchLayout,
-  fetchWidgets,
-};
+const mapDispatchToProps = (dispatch) => ({
+  fetchLayout: () => dispatch(fetchLayout()),
+  fetchWidgets: () => dispatch(fetchWidgets()),
+});
 
 GridLayout = withStyles(styles)(GridLayout);
-export default connect(mapStateToProps, mapDispatchToProps)(GridLayout);
+GridLayout = connect(mapStateToProps, mapDispatchToProps)(GridLayout);
+
+export default GridLayout

@@ -1,5 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import AttributeList from './AttributeList';
+
+// material-ui
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -7,9 +11,7 @@ import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import Collapse from '@material-ui/core/Collapse';
 
-import AttributeList from './AttributeList';
-
-const styles = theme => ({
+const styles = (theme) => ({
   nested: {
     paddingLeft: theme.spacing.unit * 4,
   },
@@ -56,4 +58,6 @@ SubthemeListItem.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(SubthemeListItem)
+SubthemeListItem = withStyles(styles)(SubthemeListItem);
+
+export default SubthemeListItem

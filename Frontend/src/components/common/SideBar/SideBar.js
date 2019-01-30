@@ -1,17 +1,20 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
 
 import ThemeList from './ThemeList';
 
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
+
+// ToDo :: set this in fcc.config.js?
 const drawerWidth = 240;
 
-const styles = theme => ({
+const styles = (theme) => ({
   drawerPaper: {
     position: 'relative',
     width: drawerWidth,
-    backgroundColor: theme.palette.primary.main,
+    //backgroundColor: theme.palette.primary.main,
   },
   appBarSpacer: theme.mixins.toolbar,
   root: {
@@ -21,7 +24,7 @@ const styles = theme => ({
   },
 });
 
-class SideBar extends Component {
+class SideBar extends React.Component {
   render() {
     const { classes } = this.props;
 
@@ -45,4 +48,6 @@ SideBar.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SideBar);
+SideBar = withStyles(styles)(SideBar);
+
+export default SideBar

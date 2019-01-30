@@ -1,5 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import SubThemeList from './SubthemeList';
+
+// material-ui
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -10,9 +14,7 @@ import ChevronRight from '@material-ui/icons/ChevronRight';
 import Collapse from '@material-ui/core/Collapse';
 import greyColor from '@material-ui/core/colors/grey';
 
-import SubThemeList from './SubthemeList';
-
-const styles = theme => ({
+const styles = (theme) => ({
   listItemText: {
     color: greyColor[800],
   },
@@ -53,4 +55,6 @@ ThemeListItem.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(ThemeListItem)
+ThemeListItem = withStyles(styles)(ThemeListItem);
+
+export default ThemeListItem

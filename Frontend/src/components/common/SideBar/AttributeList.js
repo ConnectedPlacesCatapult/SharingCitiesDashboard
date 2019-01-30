@@ -1,13 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import { connect } from 'react-redux';
-import { fetchAttributes, toggleAttributeSelected } from "../../../actions/themesActions";
 
 import AttributeListItem from './AttributeListItem';
 
-const styles = theme => ({
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+
+// redux
+import { connect } from 'react-redux';
+import {
+  fetchAttributes,
+  toggleAttributeSelected
+} from "../../../actions/themesActions";
+
+const styles = (theme) => ({
   root: {
 
   },
@@ -57,15 +64,16 @@ AttributeList.propTypes = {
   toggleAttributeSelected: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   themes: state.themes.themes,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   fetchAttributes: (themeId, subthemeId) => dispatch(fetchAttributes(themeId, subthemeId)),
   toggleAttributeSelected: (themeId, subthemeId, attributeId) => dispatch(toggleAttributeSelected(themeId, subthemeId, attributeId)),
 });
 
 AttributeList = withStyles(styles)(AttributeList);
+AttributeList = connect(mapStateToProps, mapDispatchToProps)(AttributeList);
 
-export default connect(mapStateToProps, mapDispatchToProps)(AttributeList)
+export default AttributeList
