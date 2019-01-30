@@ -25,7 +25,6 @@ const styles = (theme) => ({
   },
   widgetTitle: {
     flexGrow: 1,
-    //color: theme.palette.common.white,
     float: 'left',
   },
   widgetButtons: {

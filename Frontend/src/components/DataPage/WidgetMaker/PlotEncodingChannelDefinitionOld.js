@@ -47,7 +47,6 @@ class PlotEncodingChannelDefinition extends React.Component {
     const fieldMenuItems = VEGA_LITE_FIELDS.map((fieldObject, i) => {
       return (
         <MenuItem
-          className={classes.menuItem}
           key={i}
           value={fieldObject.name}
           disabled={(fieldObject.name !== field) && Object.keys(encoding[channel]).includes(fieldObject.name)}
@@ -60,7 +59,6 @@ class PlotEncodingChannelDefinition extends React.Component {
     const valueMenuItems = this.props.getPermittedDefinitionFieldValues(field).map((val, i) => {
       return (
         <MenuItem
-          className={classes.menuItem}
           key={i}
           value={val}
         >
@@ -75,42 +73,28 @@ class PlotEncodingChannelDefinition extends React.Component {
         onChange={this.props.handleDefinitionPanelClick(`panel${this.props.i}`)}
         className={classNames(classes.root, classes.expansionPanel)}
       >
-        <ExpansionPanelSummary
-          className={classes.expansionPanelSummary}
-          expandIcon={<ExpandMoreIcon />}
-        >
-
-          {/*<Typography className={classes.expansionPanelHeader}>Definition {this.props.i + 1}</Typography>*/}
-          <Typography className={classes.expansionPanelHeader}>{field} :: {value}</Typography>
-
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography>{field} :: {value}</Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails
-          className={classes.expansionPanelDetails}
-        >
-          <div className={classes.inline}>
-
-            <FormControl className={classes.formControl}>
+        <ExpansionPanelDetails>
+          <div className={classes.flexInline}>
+            <FormControl>
               <Select
-                className={classes.select}
                 value={field}
                 onChange={this.handleFieldChange}
               >
                 {fieldMenuItems}
               </Select>
             </FormControl>
-
-            <FormControl className={classes.formControl}>
+            <FormControl>
               {field === "title" ? (
                 <TextField
-                  //label="title"
                   placeholder="title"
-                  className={classes.textField}
                   value={value}
                   onChange={this.handleValueChange}
                 />
               ) : (
                 <Select
-                  className={classes.select}
                   value={value}
                   onChange={this.handleValueChange}
                 >
@@ -118,28 +102,20 @@ class PlotEncodingChannelDefinition extends React.Component {
                 </Select>
               )}
             </FormControl>
-
           </div>
-
         </ExpansionPanelDetails>
-
         <Divider className={classes.spacer} />
-
         <ExpansionPanelActions>
-
           <Button
             variant="contained"
             color="secondary"
             size="small"
-            className={classes.button}
             onClick={this.handleDeleteClick}
           >
             Delete Definition
             <DeleteIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
           </Button>
-
         </ExpansionPanelActions>
-
       </ExpansionPanel>
     )
   }

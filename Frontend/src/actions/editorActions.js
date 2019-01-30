@@ -93,7 +93,7 @@ export const setWidgetName = (name='') => ({
   payload: name,
 });
 
-export const setWidgetType = type => ({
+export const setWidgetType = (type) => ({
   type: SET_WIDGET_TYPE,
   payload: type,
 });

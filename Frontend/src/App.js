@@ -1,8 +1,8 @@
 import React from 'react';
 
 // base components
-import DashboardPage from './components/dashboard/DashboardPage';
-import DataPage from './components/data/DataPage';
+import DashboardPage from './components/DashboardPage';
+import DataPage from './components/DataPage';
 
 // router
 import { BrowserRouter, Route, Switch } from 'react-router-dom';

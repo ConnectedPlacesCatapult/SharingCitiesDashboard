@@ -23,21 +23,6 @@ describe('editorActions', () => {
     store.clearActions();
   });
 
-  // ToDo :: this needs to be async
-  /*describe('initializeEditor', async () => {
-    test('Dispatches the correct action and payload', () => {
-      let expectedActions = [
-        {
-
-        },
-      ];
-
-      store.dispatch(editorActions.initializeEditor());
-
-      expect(store.getActions()).toEqual(expectedActions);
-    })
-  });*/
-
   describe('purgeEditor', () => {
     test('Dispatches the correct action and payload', () => {
       let expectedActions = [
@@ -103,16 +88,13 @@ describe('editorActions', () => {
         {
           type: SET_PLOT_PROPERTY,
           payload: {
-            property: "mark",
-            value: "point",
+            property: "width",
+            value: 450,
           },
         },
       ];
 
-      store.dispatch(editorActions.setPlotProperty({
-        property: "mark",
-        value: "point",
-      }));
+      store.dispatch(editorActions.setPlotProperty("width", 450));
 
       expect(store.getActions()).toEqual(expectedActions)
     })

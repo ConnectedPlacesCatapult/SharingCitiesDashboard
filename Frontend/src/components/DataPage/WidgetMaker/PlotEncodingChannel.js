@@ -15,7 +15,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import Typography from '@material-ui/core/Typography';
 import Divider from "@material-ui/core/Divider";
 
@@ -56,7 +56,6 @@ class PlotEncodingChannel extends React.Component {
     const channelMenuItems = VEGA_LITE_ENCODING_CHANNELS.map((item, i) => {
       return (
         <MenuItem
-          className={classes.menuItem}
           key={i}
           value={item}
           disabled={(item !== channel) && Object.keys(encoding).includes(item)}
@@ -91,59 +90,47 @@ class PlotEncodingChannel extends React.Component {
         onChange={this.props.handleChannelPanelClick(`panel${this.props.i}`)}
         className={classNames(classes.root, classes.expansionPanel)}
       >
-        <ExpansionPanelSummary
-          className={classes.expansionPanelSummary}
-          expandIcon={<ExpandMoreIcon />}
-        >
-          <Typography className={classes.expansionPanelHeader}>{channel}</Typography>
+        <ExpansionPanelSummary className={classNames(classes.expansionPanelSummary, classes.expanded)} expandIcon={<ArrowDropDownIcon />}>
+          <Typography>{channel}</Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-          <FormLabel className={classes.formLabel}>Channel</FormLabel>
-          <FormControl className={classes.formControl}>
+        <ExpansionPanelDetails className={classNames(classes.flexColumn, classes.expansionPanelDetails)}>
+          <FormLabel>Channel</FormLabel>
+          <FormControl>
             <Select
-              className={classes.select}
               value={channel}
               onChange={this.handleChannelChange}
             >
               {channelMenuItems}
             </Select>
           </FormControl>
-
-          <FormLabel className={classes.formLabel}>Definitions</FormLabel>
-
-          <div className={classes.expansionPanelsWrapper}>
-            {definitionNodes}
+          <br />
+          <FormLabel>Definitions</FormLabel>
+          {definitionNodes}
+          <br />
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={this.handleAddDefinitionClick}
+            >
+              Add Definition
+              <AddIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
+            </Button>
           </div>
-
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            onClick={this.handleAddDefinitionClick}
-          >
-            Add Definition
-            <AddIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
-          </Button>
-
         </ExpansionPanelDetails>
-
         <Divider className={classes.spacer} />
-
-        <ExpansionPanelActions>
-
+        <ExpansionPanelActions className={classes.expansionPanelActions}>
           <Button
             variant="contained"
             color="secondary"
             size="small"
-            className={classes.button}
             onClick={this.handleDeleteClick}
           >
             Delete Channel
             <DeleteIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
           </Button>
-
         </ExpansionPanelActions>
-
       </ExpansionPanel>
     )
   }

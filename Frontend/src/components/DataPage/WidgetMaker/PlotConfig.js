@@ -34,22 +34,7 @@ import classNames from 'classnames';
 
 const styles = (theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  formControl: {
-    margin: theme.spacing.unit,
-    minWidth: theme.spacing.unit * 20,
-  },
-  textField: {
-    margin: theme.spacing.unit,
-  },
-  select: {
-    //margin: theme.spacing.unit,
-  },
-  button: {
-    margin: theme.spacing.unit,
-    flexGrow: 0,
+
   },
   rightIcon: {
     marginLeft: theme.spacing.unit,
@@ -61,33 +46,38 @@ const styles = (theme) => ({
     fontSize: 20,
   },
   spacer: {
-    margin: `${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing.unit * 2}px 0`,
   },
-  inline: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-  },
-  inputLabel: {
-
-  },
-  expansionPanelsWrapper: {
-    margin: `${theme.spacing.unit * 2}px ${theme.spacing.unit}px ${theme.spacing.unit}px`,
-  },
-  expansionPanel: {
-    //margin: theme.spacing.unit,
-  },
-  expansionPanelSummary: {
-    display: 'flex',
-    flexDirection: 'row',
-    //justifyContent: 'flex-start',
-  },
-  expansionPanelDetails: {
-    display: 'flex',
+  flexColumn: {
     flexDirection: 'column',
   },
-  expansionPanelHeader: {
+  flexRow: {
+    flexDirection: 'row',
+  },
+  flexInline: {
+    display: "inline-flex",
+  },
+  expansionPanel: {
+    margin: 0,
+  },
+  expansionPanelSummary: {
+    // ToDo :: try remove top and bottom margin (20px) from the child element when "expanded"
+    padding: `0 ${theme.spacing.unit * 2}px`,
+    '&$expanded': {
+      minHeight: '48px',
+    },
+  },
+  expanded: {},
+  expansionPanelDetails: {
 
+  },
+  expansionPanelActions: {
+
+  },
+  channelDefinition: {
+    display: 'inline-flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 
@@ -245,7 +235,6 @@ class PlotConfig extends React.Component {
     const markMenuItems = VEGA_LITE_MARKS.map((item, i) => {
       return (
         <MenuItem
-          className={classes.menuItem}
           key={i}
           value={item}
         >
@@ -275,17 +264,12 @@ class PlotConfig extends React.Component {
     });
 
     return (
-      <FormGroup className={classes.root}>
-
+      <FormGroup className={classNames(classes.root, classes.flexColumn)}>
         <Divider className={classes.spacer} />
-
-        <FormLabel className={classes.formLabel}>Dimensions</FormLabel>
-
-        <div className={classes.inline}>
-
-          <FormControl htmlFor="plot-width" className={classes.formControl}>
+        <FormLabel>Dimensions</FormLabel>
+        <div className={classes.flexInline}>
+          <FormControl htmlFor="plot-width">
             <TextField
-              className={classes.textField}
               label="width"
               value={editor.plotConfig.spec.width}
               onChange={this.updateSpecProperty('width')}
@@ -295,10 +279,8 @@ class PlotConfig extends React.Component {
               }}
             />
           </FormControl>
-
-          <FormControl htmlFor="plot-height" className={classes.formControl}>
+          <FormControl htmlFor="plot-height">
             <TextField
-              className={classes.textField}
               label="height"
               value={editor.plotConfig.spec.height}
               onChange={this.updateSpecProperty('height')}
@@ -308,15 +290,11 @@ class PlotConfig extends React.Component {
               }}
             />
           </FormControl>
-
         </div>
-
         <Divider className={classes.spacer} />
-
-        <FormLabel className={classes.formLabel}>Mark</FormLabel>
-        <FormControl htmlFor="plot-mark" className={classes.formControl}>
+        <FormLabel>Mark</FormLabel>
+        <FormControl htmlFor="plot-mark">
           <Select
-            className={classes.select}
             label="mark"
             value={editor.plotConfig.spec.mark}
             onChange={this.updateSpecProperty('mark')}
@@ -328,25 +306,22 @@ class PlotConfig extends React.Component {
             {markMenuItems}
           </Select>
         </FormControl>
-
         <Divider className={classes.spacer} />
-
-        <FormLabel className={classes.formLabel}>Encoding Channels</FormLabel>
-
-        <div className={classes.expansionPanelsWrapper}>
-          {encodingChannelNodes}
+        <FormLabel>Encoding Channels</FormLabel>
+        <br />
+        {encodingChannelNodes}
+        <br />
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={this.addEncodingChannel}
+          >
+            Add Channel
+            <AddIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
+          </Button>
         </div>
-
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.button}
-          onClick={this.addEncodingChannel}
-        >
-          Add Channel
-          <AddIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
-        </Button>
-
       </FormGroup>
     )
   }

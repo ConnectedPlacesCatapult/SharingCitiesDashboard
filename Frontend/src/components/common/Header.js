@@ -56,7 +56,7 @@ const styles = (theme) => ({
   loginButton: {
     paddingTop: '20px',
     paddingBottom: '20px',
-    backgroundColor: '#e3f6f4',
+    //backgroundColor: '#e3f6f4',
     textTransform: "none",
     fontWeight: "bold",
   },
@@ -111,7 +111,7 @@ class Header extends React.Component {
     ));
 
     return (
-      <AppBar position="absolute" className={classes.root}>
+      <AppBar position="absolute" color="default" className={classes.root}>
         <Toolbar className={classes.toolbar} disableGutters>
           <img className={classes.logoImage} src={bgImage} width="220px" height="auto"/>
           <Typography className={classes.toolbarTitle} variant="h4">
@@ -120,7 +120,7 @@ class Header extends React.Component {
           <div>
             {pageLinks}
           </div>
-          <Button className={classes.loginButton} color="primary" onClick={this.handleModalOpen}>
+          <Button className={classes.loginButton} onClick={this.handleModalOpen}>
             <LoginIcon className={classes.loginIcon} />
           </Button>
           <Modal

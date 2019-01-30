@@ -17,23 +17,13 @@ import { initializeEditor } from "./../../../actions/editorActions";
 
 // misc utils
 import classNames from 'classnames';
-import Color from "color";
 
 const styles = (theme) => ({
   root: {
     padding: theme.spacing.unit * 2,
   },
-  paper: {
-    //backgroundColor: Color(theme.palette.primary.dark).alpha(0.95).rgb().string(),
-  },
-  heading: {
-    //color: 'white',
-  },
   spacer: {
-    margin: `${theme.spacing.unit}px 0`,
-  },
-  button: {
-    margin: theme.spacing.unit,
+    margin: `${theme.spacing.unit * 2}px 0`,
   },
   rightIcon: {
     marginLeft: theme.spacing.unit,
@@ -57,14 +47,11 @@ class ConfigPanel extends React.Component {
     const { classes } = this.props;
 
     return (
-      <Paper className={classNames(classes.root, classes.paper)}>
-        <Typography variant="h6" className={classes.heading}>
-          Widget Creator
-        </Typography>
+      <Paper className={classes.root}>
+        <Typography variant="h6">Widget Creator</Typography>
         <TypeSelector />
         <Divider className={classes.spacer} />
         <Button
-          className={classes.button}
           variant="contained"
           size="small"
         >
