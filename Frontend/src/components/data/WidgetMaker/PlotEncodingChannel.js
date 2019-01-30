@@ -51,15 +51,15 @@ class PlotEncodingChannel extends React.Component {
   render() {
     const { classes, encoding, channel, expanded } = this.props;
 
-    const channelMenuItems = VEGA_LITE_ENCODING_CHANNELS.map((channel, i) => {
+    const channelMenuItems = VEGA_LITE_ENCODING_CHANNELS.map((item, i) => {
       return (
         <MenuItem
           className={classes.menuItem}
           key={i}
-          value={channel}
-          disabled={(channel !== channel) && Object.keys(encoding).includes(channel)}
+          value={item}
+          disabled={(item !== channel) && Object.keys(encoding).includes(item)}
         >
-          {channel.toString()}
+          {item.toString()}
         </MenuItem>
       )
     });
@@ -96,6 +96,7 @@ class PlotEncodingChannel extends React.Component {
           <Typography className={classes.expansionPanelHeader}>{channel}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+          <FormLabel className={classes.formLabel}>Channel</FormLabel>
           <FormControl className={classes.formControl}>
             <Select
               className={classes.select}

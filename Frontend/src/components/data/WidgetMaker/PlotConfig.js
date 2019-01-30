@@ -12,6 +12,7 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
+//import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd'
 import Select from "@material-ui/core/Select";
 import Divider from "@material-ui/core/Divider";
 
@@ -46,6 +47,7 @@ const styles = (theme) => ({
   },
   button: {
     margin: theme.spacing.unit,
+    flexGrow: 0,
   },
   spacer: {
     margin: `${theme.spacing.unit}px 0`,
@@ -67,7 +69,7 @@ const styles = (theme) => ({
   expansionPanelSummary: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    //justifyContent: 'flex-start',
   },
   expansionPanelDetails: {
     display: 'flex',
