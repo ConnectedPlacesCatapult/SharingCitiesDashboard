@@ -101,6 +101,99 @@ class GreenwichOCC(BaseImporter):
     def _refresh_token(self, *args):
         print('Token expired Refresh it manually')
 
+
+
+config = get_config()
+config = config[config['environment']]['greenwich_meta_2']
+
+API_NAME_2 = config['API_NAME']
+BASE_URL_2 = config['BASE_URL']
+API_CLASS_2 = config['API_CLASS']
+
+class GreenwichMeta_2(BaseImporter):
+    def __init__(self):
+        super().__init__(API_NAME_2, BASE_URL_2, REFRESH_TIME, API_KEY, API_CLASS_2, TOKEN_EXPIRY)
+
+    def _create_datasource(self, headers=None):
+        super()._create_datasource()
+        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+
+        ### Renaming the columns so that they are not confused with GreenwichMeta
+        self.df.rename(index=str, columns={'baycount': 'baycount_2',
+                       'baytype': 'baytype_2'}, 
+                      inplace=True)
+
+        loc = Location('latitude', 'longitude')
+        self.create_datasource(dataframe= self.df, sensor_tag='lotcode', attribute_tag=['baycount_2', 'baytype_2'], 
+                                unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[], 
+                                location_tag=loc, sensor_prefix='smart_parking_2_', api_timestamp_tag='run_time_stamp',
+                                is_dependent=True)
+
+    def _refresh_token(self, *args):
+        print('Token expired Refresh it manually')
+
+
+config = get_config()
+config = config[config['environment']]['greenwich_occ_2']
+
+API_NAME_OCC_2 = config['API_NAME']
+BASE_URL_OCC_2 = config['BASE_URL']
+API_CLASS_OCC_2 = config['API_CLASS']
+
+class GreenwichOCC_2(BaseImporter):
+    def __init__(self):
+        super().__init__(API_NAME_OCC_2, BASE_URL_OCC_2, REFRESH_TIME, API_KEY, API_CLASS_OCC_2, TOKEN_EXPIRY)
+
+    def _create_datasource(self, headers=None):
+        super()._create_datasource()
+        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+
+        names = self.df['lotcode'].tolist()
+        name_set = set()
+        location_sensor = {}
+        sensor_location = {}
+        latitude = []
+        longitude = []
+
+        for s in names:
+            name_set.add('smart_parking_2_' + str(s))
+
+        sensors = Sensor.get_by_name_in(name_set)
+        loc_ids = []
+        for s in sensors:
+            loc_ids.append(s.l_id)
+            location_sensor[s.l_id] = s
+        locations = location.Location.get_by_id_in(loc_ids)
+
+        for loc in locations:
+            if loc.id in location_sensor:
+                _sensor = location_sensor[loc.id]
+                sensor_location[_sensor.name] = loc
+       
+        for s in names:
+            _s = 'smart_parking_2_' + str(s)
+            if _s in sensor_location:
+                latitude.append(sensor_location[_s].lat)
+                longitude.append(sensor_location[_s].lon)
+
+        self.df['latitude'] = latitude
+        self.df['longitude'] = longitude
+
+        ### Renaming the columns so that they are not confused with GreenwichOCC
+        self.df.rename(index=str, columns={'free': 'free_2',
+                       'isoffline': 'isoffline_2',
+                       'occupied' : 'occupied_2'}, 
+                      inplace=True)
+
+        loc = Location('latitude', 'longitude')
+        self.create_datasource(dataframe= self.df, sensor_tag='lotcode', attribute_tag=['free_2', 'isoffline_2', 'occupied_2'], 
+                                unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[], location_tag=loc,
+                                sensor_prefix='smart_parking_2_', api_timestamp_tag='run_time_stamp', is_dependent=True)
+
+    def _refresh_token(self, *args):
+        print('Token expired Refresh it manually')
+
+
 config = get_config()
 config_kiwi = config[config['environment']]['greenwich_kiwi']
 
@@ -108,12 +201,11 @@ API_NAME_KIWI = config_kiwi['API_NAME']
 BASE_URL_KIWI = config_kiwi['BASE_URL']
 API_CLASS_KIWI = config_kiwi['API_CLASS']
 REFRESH_TIME_KIWI = config_kiwi['REFRESH_TIME']
-API_KEY_KIWI = config_kiwi['API_KEY']
 TOKEN_EXPIRY_KIWI = config_kiwi['TOKEN_EXPIRY']
 
 class GreenwichKiwiPump(BaseImporter):
     def __init__(self):
-        super().__init__(API_NAME_KIWI, BASE_URL_KIWI, REFRESH_TIME_KIWI, API_KEY_KIWI, API_CLASS_KIWI, TOKEN_EXPIRY_KIWI)
+        super().__init__(API_NAME_KIWI, BASE_URL_KIWI, REFRESH_TIME_KIWI, API_KEY, API_CLASS_KIWI, TOKEN_EXPIRY_KIWI)
 
     def _create_datasource(self, headers=None):
         super()._create_datasource()
@@ -144,12 +236,11 @@ API_NAME_KIWI_HOUSE = config_kiwi_house['API_NAME']
 BASE_URL_KIWI_HOUSE = config_kiwi_house['BASE_URL']
 API_CLASS_KIWI_HOUSE = config_kiwi_house['API_CLASS']
 REFRESH_TIME_KIWI_HOUSE = config_kiwi_house['REFRESH_TIME']
-API_KEY_KIWI_HOUSE = config_kiwi_house['API_KEY']
 TOKEN_EXPIRY_KIWI_HOUSE = config_kiwi_house['TOKEN_EXPIRY']
 
 class GreenwichWholeHouse(BaseImporter):
     def __init__(self):
-        super().__init__(API_NAME_KIWI_HOUSE, BASE_URL_KIWI_HOUSE, REFRESH_TIME_KIWI_HOUSE, API_KEY_KIWI_HOUSE, API_CLASS_KIWI_HOUSE, TOKEN_EXPIRY_KIWI_HOUSE)
+        super().__init__(API_NAME_KIWI_HOUSE, BASE_URL_KIWI_HOUSE, REFRESH_TIME_KIWI_HOUSE, API_KEY, API_CLASS_KIWI_HOUSE, TOKEN_EXPIRY_KIWI_HOUSE)
 
     def _create_datasource(self, headers=None):
         super()._create_datasource()
