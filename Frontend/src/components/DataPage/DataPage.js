@@ -1,8 +1,5 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
-import { connect } from 'react-redux';
 
 import Header from './../common/Header';
 import SideBar from './../common/SideBar';
@@ -11,14 +8,21 @@ import OptionsSidePanel from './OptionsSidePanel';
 import NoData from './NoData';
 import WidgetMaker from './WidgetMaker';
 
-const styles = theme => ({
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+import Modal from '@material-ui/core/Modal';
+
+// redux
+import { connect } from 'react-redux';
+
+const styles = (theme) => ({
   root: {
     display: 'flex',
     clear: 'both',
   },
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
+    //backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
     height: '100vh',
     overflow: 'auto',
@@ -31,7 +35,7 @@ const styles = theme => ({
   },
 });
 
-class DataPage extends Component {
+class DataPage extends React.Component {
   state = {
     widgetModalOpen: false,
   };
@@ -54,9 +58,9 @@ class DataPage extends Component {
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           {
-            data.fetched
+            data.fetched && data.data.length
             ? <div className={classes.flexWrapper}>
-                <DataTable />
+                {/*<DataTable />*/}
                 <OptionsSidePanel
                   openWidgetMaker={this.openWidgetMaker}
                 />
@@ -81,14 +85,15 @@ DataPage.propTypes = {
   data: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 
 });
 
 DataPage = withStyles(styles)(DataPage);
+DataPage = connect(mapStateToProps, mapDispatchToProps)(DataPage);
 
-export default connect(mapStateToProps, mapDispatchToProps)(DataPage)
+export default DataPage

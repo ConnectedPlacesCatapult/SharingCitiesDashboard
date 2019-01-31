@@ -1,12 +1,14 @@
 import React from "react";
 import PropTypes from 'prop-types';
+
+// material-ui
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     width: 'auto',
     display: 'block', // Fix IE 11 issue.
@@ -56,4 +58,6 @@ NoData.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(NoData)
+NoData = withStyles(styles)(NoData);
+
+export default NoData

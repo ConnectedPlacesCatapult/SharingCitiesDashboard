@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from "prop-types";
+
+// material-ui
 import { withStyles } from "@material-ui/core/styles";
 import { darken, lighten } from "@material-ui/core/styles/colorManipulator";
+
+// leaflet
 import {
   CircleMarker,
   FeatureGroup,
@@ -14,9 +18,11 @@ import {
   Circle,
 } from 'react-leaflet';
 import HeatmapLayer from 'react-leaflet-heatmap-layer';
+
+//redux
 import { connect } from 'react-redux';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     display: 'flex',
   },
@@ -76,7 +82,7 @@ class MapPreview extends React.Component {
   };
 
   render() {
-    const { classes, config, editor, meta } = this.props;
+    const { classes, config, editor } = this.props;
 
     // ToDo :: trigger this somewhere better
     this.setValueLimits();
@@ -101,8 +107,8 @@ class MapPreview extends React.Component {
           radius={this.getMarkerRadius(feature.properties[editor.mapConfig.heatmapAttribute])}
         >
           <Popup>
-            <h3>{feature.properties.name}</h3>
-            <p>{feature.properties.bike} of {feature.properties.dock} available</p>
+            <h3>{feature.properties["Name"]}</h3>
+            {/*<p>{feature.properties.bike} of {feature.properties.dock} available</p>*/}
           </Popup>
         </CircleMarker>
       )
@@ -155,13 +161,11 @@ MapPreview.propTypes = {
   classes: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
   editor: PropTypes.object.isRequired,
-  meta: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   config: state.config.config,
   editor: state.editor,
-  meta: state.data.meta,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -169,5 +173,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 MapPreview = withStyles(styles, { withTheme: true })(MapPreview);
+MapPreview = connect(mapStateToProps, mapDispatchToProps)(MapPreview);
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapPreview)
+export default MapPreview

@@ -1,17 +1,19 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 
 import Header from './../common/Header';
 import GridLayout from './GridLayout';
 
-const styles = theme => ({
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = (theme) => ({
   root: {
     display: 'flex',
   },
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
+    //backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
     height: '100vh',
     overflow: 'auto'
@@ -19,7 +21,7 @@ const styles = theme => ({
   appBarSpacer: theme.mixins.toolbar,
 });
 
-class DashboardPage extends Component {
+class DashboardPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -47,4 +49,6 @@ DashboardPage.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(DashboardPage)
+DashboardPage = withStyles(styles)(DashboardPage);
+
+export default DashboardPage

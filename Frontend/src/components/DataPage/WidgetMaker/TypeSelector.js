@@ -1,15 +1,19 @@
 import React from 'react';
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import { connect } from 'react-redux';
-import { setWidgetType } from "../../../actions/editorActions";
 
 import PlotConfig from './PlotConfig';
 import MapConfig from './MapConfig';
 import AlertConfig from './AlertConfig';
 
-const styles = theme => ({
+// material-ui
+import { withStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+
+// redux
+import { connect } from 'react-redux';
+import { setWidgetType } from "../../../actions/editorActions";
+
+const styles = (theme) => ({
   root: {
 
   },
@@ -23,7 +27,7 @@ const styles = theme => ({
 });
 
 class TypeSelector extends React.Component {
-  setWidgetType = e => {
+  setWidgetType = (e) => {
     this.props.setWidgetType(e.currentTarget.value)
   };
 
@@ -40,7 +44,7 @@ class TypeSelector extends React.Component {
             variant="contained"
             color="primary"
           >
-            Chart
+            Plot
           </Button>
           <Button
             className={classes.widgetTypeButton}
@@ -76,14 +80,15 @@ TypeSelector.propTypes = {
   setWidgetType: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   editor: state.editor,
 });
 
-const mapDispatchToProps = dispatch => ({
-  setWidgetType: type => dispatch(setWidgetType(type)),
+const mapDispatchToProps = (dispatch) => ({
+  setWidgetType: (type) => dispatch(setWidgetType(type)),
 });
 
 TypeSelector = withStyles(styles)(TypeSelector);
+TypeSelector = connect(mapStateToProps, mapDispatchToProps)(TypeSelector);
 
-export default connect(mapStateToProps, mapDispatchToProps)(TypeSelector)
+export default TypeSelector

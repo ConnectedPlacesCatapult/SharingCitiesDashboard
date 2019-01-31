@@ -1,4 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
 import LockIcon from '@material-ui/icons/LockOutlined';
@@ -9,10 +13,11 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
-import PropTypes from 'prop-types';
-import withStyles from '@material-ui/core/styles/withStyles';
 
-const styles = theme => ({
+// redux
+import { connect } from 'react-redux';
+
+const styles = (theme) => ({
   layout: {
     width: 'auto',
     display: 'block', // Fix IE 11 issue.
@@ -30,11 +35,11 @@ const styles = theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
-    backgroundColor: theme.palette.primary.light,
+    //backgroundColor: theme.palette.primary.light,
   },
   avatar: {
     margin: theme.spacing.unit,
-    backgroundColor: theme.palette.secondary.main,
+    //backgroundColor: theme.palette.secondary.main,
   },
   form: {
     width: '100%', // Fix IE 11 issue.
@@ -45,7 +50,7 @@ const styles = theme => ({
   },
 });
 
-class LoginForm extends Component {
+class LoginForm extends React.Component {
   constructor(props) {
     super(props);
 
@@ -132,4 +137,15 @@ LoginForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(LoginForm);
+const mapStateToProps = (state) => ({
+
+});
+
+const madDispatchToProps = (dispatch) => ({
+
+});
+
+LoginForm = withStyles(styles)(LoginForm);
+LoginForm = connect(styles)(LoginForm);
+
+export default LoginForm

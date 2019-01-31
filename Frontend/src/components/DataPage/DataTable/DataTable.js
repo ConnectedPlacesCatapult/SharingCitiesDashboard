@@ -26,13 +26,16 @@ const styles = theme => ({
   }
 });
 
+const DEFAULT_ORDER = 'desc';
+const DEFAULT_ORDER_BY = 'Timestamp';
+
 class DataTable extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      order: props.data.meta.order,
-      orderBy: props.data.meta.orderBy,
+      order: DEFAULT_ORDER,
+      orderBy: DEFAULT_ORDER_BY,
       selected: [],
       data: props.data.data,
       page: 0,
@@ -105,7 +108,7 @@ class DataTable extends React.Component {
           />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
-              <DataTableHead
+              {/*<DataTableHead
                 numSelected={selected.length}
                 order={order}
                 orderBy={orderBy}
@@ -113,8 +116,8 @@ class DataTable extends React.Component {
                 onRequestSort={this.handleRequestSort}
                 columns={data.meta.columns}
                 rowCount={data.data.length}
-              />
-              <DataTableBody
+              />*/}
+              {/*<DataTableBody
                 data={data.data}
                 columns={data.meta.columns}
                 order={order}
@@ -123,16 +126,16 @@ class DataTable extends React.Component {
                 rowsPerPage={rowsPerPage}
                 onClick={this.handleClick}
                 isSelected={this.isSelected}
-              />
+              />*/}
             </Table>
           </div>
-          <DataTablePagination
+          {/*<DataTablePagination
             data={data.data}
             rowsPerPage={rowsPerPage}
             page={page}
             onChangePage={this.handleChangePage}
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
-          />
+          />*/}
         </Paper>
       </div>
     )

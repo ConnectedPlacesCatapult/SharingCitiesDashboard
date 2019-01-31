@@ -1,12 +1,18 @@
 import React from 'react';
 import PropTypes from "prop-types";
+
+// material-ui
 import { withStyles } from "@material-ui/core/styles";
 import { darken, lighten } from "@material-ui/core/styles/colorManipulator";
+
+// redux
 import { connect } from 'react-redux';
+
+// leaflet
 import { CircleMarker, FeatureGroup, LayersControl, Map, Marker, Popup, TileLayer, Circle} from 'react-leaflet';
 import HeatmapLayer from 'react-leaflet-heatmap-layer';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     display: 'flex',
   },
@@ -17,16 +23,12 @@ const styles = theme => ({
 });
 
 class MapWidget extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      data: this.props.data,
-      lat: 51.505,
-      lng: -0.09,
-      zoom: 13,
-    }
-  }
+  state = {
+    data: this.props.data,
+    lat: 51.505,
+    lng: -0.09,
+    zoom: 13,
+  };
 
   tileLayer = this.props.config.leafletTileLayers.find((layer) => layer.name === this.props.tileLayer);
 
@@ -61,11 +63,15 @@ MapWidget.propTypes = {
   theme: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    config: state.config.config,
-  }
-};
+const mapStateToProps = (state) => ({
+  config: state.config.config,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+
+});
 
 MapWidget = withStyles(styles, { withTheme: true })(MapWidget);
-export default connect(mapStateToProps)(MapWidget);
+MapWidget = connect(mapStateToProps, mapDispatchToProps)(MapWidget);
+
+export default MapWidget

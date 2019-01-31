@@ -1,30 +1,35 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from "prop-types";
-import List from '@material-ui/core/List';
-import { connect } from 'react-redux';
-import { fetchThemes, toggleThemeSelected } from "./../../../actions/themesActions";
-import _ from 'lodash';
 
 import ThemeListItem from './ThemeListItem';
 
-class ThemeList extends Component {
+// material-ui
+import List from '@material-ui/core/List';
+
+// redux
+import { connect } from 'react-redux';
+import { fetchThemes, toggleThemeSelected } from "./../../../actions/themesActions";
+
+class ThemeList extends React.Component {
   constructor(props) {
     super(props);
 
-    props.fetchThemes()
+    if (!props.themes.length) {
+      props.fetchThemes()
+    }
   }
 
   render() {
-    const { themes, selectedThemes, toggleThemeSelected } = this.props;
+    const { themes, toggleThemeSelected } = this.props;
 
     const themeListItems = themes.map((theme, i) => {
       return (
         <ThemeListItem
           key={i}
-          themeId={i}
-          themeName={theme}
-          isSelected={_.indexOf(selectedThemes, i) !== -1}
-          onClick={() => toggleThemeSelected(i)}
+          themeId={theme.id}
+          themeName={theme.name}
+          isSelected={theme.isSelected}
+          onClick={() => toggleThemeSelected(theme.id)}
         />
       )
     });
@@ -39,21 +44,19 @@ class ThemeList extends Component {
 
 ThemeList.propTypes = {
   themes: PropTypes.array.isRequired,
-  selectedThemes: PropTypes.array.isRequired,
   fetchThemes: PropTypes.func.isRequired,
   toggleThemeSelected: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   themes: state.themes.themes,
-  selectedThemes: state.themes.selected,
 });
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchThemes: () => dispatch(fetchThemes()),
-    toggleThemeSelected: id => dispatch(toggleThemeSelected(id)),
-  }
-};
+const mapDispatchToProps = (dispatch) => ({
+  fetchThemes: () => dispatch(fetchThemes()),
+  toggleThemeSelected: (id) => dispatch(toggleThemeSelected(id)),
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ThemeList)
+ThemeList = connect(mapStateToProps, mapDispatchToProps)(ThemeList);
+
+export default ThemeList

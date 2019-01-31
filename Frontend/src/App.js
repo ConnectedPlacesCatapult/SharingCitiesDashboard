@@ -1,13 +1,19 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { connect } from 'react-redux';
-import { fetchConfig } from "./actions/configActions";
 
 // base components
-import DashboardPage from './components/dashboard/DashboardPage';
-import DataPage from './components/data/DataPage';
+import DashboardPage from './components/DashboardPage';
+import DataPage from './components/DataPage';
+
+// router
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
+// material-ui
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
+import CssBaseline from '@material-ui/core/CssBaseline';
+
+// redux
+import { connect } from 'react-redux';
+import { fetchConfig } from "./actions/configActions";
 
 // default/fallback font
 require('typeface-roboto');
@@ -38,6 +44,7 @@ class App extends React.Component {
 
       return (
         <MuiThemeProvider theme={localTheme}>
+          <div>
           <CssBaseline />
           <BrowserRouter>
             <Switch>
@@ -45,6 +52,7 @@ class App extends React.Component {
               <Route path="/data" component={DataPage} />
             </Switch>
           </BrowserRouter>
+          </div>
         </MuiThemeProvider>
       )
     }
@@ -62,8 +70,10 @@ const mapStateToProps = (state) => {
   }
 };
 
-const mapDispatchToProps = {
-  fetchConfig,
-};
+const mapDispatchToProps = (dispatch) => ({
+  fetchConfig: () => dispatch(fetchConfig()),
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+App = connect(mapStateToProps, mapDispatchToProps)(App);
+
+export default App

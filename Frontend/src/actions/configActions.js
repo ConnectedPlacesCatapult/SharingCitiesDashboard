@@ -1,4 +1,8 @@
-import { FETCH_CONFIG, FETCH_CONFIG_FULFILLED, FETCH_CONFIG_REJECTED } from "./../constants";
+import {
+  FETCH_CONFIG,
+  FETCH_CONFIG_FULFILLED,
+  FETCH_CONFIG_REJECTED
+} from "./../constants";
 
 export function fetchConfig() {
   return function(dispatch) {

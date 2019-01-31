@@ -1,20 +1,26 @@
 import React from 'react';
 import PropTypes from "prop-types";
-import classNames from 'classnames';
+
+import MapPreview from './MapPreview';
+import PlotPreview from './PlotPreview';
+import AlertPreview from './AlertPreview';
+
+// material-ui
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TitleIcon from '@material-ui/icons/Title';
+
+// redux
 import { connect } from 'react-redux';
 import { setWidgetName } from "../../../actions/editorActions";
 
-import MapPreview from './MapPreview';
-import PlotPreview from './PlotPreview';
-import AlertPreview from './AlertPreview';
+// misc utils
+import classNames from 'classnames';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     flexGrow: 1,
     padding: `${theme.spacing.unit}px`,
@@ -32,13 +38,13 @@ const styles = theme => ({
 
   },
   input: {
-    color: theme.palette.primary.main,
-    borderColor: theme.palette.primary.secondary,
+    //color: theme.palette.primary.main,
+    //borderColor: theme.palette.primary.secondary,
   }
 });
 
 class PreviewPanel extends React.Component {
-  setWidgetName= e => {
+  setWidgetName = (e) => {
     this.props.setWidgetName(e.target.value)
   };
 
@@ -47,7 +53,6 @@ class PreviewPanel extends React.Component {
 
     return (
       <Paper className={classNames(classes.root, classes.paper)}>
-
         <FormControl className={classes.formControl}>
           <Input
             id="widget-name"
@@ -79,14 +84,15 @@ PreviewPanel.propTypes = {
   setWidgetName: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   editor: state.editor,
 });
 
-const mapDispatchToProps = dispatch => ({
-  setWidgetName: name => dispatch(setWidgetName(name)),
+const mapDispatchToProps = (dispatch) => ({
+  setWidgetName: (name) => dispatch(setWidgetName(name)),
 });
 
 PreviewPanel = withStyles(styles)(PreviewPanel);
+PreviewPanel = connect(mapStateToProps, mapDispatchToProps)(PreviewPanel);
 
-export default connect(mapStateToProps, mapDispatchToProps)(PreviewPanel)
+export default PreviewPanel

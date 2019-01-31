@@ -1,10 +1,16 @@
 import React from 'react';
 import PropTypes from "prop-types";
+
+// material-ui
 import { withStyles } from "@material-ui/core/styles";
-import VegaLite from 'react-vega-lite';
+
+// redux
 import { connect } from 'react-redux';
 
-const styles = theme => ({
+// vega
+import VegaLite from 'react-vega-lite';
+
+const styles = (theme) => ({
   root: {
 
   },
@@ -19,7 +25,6 @@ class PlotPreview extends React.Component {
 
     const spec = {
       ...editor.plotConfig.spec,
-
     };
 
     return (
@@ -38,14 +43,15 @@ PlotPreview.propTypes = {
   editor: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   editor: state.editor,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 
 });
 
 PlotPreview = withStyles(styles)(PlotPreview);
+PlotPreview = connect(mapStateToProps, mapDispatchToProps)(PlotPreview);
 
-export default connect(mapStateToProps, mapDispatchToProps)(PlotPreview)
+export default PlotPreview

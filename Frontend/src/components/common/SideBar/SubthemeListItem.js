@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import AttributeList from './AttributeList';
+
+// material-ui
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
-import { connect } from 'react-redux';
-import { fetchData, purgeData } from "../../../actions/dataActions";
+import Collapse from '@material-ui/core/Collapse';
 
-const styles = theme => ({
+const styles = (theme) => ({
   nested: {
     paddingLeft: theme.spacing.unit * 4,
   },
@@ -19,55 +22,42 @@ const styles = theme => ({
 
 class SubthemeListItem extends React.Component {
   handleClick = () => {
-    if (this.props.isSelected) {
-      this.props.purgeData()
-    } else {
-      const request = {
-        subtheme: this.props.subthemeName,
-        theme: this.props.themeName,
-        meta: this.props.subthemeMeta,
-      };
-
-      this.props.fetchData(request)
-    }
-
     this.props.onClick();
   };
 
   render() {
-    const { classes, subthemeName, isSelected } = this.props;
+    const { classes, subthemeId, subthemeName, themeId, isSelected } = this.props;
 
     return (
-      <ListItem button className={classes.nested} onClick={this.handleClick}>
-        {
-          isSelected
-            ? <RadioButtonCheckedIcon fontSize="small" color="secondary" />
-            : <RadioButtonUncheckedIcon fontSize="small" className={classes.darkColor} />
-        }
-        <ListItemText inset primary={subthemeName} />
-      </ListItem>
+      <React.Fragment>
+        <ListItem button className={classes.nested} onClick={this.handleClick}>
+          {
+            isSelected
+              ? <RadioButtonCheckedIcon fontSize="small" color="secondary" />
+              : <RadioButtonUncheckedIcon fontSize="small" className={classes.darkColor} />
+          }
+          <ListItemText inset primary={subthemeName} />
+        </ListItem>
+        <Collapse in={isSelected} timeout="auto" unmountOnExit>
+          <AttributeList
+            themeId={themeId}
+            subthemeId={subthemeId}
+          />
+        </Collapse>
+      </React.Fragment>
     )
   }
 }
 
 SubthemeListItem.propTypes = {
   classes: PropTypes.object.isRequired,
+  themeId: PropTypes.number.isRequired,
+  subthemeId: PropTypes.number.isRequired,
   subthemeName: PropTypes.string.isRequired,
   isSelected: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
-  purgeData: PropTypes.func.isRequired,
 };
-
-const mapStateToProps = state => ({
-
-});
-
-const mapDispatchToProps = dispatch => ({
-  fetchData: request => dispatch(fetchData(request)),
-  purgeData: () => dispatch(purgeData()),
-});
 
 SubthemeListItem = withStyles(styles)(SubthemeListItem);
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubthemeListItem)
+export default SubthemeListItem

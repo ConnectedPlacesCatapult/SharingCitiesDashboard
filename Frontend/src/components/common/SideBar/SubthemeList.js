@@ -1,40 +1,46 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import List from '@material-ui/core/List';
-import { connect } from 'react-redux';
-import { fetchSubthemes, toggleSubthemeSelected } from "../../../actions/subthemesActions";
-import _ from "lodash";
 
 import SubthemeListItem from './SubthemeListItem';
+
+// material-ui
+import List from '@material-ui/core/List';
+
+// redux
+import { connect } from 'react-redux';
+import {
+  fetchSubthemes,
+  toggleSubthemeSelected
+} from "../../../actions/themesActions";
 
 class SubthemeList extends React.Component {
   constructor(props) {
     super(props);
 
-    props.fetchSubthemes(props.themeName)
+    if (!props.themes.find(theme => theme.id === props.themeId).subthemes.length) {
+      props.fetchSubthemes(props.themeId)
+    }
   }
 
   render() {
-    const { themeId, themeName, subthemes, selectedSubthemes, toggleSubthemeSelected } = this.props;
+    const { themeId, themes, toggleSubthemeSelected } = this.props;
 
-    const subthemeListItems = subthemes.filter(subtheme => subtheme.theme === themeName).map((subtheme, i) => {
-      const subthemeId = themeId + "_" + i;
-
+    const subthemes = themes.find(theme => theme.id === themeId).subthemes;
+    const subthemeListItems = subthemes.map((subtheme, i) => {
       return (
         <SubthemeListItem
           key={i}
-          subthemeId={subthemeId}
+          themeId={themeId}
+          subthemeId={subtheme.id}
           subthemeName={subtheme.name}
-          subthemeMeta={subtheme.meta}
-          themeName={themeName}
-          isSelected={_.indexOf(selectedSubthemes, subthemeId) !== -1}
-          onClick={() => toggleSubthemeSelected(subthemeId)}
+          isSelected={subtheme.isSelected}
+          onClick={() => toggleSubthemeSelected(themeId, subtheme.id)}
         />
       )
     });
 
     return (
-      <List component="div" disablePadding>
+      <List component="nav" disablePadding>
         {subthemeListItems}
       </List>
     )
@@ -43,21 +49,20 @@ class SubthemeList extends React.Component {
 
 SubthemeList.propTypes = {
   themeId: PropTypes.number.isRequired,
-  themeName: PropTypes.string.isRequired,
-  subthemes: PropTypes.array.isRequired,
-  selectedSubthemes: PropTypes.array.isRequired,
+  themes: PropTypes.array.isRequired,
   fetchSubthemes: PropTypes.func.isRequired,
   toggleSubthemeSelected: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-  subthemes: state.subthemes.subthemes,
-  selectedSubthemes: state.subthemes.selected,
+const mapStateToProps = (state) => ({
+  themes: state.themes.themes,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchSubthemes: themeName => dispatch(fetchSubthemes(themeName)),
-  toggleSubthemeSelected: subthemeId => dispatch(toggleSubthemeSelected(subthemeId)),
+const mapDispatchToProps = (dispatch) => ({
+  fetchSubthemes: (themeId) => dispatch(fetchSubthemes(themeId)),
+  toggleSubthemeSelected: (themeId, subthemeId) => dispatch(toggleSubthemeSelected(themeId, subthemeId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubthemeList)
+SubthemeList = connect(mapStateToProps, mapDispatchToProps)(SubthemeList);
+
+export default SubthemeList
