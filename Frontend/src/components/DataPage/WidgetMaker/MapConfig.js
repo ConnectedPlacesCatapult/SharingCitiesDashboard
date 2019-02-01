@@ -57,6 +57,10 @@ class MapConfig extends React.Component {
     this.props.setMapProperty(property, e.target.value)
   };
 
+  setMapShowHeatmap = (e) => {
+    this.props.setMapProperty('showHeatmap', e.target.checked)
+  };
+
   handleToggleTooltip = (field) => (e) => {
     this.props.toggleMapTooltipField(field, e.target.checked)
   };
@@ -149,7 +153,7 @@ class MapConfig extends React.Component {
             control={
               <Switch
                 checked={editor.showHeatmap}
-                onChange={this.setMapProperty('showHeatmap')}
+                onChange={this.setMapShowHeatmap}
                 value={editor.showHeatmap}
                 color="primary"
               />
