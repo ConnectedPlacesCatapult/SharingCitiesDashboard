@@ -15,8 +15,6 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import Slider from '@material-ui/lab/Slider';
-import Typography from '@material-ui/core/Typography';
 
 // color picker
 import ColorPicker from 'material-ui-color-picker';
@@ -24,11 +22,7 @@ import ColorPicker from 'material-ui-color-picker';
 // redux
 import { connect } from 'react-redux';
 import {
-  setMapMarkerAttribute,
-  setMapMarkerColor,
-  setMapMarkerOpacity,
-  setMapShowHeatmap,
-  setMapTileLayer,
+  setMapProperty,
   toggleMapTooltipField,
 } from "../../../actions/editorActions";
 
@@ -44,17 +38,6 @@ const styles = (theme) => ({
   spacer: {
     margin: `${theme.spacing.unit}px 0`,
   },
-  slider: {
-    padding: '22px 0px',
-  },
-  sliderLabel: {
-    color: 'rgba(255, 255, 255, 0.7)',
-    padding: 0,
-    fontSize: '1rem',
-    lineHeight: 1,
-    transform: 'translate(0, 1.5px) scale(0.75)',
-    transformOrigin: 'top left',
-  },
 });
 
 class MapConfig extends React.Component {
@@ -66,24 +49,12 @@ class MapConfig extends React.Component {
     return field
   });
 
-  setMapMarkerAttribute = (e) => {
-    this.props.setMapMarkerAttribute(e.target.value)
-  };
-
   setMapMarkerColor = (color) => {
-    this.props.setMapMarkerColor(color)
+    this.props.setMapProperty('markerColor', color)
   };
 
-  setMapMarkerOpacity = (e, value) => {
-    this.props.setMapMarkerOpacity(value);
-  };
-
-  setMapShowHeatmap = (e) => {
-    this.props.setMapShowHeatmap(e.target.checked)
-  };
-
-  setMapTileLayer = (e) => {
-    this.props.setMapTileLayer(e.target.value)
+  setMapProperty = (property) => (e) => {
+    this.props.setMapProperty(property, e.target.value)
   };
 
   handleToggleTooltip = (field) => (e) => {
@@ -128,7 +99,7 @@ class MapConfig extends React.Component {
         <FormLabel>Tile Layer</FormLabel>
         <FormControl htmlFor="map-tile-layer" className={classes.formControl}>
           <Select
-            onChange={this.setMapTileLayer}
+            onChange={this.setMapProperty('tileLayer')}
             value={editor.tileLayer}
             inputProps={{
               name: 'tileLayer',
@@ -145,7 +116,7 @@ class MapConfig extends React.Component {
         <FormControl htmlFor="map-marker-attribute" className={classes.formControl}>
           <InputLabel>Attribute</InputLabel>
           <Select
-            onChange={this.setMapMarkerAttribute}
+            onChange={this.setMapProperty('markerAttribute')}
             value={editor.markerAttribute}
             inputProps={{
               name: 'markerAttribute',
@@ -168,23 +139,6 @@ class MapConfig extends React.Component {
             }}
           />
         </FormControl>
-        <FormControl htmlFor="map-marker-opacity" className={classes.formControl}>
-          <Typography
-            id="markerOpacityLabel"
-            component='label'
-            className={classes.sliderLabel}
-          >
-            Opacity
-          </Typography>
-          <Slider
-            classes={{ container: classes.slider }}
-            aria-labelledby="markerOpacityLabel"
-            value={editor.markerOpacity}
-            onChange={this.setMapMarkerOpacity}
-            min={0}
-            max={1}
-          />
-        </FormControl>
 
         <Divider className={classes.spacer} />
 
@@ -195,7 +149,7 @@ class MapConfig extends React.Component {
             control={
               <Switch
                 checked={editor.showHeatmap}
-                onChange={this.setMapShowHeatmap}
+                onChange={this.setMapProperty('showHeatmap')}
                 value={editor.showHeatmap}
                 color="primary"
               />
@@ -220,11 +174,7 @@ MapConfig.propTypes = {
   config: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
   editor: PropTypes.object.isRequired,
-  setMapMarkerAttribute: PropTypes.func.isRequired,
-  setMapMarkerColor: PropTypes.func.isRequired,
-  setMapMarkerOpacity: PropTypes.func.isRequired,
-  setMapShowHeatmap: PropTypes.func.isRequired,
-  setMapTileLayer: PropTypes.func.isRequired,
+  setMapProperty: PropTypes.func.isRequired,
   toggleMapTooltipField: PropTypes.func.isRequired,
 };
 
@@ -235,11 +185,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setMapMarkerAttribute: (attr) => dispatch(setMapMarkerAttribute(attr)),
-  setMapMarkerColor: (color) => dispatch(setMapMarkerColor(color)),
-  setMapMarkerOpacity: (opacity) => dispatch(setMapMarkerOpacity(opacity)),
-  setMapShowHeatmap: (showHeatmap) => dispatch(setMapShowHeatmap(showHeatmap)),
-  setMapTileLayer: (tileLayer) => dispatch(setMapTileLayer(tileLayer)),
+  setMapProperty: (property, value) => dispatch(setMapProperty(property, value)),
   toggleMapTooltipField: (field, checked) => dispatch(toggleMapTooltipField(field, checked)),
 });
 

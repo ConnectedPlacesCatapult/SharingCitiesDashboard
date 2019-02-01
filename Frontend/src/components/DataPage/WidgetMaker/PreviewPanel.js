@@ -15,7 +15,7 @@ import TitleIcon from '@material-ui/icons/Title';
 
 // redux
 import { connect } from 'react-redux';
-import { setWidgetName } from "../../../actions/editorActions";
+import { setWidgetProperty } from "../../../actions/editorActions";
 
 // misc utils
 import classNames from 'classnames';
@@ -48,6 +48,10 @@ class PreviewPanel extends React.Component {
     this.props.setWidgetName(e.target.value)
   };
 
+  updateWidgetProperty = (property) => (e) => {
+    this.props.setWidgetProperty(property, e.target.value)
+  };
+
   render() {
     const { classes, editor } = this.props;
 
@@ -58,7 +62,7 @@ class PreviewPanel extends React.Component {
             id="widget-name"
             className={classes.textField}
             defaultValue={editor.name}
-            onChange={this.setWidgetName}
+            onChange={this.updateWidgetProperty('name')}
             inputProps={{
               root: classes.input,
               className: classes.input
@@ -81,7 +85,7 @@ class PreviewPanel extends React.Component {
 PreviewPanel.propTypes = {
   classes: PropTypes.object.isRequired,
   editor: PropTypes.object.isRequired,
-  setWidgetName: PropTypes.func.isRequired,
+  setWidgetProperty: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -89,7 +93,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setWidgetName: (name) => dispatch(setWidgetName(name)),
+  setWidgetProperty: (property, value) => dispatch(setWidgetProperty(property, value)),
 });
 
 PreviewPanel = withStyles(styles)(PreviewPanel);

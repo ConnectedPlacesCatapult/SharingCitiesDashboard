@@ -2,17 +2,13 @@ import configureStore from 'redux-mock-store';
 import * as editorActions from './../editorActions';
 import {
   PURGE_EDITOR,
-  SET_WIDGET_NAME,
-  SET_WIDGET_TYPE,
+  SET_MAP_DATA,
+  SET_MAP_PROPERTY,
   SET_PLOT_DATA,
-  SET_PLOT_PROPERTY,
   SET_PLOT_ENCODING,
-  SET_MAP_CENTER,
-  SET_MAP_HEATMAP_ATTRIBUTE,
-  SET_MAP_IS_MAPPABLE,
-  SET_MAP_SHOW_HEATMAP,
-  SET_MAP_TILE_LAYER,
-  SET_MAP_ZOOM,
+  SET_PLOT_PROPERTY,
+  SET_WIDGET_PROPERTY,
+  TOGGLE_MAP_TOOLTIP_FIELD,
 } from "./../../constants";
 
 const mockStore = configureStore();
@@ -37,31 +33,34 @@ describe('editorActions', () => {
     })
   });
 
-  describe('setWidgetName', () => {
+  describe('setMapData', () => {
     test('Dispatches the correct action and payload', () => {
       let expectedActions = [
         {
-          type: SET_WIDGET_NAME,
-          payload: 'Bike Availability',
-        },
+          type: SET_MAP_DATA,
+          payload: [{a: 1}],
+        }
       ];
 
-      store.dispatch(editorActions.setWidgetName('Bike Availability'));
+      store.dispatch(editorActions.setMapData([{a: 1}]));
 
       expect(store.getActions()).toEqual(expectedActions)
     })
   });
 
-  describe('setWidgetType', () => {
+  describe('setMapProperty', () => {
     test('Dispatches the correct action and payload', () => {
       let expectedActions = [
         {
-          type: SET_WIDGET_TYPE,
-          payload: 'plot',
-        },
+          type: SET_MAP_PROPERTY,
+          payload: {
+            property: 'markerAttribute',
+            value: 'Value',
+          },
+        }
       ];
 
-      store.dispatch(editorActions.setWidgetType('plot'));
+      store.dispatch(editorActions.setMapProperty('markerAttribute', 'Value'));
 
       expect(store.getActions()).toEqual(expectedActions)
     })
@@ -77,6 +76,39 @@ describe('editorActions', () => {
       ];
 
       store.dispatch(editorActions.setPlotData([{ a: 1 }]));
+
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+  });
+
+  describe('setPlotEncoding', () => {
+    test('Dispatches the correct action and payload', () => {
+      let expectedActions = [
+        {
+          type: SET_PLOT_ENCODING,
+          payload: {
+            x: {
+              field: "Timestamp",
+              type: "temporal",
+            },
+            y: {
+              field: "Value",
+              type: "quantitative",
+            },
+          },
+        },
+      ];
+
+      store.dispatch(editorActions.setPlotEncoding({
+        x: {
+          field: "Timestamp",
+          type: "temporal",
+        },
+        y: {
+          field: "Value",
+          type: "quantitative",
+        },
+      }));
 
       expect(store.getActions()).toEqual(expectedActions)
     })
@@ -100,119 +132,37 @@ describe('editorActions', () => {
     })
   });
 
-  describe('setPlotEncoding', () => {
+  describe('setWidgetProperty', () => {
     test('Dispatches the correct action and payload', () => {
       let expectedActions = [
         {
-          type: SET_PLOT_ENCODING,
+          type: SET_WIDGET_PROPERTY,
           payload: {
-            x: {
-              field: "Timestamp",
-              type: "temporal",
-            },
+            property: 'name',
+            value: 'test widget',
           },
         },
       ];
 
-      store.dispatch(editorActions.setPlotEncoding({
-        x: {
-          field: "Timestamp",
-          type: "temporal",
-        },
-      }));
+      store.dispatch(editorActions.setWidgetProperty('name', 'test widget'));
 
       expect(store.getActions()).toEqual(expectedActions)
     })
   });
 
-  describe('setMapCenter', () => {
+  describe('toggleMapTooltipField', () => {
     test('Dispatches the correct action and payload', () => {
       let expectedActions = [
         {
-          'type': SET_MAP_CENTER,
-          'payload': {
-            'lat': 51.505,
-            'lng': -0.09,
+          type: TOGGLE_MAP_TOOLTIP_FIELD,
+          payload: {
+            field: 'Value',
+            checked: true,
           },
         },
       ];
 
-      store.dispatch(editorActions.setMapCenter({ lat: 51.505, lng: -0.09 }));
-
-      expect(store.getActions()).toEqual(expectedActions)
-    })
-  });
-
-  describe('setMapHeatmapAttribute', () => {
-    test('Dispatches the correct action and payload', () => {
-      let expectedActions = [
-        {
-          type: SET_MAP_HEATMAP_ATTRIBUTE,
-          payload: 'bikes',
-        },
-      ];
-
-      store.dispatch(editorActions.setMapHeatmapAttribute('bikes'));
-
-      expect(store.getActions()).toEqual(expectedActions)
-    })
-  });
-
-  describe('setMapIsMappable', () => {
-    test('Dispatches the correct action and payload', () => {
-      let expectedActions = [
-        {
-          type: SET_MAP_IS_MAPPABLE,
-          payload: true,
-        },
-      ];
-
-      store.dispatch(editorActions.setMapIsMappable(true));
-
-      expect(store.getActions()).toEqual(expectedActions)
-    })
-  });
-
-  describe('setMapShowHeatmap', () => {
-    test('Dispatches the correct action and payload', () => {
-      let expectedActions = [
-        {
-          type: SET_MAP_SHOW_HEATMAP,
-          payload: true,
-        },
-      ];
-
-      store.dispatch(editorActions.setMapShowHeatmap(true));
-
-      expect(store.getActions()).toEqual(expectedActions)
-    })
-  });
-
-  describe('setMapTileLayer', () => {
-    test('Dispatches the correct action and payload', () => {
-      let expectedActions = [
-        {
-          type: SET_MAP_TILE_LAYER,
-          payload: 'CartoDB.DarkMatter',
-        },
-      ];
-
-      store.dispatch(editorActions.setMapTileLayer('CartoDB.DarkMatter'));
-
-      expect(store.getActions()).toEqual(expectedActions)
-    })
-  });
-
-  describe('setMapZoom', () => {
-    test('Dispatches the correct action and payload', () => {
-      let expectedActions = [
-        {
-          type: SET_MAP_ZOOM,
-          payload: 13,
-        },
-      ];
-
-      store.dispatch(editorActions.setMapZoom(13));
+      store.dispatch(editorActions.toggleMapTooltipField('Value', true));
 
       expect(store.getActions()).toEqual(expectedActions)
     })

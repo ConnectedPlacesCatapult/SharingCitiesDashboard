@@ -44,6 +44,7 @@ export const fetchAttributeData = (grouped, perSensor) => {
         attributedata: selectedAttributes.join(),
         grouped: grouped,
         per_sensor: perSensor,
+        harmonising_method: 'ffill',
       },
     })
       .then((response) => {

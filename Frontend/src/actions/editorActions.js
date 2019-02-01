@@ -1,23 +1,21 @@
 import {
   PURGE_EDITOR,
-  SET_WIDGET_NAME,
-  SET_WIDGET_TYPE,
-  SET_PLOT_DATA,
-  SET_PLOT_PROPERTY,
-  SET_PLOT_ENCODING,
-  SET_MAP_CENTER,
   SET_MAP_DATA,
-  SET_MAP_IS_MAPPABLE,
-  SET_MAP_MARKER_ATTRIBUTE,
-  SET_MAP_MARKER_COLOR,
-  SET_MAP_MARKER_OPACITY,
-  SET_MAP_SHOW_HEATMAP,
-  SET_MAP_TILE_LAYER,
-  SET_MAP_ZOOM,
+  SET_MAP_PROPERTY,
+  SET_PLOT_DATA,
+  SET_PLOT_ENCODING,
+  SET_PLOT_PROPERTY,
+  SET_WIDGET_PROPERTY,
   TOGGLE_MAP_TOOLTIP_FIELD,
 } from "./../constants";
 
-const isMappable = record => {
+/**
+ * Simply returns true if a record object contains both "Latitude" and "Longitude" fields
+ *
+ * @param record
+ * @returns {boolean}
+ */
+const isMappable = (record={}) => {
   const requiredKeys = ['Latitude', 'Longitude'];
   const presentKeys = Object.keys(record);
 
@@ -28,7 +26,11 @@ const isMappable = record => {
   return true
 };
 
-// ToDo :: this needs to remember stuff rather than just overwrite it every time
+/**
+ * Applies default values as defined in ./../../fcc.config.js
+ *
+ * @returns {Function}
+ */
 export const initializeEditor = () => {
   return (dispatch, getState) => {
     const currentState = getState();
@@ -36,13 +38,56 @@ export const initializeEditor = () => {
     const data = currentState.data.data;
 
     dispatch({
-      type: SET_WIDGET_NAME,
-      payload: defaults.widgetName,
+      type: SET_MAP_DATA,
+      payload: data,
     });
 
     dispatch({
-      type: SET_WIDGET_TYPE,
-      payload: defaults.widgetType,
+      type: SET_MAP_PROPERTY,
+      payload: {
+        property: 'center',
+        value: defaults.mapCenter,
+      },
+    });
+
+    dispatch({
+      type: SET_MAP_PROPERTY,
+      payload: {
+        property: 'markerAttribute',
+        value: defaults.mapMarkerAttribute,
+      },
+    });
+
+    dispatch({
+      type: SET_MAP_PROPERTY,
+      payload: {
+        property: 'markerColor',
+        value: defaults.mapMarkerColor,
+      },
+    });
+
+    dispatch({
+      type: SET_MAP_PROPERTY,
+      payload: {
+        property: 'tileLayer',
+        value: defaults.mapTileLayer,
+      },
+    });
+
+    dispatch({
+      type: SET_MAP_PROPERTY,
+      payload: {
+        property: 'showHeatmap',
+        value: defaults.mapShowHeatmap,
+      },
+    });
+
+    dispatch({
+      type: SET_MAP_PROPERTY,
+      payload: {
+        property: 'zoom',
+        value: defaults.mapZoom,
+      },
     });
 
     dispatch({
@@ -51,48 +96,27 @@ export const initializeEditor = () => {
     });
 
     dispatch({
-      type: SET_MAP_TILE_LAYER,
-      payload: defaults.mapTileLayer,
+      type: SET_WIDGET_PROPERTY,
+      payload: {
+        property: 'isMappable',
+        value: isMappable(data[0]),
+      },
     });
 
     dispatch({
-      type: SET_MAP_IS_MAPPABLE,
-      payload: isMappable(data[0])
+      type: SET_WIDGET_PROPERTY,
+      payload: {
+        property: 'name',
+        value: defaults.widgetName,
+      },
     });
 
     dispatch({
-      type: SET_MAP_DATA,
-      payload: data,
-    });
-
-    dispatch({
-      type: SET_MAP_MARKER_ATTRIBUTE,
-      payload: defaults.mapMarkerAttribute,
-    });
-
-    dispatch({
-      type: SET_MAP_MARKER_COLOR,
-      payload: defaults.mapMarkerColor,
-    });
-
-    dispatch({
-      type: SET_MAP_MARKER_OPACITY,
-      payload: defaults.mapMarkerOpacity,
-    });
-
-    dispatch({
-      type: SET_MAP_SHOW_HEATMAP,
-      payload: defaults.mapShowHeatmap,
-    });
-
-    dispatch({
-      type: SET_MAP_ZOOM,
-      payload: defaults.mapZoom,
-    });
-
-    dispatch({
-      type: SET_MAP_CENTER,
-      payload: defaults.mapCenter,
+      type: SET_WIDGET_PROPERTY,
+      payload: {
+        property: 'type',
+        value: defaults.widgetType,
+      },
     });
   }
 };
@@ -101,19 +125,27 @@ export const purgeEditor = () => ({
   type: PURGE_EDITOR,
 });
 
-export const setWidgetName = (name='') => ({
-  type: SET_WIDGET_NAME,
-  payload: name,
+export const setMapData = (data=[]) => ({
+  type: SET_MAP_DATA,
+  payload: data,
 });
 
-export const setWidgetType = (type) => ({
-  type: SET_WIDGET_TYPE,
-  payload: type,
+export const setMapProperty = (property, value) => ({
+  type: SET_MAP_PROPERTY,
+  payload: {
+    property,
+    value,
+  },
 });
 
 export const setPlotData = (data=[]) => ({
   type: SET_PLOT_DATA,
   payload: data,
+});
+
+export const setPlotEncoding = (encoding) => ({
+  type: SET_PLOT_ENCODING,
+  payload: encoding,
 });
 
 export const setPlotProperty = (property, value) => ({
@@ -124,49 +156,12 @@ export const setPlotProperty = (property, value) => ({
   },
 });
 
-export const setPlotEncoding = (encoding) => ({
-  type: SET_PLOT_ENCODING,
-  payload: encoding,
-});
-
-export const setMapIsMappable = isMappable => ({
-  type: SET_MAP_IS_MAPPABLE,
-  payload: isMappable,
-});
-
-export const setMapTileLayer = tileLayer => ({
-  type: SET_MAP_TILE_LAYER,
-  payload: tileLayer,
-});
-
-export const setMapCenter = (center) => ({
-  type: SET_MAP_CENTER,
-  payload: center,
-});
-
-export const setMapMarkerAttribute = (attr) => ({
-  type: SET_MAP_MARKER_ATTRIBUTE,
-  payload: attr,
-});
-
-export const setMapMarkerColor = (color) => ({
-  type: SET_MAP_MARKER_COLOR,
-  payload: color,
-});
-
-export const setMapMarkerOpacity = (o) => ({
-  type: SET_MAP_MARKER_OPACITY,
-  payload: o,
-});
-
-export const setMapShowHeatmap = showHeatmap => ({
-  type: SET_MAP_SHOW_HEATMAP,
-  payload: showHeatmap,
-});
-
-export const setMapZoom = zoom => ({
-  type: SET_MAP_ZOOM,
-  payload: zoom,
+export const setWidgetProperty = (property, value) => ({
+  type: SET_WIDGET_PROPERTY,
+  payload: {
+    property,
+    value,
+  },
 });
 
 export const toggleMapTooltipField = (field, checked) => ({

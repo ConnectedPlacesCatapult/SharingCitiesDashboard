@@ -11,7 +11,7 @@ import Button from "@material-ui/core/Button";
 
 // redux
 import { connect } from 'react-redux';
-import { setWidgetType } from "../../../actions/editorActions";
+import { setWidgetProperty } from "../../../actions/editorActions";
 
 const styles = (theme) => ({
   root: {
@@ -28,7 +28,7 @@ const styles = (theme) => ({
 
 class TypeSelector extends React.Component {
   setWidgetType = (e) => {
-    this.props.setWidgetType(e.currentTarget.value)
+    this.props.setWidgetProperty('type', e.currentTarget.value)
   };
 
   render() {
@@ -77,7 +77,7 @@ class TypeSelector extends React.Component {
 TypeSelector.propTypes = {
   classes: PropTypes.object.isRequired,
   editor: PropTypes.object.isRequired,
-  setWidgetType: PropTypes.func.isRequired,
+  setWidgetProperty: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -85,7 +85,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setWidgetType: (type) => dispatch(setWidgetType(type)),
+  setWidgetProperty: (property, value) => dispatch(setWidgetProperty(property, value)),
 });
 
 TypeSelector = withStyles(styles)(TypeSelector);
