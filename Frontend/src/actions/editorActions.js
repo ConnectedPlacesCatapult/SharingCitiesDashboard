@@ -7,11 +7,14 @@ import {
   SET_PLOT_ENCODING,
   SET_MAP_CENTER,
   SET_MAP_DATA,
-  SET_MAP_HEATMAP_ATTRIBUTE,
   SET_MAP_IS_MAPPABLE,
+  SET_MAP_MARKER_ATTRIBUTE,
+  SET_MAP_MARKER_COLOR,
+  SET_MAP_MARKER_OPACITY,
   SET_MAP_SHOW_HEATMAP,
   SET_MAP_TILE_LAYER,
   SET_MAP_ZOOM,
+  TOGGLE_MAP_TOOLTIP_FIELD,
 } from "./../constants";
 
 const isMappable = record => {
@@ -63,8 +66,18 @@ export const initializeEditor = () => {
     });
 
     dispatch({
-      type: SET_MAP_HEATMAP_ATTRIBUTE,
-      payload: "Value",
+      type: SET_MAP_MARKER_ATTRIBUTE,
+      payload: defaults.mapMarkerAttribute,
+    });
+
+    dispatch({
+      type: SET_MAP_MARKER_COLOR,
+      payload: defaults.mapMarkerColor,
+    });
+
+    dispatch({
+      type: SET_MAP_MARKER_OPACITY,
+      payload: defaults.mapMarkerOpacity,
     });
 
     dispatch({
@@ -131,9 +144,19 @@ export const setMapCenter = (center) => ({
   payload: center,
 });
 
-export const setMapHeatmapAttribute = attr => ({
-  type: SET_MAP_HEATMAP_ATTRIBUTE,
+export const setMapMarkerAttribute = (attr) => ({
+  type: SET_MAP_MARKER_ATTRIBUTE,
   payload: attr,
+});
+
+export const setMapMarkerColor = (color) => ({
+  type: SET_MAP_MARKER_COLOR,
+  payload: color,
+});
+
+export const setMapMarkerOpacity = (o) => ({
+  type: SET_MAP_MARKER_OPACITY,
+  payload: o,
 });
 
 export const setMapShowHeatmap = showHeatmap => ({
@@ -144,4 +167,12 @@ export const setMapShowHeatmap = showHeatmap => ({
 export const setMapZoom = zoom => ({
   type: SET_MAP_ZOOM,
   payload: zoom,
+});
+
+export const toggleMapTooltipField = (field, checked) => ({
+  type: TOGGLE_MAP_TOOLTIP_FIELD,
+  payload: {
+    field,
+    checked,
+  },
 });

@@ -68,12 +68,6 @@ const styles = (theme) => ({
     },
   },
   expanded: {},
-  expansionPanelDetails: {
-
-  },
-  expansionPanelActions: {
-
-  },
   channelDefinition: {
     display: 'inline-flex',
     justifyContent: 'space-between',

@@ -25,7 +25,7 @@ To circumvent this challenge, we have developed a tool that enables users to cre
 - Create visualisations that they want on their dashboard
 
 
-## Delpoyment 
+## Deployment 
 
 ## Modules
 

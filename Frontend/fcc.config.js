@@ -7,29 +7,28 @@ module.exports = {
   localeStyleSheet: "./styles/lisbon.css",
 
   // overrides for MaterialUI default theme
-  // ToDo :: change palette type to 'dark' and update styles accordingly
   localeThemeData: {
-    "palette": {
-     "type": "dark",
-      "primary": {
-        "light": "#d3edea",
-        "main": "#81cfc7",
-        "dark": "#32b1a4"
+    palette: {
+      type: "dark",
+      primary: {
+        //light: "#d3edea",
+        main: "#81cfc7",
+        //dark: "#32b1a4",
       },
-      "secondary": {
-        "light": "#FC554B",
-        "main": "#D54A44",
-        "dark": "#AE3C38"
+      secondary: {
+        //light: "#FC554B",
+        main: "#D54A44",
+        //dark: "#AE3C38",
       },
-      "background": {
-        "paper": "#313443",
-        "default": "#42465a"
+      background: {
+        paper: "#313443",
+        default: "#42465a",
       }
     },
-    "typography": {
+    typography: {
       useNextVariants: true, // to avoid deprecation warnings
-      "fontFamily": "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
-    }
+      fontFamily: "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
+    },
   },
 
   // currently used by the common/Header component to define links
@@ -78,6 +77,9 @@ module.exports = {
       lat: 51.505,
       lng: -0.09,
     },
+    mapMarkerAttribute: "Value",
+    mapMarkerColor: "#D54A44",
+    mapMarkerOpacity: 0.7,
     mapShowHeatmap: false,
     mapTileLayer: "CartoDB.DarkMatter",
     mapZoom: 13,

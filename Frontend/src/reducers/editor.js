@@ -7,17 +7,20 @@ import {
   SET_PLOT_ENCODING,
   SET_MAP_CENTER,
   SET_MAP_DATA,
-  SET_MAP_HEATMAP_ATTRIBUTE,
   SET_MAP_IS_MAPPABLE,
+  SET_MAP_MARKER_ATTRIBUTE,
+  SET_MAP_MARKER_COLOR,
+  SET_MAP_MARKER_OPACITY,
   SET_MAP_SHOW_HEATMAP,
   SET_MAP_TILE_LAYER,
   SET_MAP_ZOOM,
+  TOGGLE_MAP_TOOLTIP_FIELD
 } from "./../constants";
 
 const initialState = {
+  isMappable: false,
   name: '',
   type: null,
-  isMappable: false,
   plotConfig: {
     spec: {
       "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
@@ -48,9 +51,12 @@ const initialState = {
       type: "FeatureCollection",
       features: [],
     },
+    markerAttribute: null,
+    markerColor: '#00ff00',
+    markerOpacity: 1,
     showHeatmap: false,
-    heatmapAttribute: null,
     tileLayer: null,
+    tooltipFields: [],
     zoom: 0,
   },
   alertConfig: {},
@@ -158,20 +164,40 @@ export default (state=initialState, action={}) => {
       }
     }
 
-    case SET_MAP_HEATMAP_ATTRIBUTE: {
-      return {
-        ...state,
-        mapConfig: {
-          ...state.mapConfig,
-          heatmapAttribute: action.payload,
-        }
-      }
-    }
-
     case SET_MAP_IS_MAPPABLE: {
       return {
         ...state,
         isMappable: action.payload,
+      }
+    }
+
+    case SET_MAP_MARKER_ATTRIBUTE: {
+      return {
+        ...state,
+        mapConfig: {
+          ...state.mapConfig,
+          markerAttribute: action.payload,
+        }
+      }
+    }
+
+    case SET_MAP_MARKER_COLOR: {
+      return {
+        ...state,
+        mapConfig: {
+          ...state.mapConfig,
+          markerColor: action.payload,
+        }
+      }
+    }
+
+    case SET_MAP_MARKER_OPACITY: {
+      return {
+        ...state,
+        mapConfig: {
+          ...state.mapConfig,
+          markerOpacity: action.payload,
+        }
       }
     }
 
@@ -202,6 +228,18 @@ export default (state=initialState, action={}) => {
           ...state.mapConfig,
           zoom: action.payload,
         }
+      }
+    }
+
+    case TOGGLE_MAP_TOOLTIP_FIELD: {
+      return {
+        ...state,
+        mapConfig: {
+          ...state.mapConfig,
+          tooltipFields: action.payload.checked
+            ? [...state.mapConfig.tooltipFields, action.payload.field]
+            : [...state.mapConfig.tooltipFields].filter(item => item !== action.payload.field),
+        },
       }
     }
 
