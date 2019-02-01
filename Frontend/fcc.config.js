@@ -72,17 +72,17 @@ module.exports = {
     defaultPlotType: "bar",
   },
   widgetEditorDefaults: {
-    plotType: "bar",
     mapCenter: {
       lat: 51.505,
       lng: -0.09,
     },
     mapMarkerAttribute: "Value",
-    mapMarkerColor: "#D54A44",
-    mapMarkerOpacity: 0.7,
+    mapMarkerColor: "rgba(213, 74, 68, 0.8)",
+    mapMarkerRadius: 60,
     mapShowHeatmap: false,
     mapTileLayer: "CartoDB.DarkMatter",
     mapZoom: 13,
+    plotMarker: "point",
     widgetName: "New Widget",
     widgetType: "plot",
   }

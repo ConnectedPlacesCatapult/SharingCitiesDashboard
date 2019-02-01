@@ -49,6 +49,7 @@ const initialState = {
     },
     markerAttribute: null,
     markerColor: '#00ff00',
+    markerRadius: 10,
     showHeatmap: false,
     tileLayer: null,
     tooltipFields: [],

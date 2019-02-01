@@ -69,6 +69,14 @@ export const initializeEditor = () => {
     dispatch({
       type: SET_MAP_PROPERTY,
       payload: {
+        property: 'markerRadius',
+        value: defaults.mapMarkerRadius,
+      },
+    });
+
+    dispatch({
+      type: SET_MAP_PROPERTY,
+      payload: {
         property: 'tileLayer',
         value: defaults.mapTileLayer,
       },
@@ -93,6 +101,14 @@ export const initializeEditor = () => {
     dispatch({
       type: SET_PLOT_DATA,
       payload: data,
+    });
+
+    dispatch({
+      type: SET_PLOT_PROPERTY,
+      payload: {
+        property: "mark",
+        value: defaults.plotMarker,
+      },
     });
 
     dispatch({

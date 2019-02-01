@@ -41,7 +41,6 @@ const styles = (theme) => ({
 
 class MapPreview extends React.Component {
   getMarkerColor = (val) => {
-    // ToDo :: specify a default for this in config and add selector to mapConfig
     const baseColor = this.props.editor.mapConfig.markerColor;
     const diff = this.maxValue - this.minValue;
     const step = diff / 5;
@@ -61,19 +60,14 @@ class MapPreview extends React.Component {
   };
 
   getMarkerRadius = (val) => {
-    // ToDo :: specify a default for this in config and add selector to mapConfig
-    const maxRadius = 60;
-
-    return maxRadius * ((val - this.minValue) / (this.maxValue - this.minValue))
+    return this.props.editor.mapConfig.markerRadius * ((val - this.minValue) / (this.maxValue - this.minValue))
   };
 
   setValueLimits = () => {
-    const { editor } = this.props;
-
     let min = null;
     let max = null;
-    let watchedAttribute = editor.mapConfig.markerAttribute; // ToDo :: this needs to be specified elsewhere
-    let features = editor.mapConfig.data.features;
+    let watchedAttribute = this.props.editor.mapConfig.markerAttribute;
+    let features = this.props.editor.mapConfig.data.features;
 
     for (let feature of features) {
       let attributeValue = feature.properties[watchedAttribute];
@@ -117,7 +111,7 @@ class MapPreview extends React.Component {
           center={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}
           stroke={false}
           fillColor={this.getMarkerColor(markerValue)}
-          fillOpacity={editor.mapConfig.markerOpacity}
+          //fillOpacity={editor.mapConfig.markerOpacity}
           radius={this.getMarkerRadius(markerValue)}
         >
           <Popup>
@@ -189,12 +183,12 @@ MapPreview.propTypes = {
   editor: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   config: state.config.config,
   editor: state.editor,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 
 });
 
