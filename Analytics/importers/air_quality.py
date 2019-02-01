@@ -68,7 +68,7 @@ class KCLAirQuality(BaseImporter):
 		self.df = None
 		for code in _codes:
 			self.url = BASE_URL % (code, _today, _tomorrow)
-			super()._create_datasource()
+			super()._create_datasource(headers)
 			_df = self.create_dataframe(object_separator='@SpeciesCode')
 			_dates = _df['@MeasurementDateGMT'].tolist()
 			_new_dates = []
