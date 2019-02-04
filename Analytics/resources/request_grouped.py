@@ -193,6 +193,15 @@ def request_harmonised_data(data, harmonising_method):
 	else:
 		pass
 
-	data = json.loads(_df.to_json(orient='records'))
+	### pass the long vs wide data format
+	if harmonising_method == 'wide':
+		_df.reset_index(inplace=True)
+		_df['Value'] = _df['Value'].astype(float)
+		_df['timestamp'] = _df['Timestamp'].astype(int) / 10**6 ### milliseconds
+		_df = _df.pivot_table(index='Timestamp', columns='Attribute_Name', values=['Value','timestamp','Latitude', 'Longitude'])
+
+		data = json.loads(_df.to_json(orient='records').replace('["','').replace('"]','').replace('","',','))
+	else:
+		data = json.loads(_df.to_json(orient='records'))
 
 	return data

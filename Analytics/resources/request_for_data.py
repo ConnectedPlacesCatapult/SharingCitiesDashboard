@@ -40,7 +40,7 @@ Note: If no parameters are passed then by default all the themes are returned
 		{URL}?attributedata='<name1><name2>&limit=60&offset=60&fromdate=2018-11-22&todate=2018-11-24'
 		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=True&freq='1H' // Retrieves records and groups the data at hourly intervals
 		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=False&freq='1H' // Retrieves records and groups the data from all sensors of same attribute at hourly intervals
-		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&harmonising_method=ffill // Harmonisies all attributes in the query to match the attribute with the most records
+		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&harmonising_method=long // Harmonisies all attributes in the query to match the attribute with the most records. It also reformats the data to be structured as long (row stacked) or wide (column stacked)
 
 """
 
@@ -87,7 +87,7 @@ class RequestForData(Resource):
 						store_missing=False)
 	parser.add_argument('harmonising_method', 
 						type=str,
-						choices=('ffill'),
+						choices=('long', 'wide'),
 						store_missing=False)
 	parser.add_argument('per_sensor', type=inputs.boolean, store_missing=False)
 	parser.add_argument('sensorid', type=str)
