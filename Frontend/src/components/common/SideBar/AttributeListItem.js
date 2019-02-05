@@ -27,7 +27,7 @@ class AttributeListItem extends React.Component {
     this.props.onClick();
 
     // fire off call for fresh data
-    this.props.fetchAttributeData(true, true);
+    this.props.fetchAttributeData(this.props.themeId, this.props.subthemeId, true, true, 'long', 100);
   };
 
   render() {
@@ -63,7 +63,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchAttributeData: (grouped, perSensor) => dispatch(fetchAttributeData(grouped, perSensor)),
+  fetchAttributeData: (grouped, perSensor, harmonisingMethod, limit) => dispatch(fetchAttributeData(grouped, perSensor)),
 });
 
 AttributeListItem = withStyles(styles)(AttributeListItem);

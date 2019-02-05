@@ -1,17 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
-import _ from "lodash";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
 
 import DataTableToolbar from './DataTableToolbar';
 import DataTableHead from './DataTableHead';
 import DataTableBody from './DataTableBody';
 import DataTablePagination from './DataTablePagination';
 
-const styles = theme => ({
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+import Paper from "@material-ui/core/Paper";
+import Table from "@material-ui/core/Table";
+
+// redux
+import { connect } from 'react-redux';
+
+const styles = (theme) => ({
   root: {
     // width: '70%',
     // marginTop: theme.spacing.unit * 3,
@@ -39,11 +42,28 @@ class DataTable extends React.Component {
       selected: [],
       data: props.data.data,
       page: 0,
-      rowsPerPage: 10
+      rowsPerPage: 10,
     };
   }
 
-  handleSelectAllClick = e => {
+  generateColumnsFromData = () => {
+    const { data } = this.props;
+
+    if (!data.data.length) return [];
+
+    let columns = [];
+    Object.keys(data.data[0]).forEach((key, i) => {
+      columns = [...columns, {
+        id: key,
+        label: key,
+        numeric: Number.isInteger(data.data[0][key]),
+      }]
+    });
+
+    return columns;
+  };
+
+  handleSelectAllClick = (e) => {
     if (e.target.checked) {
       this.setState(state => ({ selected: state.data.map((n, i) => i) }));
       return;
@@ -51,7 +71,7 @@ class DataTable extends React.Component {
     this.setState({ selected: [] });
   };
 
-  handleRequestSort = (event, property) => {
+  handleRequestSort = (e, property) => {
     const orderBy = property;
     let order = 'desc';
 
@@ -64,6 +84,7 @@ class DataTable extends React.Component {
 
   handleClick = (id) => {
     const { selected } = this.state;
+
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
@@ -84,58 +105,62 @@ class DataTable extends React.Component {
   };
 
   handleChangePage = (e, page) => {
-    this.setState({ page });
+    this.setState({ page })
   };
 
-  handleChangeRowsPerPage = e => {
-    this.setState({ rowsPerPage: e.target.value });
+  handleChangeRowsPerPage = (e) => {
+    this.setState({ rowsPerPage: e.target.value })
   };
 
   isSelected = (id) => {
-    return _.indexOf(this.state.selected, id) !== -1;
+    return this.state.selected.includes(id)
   };
 
   render() {
-    const { classes, data } = this.props;
+    const { classes, data, themes } = this.props;
     const { order, orderBy, selected, page, rowsPerPage } = this.state;
+
+    const currentTheme = themes.find((theme) => theme.id === data.query.themeId);
+    const currentSubtheme = currentTheme.subthemes.find((subtheme) => subtheme.id === data.query.subthemeId);
+    const columns = this.generateColumnsFromData();
 
     return (
       <div className={classes.root}>
         <Paper>
           <DataTableToolbar
             numSelected={selected.length}
-            subthemeName={data.subtheme}
+            subthemeName={currentSubtheme.name}
           />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
-              {/*<DataTableHead
+              <DataTableHead
                 numSelected={selected.length}
                 order={order}
                 orderBy={orderBy}
                 onSelectAllClick={this.handleSelectAllClick}
                 onRequestSort={this.handleRequestSort}
-                columns={data.meta.columns}
+                columns={columns}
                 rowCount={data.data.length}
-              />*/}
-              {/*<DataTableBody
+              />
+              <DataTableBody
                 data={data.data}
-                columns={data.meta.columns}
+                columns={columns}
                 order={order}
                 orderBy={orderBy}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onClick={this.handleClick}
                 isSelected={this.isSelected}
-              />*/}
+              />
             </Table>
           </div>
-          {/*<DataTablePagination
+          <DataTablePagination
             data={data.data}
             rowsPerPage={rowsPerPage}
             page={page}
             onChangePage={this.handleChangePage}
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
-          />*/}
+          />
         </Paper>
       </div>
     )
@@ -145,16 +170,19 @@ class DataTable extends React.Component {
 DataTable.propTypes = {
   classes: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
+  themes: PropTypes.array.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   data: state.data,
+  themes: state.themes.themes,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 
 });
 
 DataTable = withStyles(styles)(DataTable);
+DataTable = connect(mapStateToProps, mapDispatchToProps)(DataTable);
 
-export default connect(mapStateToProps, mapDispatchToProps)(DataTable)
+export default DataTable

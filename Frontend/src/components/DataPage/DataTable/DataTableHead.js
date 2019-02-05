@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+
+// material-ui
 import { withStyles } from "@material-ui/core/styles";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -8,7 +10,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Tooltip from "@material-ui/core/Tooltip";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 
-const styles = theme => ({
+const styles = (theme) => ({
   columnLabel: {
     color: theme.palette.primary.light,
     fontWeight: 600,
@@ -22,8 +24,6 @@ const styles = theme => ({
   cellBorder: {
     borderColor: theme.palette.background.default,
   },
-
-
   labelRoot: {
     color: theme.palette.primary.light,
     fontWeight: 600,
@@ -37,7 +37,6 @@ const styles = theme => ({
   labelActive: {
     color: theme.palette.primary.light,
   },
-
   focus: {
 
   },
@@ -47,7 +46,7 @@ const styles = theme => ({
 });
 
 class DataTableHead extends React.Component {
-  createSortHandler = property => event => {
+  createSortHandler = (property) => (e) => {
     this.props.onRequestSort(event, property);
   };
 
@@ -68,7 +67,7 @@ class DataTableHead extends React.Component {
           {columns.map((column, i) => {
             return (
               <TableCell
-                key={column.id}
+                key={i}
                 numeric={column.numeric}
                 padding={(i === 0) ? 'none' : 'default'}
                 sortDirection={orderBy === column.id ? order : false}
