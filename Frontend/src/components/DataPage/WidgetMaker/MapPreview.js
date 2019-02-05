@@ -111,7 +111,6 @@ class MapPreview extends React.Component {
           center={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}
           stroke={false}
           fillColor={this.getMarkerColor(markerValue)}
-          //fillOpacity={editor.mapConfig.markerOpacity}
           radius={this.getMarkerRadius(markerValue)}
         >
           <Popup>

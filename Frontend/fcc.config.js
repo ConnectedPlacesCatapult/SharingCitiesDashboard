@@ -65,12 +65,6 @@ module.exports = {
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
     },
   ],
-  vega: {
-    schema: "https://vega.github.io/schema/vega-lite/v2.json",
-    defaultWidth: 640,
-    defaultHeight: 480,
-    defaultPlotType: "bar",
-  },
   widgetEditorDefaults: {
     mapCenter: {
       lat: 51.505,
@@ -78,7 +72,7 @@ module.exports = {
     },
     mapMarkerAttribute: "Value",
     mapMarkerColor: "rgba(213, 74, 68, 0.8)",
-    mapMarkerRadius: 60,
+    mapMarkerRadius: 10,
     mapShowHeatmap: false,
     mapTileLayer: "CartoDB.DarkMatter",
     mapZoom: 13,

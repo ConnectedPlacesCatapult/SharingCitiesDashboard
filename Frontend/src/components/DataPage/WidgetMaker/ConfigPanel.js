@@ -43,6 +43,10 @@ class ConfigPanel extends React.Component {
     props.initializeEditor();
   }
 
+  saveWidget = () => {
+    console.log("save widget")
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -54,6 +58,7 @@ class ConfigPanel extends React.Component {
         <Button
           variant="contained"
           size="small"
+          onClick={this.saveWidget}
         >
           Save Widget
           <SaveIcon className={classNames(classes.rightIcon, classes.iconSmall)} />

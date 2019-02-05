@@ -48,7 +48,7 @@ class App extends React.Component {
           <CssBaseline />
           <BrowserRouter>
             <Switch>
-              <Route exact path="/" component={DataPage} />
+              <Route exact path="/" component={DashboardPage} />
               <Route path="/data" component={DataPage} />
             </Switch>
           </BrowserRouter>

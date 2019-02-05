@@ -60,7 +60,7 @@ class DataPage extends React.Component {
           {
             data.fetched && data.data.length
             ? <div className={classes.flexWrapper}>
-                {/*<DataTable />*/}
+                <DataTable />
                 <OptionsSidePanel
                   openWidgetMaker={this.openWidgetMaker}
                 />
