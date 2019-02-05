@@ -6,9 +6,9 @@ import {
 
 const initialState = {
   data: [],
-  query: {
-    themeId: null,
-    subthemeId: null,
+  themeId: null,
+  subthemeId: null,
+  queryParams: {
     attributedata: [],
     grouped: null,
     per_sensor: null,
@@ -38,15 +38,11 @@ export default (state=initialState, action={}) => {
         fetching: false,
         fetched: true,
         data: action.payload.data,
-        query: {
-          ...state.query,
-          themeId: action.payload.query.themeId,
-          subthemeId: action.payload.query.subthemeId,
-          attributedata: action.payload.query.attributedata,
-          grouped: action.payload.query.grouped,
-          per_sensor: action.payload.query.per_sensor,
-          harmonising_method: action.payload.query.harmonising_method,
-          limit: action.payload.query.limit,
+        themeId: action.payload.themeId,
+        subthemeId: action.payload.subthemeId,
+        queryParams: {
+          ...state.queryParams,
+          ...action.payload.queryParams,
         }
       }
     }

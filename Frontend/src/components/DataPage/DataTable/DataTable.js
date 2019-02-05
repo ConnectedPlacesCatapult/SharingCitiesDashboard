@@ -119,8 +119,7 @@ class DataTable extends React.Component {
     const { classes, data, themes } = this.props;
     const { order, orderBy, selected, page, rowsPerPage } = this.state;
 
-    const currentTheme = themes.find((theme) => theme.id === data.query.themeId);
-    const currentSubtheme = currentTheme.subthemes.find((subtheme) => subtheme.id === data.query.subthemeId);
+    const currentSubtheme = themes.find((theme) => theme.id === data.themeId).subthemes.find((subtheme) => subtheme.id === data.subthemeId);
     const columns = this.generateColumnsFromData();
 
     return (

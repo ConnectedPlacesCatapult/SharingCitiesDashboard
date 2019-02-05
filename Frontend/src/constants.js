@@ -13,6 +13,14 @@ export const FETCH_CONFIG_REJECTED = "FETCH_CONFIG_REJECTED";
 export const FETCH_ATTRIBUTE_DATA = "FETCH_ATTRIBUTE_DATA";
 export const FETCH_ATTRIBUTE_DATA_FULFILLED = "FETCH_ATTRIBUTE_DATA_FULFILLED";
 export const FETCH_ATTRIBUTE_DATA_REJECTED = "FETCH_ATTRIBUTE_DATA_REJECTED";
+export const QUERY_PARAM_GROUPED = "grouped";
+export const QUERY_PARAM_PER_SENSOR = "per_sensor";
+export const QUERY_PARAM_HARMONISING_METHOD = "harmonising_method";
+export const QUERY_PARAM_HARMONISING_METHOD_LONG = "long";
+export const QUERY_PARAM_HARMONISING_METHOD_WIDE = "wide";
+export const QUERY_PARAM_LIMIT = "limit";
+export const QUERY_PARAM_SUBTHEME_ID = "subtheme";
+export const QUERY_PARAM_THEME_ID = "theme";
 
 // editor
 export const PURGE_EDITOR = "PURGE_EDITOR";

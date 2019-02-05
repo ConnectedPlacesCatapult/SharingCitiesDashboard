@@ -5,40 +5,31 @@ import {
   FETCH_ATTRIBUTE_DATA_REJECTED,
 } from "./../constants";
 
-export const fetchAttributeData = (themeId, subthemeId, grouped=true, perSensor=true, harmonisingMethod='long', limit=100) => {
+export const fetchAttributeData = (themeId, subthemeId, queryParams = {}) => {
   return (dispatch, getState) => {
     const currentState = getState();
     const config = currentState.config.config;
     const themes = currentState.themes.themes;
 
     // gather all selected attributes
-    // ToDo :: limit this to search only the current theme?
-    let selectedAttributes = [];
-    for (let theme of themes) {
-      for (let subtheme of theme.subthemes) {
-        for (let attribute of subtheme.attributes) {
-          if (attribute.isSelected) {
-            selectedAttributes = [...selectedAttributes, attribute.name]
-          }
-        }
-      }
-    }
+    const selectedAttributes = themes.find((theme) => theme.id === themeId)
+      .subthemes.find((subtheme) => subtheme.id === subthemeId)
+      .attributes.filter((attr) => attr.isSelected)
+      .map((attr) => attr.name)
+    ;
 
     // catch no attributes selected
     if (!selectedAttributes.length) {
       dispatch({
         type: FETCH_ATTRIBUTE_DATA_FULFILLED,
         payload: {
-          data: [],
-          query: {
-            themeId,
-            subthemeId,
+          themeId,
+          subthemeId,
+          queryParams: {
+            ...queryParams,
             attributedata: selectedAttributes.join(),
-            grouped,
-            per_sensor: perSensor,
-            harmonising_method: harmonisingMethod,
-            limit,
           },
+          data: [],
         },
       });
 
@@ -49,34 +40,25 @@ export const fetchAttributeData = (themeId, subthemeId, grouped=true, perSensor=
       type: FETCH_ATTRIBUTE_DATA,
     });
 
-    // ToDo :: tidy this
     axios({
       url: config.apiRoot,
       method: 'get',
       params: {
-        themeId,
-        subthemeId,
+        ...queryParams,
         attributedata: selectedAttributes.join(),
-        grouped,
-        per_sensor: perSensor,
-        harmonising_method: harmonisingMethod,
-        limit,
       },
     })
       .then((response) => {
         dispatch({
           type: FETCH_ATTRIBUTE_DATA_FULFILLED,
           payload: {
-            data: response.data,
-            query: {
-              themeId,
-              subthemeId,
+            themeId,
+            subthemeId,
+            queryParams: {
+              ...queryParams,
               attributedata: selectedAttributes.join(),
-              grouped,
-              per_sensor: perSensor,
-              harmonising_method: harmonisingMethod,
-              limit,
             },
+            data: response.data,
           },
         })
       })
