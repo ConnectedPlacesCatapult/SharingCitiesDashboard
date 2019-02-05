@@ -19,9 +19,6 @@ const styles = (theme) => ({
   nested: {
     paddingLeft: theme.spacing.unit * 6,
   },
-  darkColor: {
-    color: theme.palette.primary.dark,
-  },
 });
 
 class AttributeListItem extends React.Component {
@@ -40,8 +37,8 @@ class AttributeListItem extends React.Component {
       <ListItem button className={classes.nested} onClick={this.handleClick}>
         {
           isSelected
-            ? <RadioButtonCheckedIcon fontSize="small" color="secondary" />
-            : <RadioButtonUncheckedIcon fontSize="small" className={classes.darkColor} />
+            ? <RadioButtonCheckedIcon fontSize="small" color="primary" />
+            : <RadioButtonUncheckedIcon fontSize="small" color="primary" />
         }
         <ListItemText inset primary={attributeName} />
       </ListItem>

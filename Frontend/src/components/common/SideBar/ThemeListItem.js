@@ -29,8 +29,8 @@ class ThemeListItem extends React.Component {
         <ListItem button onClick={onClick}>
           {
             isSelected
-              ? <ExpandMore color="secondary" />
-              : <ChevronRight color="secondary"/>
+              ? <ExpandMore color="primary" />
+              : <ChevronRight color="primary"/>
           }
           <ListItemText inset className={classes.listItemText}>
             {themeName}
