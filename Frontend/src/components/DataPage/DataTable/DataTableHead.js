@@ -47,7 +47,7 @@ const styles = (theme) => ({
 
 class DataTableHead extends React.Component {
   createSortHandler = (property) => (e) => {
-    this.props.onRequestSort(event, property);
+    this.props.onRequestSort(e, property);
   };
 
   render() {

@@ -28,7 +28,18 @@ export const fetchAttributeData = (themeId, subthemeId, grouped=true, perSensor=
     if (!selectedAttributes.length) {
       dispatch({
         type: FETCH_ATTRIBUTE_DATA_FULFILLED,
-        payload: [],
+        payload: {
+          data: [],
+          query: {
+            themeId,
+            subthemeId,
+            attributedata: selectedAttributes.join(),
+            grouped,
+            per_sensor: perSensor,
+            harmonising_method: harmonisingMethod,
+            limit,
+          },
+        },
       });
 
       return

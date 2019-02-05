@@ -40,7 +40,6 @@ class DataTable extends React.Component {
       order: DEFAULT_ORDER,
       orderBy: DEFAULT_ORDER_BY,
       selected: [],
-      data: props.data.data,
       page: 0,
       rowsPerPage: 10,
     };
@@ -52,7 +51,7 @@ class DataTable extends React.Component {
     if (!data.data.length) return [];
 
     let columns = [];
-    Object.keys(data.data[0]).forEach((key, i) => {
+    Object.keys(data.data[0]).forEach((key) => {
       columns = [...columns, {
         id: key,
         label: key,
@@ -65,7 +64,7 @@ class DataTable extends React.Component {
 
   handleSelectAllClick = (e) => {
     if (e.target.checked) {
-      this.setState(state => ({ selected: state.data.map((n, i) => i) }));
+      this.setState({ selected: this.props.data.data.map((n, i) => i) });
       return;
     }
     this.setState({ selected: [] });
