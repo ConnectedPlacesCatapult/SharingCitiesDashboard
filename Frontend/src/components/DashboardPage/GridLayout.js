@@ -7,14 +7,19 @@ import Widget from './Widget';
 import { withStyles } from '@material-ui/core/styles';
 
 // grid-layout
-import RGL, { WidthProvider } from "react-grid-layout";
+import RGL from "react-grid-layout";
+
 // ToDo :: overwrite some of the original base styles
 import './../../../node_modules/react-grid-layout/css/styles.css';
 import './../../../node_modules/react-resizable/css/styles.css';
 
 // redux
 import { connect } from 'react-redux';
-import { fetchLayout, fetchWidgets } from "./../../actions/dashboardActions";
+import {
+  fetchLayout,
+  updateLayout,
+  fetchWidgets,
+} from "./../../actions/dashboardActions";
 
 const styles = (theme) => ({
   root: {
@@ -23,41 +28,24 @@ const styles = (theme) => ({
   },
 });
 
-// ToDo :: check out WidthProvider
-//const ReactGridLayout = WidthProvider(RGL);
 const ReactGridLayout = RGL;
 
 class GridLayout extends React.Component {
   constructor(props) {
     super(props);
 
-    /*this.state = {
-      layout: [],
-    };*/
-
-    //this.onLayoutChange = this.onLayoutChange.bind(this);
+    this.onLayoutChange = this.onLayoutChange.bind(this);
 
     this.props.fetchLayout();
     this.props.fetchWidgets();
   }
 
-  componentWillMount() {
-
-  }
-
   onLayoutChange(layout) {
-    //this.setState({ layout });
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    /*if (prevProps.layout !== this.props.dashboard.layout) {
-      this.setState({ layout: this.props.dashboard.layout })
-    }*/
+    this.props.updateLayout(layout);
   }
 
   render() {
     const { classes, dashboard } = this.props;
-    //const { layout } = this.state;
 
     const gridItems = dashboard.layout.map((gridItem) => {
       let gridItemWidget = dashboard.widgets.find((widget) => gridItem.i === widget.i);
@@ -88,6 +76,9 @@ class GridLayout extends React.Component {
 GridLayout.propTypes = {
   classes: PropTypes.object.isRequired,
   dashboard: PropTypes.object.isRequired,
+  fetchLayout: PropTypes.func.isRequired,
+  updateLayout: PropTypes.func.isRequired,
+  fetchWidgets: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -96,6 +87,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchLayout: () => dispatch(fetchLayout()),
+  updateLayout: (layout) => dispatch(updateLayout(layout)),
   fetchWidgets: () => dispatch(fetchWidgets()),
 });
 

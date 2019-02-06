@@ -2,9 +2,13 @@ import {
   FETCH_LAYOUT,
   FETCH_LAYOUT_FULFILLED,
   FETCH_LAYOUT_REJECTED,
+  UPDATE_LAYOUT,
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
   FETCH_WIDGETS_REJECTED,
+  ADD_WIDGET,
+  UPDATE_WIDGET,
+  DELETE_WIDGET,
 } from "./../constants";
 
 export const fetchLayout = () => {
@@ -29,6 +33,11 @@ export const fetchLayout = () => {
     }
   }
 };
+
+export const updateLayout = (layout) => ({
+  type: UPDATE_LAYOUT,
+  payload: layout,
+});
 
 export const fetchWidgets = () => {
   return (dispatch, getState) => {

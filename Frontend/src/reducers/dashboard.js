@@ -2,6 +2,7 @@ import {
   FETCH_LAYOUT,
   FETCH_LAYOUT_FULFILLED,
   FETCH_LAYOUT_REJECTED,
+  UPDATE_LAYOUT,
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
   FETCH_WIDGETS_REJECTED,
@@ -40,6 +41,13 @@ export default (state=initialState, action={}) => {
         fetching: false,
         fetched: false,
         error: action.payload,
+      }
+    }
+
+    case UPDATE_LAYOUT: {
+      return {
+        ...state,
+        layout: action.payload,
       }
     }
 
