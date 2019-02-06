@@ -3,6 +3,7 @@ import json
 import numpy as np
 from models.sensor import Sensor
 from models.location import Location
+import geojson
 
 """
 This function groups sensor data having different temporal frequencies by grouping at 
@@ -15,7 +16,23 @@ analytics b) Median is more robust to outliers and c) Median preserves the origi
 	data: a json object from request_for_data.get_attribute_data. 
 	per_sensor: A boolean flag of whether the reformormatted request returns data per individual sensor
 	or per attribute
+	freq: temporal frequency of aggregation 'W', '1D', '1H', '1Min'
+	harmonising_method: harmonises attributes relative to the one with the higher frequency and delivers the data 
+	either on a long/wide format or a geojson 
 """
+
+def data_geojson(df):
+    features = []
+    insert_features = lambda X: features.append(
+            geojson.Feature(geometry=geojson.Point((X["Longitude"],
+                                                    X["Latitude"])),
+                            properties=dict(Attribute_Name=X["Attribute_Name"],
+                            				Value=X["Value"],
+											Name=X["Name"])))
+    df.apply(insert_features, axis=1)
+    return geojson.FeatureCollection(features)
+        
+
 
 def request_grouped_data(data, per_sensor, freq):
 	df = pd.read_json(json.dumps(data), orient = 'records')
@@ -201,7 +218,12 @@ def request_harmonised_data(data, harmonising_method):
 		_df = _df.pivot_table(index='Timestamp', columns='Attribute_Name', values=['Value','timestamp','Latitude', 'Longitude'])
 
 		data = json.loads(_df.to_json(orient='records').replace('["','').replace('"]','').replace('","',','))
-	else:
+	elif harmonising_method == 'long':
 		data = json.loads(_df.to_json(orient='records'))
 
+	else:
+		data = data_geojson(_df)
+
 	return data
+
+

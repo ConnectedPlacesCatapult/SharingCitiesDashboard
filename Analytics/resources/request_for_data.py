@@ -87,7 +87,7 @@ class RequestForData(Resource):
 						store_missing=False)
 	parser.add_argument('harmonising_method', 
 						type=str,
-						choices=('long', 'wide'),
+						choices=('long', 'wide', 'geo'),
 						store_missing=False)
 	parser.add_argument('per_sensor', type=inputs.boolean, store_missing=False)
 	parser.add_argument('sensorid', type=str)
