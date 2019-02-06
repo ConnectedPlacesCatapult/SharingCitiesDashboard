@@ -35,7 +35,7 @@ export const initializeEditor = () => {
   return (dispatch, getState) => {
     const currentState = getState();
     const defaults = currentState.config.config.widgetEditorDefaults;
-    const data = currentState.data.data;
+    const data = currentState.api.data;
 
     dispatch({
       type: SET_MAP_DATA,

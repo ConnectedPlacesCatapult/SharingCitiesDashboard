@@ -11,10 +11,24 @@ import {
   FETCH_ATTRIBUTES_FULFILLED,
   FETCH_ATTRIBUTES_REJECTED,
   TOGGLE_ATTRIBUTE_SELECTED,
+  FETCH_ATTRIBUTE_DATA,
+  FETCH_ATTRIBUTE_DATA_FULFILLED,
+  FETCH_ATTRIBUTE_DATA_REJECTED,
+  QUERY_PARAMS,
 } from "./../constants";
 
 const initialState = {
   themes: [],
+  themeId: null,
+  subthemeId: null,
+  queryParams: {
+    attributedata: [],
+    grouped: null,
+    per_sensor: null,
+    harmonising_method: QUERY_PARAMS.HARMONISING_METHOD_LONG,
+    limit: 100,
+  },
+  data: [],
   fetching: false,
   fetched: false,
   error: null,
@@ -22,6 +36,7 @@ const initialState = {
 
 export default (state=initialState, action={}) => {
   switch (action.type) {
+
     case FETCH_THEMES: {
       return {
         ...state,
@@ -170,6 +185,38 @@ export default (state=initialState, action={}) => {
         themes: newThemes,
       }
     }
+
+    case FETCH_ATTRIBUTE_DATA: {
+      return {
+        ...state,
+        fetching: true,
+      }
+    }
+
+    case FETCH_ATTRIBUTE_DATA_FULFILLED: {
+      return {
+        ...state,
+        fetching: false,
+        fetched: true,
+        data: action.payload.data,
+        themeId: action.payload.themeId,
+        subthemeId: action.payload.subthemeId,
+        queryParams: {
+          ...state.queryParams,
+          ...action.payload.queryParams,
+        }
+      }
+    }
+
+    case FETCH_ATTRIBUTE_DATA_REJECTED: {
+      return {
+        ...state,
+        fetching: false,
+        fetched: false,
+        error: action.payload,
+      }
+    }
+
   }
 
   return state

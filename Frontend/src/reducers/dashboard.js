@@ -1,11 +1,15 @@
 import {
   FETCH_LAYOUT,
   FETCH_LAYOUT_FULFILLED,
-  FETCH_LAYOUT_REJECTED
+  FETCH_LAYOUT_REJECTED,
+  FETCH_WIDGETS,
+  FETCH_WIDGETS_FULFILLED,
+  FETCH_WIDGETS_REJECTED,
 } from "./../constants";
 
 const initialState = {
   layout: [],
+  widgets: [],
   fetching: false,
   fetched: false,
   error: null,
@@ -13,6 +17,7 @@ const initialState = {
 
 export default (state=initialState, action={}) => {
   switch (action.type) {
+
     case FETCH_LAYOUT: {
       return {
         ...state,
@@ -37,6 +42,32 @@ export default (state=initialState, action={}) => {
         error: action.payload,
       }
     }
+
+    case FETCH_WIDGETS: {
+      return {
+        ...state,
+        fetching: true,
+      }
+    }
+
+    case FETCH_WIDGETS_FULFILLED: {
+      return {
+        ...state,
+        fetching: false,
+        fetched: true,
+        widgets: action.payload,
+      }
+    }
+
+    case FETCH_WIDGETS_REJECTED: {
+      return {
+        ...state,
+        fetching: false,
+        fetched: false,
+        error: action.payload,
+      }
+    }
+
   }
 
   return state;

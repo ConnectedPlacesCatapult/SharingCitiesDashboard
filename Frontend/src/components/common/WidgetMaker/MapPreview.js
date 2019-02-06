@@ -41,7 +41,7 @@ const styles = (theme) => ({
 
 class MapPreview extends React.Component {
   getMarkerColor = (val) => {
-    const baseColor = this.props.editor.mapConfig.markerColor;
+    const baseColor = this.props.mapConfig.markerColor;
     const diff = this.maxValue - this.minValue;
     const step = diff / 5;
 
@@ -60,14 +60,14 @@ class MapPreview extends React.Component {
   };
 
   getMarkerRadius = (val) => {
-    return this.props.editor.mapConfig.markerRadius * ((val - this.minValue) / (this.maxValue - this.minValue))
+    return this.props.mapConfig.markerRadius * ((val - this.minValue) / (this.maxValue - this.minValue))
   };
 
   setValueLimits = () => {
     let min = null;
     let max = null;
-    let watchedAttribute = this.props.editor.mapConfig.markerAttribute;
-    let features = this.props.editor.mapConfig.data.features;
+    let watchedAttribute = this.props.mapConfig.markerAttribute;
+    let features = this.props.mapConfig.data.features;
 
     for (let feature of features) {
       let attributeValue = feature.properties[watchedAttribute];
@@ -83,19 +83,19 @@ class MapPreview extends React.Component {
   };
 
   render() {
-    const { classes, config, editor } = this.props;
+    const { classes, config, mapConfig } = this.props;
 
     // ToDo :: trigger this somewhere better
     this.setValueLimits();
 
-    const tileLayer = config.leafletTileLayers.find(layer => layer.name === editor.mapConfig.tileLayer);
+    const tileLayer = config.leafletTileLayers.find(layer => layer.name === mapConfig.tileLayer);
 
-    const heatmapPoints = editor.mapConfig.data.features.map(feature => {
-      return [feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties[editor.mapConfig.markerAttribute]]
+    const heatmapPoints = mapConfig.data.features.map(feature => {
+      return [feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties[mapConfig.markerAttribute]]
     });
 
-    const circleFeatures = editor.mapConfig.data.features.map((feature, i) => {
-      const propList = editor.mapConfig.tooltipFields.map((key, ii) => {
+    const circleFeatures = mapConfig.data.features.map((feature, i) => {
+      const propList = mapConfig.tooltipFields.map((key, ii) => {
         return (
           <ListItem key={ii} divider disableGutters>
             <ListItemText>{key}: {feature.properties[key]}</ListItemText>
@@ -103,7 +103,7 @@ class MapPreview extends React.Component {
         )
       });
 
-      const markerValue = feature.properties[editor.mapConfig.markerAttribute];
+      const markerValue = feature.properties[mapConfig.markerAttribute];
 
       return (
         <CircleMarker
@@ -137,8 +137,8 @@ class MapPreview extends React.Component {
       <div className={classes.root}>
         <Map
           className={classes.widget}
-          center={editor.mapConfig.center}
-          zoom={editor.mapConfig.zoom}
+          center={mapConfig.center}
+          zoom={mapConfig.zoom}
         >
           <LayersControl>
             <LayersControl.BaseLayer name="Basemap" checked>
@@ -148,14 +148,14 @@ class MapPreview extends React.Component {
               />
             </LayersControl.BaseLayer>
             <LayersControl.Overlay name="GeoJSON default" checked>
-              <GeoJSON data={editor.mapConfig.data} />
+              <GeoJSON data={mapConfig.data} />
             </LayersControl.Overlay>
             <LayersControl.Overlay name="GeoJSON custom" checked>
               <FeatureGroup>
                 {circleFeatures}
               </FeatureGroup>
             </LayersControl.Overlay>
-            { editor.mapConfig.showHeatmap &&
+            { mapConfig.showHeatmap &&
               <LayersControl.Overlay name="Heatmap" checked>
                 <FeatureGroup>
                   <HeatmapLayer
@@ -179,12 +179,12 @@ class MapPreview extends React.Component {
 MapPreview.propTypes = {
   classes: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
+  mapConfig: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   config: state.config.config,
-  editor: state.editor,
+  mapConfig: state.widget.mapConfig,
 });
 
 const mapDispatchToProps = (dispatch) => ({

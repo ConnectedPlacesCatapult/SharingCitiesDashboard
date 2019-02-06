@@ -46,16 +46,16 @@ class DataTable extends React.Component {
   }
 
   generateColumnsFromData = () => {
-    const { data } = this.props;
+    const { api } = this.props;
 
-    if (!data.data.length) return [];
+    if (!api.data.length) return [];
 
     let columns = [];
-    Object.keys(data.data[0]).forEach((key) => {
+    Object.keys(api.data[0]).forEach((key) => {
       columns = [...columns, {
         id: key,
         label: key,
-        numeric: Number.isInteger(data.data[0][key]),
+        numeric: Number.isInteger(api.data[0][key]),
       }]
     });
 
@@ -64,7 +64,7 @@ class DataTable extends React.Component {
 
   handleSelectAllClick = (e) => {
     if (e.target.checked) {
-      this.setState({ selected: this.props.data.data.map((n, i) => i) });
+      this.setState({ selected: this.props.api.data.map((n, i) => i) });
       return;
     }
     this.setState({ selected: [] });
@@ -116,10 +116,10 @@ class DataTable extends React.Component {
   };
 
   render() {
-    const { classes, data, themes } = this.props;
+    const { classes, api } = this.props;
     const { order, orderBy, selected, page, rowsPerPage } = this.state;
 
-    const currentSubtheme = themes.find((theme) => theme.id === data.themeId).subthemes.find((subtheme) => subtheme.id === data.subthemeId);
+    const currentSubtheme = api.themes.find((theme) => theme.id === api.themeId).subthemes.find((subtheme) => subtheme.id === api.subthemeId);
     const columns = this.generateColumnsFromData();
 
     return (
@@ -138,10 +138,10 @@ class DataTable extends React.Component {
                 onSelectAllClick={this.handleSelectAllClick}
                 onRequestSort={this.handleRequestSort}
                 columns={columns}
-                rowCount={data.data.length}
+                rowCount={api.data.length}
               />
               <DataTableBody
-                data={data.data}
+                data={api.data}
                 columns={columns}
                 order={order}
                 orderBy={orderBy}
@@ -153,7 +153,7 @@ class DataTable extends React.Component {
             </Table>
           </div>
           <DataTablePagination
-            data={data.data}
+            data={api.data}
             rowsPerPage={rowsPerPage}
             page={page}
             onChangePage={this.handleChangePage}
@@ -167,13 +167,11 @@ class DataTable extends React.Component {
 
 DataTable.propTypes = {
   classes: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
-  themes: PropTypes.array.isRequired,
+  api: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  data: state.data,
-  themes: state.themes.themes,
+  api: state.api,
 });
 
 const mapDispatchToProps = (dispatch) => ({

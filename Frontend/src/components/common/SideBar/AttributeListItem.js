@@ -1,14 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  QUERY_PARAM_GROUPED,
-  QUERY_PARAM_HARMONISING_METHOD,
-  QUERY_PARAM_HARMONISING_METHOD_LONG,
-  QUERY_PARAM_HARMONISING_METHOD_WIDE,
-  QUERY_PARAM_LIMIT,
-  QUERY_PARAM_PER_SENSOR,
-} from './../../../constants';
+import { QUERY_PARAMS } from './../../../constants';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -19,7 +12,7 @@ import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 
 // redux
 import { connect } from 'react-redux';
-import { fetchAttributeData } from "../../../actions/dataActions";
+import { fetchAttributeData } from "../../../actions/apiActions";
 
 const styles = (theme) => ({
   root: {
@@ -36,10 +29,10 @@ class AttributeListItem extends React.Component {
     this.props.onClick();
 
     const queryParams = {
-      [QUERY_PARAM_GROUPED]: true,
-      [QUERY_PARAM_HARMONISING_METHOD]: QUERY_PARAM_HARMONISING_METHOD_WIDE,
-      [QUERY_PARAM_LIMIT]: 100,
-      [QUERY_PARAM_PER_SENSOR]: true,
+      [QUERY_PARAMS.GROUPED]: true,
+      [QUERY_PARAMS.HARMONISING_METHOD]: QUERY_PARAMS.HARMONISING_METHOD_LONG,
+      [QUERY_PARAMS.LIMIT]: 100,
+      [QUERY_PARAMS.PER_SENSOR]: true,
     };
 
     // fire off call for fresh data
@@ -75,7 +68,7 @@ AttributeListItem.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  data: state.data.data,
+  data: state.api.data,
 });
 
 const mapDispatchToProps = (dispatch) => ({

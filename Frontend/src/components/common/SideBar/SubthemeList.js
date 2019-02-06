@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import {
   fetchSubthemes,
   toggleSubthemeSelected
-} from "../../../actions/themesActions";
+} from "../../../actions/apiActions";
 
 class SubthemeList extends React.Component {
   constructor(props) {
@@ -55,7 +55,7 @@ SubthemeList.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  themes: state.themes.themes,
+  themes: state.api.themes,
 });
 
 const mapDispatchToProps = (dispatch) => ({

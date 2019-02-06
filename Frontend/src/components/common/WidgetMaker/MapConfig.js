@@ -24,7 +24,7 @@ import { connect } from 'react-redux';
 import {
   setMapProperty,
   toggleMapTooltipField,
-} from "../../../actions/editorActions";
+} from "../../../actions/widgetActions";
 
 const styles = (theme) => ({
   root: {
@@ -45,7 +45,7 @@ class MapConfig extends React.Component {
     tooltipFields: [],
   };
 
-  dataFields = Object.keys(this.props.data.data[0]).map(field => {
+  dataFields = Object.keys(this.props.data[0]).map(field => {
     return field
   });
 
@@ -66,7 +66,7 @@ class MapConfig extends React.Component {
   };
 
   render() {
-    const { classes, config, editor } = this.props;
+    const { classes, config, mapConfig } = this.props;
 
     const menuItems = config.leafletTileLayers.map((tileLayer, i) => {
       return <MenuItem key={i} value={tileLayer.name}>{tileLayer.name}</MenuItem>
@@ -82,7 +82,7 @@ class MapConfig extends React.Component {
           key={i}
           control={
             <Checkbox
-              checked={editor.tooltipFields.includes(field)}
+              checked={mapConfig.tooltipFields.includes(field)}
               onChange={this.handleToggleTooltip(field)}
               value={field}
               color="primary"
@@ -104,7 +104,7 @@ class MapConfig extends React.Component {
         <FormControl htmlFor="map-tile-layer" className={classes.formControl}>
           <Select
             onChange={this.setMapProperty('tileLayer')}
-            value={editor.tileLayer}
+            value={mapConfig.tileLayer}
             inputProps={{
               name: 'tileLayer',
               id: 'map-tile-layer',
@@ -121,7 +121,7 @@ class MapConfig extends React.Component {
           <InputLabel>Attribute</InputLabel>
           <Select
             onChange={this.setMapProperty('markerAttribute')}
-            value={editor.markerAttribute}
+            value={mapConfig.markerAttribute}
             inputProps={{
               name: 'markerAttribute',
               id: 'map-marker-attribute',
@@ -135,7 +135,7 @@ class MapConfig extends React.Component {
             style={{ 'z-index': 3 }}
             label="Color"
             defaultValue='#000'
-            value={editor.markerColor}
+            value={mapConfig.markerColor}
             onChange={(color) => this.setMapMarkerColor(color)}
             inputProps={{
               name: 'markerColor',
@@ -152,9 +152,9 @@ class MapConfig extends React.Component {
             label="Enable Heatmap"
             control={
               <Switch
-                checked={editor.showHeatmap}
+                checked={mapConfig.showHeatmap}
                 onChange={this.setMapShowHeatmap}
-                value={editor.showHeatmap}
+                value={mapConfig.showHeatmap}
                 color="primary"
               />
             }
@@ -176,16 +176,16 @@ class MapConfig extends React.Component {
 MapConfig.propTypes = {
   classes: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  mapConfig: PropTypes.object.isRequired,
   setMapProperty: PropTypes.func.isRequired,
   toggleMapTooltipField: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   config: state.config.config,
-  data: state.data,
-  editor: state.editor.mapConfig,
+  data: state.api.data,
+  mapConfig: state.widget.mapConfig,
 });
 
 const mapDispatchToProps = dispatch => ({

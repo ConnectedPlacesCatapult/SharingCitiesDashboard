@@ -8,7 +8,10 @@ import List from '@material-ui/core/List';
 
 // redux
 import { connect } from 'react-redux';
-import { fetchThemes, toggleThemeSelected } from "./../../../actions/themesActions";
+import {
+  fetchThemes,
+  toggleThemeSelected
+} from "./../../../actions/apiActions";
 
 class ThemeList extends React.Component {
   constructor(props) {
@@ -49,7 +52,7 @@ ThemeList.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  themes: state.themes.themes,
+  themes: state.api.themes,
 });
 
 const mapDispatchToProps = (dispatch) => ({

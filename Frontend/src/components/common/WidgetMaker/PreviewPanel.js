@@ -15,7 +15,7 @@ import TitleIcon from '@material-ui/icons/Title';
 
 // redux
 import { connect } from 'react-redux';
-import { setWidgetProperty } from "../../../actions/editorActions";
+import { setWidgetProperty } from "../../../actions/widgetActions";
 
 // misc utils
 import classNames from 'classnames';
@@ -53,7 +53,7 @@ class PreviewPanel extends React.Component {
   };
 
   render() {
-    const { classes, editor } = this.props;
+    const { classes, widget } = this.props;
 
     return (
       <Paper className={classNames(classes.root, classes.paper)}>
@@ -61,7 +61,7 @@ class PreviewPanel extends React.Component {
           <Input
             id="widget-name"
             className={classes.textField}
-            defaultValue={editor.name}
+            defaultValue={widget.name}
             onChange={this.updateWidgetProperty('name')}
             inputProps={{
               root: classes.input,
@@ -74,9 +74,9 @@ class PreviewPanel extends React.Component {
             }
           />
         </FormControl>
-        { editor.type === 'plot' && <PlotPreview /> }
-        { editor.type === 'map' && <MapPreview /> }
-        { editor.type === 'alert' && <AlertPreview /> }
+        { widget.type === 'plot' && <PlotPreview /> }
+        { widget.type === 'map' && <MapPreview /> }
+        { widget.type === 'alert' && <AlertPreview /> }
       </Paper>
     )
   }
@@ -84,12 +84,12 @@ class PreviewPanel extends React.Component {
 
 PreviewPanel.propTypes = {
   classes: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
+  widget: PropTypes.object.isRequired,
   setWidgetProperty: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  editor: state.editor,
+  widget: state.widget,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -13,7 +13,7 @@ import SaveIcon from '@material-ui/icons/Save';
 
 // redux
 import { connect } from 'react-redux';
-import { initializeEditor } from "./../../../actions/editorActions";
+import { initializeEditor } from "./../../../actions/widgetActions";
 
 // misc utils
 import classNames from 'classnames';

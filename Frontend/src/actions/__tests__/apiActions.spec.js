@@ -2,7 +2,7 @@ import MockStore from 'redux-mock-store';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
-import { fetchThemes, toggleThemeSelected } from "./../themesActions";
+import { fetchThemes, toggleThemeSelected } from "./../apiActions";
 import {
   FETCH_THEMES,
   FETCH_THEMES_FULFILLED,

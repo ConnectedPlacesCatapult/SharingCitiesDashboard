@@ -11,7 +11,7 @@ import Button from "@material-ui/core/Button";
 
 // redux
 import { connect } from 'react-redux';
-import { setWidgetProperty } from "../../../actions/editorActions";
+import { setWidgetProperty } from "../../../actions/widgetActions";
 
 const styles = (theme) => ({
   root: {
@@ -32,7 +32,7 @@ class TypeSelector extends React.Component {
   };
 
   render() {
-    const { classes, editor } = this.props;
+    const { classes, widget } = this.props;
 
     return (
       <div className={classes.root}>
@@ -52,7 +52,7 @@ class TypeSelector extends React.Component {
             value="map"
             variant="contained"
             color="primary"
-            disabled={!editor.isMappable}
+            disabled={!widget.isMappable}
           >
             Map
           </Button>
@@ -66,9 +66,9 @@ class TypeSelector extends React.Component {
             Alert
           </Button>
         </div>
-        { editor.type === 'plot' && <PlotConfig /> }
-        { editor.type === 'map' && <MapConfig /> }
-        { editor.type === 'alert' && <AlertConfig /> }
+        { widget.type === 'plot' && <PlotConfig /> }
+        { widget.type === 'map' && <MapConfig /> }
+        { widget.type === 'alert' && <AlertConfig /> }
       </div>
     )
   }
@@ -76,12 +76,12 @@ class TypeSelector extends React.Component {
 
 TypeSelector.propTypes = {
   classes: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
+  widget: PropTypes.object.isRequired,
   setWidgetProperty: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  editor: state.editor,
+  widget: state.widget,
 });
 
 const mapDispatchToProps = (dispatch) => ({

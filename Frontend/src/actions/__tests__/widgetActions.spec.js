@@ -1,5 +1,5 @@
 import configureStore from 'redux-mock-store';
-import * as editorActions from './../editorActions';
+import * as editorActions from './../widgetActions';
 import {
   PURGE_EDITOR,
   SET_MAP_DATA,

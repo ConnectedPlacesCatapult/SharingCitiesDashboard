@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import {
   fetchAttributes,
   toggleAttributeSelected
-} from "../../../actions/themesActions";
+} from "../../../actions/apiActions";
 
 const styles = (theme) => ({
   root: {
@@ -65,7 +65,7 @@ AttributeList.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  themes: state.themes.themes,
+  themes: state.api.themes,
 });
 
 const mapDispatchToProps = (dispatch) => ({

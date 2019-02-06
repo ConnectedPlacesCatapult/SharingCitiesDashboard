@@ -1,19 +1,15 @@
 import { combineReducers } from 'redux';
 
+import api from './reducers/api';
 import config from './reducers/config';
-import data from './reducers/data';
-import editor from './reducers/editor';
-import layout from './reducers/layout';
-import themes from './reducers/themes';
+import dashboard from './reducers/dashboard';
 import user from './reducers/user';
-import widgets from './reducers/widgets';
+import widget from './reducers/widget';
 
 export default combineReducers({
+  api,
   config,
-  data,
-  editor,
-  layout,
-  themes,
+  dashboard,
   user,
-  widgets,
+  widget,
 })
