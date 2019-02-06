@@ -62,7 +62,7 @@ class BaseImporter(object):
         self.token_expiry = token_expiry
         self.api_class = api_class
 
-    def _create_datasource(self, headers=None):
+    def _create_datasource(self, headers):
         _, status_code = self.load_dataset(headers)
         if status_code != 200:
             self._refresh_token()
@@ -71,7 +71,7 @@ class BaseImporter(object):
         # This method needs to be overriden in child classes
         raise NotImplementedError
 
-    def load_dataset(self, headers=None):
+    def load_dataset(self, headers):
         data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
         self.dataset = json.loads(data.text)
         return self.dataset, data.status_code

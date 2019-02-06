@@ -33,7 +33,7 @@ class TfL_BikePoints(BaseImporter):
         super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, API_CLASS, TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource()
+        super()._create_datasource(headers)
         self.df  = self.create_dataframe(ignore_object_tags=['$type'], object_separator = 'id')
         
         self.df.dropna(inplace=True)

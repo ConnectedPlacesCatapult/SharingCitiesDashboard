@@ -154,7 +154,7 @@ class GreenwichMeta(BaseImporter):
         super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, API_CLASS, TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource()
+        super()._create_datasource(headers)
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
         loc = Location('latitude', 'longitude')
@@ -179,7 +179,7 @@ class GreenwichOCC(BaseImporter):
         super().__init__(API_NAME_OCC, BASE_URL_OCC, REFRESH_TIME, API_KEY, API_CLASS_OCC, TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource()
+        super()._create_datasource(headers)
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
         names = self.df['lotcode'].tolist()
@@ -234,7 +234,7 @@ class GreenwichMeta_2(BaseImporter):
         super().__init__(API_NAME_2, BASE_URL_2, REFRESH_TIME, API_KEY, API_CLASS_2, TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource()
+        super()._create_datasource(headers)
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
         ### Renaming the columns so that they are not confused with GreenwichMeta
@@ -264,7 +264,7 @@ class GreenwichOCC_2(BaseImporter):
         super().__init__(API_NAME_OCC_2, BASE_URL_OCC_2, REFRESH_TIME, API_KEY, API_CLASS_OCC_2, TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource()
+        super()._create_datasource(headers)
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
         names = self.df['lotcode'].tolist()
@@ -327,7 +327,7 @@ class GreenwichKiwiPump(BaseImporter):
         super().__init__(API_NAME_KIWI, BASE_URL_KIWI, REFRESH_TIME_KIWI, API_KEY, API_CLASS_KIWI, TOKEN_EXPIRY_KIWI)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource()
+        super()._create_datasource(headers)
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
         ### Hardcoding the location 
@@ -362,7 +362,7 @@ class GreenwichWholeHouse(BaseImporter):
         super().__init__(API_NAME_KIWI_HOUSE, BASE_URL_KIWI_HOUSE, REFRESH_TIME_KIWI_HOUSE, API_KEY, API_CLASS_KIWI_HOUSE, TOKEN_EXPIRY_KIWI_HOUSE)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource()
+        super()._create_datasource(headers)
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
         ### Hardcoding the location 
@@ -410,7 +410,7 @@ class GreenwichSiemens(BaseImporter):
         super().__init__(API_NAME_SIEMENS, BASE_URL_SIEMENS, REFRESH_TIME_SIEMENS, API_KEY, API_CLASS_SIEMENS, TOKEN_EXPIRY_SIEMENS)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource()
+        super()._create_datasource(headers)
         self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
         ### Hardcoding the location. As there is no information on the location of the sensor
