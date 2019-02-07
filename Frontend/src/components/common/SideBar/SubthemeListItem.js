@@ -7,16 +7,13 @@ import AttributeList from './AttributeList';
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import ChevronRight from '@material-ui/icons/ChevronRight';
 import Collapse from '@material-ui/core/Collapse';
 
 const styles = (theme) => ({
   nested: {
     paddingLeft: theme.spacing.unit * 4,
-  },
-  darkColor: {
-    color: theme.palette.primary.dark,
   },
 });
 
@@ -33,8 +30,8 @@ class SubthemeListItem extends React.Component {
         <ListItem button className={classes.nested} onClick={this.handleClick}>
           {
             isSelected
-              ? <RadioButtonCheckedIcon fontSize="small" color="secondary" />
-              : <RadioButtonUncheckedIcon fontSize="small" className={classes.darkColor} />
+              ? <ExpandMore color="primary" />
+              : <ChevronRight color="primary"/>
           }
           <ListItemText inset primary={subthemeName} />
         </ListItem>

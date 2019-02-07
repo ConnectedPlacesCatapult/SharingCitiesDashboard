@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { QUERY_PARAMS } from './../../../constants';
+
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
@@ -10,7 +12,7 @@ import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 
 // redux
 import { connect } from 'react-redux';
-import { fetchAttributeData } from "../../../actions/dataActions";
+import { fetchAttributeData } from "../../../actions/apiActions";
 
 const styles = (theme) => ({
   root: {
@@ -19,9 +21,6 @@ const styles = (theme) => ({
   nested: {
     paddingLeft: theme.spacing.unit * 6,
   },
-  darkColor: {
-    color: theme.palette.primary.dark,
-  },
 });
 
 class AttributeListItem extends React.Component {
@@ -29,8 +28,15 @@ class AttributeListItem extends React.Component {
     // toggle isSelected
     this.props.onClick();
 
+    const queryParams = {
+      [QUERY_PARAMS.GROUPED]: true,
+      [QUERY_PARAMS.HARMONISING_METHOD]: QUERY_PARAMS.HARMONISING_METHOD_LONG,
+      [QUERY_PARAMS.LIMIT]: 100,
+      [QUERY_PARAMS.PER_SENSOR]: true,
+    };
+
     // fire off call for fresh data
-    this.props.fetchAttributeData(true, true);
+    this.props.fetchAttributeData(this.props.themeId, this.props.subthemeId, queryParams);
   };
 
   render() {
@@ -40,8 +46,8 @@ class AttributeListItem extends React.Component {
       <ListItem button className={classes.nested} onClick={this.handleClick}>
         {
           isSelected
-            ? <RadioButtonCheckedIcon fontSize="small" color="secondary" />
-            : <RadioButtonUncheckedIcon fontSize="small" className={classes.darkColor} />
+            ? <RadioButtonCheckedIcon fontSize="small" color="primary" />
+            : <RadioButtonUncheckedIcon fontSize="small" color="primary" />
         }
         <ListItemText inset primary={attributeName} />
       </ListItem>
@@ -62,11 +68,11 @@ AttributeListItem.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  data: state.data.data,
+  data: state.api.data,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchAttributeData: (grouped, perSensor) => dispatch(fetchAttributeData(grouped, perSensor)),
+  fetchAttributeData: (themeId, subthemeId, queryParams) => dispatch(fetchAttributeData(themeId, subthemeId, queryParams)),
 });
 
 AttributeListItem = withStyles(styles)(AttributeListItem);

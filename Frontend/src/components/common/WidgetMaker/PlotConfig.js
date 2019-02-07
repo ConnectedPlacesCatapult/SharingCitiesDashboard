@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import {
   setPlotProperty,
   setPlotEncoding,
-} from './../../../actions/editorActions';
+} from './../../../actions/widgetActions';
 
 // vega
 import {
@@ -68,12 +68,6 @@ const styles = (theme) => ({
     },
   },
   expanded: {},
-  expansionPanelDetails: {
-
-  },
-  expansionPanelActions: {
-
-  },
   channelDefinition: {
     display: 'inline-flex',
     justifyContent: 'space-between',
@@ -93,7 +87,7 @@ class PlotConfig extends React.Component {
 
     switch (currentFieldObject.type) {
       case "DataFieldName":
-        values = this.props.data.data.length ? Object.keys(this.props.data.data[0]) : [];
+        values = this.props.api.data.length ? Object.keys(this.props.api.data[0]) : [];
 
         break;
 
@@ -129,7 +123,7 @@ class PlotConfig extends React.Component {
   };
 
   addEncodingChannel = () => {
-    const usedChannels = Object.keys(this.props.editor.plotConfig.spec.encoding);
+    const usedChannels = Object.keys(this.props.plotConfig.spec.encoding);
     let freeChannel;
 
     for (let channel of VEGA_LITE_ENCODING_CHANNELS) {
@@ -143,7 +137,7 @@ class PlotConfig extends React.Component {
     // ToDo :: catch here if no freeChannel
 
     // create new channel and populate it with all "required" channel field definitions
-    const updatedEncoding = {...this.props.editor.plotConfig.spec.encoding};
+    const updatedEncoding = {...this.props.plotConfig.spec.encoding};
     updatedEncoding[freeChannel] = {};
 
     const requiredFields = VEGA_LITE_FIELDS.filter((field) => field.required);
@@ -160,7 +154,7 @@ class PlotConfig extends React.Component {
       return
     }
 
-    const updatedEncoding = {...this.props.editor.plotConfig.spec.encoding};
+    const updatedEncoding = {...this.props.plotConfig.spec.encoding};
     updatedEncoding[newChannel] = updatedEncoding[oldChannel];
 
     delete updatedEncoding[oldChannel];
@@ -169,7 +163,7 @@ class PlotConfig extends React.Component {
   };
 
   deleteEncodingChannel = (channel) => {
-    const updatedEncoding = {...this.props.editor.plotConfig.spec.encoding};
+    const updatedEncoding = {...this.props.plotConfig.spec.encoding};
 
     delete updatedEncoding[channel];
 
@@ -177,7 +171,7 @@ class PlotConfig extends React.Component {
   };
 
   addDefinition = (channel) => {
-    const usedDefinitions = Object.keys(this.props.editor.plotConfig.spec.encoding[channel]);
+    const usedDefinitions = Object.keys(this.props.plotConfig.spec.encoding[channel]);
     let freeDefinition;
 
     for (let definition of VEGA_LITE_FIELDS) {
@@ -190,14 +184,14 @@ class PlotConfig extends React.Component {
 
     // ToDo :: catch here if no freeDefinition
 
-    const updatedEncoding = {...this.props.editor.plotConfig.spec.encoding};
+    const updatedEncoding = {...this.props.plotConfig.spec.encoding};
     updatedEncoding[channel][freeDefinition.name] = freeDefinition.default;
 
     this.props.setPlotEncoding(updatedEncoding)
   };
 
   updateDefinition = (channel, oldField, newField, value) => {
-    const updatedEncoding = {...this.props.editor.plotConfig.spec.encoding};
+    const updatedEncoding = {...this.props.plotConfig.spec.encoding};
 
     if (oldField === newField) {
       // only update value
@@ -222,7 +216,7 @@ class PlotConfig extends React.Component {
   };
 
   deleteDefinition = (channel, field) => {
-    const updatedEncoding = {...this.props.editor.plotConfig.spec.encoding};
+    const updatedEncoding = {...this.props.plotConfig.spec.encoding};
 
     delete updatedEncoding[channel][field];
 
@@ -230,7 +224,7 @@ class PlotConfig extends React.Component {
   };
 
   render() {
-    const { classes, editor } = this.props;
+    const { classes, plotConfig } = this.props;
 
     const markMenuItems = VEGA_LITE_MARKS.map((item, i) => {
       return (
@@ -243,13 +237,13 @@ class PlotConfig extends React.Component {
       )
     });
 
-    const encodingChannelNodes = Object.keys(editor.plotConfig.spec.encoding).map((channel, i) => {
+    const encodingChannelNodes = Object.keys(plotConfig.spec.encoding).map((channel, i) => {
       return (
         <PlotEncodingChannel
           key={i}
           i={i}
           classes={classes}
-          encoding={editor.plotConfig.spec.encoding}
+          encoding={plotConfig.spec.encoding}
           channel={channel}
           expanded={this.state.expandedChannel === `panel${i}`}
           handleChannelPanelClick={this.handleChannelPanelClick}
@@ -271,7 +265,7 @@ class PlotConfig extends React.Component {
           <FormControl htmlFor="plot-width">
             <TextField
               label="width"
-              value={editor.plotConfig.spec.width}
+              value={plotConfig.spec.width}
               onChange={this.updateSpecProperty('width')}
               inputProps={{
                 name: 'plotWidth',
@@ -282,7 +276,7 @@ class PlotConfig extends React.Component {
           <FormControl htmlFor="plot-height">
             <TextField
               label="height"
-              value={editor.plotConfig.spec.height}
+              value={plotConfig.spec.height}
               onChange={this.updateSpecProperty('height')}
               inputProps={{
                 name: 'plotHeight',
@@ -296,7 +290,7 @@ class PlotConfig extends React.Component {
         <FormControl htmlFor="plot-mark">
           <Select
             label="mark"
-            value={editor.plotConfig.spec.mark}
+            value={plotConfig.spec.mark}
             onChange={this.updateSpecProperty('mark')}
             inputProps={{
               name: 'plotMark',
@@ -329,11 +323,13 @@ class PlotConfig extends React.Component {
 
 PlotConfig.propTypes = {
   classes: PropTypes.object.isRequired,
+  api: PropTypes.object.isRequired,
+  plotConfig: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  data: state.data,
-  editor: state.editor,
+  api: state.api,
+  plotConfig: state.widget.plotConfig,
 });
 
 const mapDispatchToProps = (dispatch) => ({

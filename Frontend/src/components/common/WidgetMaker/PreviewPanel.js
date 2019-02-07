@@ -15,7 +15,7 @@ import TitleIcon from '@material-ui/icons/Title';
 
 // redux
 import { connect } from 'react-redux';
-import { setWidgetName } from "../../../actions/editorActions";
+import { setWidgetProperty } from "../../../actions/widgetActions";
 
 // misc utils
 import classNames from 'classnames';
@@ -48,8 +48,12 @@ class PreviewPanel extends React.Component {
     this.props.setWidgetName(e.target.value)
   };
 
+  updateWidgetProperty = (property) => (e) => {
+    this.props.setWidgetProperty(property, e.target.value)
+  };
+
   render() {
-    const { classes, editor } = this.props;
+    const { classes, widget } = this.props;
 
     return (
       <Paper className={classNames(classes.root, classes.paper)}>
@@ -57,8 +61,8 @@ class PreviewPanel extends React.Component {
           <Input
             id="widget-name"
             className={classes.textField}
-            defaultValue={editor.name}
-            onChange={this.setWidgetName}
+            defaultValue={widget.name}
+            onChange={this.updateWidgetProperty('name')}
             inputProps={{
               root: classes.input,
               className: classes.input
@@ -70,9 +74,9 @@ class PreviewPanel extends React.Component {
             }
           />
         </FormControl>
-        { editor.type === 'plot' && <PlotPreview /> }
-        { editor.type === 'map' && <MapPreview /> }
-        { editor.type === 'alert' && <AlertPreview /> }
+        { widget.type === 'plot' && <PlotPreview /> }
+        { widget.type === 'map' && <MapPreview /> }
+        { widget.type === 'alert' && <AlertPreview /> }
       </Paper>
     )
   }
@@ -80,16 +84,16 @@ class PreviewPanel extends React.Component {
 
 PreviewPanel.propTypes = {
   classes: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
-  setWidgetName: PropTypes.func.isRequired,
+  widget: PropTypes.object.isRequired,
+  setWidgetProperty: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  editor: state.editor,
+  widget: state.widget,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setWidgetName: (name) => dispatch(setWidgetName(name)),
+  setWidgetProperty: (property, value) => dispatch(setWidgetProperty(property, value)),
 });
 
 PreviewPanel = withStyles(styles)(PreviewPanel);

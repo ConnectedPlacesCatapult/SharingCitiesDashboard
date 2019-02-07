@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import classNames from "classnames";
+
+// material-ui
 import { withStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -10,7 +11,10 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 
-const styles = theme => ({
+// misc utils
+import classNames from "classnames";
+
+const styles = (theme) => ({
   root: {
     paddingRight: theme.spacing.unit,
   },
@@ -80,4 +84,6 @@ DataTableToolbar.propTypes = {
   subthemeName: PropTypes.string.isRequired,
 };
 
-export default withStyles(styles)(DataTableToolbar)
+DataTableToolbar = withStyles(styles)(DataTableToolbar);
+
+export default DataTableToolbar

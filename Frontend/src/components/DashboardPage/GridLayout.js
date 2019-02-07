@@ -7,15 +7,19 @@ import Widget from './Widget';
 import { withStyles } from '@material-ui/core/styles';
 
 // grid-layout
-import RGL, { WidthProvider } from "react-grid-layout";
+import RGL from "react-grid-layout";
+
 // ToDo :: overwrite some of the original base styles
 import './../../../node_modules/react-grid-layout/css/styles.css';
 import './../../../node_modules/react-resizable/css/styles.css';
 
 // redux
 import { connect } from 'react-redux';
-import { fetchLayout } from "./../../actions/layoutActions";
-import { fetchWidgets } from './../../actions/widgetsActions';
+import {
+  fetchLayout,
+  updateLayout,
+  fetchWidgets,
+} from "./../../actions/dashboardActions";
 
 const styles = (theme) => ({
   root: {
@@ -24,42 +28,27 @@ const styles = (theme) => ({
   },
 });
 
-// ToDo :: check out WidthProvider
-//const ReactGridLayout = WidthProvider(RGL);
 const ReactGridLayout = RGL;
 
 class GridLayout extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      layout: [],
-    };
-
     this.onLayoutChange = this.onLayoutChange.bind(this);
-  }
 
-  componentWillMount() {
     this.props.fetchLayout();
     this.props.fetchWidgets();
   }
 
   onLayoutChange(layout) {
-    this.setState({ layout });
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.layout !== this.props.layout) {
-      this.setState({ layout: this.props.layout })
-    }
+    this.props.updateLayout(layout);
   }
 
   render() {
-    const { classes } = this.props;
-    const { layout } = this.state;
+    const { classes, dashboard } = this.props;
 
-    const gridItems = layout.map((gridItem) => {
-      let gridItemWidget = this.props.widgets.find((widget) => gridItem.i === widget.i);
+    const gridItems = dashboard.layout.map((gridItem) => {
+      let gridItemWidget = dashboard.widgets.find((widget) => gridItem.i === widget.i);
 
       return (
         <div key={gridItem.i}>
@@ -70,7 +59,7 @@ class GridLayout extends React.Component {
 
     return (
       <ReactGridLayout
-        layout={layout}
+        layout={dashboard.layout}
         cols={12}
         rowHeight={30}
         width={1200}
@@ -86,16 +75,19 @@ class GridLayout extends React.Component {
 
 GridLayout.propTypes = {
   classes: PropTypes.object.isRequired,
-  layout: PropTypes.array.isRequired,
+  dashboard: PropTypes.object.isRequired,
+  fetchLayout: PropTypes.func.isRequired,
+  updateLayout: PropTypes.func.isRequired,
+  fetchWidgets: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  layout: state.layout.layout,
-  widgets: state.widgets.widgets,
+  dashboard: state.dashboard,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   fetchLayout: () => dispatch(fetchLayout()),
+  updateLayout: (layout) => dispatch(updateLayout(layout)),
   fetchWidgets: () => dispatch(fetchWidgets()),
 });
 

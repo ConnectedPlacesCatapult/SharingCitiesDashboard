@@ -1,28 +1,27 @@
 import {
   PURGE_EDITOR,
-  SET_WIDGET_NAME,
-  SET_WIDGET_TYPE,
-  SET_PLOT_DATA,
-  SET_PLOT_PROPERTY,
-  SET_PLOT_ENCODING,
-  SET_MAP_CENTER,
   SET_MAP_DATA,
-  SET_MAP_HEATMAP_ATTRIBUTE,
-  SET_MAP_IS_MAPPABLE,
-  SET_MAP_SHOW_HEATMAP,
-  SET_MAP_TILE_LAYER,
-  SET_MAP_ZOOM,
+  SET_MAP_PROPERTY,
+  SET_PLOT_DATA,
+  SET_PLOT_ENCODING,
+  SET_PLOT_PROPERTY,
+  SET_WIDGET_PROPERTY,
+  TOGGLE_MAP_TOOLTIP_FIELD
 } from "./../constants";
 
 const initialState = {
+  isMappable: false,
   name: '',
   type: null,
-  isMappable: false,
   plotConfig: {
     spec: {
       "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
       width: 640,
       height: 480,
+      autosize: {
+        type: "fit",
+        contains: "padding"
+      },
       data: {
         values: [],
       },
@@ -48,9 +47,12 @@ const initialState = {
       type: "FeatureCollection",
       features: [],
     },
+    markerAttribute: null,
+    markerColor: '#00ff00',
+    markerRadius: 10,
     showHeatmap: false,
-    heatmapAttribute: null,
     tileLayer: null,
+    tooltipFields: [],
     zoom: 0,
   },
   alertConfig: {},
@@ -58,75 +60,13 @@ const initialState = {
 
 export default (state=initialState, action={}) => {
   switch (action.type) {
+
     case PURGE_EDITOR: {
       return initialState
     }
 
-    case SET_WIDGET_NAME: {
-      return {
-        ...state,
-        name: action.payload,
-      }
-    }
-
-    case SET_WIDGET_TYPE: {
-      return {
-        ...state,
-        type: action.payload,
-      }
-    }
-
-    case SET_PLOT_DATA: {
-      return {
-        ...state,
-        plotConfig: {
-          ...state.plotConfig,
-          data: {
-            ...state.plotConfig.data,
-            values: action.payload,
-          }
-        }
-      }
-    }
-
-    case SET_PLOT_PROPERTY: {
-      return {
-        ...state,
-        plotConfig: {
-          ...state.plotConfig,
-          spec: {
-            ...state.plotConfig.spec,
-            [action.payload.property]: action.payload.value,
-          },
-        },
-      }
-    }
-
-    case SET_PLOT_ENCODING: {
-      return {
-        ...state,
-        plotConfig: {
-          ...state.plotConfig,
-          spec: {
-            ...state.plotConfig.spec,
-            encoding: action.payload,
-          }
-        }
-      }
-    }
-
-    case SET_MAP_CENTER: {
-      return {
-        ...state,
-        mapConfig: {
-          ...state.mapConfig,
-          center: [action.payload.lat, action.payload.lng],
-        },
-      }
-    }
-
     case SET_MAP_DATA: {
-      const formatted = action.payload.map((feature, i) => {
+      const formatted = action.payload.map((feature) => {
         function getProperties(feature) {
           return Object.keys(feature)
             .filter(key => !['Latitude', 'Longitude'].includes(key))
@@ -153,55 +93,76 @@ export default (state=initialState, action={}) => {
           data: {
             ...state.mapConfig.data,
             features: formatted,
-          }
-        }
+          },
+        },
       }
     }
 
-    case SET_MAP_HEATMAP_ATTRIBUTE: {
+    case SET_MAP_PROPERTY: {
       return {
         ...state,
         mapConfig: {
           ...state.mapConfig,
-          heatmapAttribute: action.payload,
-        }
+          [action.payload.property]: action.payload.value,
+        },
       }
     }
 
-    case SET_MAP_IS_MAPPABLE: {
+    case SET_PLOT_DATA: {
       return {
         ...state,
-        isMappable: action.payload,
+        plotConfig: {
+          ...state.plotConfig,
+          data: {
+            ...state.plotConfig.data,
+            values: action.payload,
+          },
+        },
       }
     }
 
-    case SET_MAP_SHOW_HEATMAP: {
+    case SET_PLOT_ENCODING: {
+      return {
+        ...state,
+        plotConfig: {
+          ...state.plotConfig,
+          spec: {
+            ...state.plotConfig.spec,
+            encoding: action.payload,
+          },
+        },
+      }
+    }
+
+    case SET_PLOT_PROPERTY: {
+      return {
+        ...state,
+        plotConfig: {
+          ...state.plotConfig,
+          spec: {
+            ...state.plotConfig.spec,
+            [action.payload.property]: action.payload.value,
+          },
+        },
+      }
+    }
+
+    case SET_WIDGET_PROPERTY: {
+      return {
+        ...state,
+        [action.payload.property]: action.payload.value,
+      }
+    }
+
+    case TOGGLE_MAP_TOOLTIP_FIELD: {
       return {
         ...state,
         mapConfig: {
           ...state.mapConfig,
-          showHeatmap: action.payload,
-        }
-      }
-    }
-
-    case SET_MAP_TILE_LAYER: {
-      return {
-        ...state,
-        mapConfig: {
-          ...state.mapConfig,
-          tileLayer: action.payload,
-        }
-      }
-    }
-
-    case SET_MAP_ZOOM: {
-      return {
-        ...state,
-        mapConfig: {
-          ...state.mapConfig,
-          zoom: action.payload,
-        }
+          tooltipFields: action.payload.checked
+            ? [...state.mapConfig.tooltipFields, action.payload.field]
+            : [...state.mapConfig.tooltipFields].filter(item => item !== action.payload.field),
+        },
       }
     }
 

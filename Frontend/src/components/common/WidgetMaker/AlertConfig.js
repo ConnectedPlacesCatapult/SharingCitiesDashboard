@@ -15,7 +15,7 @@ const styles = (theme) => ({
 
 class AlertConfig extends React.Component {
   render() {
-    const { classes, config, editor } = this.props;
+    const { classes, alertConfig } = this.props;
 
     return (
       <form className={classes.root}>
@@ -27,13 +27,11 @@ class AlertConfig extends React.Component {
 
 AlertConfig.propTypes = {
   classes: PropTypes.object.isRequired,
-  config: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
+  alertConfig: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  config: state.config.config,
-  editor: state.editor.plotConfig,
+  alertConfig: state.widget.alertConfig,
 });
 
 const mapDispatchToProps = (dispatch) => ({

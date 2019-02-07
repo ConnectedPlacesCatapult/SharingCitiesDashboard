@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 import Header from './../common/Header';
 import SideBar from './../common/SideBar';
+import WidgetMaker from './../common/WidgetMaker';
 import DataTable from './DataTable';
 import OptionsSidePanel from './OptionsSidePanel';
 import NoData from './NoData';
-import WidgetMaker from './WidgetMaker';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -49,7 +49,7 @@ class DataPage extends React.Component {
   };
 
   render() {
-    const { classes, location, data } = this.props;
+    const { classes, location, api } = this.props;
 
     return (
       <div className={classes.root}>
@@ -58,9 +58,9 @@ class DataPage extends React.Component {
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           {
-            data.fetched && data.data.length
+            api.fetched && api.data.length
             ? <div className={classes.flexWrapper}>
-                {/*<DataTable />*/}
+                <DataTable />
                 <OptionsSidePanel
                   openWidgetMaker={this.openWidgetMaker}
                 />
@@ -82,11 +82,11 @@ class DataPage extends React.Component {
 
 DataPage.propTypes = {
   classes: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
+  api: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  data: state.data,
+  api: state.api,
 });
 
 const mapDispatchToProps = (dispatch) => ({

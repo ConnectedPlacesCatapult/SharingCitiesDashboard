@@ -4,6 +4,10 @@ import PropTypes from "prop-types";
 // material-ui
 import { withStyles } from "@material-ui/core/styles";
 import { darken, lighten } from "@material-ui/core/styles/colorManipulator";
+import List from '@material-ui/core/List';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 // leaflet
 import {
@@ -30,12 +34,14 @@ const styles = (theme) => ({
     width: '570px',
     height: '340px',
   },
+  popupList: {
+    backgroundColor: theme.palette.background.default,
+  },
 });
 
 class MapPreview extends React.Component {
   getMarkerColor = (val) => {
-    // ToDo :: specify a default for this in config and add selector to mapConfig
-    const baseColor = this.props.theme.palette.secondary.light;
+    const baseColor = this.props.mapConfig.markerColor;
     const diff = this.maxValue - this.minValue;
     const step = diff / 5;
 
@@ -54,19 +60,14 @@ class MapPreview extends React.Component {
   };
 
   getMarkerRadius = (val) => {
-    // ToDo :: specify a default for this in config and add selector to mapConfig
-    const maxRadius = 60;
-
-    return maxRadius * ((val - this.minValue) / (this.maxValue - this.minValue))
+    return this.props.mapConfig.markerRadius * ((val - this.minValue) / (this.maxValue - this.minValue))
   };
 
   setValueLimits = () => {
-    const { editor } = this.props;
-
     let min = null;
     let max = null;
-    let watchedAttribute = editor.mapConfig.heatmapAttribute; // ToDo :: this needs to be specified elsewhere
-    let features = editor.mapConfig.data.features;
+    let watchedAttribute = this.props.mapConfig.markerAttribute;
+    let features = this.props.mapConfig.data.features;
 
     for (let feature of features) {
       let attributeValue = feature.properties[watchedAttribute];
@@ -82,33 +83,51 @@ class MapPreview extends React.Component {
   };
 
   render() {
-    const { classes, config, editor } = this.props;
+    const { classes, config, mapConfig } = this.props;
 
     // ToDo :: trigger this somewhere better
     this.setValueLimits();
 
-    const tileLayer = config.leafletTileLayers.find(layer => layer.name === editor.mapConfig.tileLayer);
+    const tileLayer = config.leafletTileLayers.find(layer => layer.name === mapConfig.tileLayer);
 
-    const heatmapPoints = editor.mapConfig.data.features.map(feature => {
-      return [feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties[editor.mapConfig.heatmapAttribute]]
+    const heatmapPoints = mapConfig.data.features.map(feature => {
+      return [feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties[mapConfig.markerAttribute]]
     });
 
-    const circleFeatures = editor.mapConfig.data.features.map((feature, i) => {
+    const circleFeatures = mapConfig.data.features.map((feature, i) => {
+      const propList = mapConfig.tooltipFields.map((key, ii) => {
+        return (
+          <ListItem key={ii} divider disableGutters>
+            <ListItemText>{key}: {feature.properties[key]}</ListItemText>
+          </ListItem>
+        )
+      });
 
-      // ToDo :: get Popup content from meta
+      const markerValue = feature.properties[mapConfig.markerAttribute];
 
       return (
         <CircleMarker
           key={i}
           center={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}
           stroke={false}
-          fillColor={this.getMarkerColor(feature.properties[editor.mapConfig.heatmapAttribute])}
-          fillOpacity={0.7}
-          radius={this.getMarkerRadius(feature.properties[editor.mapConfig.heatmapAttribute])}
+          fillColor={this.getMarkerColor(markerValue)}
+          radius={this.getMarkerRadius(markerValue)}
         >
           <Popup>
-            <h3>{feature.properties["Name"]}</h3>
-            {/*<p>{feature.properties.bike} of {feature.properties.dock} available</p>*/}
+            <List
+              disablePadding={true}
+              dense
+              className={classes.popupList}
+            >
+              <ListSubheader
+                disableGutters
+                disableSticky
+                inset={false}
+              >
+                {feature.properties["Name"]}
+              </ListSubheader>
+              {propList}
+            </List>
           </Popup>
         </CircleMarker>
       )
@@ -118,8 +137,8 @@ class MapPreview extends React.Component {
       <div className={classes.root}>
         <Map
           className={classes.widget}
-          center={editor.mapConfig.center}
-          zoom={editor.mapConfig.zoom}
+          center={mapConfig.center}
+          zoom={mapConfig.zoom}
         >
           <LayersControl>
             <LayersControl.BaseLayer name="Basemap" checked>
@@ -129,14 +148,14 @@ class MapPreview extends React.Component {
               />
             </LayersControl.BaseLayer>
             <LayersControl.Overlay name="GeoJSON default" checked>
-              <GeoJSON data={editor.mapConfig.data} />
+              <GeoJSON data={mapConfig.data} />
             </LayersControl.Overlay>
             <LayersControl.Overlay name="GeoJSON custom" checked>
               <FeatureGroup>
                 {circleFeatures}
               </FeatureGroup>
             </LayersControl.Overlay>
-            { editor.mapConfig.showHeatmap &&
+            { mapConfig.showHeatmap &&
               <LayersControl.Overlay name="Heatmap" checked>
                 <FeatureGroup>
                   <HeatmapLayer
@@ -160,15 +179,15 @@ class MapPreview extends React.Component {
 MapPreview.propTypes = {
   classes: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
+  mapConfig: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   config: state.config.config,
-  editor: state.editor,
+  mapConfig: state.widget.mapConfig,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 
 });
 

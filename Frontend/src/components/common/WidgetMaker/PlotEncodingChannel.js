@@ -93,7 +93,7 @@ class PlotEncodingChannel extends React.Component {
         <ExpansionPanelSummary className={classNames(classes.expansionPanelSummary, classes.expanded)} expandIcon={<ArrowDropDownIcon />}>
           <Typography>{channel}</Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classNames(classes.flexColumn, classes.expansionPanelDetails)}>
+        <ExpansionPanelDetails className={classes.flexColumn}>
           <FormLabel>Channel</FormLabel>
           <FormControl>
             <Select
@@ -120,7 +120,7 @@ class PlotEncodingChannel extends React.Component {
           </div>
         </ExpansionPanelDetails>
         <Divider className={classes.spacer} />
-        <ExpansionPanelActions className={classes.expansionPanelActions}>
+        <ExpansionPanelActions>
           <Button
             variant="contained"
             color="secondary"

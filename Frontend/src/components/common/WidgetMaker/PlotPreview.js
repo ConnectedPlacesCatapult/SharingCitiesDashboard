@@ -21,17 +21,17 @@ const styles = (theme) => ({
 
 class PlotPreview extends React.Component {
   render() {
-    const { classes, editor } = this.props;
+    const { classes, plotConfig } = this.props;
 
     const spec = {
-      ...editor.plotConfig.spec,
+      ...plotConfig.spec,
     };
 
     return (
       <div className={classes.root}>
         <VegaLite
           spec={spec}
-          data={editor.plotConfig.data}
+          data={plotConfig.data}
         />
       </div>
     )
@@ -40,11 +40,11 @@ class PlotPreview extends React.Component {
 
 PlotPreview.propTypes = {
   classes: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
+  plotConfig: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  editor: state.editor,
+  plotConfig: state.widget.plotConfig,
 });
 
 const mapDispatchToProps = (dispatch) => ({

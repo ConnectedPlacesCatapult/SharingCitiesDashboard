@@ -61,14 +61,12 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    config: state.config.config,
-    error: state.config.error,
-    fetched: state.config.fetched,
-    fetching: state.config.fetching,
-  }
-};
+const mapStateToProps = (state) => ({
+  config: state.config.config,
+  error: state.config.error,
+  fetched: state.config.fetched,
+  fetching: state.config.fetching,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   fetchConfig: () => dispatch(fetchConfig()),
