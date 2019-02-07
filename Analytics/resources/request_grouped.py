@@ -24,6 +24,7 @@ analytics b) Median is more robust to outliers and c) Median preserves the origi
 """
 
 def data_geojson(df):
+	### Creates a geojson by loading the wkt geometry
     features = []
     insert_features = lambda X: features.append(
             geojson.Feature(geometry=shapely.wkt.loads(X["wkt_geom"]),
@@ -223,6 +224,7 @@ def request_harmonised_data(data, harmonising_method):
 		data = json.loads(_df.to_json(orient='records'))
 
 	else:
+		### using geolachemy's to_shape function to grab the geometry of sensors (instead of lat lon).  
 		_df['wkt_geom'] = _df['Sensor_id'].apply(lambda x: str(to_shape(Location.get_by_id_in([Sensor.get_by_id(x).l_id])[0].geo)))
 		data = data_geojson(_df)
 
