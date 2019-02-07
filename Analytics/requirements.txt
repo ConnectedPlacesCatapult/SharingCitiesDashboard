@@ -15,3 +15,4 @@ scikit-learn
 fbprophet
 holidays==0.9.8
 geojson
+shapely
