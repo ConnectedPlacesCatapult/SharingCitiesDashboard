@@ -4,6 +4,8 @@ import numpy as np
 from models.sensor import Sensor
 from models.location import Location
 import geojson
+from geoalchemy2.shape import to_shape 
+import shapely.wkt
 
 """
 This function groups sensor data having different temporal frequencies by grouping at 
@@ -24,8 +26,7 @@ analytics b) Median is more robust to outliers and c) Median preserves the origi
 def data_geojson(df):
     features = []
     insert_features = lambda X: features.append(
-            geojson.Feature(geometry=geojson.Point((X["Longitude"],
-                                                    X["Latitude"])),
+            geojson.Feature(geometry=shapely.wkt.loads(X["wkt_geom"]),
                             properties=dict(Attribute_Name=X["Attribute_Name"],
                             				Value=X["Value"],
 											Name=X["Name"])))
@@ -222,8 +223,7 @@ def request_harmonised_data(data, harmonising_method):
 		data = json.loads(_df.to_json(orient='records'))
 
 	else:
+		_df['wkt_geom'] = _df['Sensor_id'].apply(lambda x: str(to_shape(Location.get_by_id_in([Sensor.get_by_id(x).l_id])[0].geo)))
 		data = data_geojson(_df)
 
 	return data
-
-
