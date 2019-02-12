@@ -242,7 +242,7 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
     def _create_datasource(self, headers=json.loads(HEADERS_EM.replace("'",'"'))):
         super()._create_datasource(headers)
 
-        self.df = self.load_dataset(headers)
+        data = self.load_dataset(headers)
 
         df = pd.DataFrame(columns=['plate','rentalState', 'date', 'whichDate'])
         index = 0
