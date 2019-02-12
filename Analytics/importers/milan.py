@@ -222,3 +222,62 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
 
     def _refresh_token(self, *args):
         print('Token Expired')
+
+config = get_config()
+config = config[config['environment']]['milan_sc_emobility_refeel']
+
+config = config[config['environment']]['milan_sc_emobility_refeel']
+
+API_NAME_EM = config['API_NAME']
+
+### Using a monthly interval
+BASE_URL_EM = config['BASE_URL'] + 'fromTime={0}&toTime={1}'.format((datetime.now() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%m:%SZ'),
+                                                                    (datetime.now()).strftime('%Y-%m-%dT%H:%m:%SZ'))
+REFRESH_TIME_EM = config['REFRESH_TIME']
+REFRESH_URL_EM = config['REFRESH_URL']
+API_CLASS_EM = config['API_CLASS']
+HEADERS_EM = config['HEADERS']
+
+
+class Milan_API_sc_emobility_refeel(BaseImporter):
+    def __init__(self):
+        super().__init__(API_NAME_EM, BASE_URL_EM, REFRESH_TIME_EM, API_KEY, API_CLASS_EM, TOKEN_EXPIRY)
+
+    def _create_datasource(self, headers=json.loads(HEADERS_EM.replace("'",'"'))):
+        super()._create_datasource(headers)
+
+        self.df = self.load_dataset(headers)
+
+        df = pd.DataFrame(columns=['plate','rentalState', 'date', 'whichDate'])
+        index = 0
+
+        ### Creating two attributes for each car, one for the 'dateFrom' and one for 'dateTo'
+        ### e.g. BOOKED_dateFrom, BOOKED_dateTo. The api_timestamp is the time information for eac case
+        for plate in data[0]['vehicles']:
+            for s in plate['statuses']:
+                df.at[index, 'plate'] = plate['plate']
+                df.at[index, 'rentalState'] = s['rentalState'] + '_dateFrom'
+                df.at[index, 'date'] = s['dateFrom']
+                index = index+1
+
+        for plate in data[0]['vehicles']:
+            for s in plate['statuses']:
+                df.at[index, 'plate'] = plate['plate']
+                df.at[index, 'rentalState'] = s['rentalState'] + '_dateTill'
+                df.at[index, 'date'] = s['dateTill']
+                index = index+1
+
+        ### Using the centroid coordinates of viale Bacchiglione since no location information is present
+        df['latitude'] = 45.443384
+        df['longitude'] = 9.221501
+        loc = Location('latitude', 'longitude')
+       
+        df['api_timestamp_tag'] = pd.to_datetime(df['date'])
+        df['api_timestamp_tag'] = df['api_timestamp_tag'].astype(int)
+        
+        self.create_datasource(dataframe=df, sensor_tag='plate', 
+                                attribute_tag=['rentalState'], 
+                                unit_value=[], bespoke_unit_tag=[], description=['Information on activities relted to two e-car used by the inhabitants of a condominium located in viale Bacchiglione'],
+                                bespoke_sub_theme=[], location_tag=loc, sensor_prefix='', 
+                                api_timestamp_tag='api_timestamp_tag')
+
