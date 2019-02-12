@@ -1,0 +1,222 @@
+Feature: UI
+
+#remember me checkbox
+#email or potentially an IP address
+#find out what drop downs there will be 
+#find out what attributes there will be
+
+Scenario 1: User enters valid credentials to login and has a dashboard set up 
+	Given the user is an existing user
+	When the user is prompted with the sign in page on the Sharingcities application
+	And the user enters the correct email address 
+	And user enters the correct password
+	And the user clicks the Sign In button
+	Then the user sees the Sharingcities dashboard that is linked to them
+
+
+Scenario 2: User enters invalid email address to login 
+	Given the user is an existing user
+	When the user is prompted with the sign in page on the Sharingcities application
+	And the user enters the incorrect email address 
+	And user enters the correct password
+	And the user clicks the Sign In button
+	Then the user sees the an Error message: "Incorrect email address" 
+
+#resetting a password?	
+
+Scenario 3: User enters invalid password to login
+	Given the user is an existing user
+	When the user is prompted with the sign in page on the Sharingcities application
+	And the user enters the correct email address 
+	And user enters the incorrect password
+	And the user clicks the Sign In button
+	Then the user sees the an Error message: "Incorrect password"
+
+
+Scenario 4: User enters invalid email address and password to login
+	Given the user is an existing user
+	When the user is prompted with the sign in page on the Sharingcities application
+	And the user enters the incorrect email address 
+	And user enters the incorrect password
+	And the user clicks the Sign In button
+	Then the user sees the an Error message: "Incorrect email address and password"	
+
+
+Scenario 5: User enters valid credentials to login and does not have a dashboard set up 
+	Given the user is an existing user
+	When the user is prompted with the sign in page on the Sharingcities application
+	And the user enters the correct email address 
+	And user enters the correct password
+	And the user clicks the Sign In button
+	Then the user sees a blank Sharingcities dashboard with a message "No data loaded. Please select a data source" 
+
+
+Scenario 6: User selects Environment drop down list
+	Given the user is on a the DATA TOOLS tab on the Sharingcities application
+	When the user clicks on the Environment drop down button
+	Then the user will see <Environment Attribute>
+
+| Environment Attribute |
+| Airquality			|
+| Energy 				|
+| Transport 			|	
+
+
+Scenario 7: User selects Airquality drop down list
+	Given the user is on a the DATA TOOLS tab on the Sharingcities application
+	When the user clicks on the Airquality drop down button
+	Then the user will see <Attribute>
+
+| Attribute   		 |
+| baycount    		 |
+| baytype	  		 |
+| free 		  		 |
+| isoffline   		 |
+| occupied 	  		 |
+| NO2		  		 |
+| SO2		  		 |
+| PM10		  		 |
+| PM25		  		 |
+| FINE		 	     |
+| O3		  		 |
+| CO 		    	 |
+| NbEmptyDocks		 |
+| temperature 		 |
+| dimmer_perc  		 |
+| dimmer_read  		 | 
+| dimmer_default 	 |
+| dimmer_set  	 	 |
+| do2 				 |
+| tilt_angle		 |
+| connected_device   |
+| energy_delivered   |
+| di4 				 |
+| di5				 |
+| energy_consumed 	 |
+| do1				 |
+| di1				 |
+| di2				 |
+| di3				 |
+| temp_sid_400191    |
+| b1_heat_value      |
+| baycount_2		 |
+| baytype_2 		 |
+| free_2 			 |
+| isoffline_2 		 |
+| occupied_2		 |
+| b1_flow_value 	 |
+| b1_temp_out_value  |
+| b1_temp_back_value |
+| b2_heat_value 	 |
+| b2_flow_value   	 |	
+| b2_temp_out_value  |
+| b2_temp_back_value |
+| b3_heat_value 	 |
+| b3_flow_value 	 |
+| b3_temp_out_value  |
+| b3_temp_back_value |
+
+
+Scenario 8: User selects Energy drop down list
+	Given the user is on a the DATA TOOLS tab on the Sharingcities application
+	When the user clicks on the Energy drop down button
+	Then the user will see <Attribute>
+
+| Attribute    		 |
+| ernest_dense_pumps |
+| power_sid_761573	 |
+| avg_lux_sid_400191 |
+
+
+Scenario 9: User selects Transport drop down list
+	Given the user is on a the DATA TOOLS tab on the Sharingcities application
+	When the user clicks on the Transport drop down button
+	Then the user will see <Transport Attribute>
+
+| Transport Attribute |
+| Bike Availability	  |
+| Charger Status	  |
+| Traffic 			  |	
+
+
+Scenario 10:  User selects an Airquality attribute 	
+	Given the user has selected the Airquality drop down list from the Environment drop down list
+	When the user selects <Attribute>
+	Then the records of the <Attribute> attribute will be shown on the right
+
+| Attribute   		 |
+| baycount    		 |
+| baytype	  		 |
+| free 		  		 |
+| isoffline   		 |
+| occupied 	  		 |
+| NO2		  		 |
+| SO2		  		 |
+| PM10		  		 |
+| PM25		  		 |
+| FINE		 	     |
+| O3		  		 |
+| CO 		    	 |
+| NbEmptyDocks		 |
+| temperature 		 |
+| dimmer_perc  		 |
+| dimmer_read  		 | 
+| dimmer_default 	 |
+| dimmer_set  	 	 |
+| do2 				 |
+| tilt_angle		 |
+| connected_device   |
+| energy_delivered   |
+| di4 				 |
+| di5				 |
+| energy_consumed 	 |
+| do1				 |
+| di1				 |
+| di2				 |
+| di3				 |
+| temp_sid_400191    |
+| b1_heat_value      |
+| baycount_2		 |
+| baytype_2 		 |
+| free_2 			 |
+| isoffline_2 		 |
+| occupied_2		 |
+| b1_flow_value 	 |
+| b1_temp_out_value  |
+| b1_temp_back_value |
+| b2_heat_value 	 |
+| b2_flow_value   	 |	
+| b2_temp_out_value  |
+| b2_temp_back_value |
+| b3_heat_value 	 |
+| b3_flow_value 	 |
+| b3_temp_out_value  |
+| b3_temp_back_value |	
+
+
+Scenario 11:  User selects an Energy attribute 	
+	Given the user has selected the Energy drop down list from the Environment drop down list
+	When the user selects <Attribute>
+	Then the records of the <Attribute> attribute will be shown on the right
+
+| Attribute    		 |
+| ernest_dense_pumps |
+| power_sid_761573	 |
+| avg_lux_sid_400191 |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
