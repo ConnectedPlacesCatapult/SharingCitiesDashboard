@@ -225,11 +225,7 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
 
 config = get_config()
 config = config[config['environment']]['milan_sc_emobility_refeel']
-
-config = config[config['environment']]['milan_sc_emobility_refeel']
-
 API_NAME_EM = config['API_NAME']
-
 ### Using a monthly interval
 BASE_URL_EM = config['BASE_URL'] + 'fromTime={0}&toTime={1}'.format((datetime.now() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%m:%SZ'),
                                                                     (datetime.now()).strftime('%Y-%m-%dT%H:%m:%SZ'))
