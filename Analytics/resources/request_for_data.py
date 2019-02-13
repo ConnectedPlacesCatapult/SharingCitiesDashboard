@@ -83,7 +83,10 @@ class RequestForData(Resource):
 						store_missing=False)
 	parser.add_argument('grouped', type=inputs.boolean, store_missing=False)
 	parser.add_argument('freq', type=str,
-						choices=('W', '1D', '1H', '1Min'),
+						choices=('1W', '1D', '1H', '1Min', '1M'),
+						store_missing=False)
+	parser.add_argument('method', type=str,
+						choices=('mean', 'median', 'min', 'max'),
 						store_missing=False)
 	parser.add_argument('harmonising_method', 
 						type=str,
@@ -96,7 +99,7 @@ class RequestForData(Resource):
 
 	def get(self):
 		args = self.parser.parse_args()
-		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, sensorid, n_predictions, predictions, grouped, harmonising_method, per_sensor, freq = None, None, None, None, None, None, [], None, 100, None, None, None, None, '1H'
+		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, sensorid, n_predictions, predictions, grouped, harmonising_method, per_sensor, freq, method = None, None, None, None, None, None, [], None, 100, None, None, None, None, '1H', 'mean'
 
 		if 'theme' in args:
 			theme = args['theme']
@@ -149,6 +152,9 @@ class RequestForData(Resource):
 		if 'freq' in args:
 			freq = args['freq']
 
+		if 'method' in args:
+			method = args['method']
+
 		if 'predictions' in args:
 			predictions = args['predictions']
 			if predictions >=100:
@@ -181,7 +187,17 @@ class RequestForData(Resource):
 
 			if ('fromdate' in args and args['fromdate'] is not None 
 				and 'todate' in args and args['todate'] is not None):
-				data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
+				if grouped:
+					if harmonising_method:
+						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
+												args['fromdate'], args['todate'], operation)
+						data = request_harmonised_data(data, harmonising_method=harmonising_method)
+					else:
+						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
+												args['fromdate'], args['todate'], operation)
+						data = request_grouped_data(data, per_sensor=per_sensor, freq=freq, method=method)
+				else:
+					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
 												args['fromdate'], args['todate'], operation)
 				if predictions:
 					data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
@@ -194,7 +210,7 @@ class RequestForData(Resource):
 						data = request_harmonised_data(data, harmonising_method=harmonising_method)
 					else:
 						data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-						data = request_grouped_data(data, per_sensor=per_sensor, freq=freq)
+						data = request_grouped_data(data, per_sensor=per_sensor, freq=freq, method=method)
 				else:
 					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
 
@@ -259,11 +275,14 @@ class RequestForData(Resource):
 			values = []
 			if fromdate is not None and todate is not None:
 				if operation is None:
+
 					values = db.session.query(model) \
 							.filter(model.api_timestamp >= fromdate) \
 							.filter(model.api_timestamp <= todate) \
-							.limit(limit).offset(abs(count - offset)) \
-							.all()
+							.limit(limit).all() 
+							
+
+					#.offset(abs(count - offset)) 
 				else:
 					values = db.session.query(model) \
 							.filter(model.api_timestamp >= fromdate) \
