@@ -54,25 +54,7 @@ class LoginPage extends React.Component {
       <div className={classes.root}>
         <main className={classes.content}>
           <LoginForm/>
-          <div className={classes.appBarSpacer} />
-          {
-            api.fetched && api.data.length
-            ? <div className={classes.flexWrapper}>
-                <DataTable />
-                <OptionsSidePanel
-                  openWidgetMaker={this.openWidgetMaker}
-                />
-              </div>
-            : <NoData />
-          }
         </main>
-        <Modal
-          open={this.state.widgetModalOpen}
-          onClose={this.handleWidgetMakerClose}
-          disableAutoFocus={true}
-        >
-          <WidgetMaker />
-        </Modal>
       </div>
     )
   }
