@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import LoginForm from './LoginForm';
+import LoginForm from '../LoginPage/LoginForm';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
