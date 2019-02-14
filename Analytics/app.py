@@ -7,6 +7,7 @@ from resources.request_for_data import RequestForData
 from resources.login import Login, SecretResource
 from resources.refresh_token import TokenRefresh
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
+from resources.changePassword import ChangePassword
 from db import db
 from flask_cors import CORS
 # from flask_bcrypt import Bcrypt
@@ -43,7 +44,7 @@ def create_app(**config_overrides):
     # should be added to the access token.
     @jwt.user_claims_loader
     def add_claims_to_access_token(user):
-        return {'admin': user.admin}
+        return {'is_admin': user.admin}
 
 
     # Create a function that will be called whenever create_access_token
@@ -82,5 +83,7 @@ def create_app(**config_overrides):
     api.add_resource(UserLogoutAccess, '/revokeAccess')
     api.add_resource(UserLogoutRefresh, '/revokeRefresh')
     api.add_resource(SecretResource, '/secret')
+
+    api.add_resource(ChangePassword, '/changePassword')
 
     return app
