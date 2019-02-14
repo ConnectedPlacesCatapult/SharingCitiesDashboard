@@ -50,3 +50,7 @@ class Unit(db.Model):
     @classmethod
     def get(cls):
         return Unit.query.all()
+    
+    @classmethod
+    def get_by_id(cls, id):
+        return Unit.query.filter_by(id=id).first()

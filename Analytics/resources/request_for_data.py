@@ -53,6 +53,8 @@ from models.theme import SubTheme
 from models.attribute_data import ModelClass
 from models.sensor_attribute import SensorAttribute
 from models.sensor import Sensor
+from models.location import Location
+from models.unit import Unit
 from resources.predict import predict
 from resources.helper_functions import is_number
 from sqlalchemy import desc
@@ -293,7 +295,6 @@ class RequestForData(Resource):
 
 					### refactored the query to fetch the latest values by default
 					values = db.session.query(model).order_by(desc(model.api_timestamp)).limit(limit).all() # \
-
 					# values = db.session.query(model).limit(limit) \
 					# 				.offset(abs(count - offset)).all()
 
@@ -306,16 +307,22 @@ class RequestForData(Resource):
 					'Attribute_Table': attribute.table_name,
 					'Attribute_Name': attribute.name,
 					'Attribute_Description': attribute.description,
-					'Attribute_Unit_Value': attribute.unit_value,
+					'Attribute_Unit_Description': Unit.get_by_id(attribute.unit_id).description,
+					'Attribute_Unit_Value': Unit.get_by_id(attribute.unit_id)._type,
 					'Total_Records': count
 					}
 			temp = []
 			if operation is None:
 				for i in range(len(values)-1, -1, -1):
+					s = Sensor.get_by_id(values[i].s_id)
 					temp.append({
+						'Attribute_Name': attribute.name,
 						'Sensor_id': values[i].s_id,
+						'Timestamp': str(values[i].api_timestamp),
 						'Value': values[i].value,
-						'Timestamp': str(values[i].api_timestamp)
+						'Name': s.name,
+						'Latitude': Location.get_by_id(s.l_id).lat,
+						'Longitude': Location.get_by_id(s.l_id).lon
 					})
 				_common['Attribute_Values'] = temp
 			else:
