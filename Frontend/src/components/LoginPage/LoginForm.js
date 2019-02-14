@@ -4,9 +4,6 @@ import PropTypes from 'prop-types';
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import LockIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Input from '@material-ui/core/Input';
@@ -14,8 +11,12 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 
+import { doLogin } from "../../actions/userActions";
+
 // redux
 import { connect } from 'react-redux';
+
+const bgImage = require('./../../images/Lisbon-logo-med.png');
 
 const styles = (theme) => ({
   layout: {
@@ -67,6 +68,7 @@ class LoginForm extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
+    doLogin(this.state.email, this.state.password)
   };
 
   onChange = (e) => {
@@ -80,12 +82,7 @@ class LoginForm extends React.Component {
     return (
       <main className={classes.layout}>
         <Paper className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
+          <img className={classes.logoImage} src={bgImage} width="220px" height="auto"/>
           <form className={classes.form} onSubmit={this.onSubmit}>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Email Address</InputLabel>
@@ -146,6 +143,6 @@ const madDispatchToProps = (dispatch) => ({
 });
 
 LoginForm = withStyles(styles)(LoginForm);
-LoginForm = connect(styles)(LoginForm);
+LoginForm = connect(mapStateToProps, madDispatchToProps)(LoginForm);
 
 export default LoginForm
