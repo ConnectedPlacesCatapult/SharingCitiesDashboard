@@ -16,3 +16,5 @@ fbprophet
 holidays==0.9.8
 geojson
 shapely
+bcrypt
+flask-jwt-extended
