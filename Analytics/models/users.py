@@ -2,8 +2,6 @@ import json
 from db import db
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
-
-from passlib.hash import pbkdf2_sha256 as sha256
 import bcrypt
 
 
