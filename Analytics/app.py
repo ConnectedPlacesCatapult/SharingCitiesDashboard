@@ -7,7 +7,6 @@ from resources.request_for_data import RequestForData
 from resources.register import Register
 from db import db
 from flask_cors import CORS
-from flask_bcrypt import Bcrypt
 
 def create_app(**config_overrides):
     app = Flask(__name__)
@@ -15,9 +14,6 @@ def create_app(**config_overrides):
     app.config.update(config_overrides)
     cors = CORS(app, resources={r"/*": {"origins":"*"}})
     api = Api(app)
-
-
-    password_bcrypt = Bcrypt(app)
 
     db.init_app(app)
     db.app = app
