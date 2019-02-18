@@ -10,6 +10,7 @@ class Register(Resource):
 	parser.add_argument('fullname', type=str, store_missing=False) 
 	parser.add_argument('email', type=str, store_missing=False, help = 'This field cannot be blank', required = True)
 	parser.add_argument('password', type=str, store_missing=False,  help = 'This field cannot be blank', required = True)
+	parser.add_argument('password_new', type=str, store_missing=False,  help = 'This field cannot be blank', required = True)
 
 	def post(self):
 		args = self.parser.parse_args()
@@ -27,6 +28,7 @@ class Register(Resource):
 
 
 		current_user.activated = True #t
+		current_user.password = Users.generate_hash(args["password_new"].encode("utf8")).decode("utf8")
 		current_user.commit()
 		return {'message': '{}\'s account has been registered. Redirect to login'. format(args['email'])}, 201 #t
 
