@@ -51,7 +51,7 @@ class Users(db.Model):
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            print(self.name, 'User already exists')
+            print(self.fullname, 'User already exists')
 
     def commit(self):
         db.session.commit()
