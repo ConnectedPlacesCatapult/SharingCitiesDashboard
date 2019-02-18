@@ -18,3 +18,4 @@ geojson
 shapely
 bcrypt
 flask-jwt-extended
+pytest
