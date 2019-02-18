@@ -17,9 +17,7 @@ class Register(Resource):
 		if not current_user:
 			return {'message': 'User {} is not authorised to access Sharing Cities Dashboard'. format(args['email'])}, 403 #t
 
-		# TODO: test hasing pswd store NOTE: # current_user.password = Users.generate_hash(current_user.password.encode("utf8")).decode("utf8");current_user.commit()
-
-		# if not User.verify_hash(args['password'], current_user.password):
+		# if not Users.verify_hash(args['password'].encode("utf8"), current_user.password.encode("utf8")):
 		# 	return {'message': 'The password entered does not correspond to the password sent to {}. Please try again'. format(args['email'])}, 403
 
 		if not args['password'] == current_user.password:
