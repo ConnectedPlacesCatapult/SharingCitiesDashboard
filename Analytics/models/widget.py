@@ -14,7 +14,7 @@ class WidgetModel(db.Model):
     title = db.Column('title', db.String, nullable=False)
     type = db.Column('type', db.String, nullable=False)
     tile_layer = db.Column('tile_layer', db.String, nullable=True)
-    is_heat_map = db.Column('is_heat_map', db.Boolean, nullable=True)
+    is_heat_map = db.Column('is_heat_map', db.String, nullable=True)
 
     spec = db.Column('spec', JSON, nullable=False)
     data = db.Column('data', JSON, nullable=False)
@@ -61,11 +61,11 @@ class WidgetModel(db.Model):
             # Create a table with the appropriate Columns
             db.Table(self._WIDGET_DB_TABLE_NAME, db.MetaData(bind=db.engine),
                      db.Column('id', db.Integer, primary_key=True),
-                     db.Column('user_id', db.Integer, nullable=False),
-                     db.Column('title', db.String, nullable=False),
-                     db.Column('type', db.String, nullable=False),
+                     db.Column('user_id', db.Integer, nullable=True),
+                     db.Column('title', db.String, nullable=True),
+                     db.Column('type', db.String, nullable=True),
                      db.Column('tile_layer', db.String, nullable=True),
-                     db.Column('is_heat_map', db.Boolean, nullable=True),
+                     db.Column('is_heat_map', db.String, nullable=True),
                      db.Column('spec', JSON, nullable=False),
                      db.Column('data', JSON, nullable=False),
                      schema=None).create()

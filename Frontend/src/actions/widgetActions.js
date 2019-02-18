@@ -10,6 +10,8 @@ import {
   SET_WIDGET_PROPERTY,
   SAVE_WIDGET_FULFILLED,
   SAVE_WIDGET_REJECTED,
+  LOAD_WIDGET_FULFILLED,
+  LOAD_WIDGET_REJECTED,
   TOGGLE_MAP_TOOLTIP_FIELD,
 } from "./../constants";
 import {FETCH_ADMIN_FULFILLED, FETCH_ADMIN_REJECTED} from "../constants";
@@ -211,13 +213,13 @@ export function saveWidget() {
     console.log(widgetConfig)
 
     axios({
-      url: config.apiRoot + 'admin/list_users',
+      url: config.apiRoot + 'widgets',
       method: 'post',
       headers: {
         Authorization: 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTA1MDUzNTgsIm5iZiI6MTU1MDUwNTM1OCwianRpIjoiZDA4ZGRiNGQtNDE4YS00YWMwLWFkODYtZDQ3ZGM0ZTUyYTQ4IiwiZXhwIjoxNTUxMTEwMTU4LCJpZGVudGl0eSI6InBhdHJpY2tAZG90bW9kdXMuY29tIiwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIiwidXNlcl9jbGFpbXMiOnsiYWRtaW4iOm51bGx9fQ.N_fD7BGjnRL47YFoclmIBnoWzub2ugDJUSNuLwRA0B4'
       },
       data: {
-        limit: '10'
+        ...widgetConfig
       },
     })
       .then((response) => {

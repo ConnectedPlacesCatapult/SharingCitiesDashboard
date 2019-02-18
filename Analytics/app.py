@@ -13,7 +13,7 @@ from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.request_for_data import RequestForData
-
+from resources.widgets import Widgets
 from resources.user_admin import UserAdmin
 from resources.user_permissions import UserPermissions
 from resources.user_list import UsersList
@@ -83,14 +83,12 @@ def create_app(**config_overrides):
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
     api.add_resource(RequestForData, '/data')
-
-
+    api.add_resource(Widgets, '/widgets')
     api.add_resource(Login, '/login')
     api.add_resource(TokenRefresh, '/refreshToken')
     api.add_resource(UserLogoutAccess, '/revokeAccess')
     api.add_resource(UserLogoutRefresh, '/revokeRefresh')
     api.add_resource(SecretResource, '/secret')
-
     api.add_resource(UserAdmin, '/admin', endpoint='admin')
     api.add_resource(UserPermissions, '/admin/user_permissions', endpoint='user_permissions')
     api.add_resource(UsersList, '/admin/list_users', endpoint='list_users')

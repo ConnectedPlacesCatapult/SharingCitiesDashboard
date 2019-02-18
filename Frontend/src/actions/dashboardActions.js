@@ -1,4 +1,6 @@
 import _ from 'lodash'
+import axios from "axios";
+
 import {
   FETCH_LAYOUT,
   FETCH_LAYOUT_FULFILLED,
@@ -13,6 +15,7 @@ import {
   DELETE_WIDGET,
 } from "./../constants";
 import {axiosInstance} from "../api/axios";
+import {SAVE_WIDGET_FULFILLED, SAVE_WIDGET_REJECTED} from "../constants";
 
 export const fetchLayout = () => {
   return (dispatch, getState) => {
@@ -51,6 +54,29 @@ export const fetchWidgets = () => {
     dispatch({
       type: FETCH_WIDGETS,
     });
+
+    axios({
+      url: config.apiRoot + 'widgets',
+      method: 'post',
+      headers: {
+        Authorization: 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTA1MDUzNTgsIm5iZiI6MTU1MDUwNTM1OCwianRpIjoiZDA4ZGRiNGQtNDE4YS00YWMwLWFkODYtZDQ3ZGM0ZTUyYTQ4IiwiZXhwIjoxNTUxMTEwMTU4LCJpZGVudGl0eSI6InBhdHJpY2tAZG90bW9kdXMuY29tIiwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIiwidXNlcl9jbGFpbXMiOnsiYWRtaW4iOm51bGx9fQ.N_fD7BGjnRL47YFoclmIBnoWzub2ugDJUSNuLwRA0B4'
+      },
+      data: {
+        ...widgetConfig
+      },
+    })
+      .then((response) => {
+        dispatch({
+          type: SAVE_WIDGET_FULFILLED,
+          payload: response.data,
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: SAVE_WIDGET_REJECTED,
+          payload: err,
+        })
+      })
 
     try {
       const STATIC_WIDGET_DATA = require('./../data/tempWidgets');

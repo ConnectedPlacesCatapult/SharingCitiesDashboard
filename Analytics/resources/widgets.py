@@ -95,13 +95,14 @@ class Widgets(Resource):
         current_user = Users.find_by_email(get_jwt_identity())
         new_widget = WidgetModel(current_user.id, args["title"], args["type"],
                                  args["spec"], args["data"], tile_layer=args["tileLayer"],
-                                 is_heat_map=inputs.boolean(args["isHeatMap"]))
+                                 is_heat_map=args["isHeatMap"])
 
         try:
             db.session.add(new_widget)
             db.session.commit()
-        except exc.SQLAlchemyError:
-            return jsonify(args), HTTPStatus.BAD_REQUEST.value
+        except exc.SQLAlchemyError as e:
+            print(e.with_traceback(e.__traceback__))
+            # return jsonify(args), HTTPStatus.BAD_REQUEST.value
 
         return "{} Widget with id: {} saved".format(new_widget.title, new_widget.id), HTTPStatus.OK.value
 
