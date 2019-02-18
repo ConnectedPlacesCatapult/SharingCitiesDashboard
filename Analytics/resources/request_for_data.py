@@ -305,6 +305,7 @@ class RequestForData(Resource):
 
 			_common = {
 					'Attribute_Table': attribute.table_name,
+					'Attribute_id': attribute.id,
 					'Attribute_Name': attribute.name,
 					'Attribute_Description': attribute.description,
 					'Attribute_Unit_Description': Unit.get_by_id(attribute.unit_id).description,
@@ -317,6 +318,7 @@ class RequestForData(Resource):
 					s = Sensor.get_by_id(values[i].s_id)
 					temp.append({
 						'Attribute_Name': attribute.name,
+						'Attribute_id': attribute.id,
 						'Sensor_id': values[i].s_id,
 						'Timestamp': str(values[i].api_timestamp),
 						'Value': values[i].value,
