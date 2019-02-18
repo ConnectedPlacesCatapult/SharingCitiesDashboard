@@ -17,11 +17,11 @@ class Register(Resource):
 		if not current_user:
 			return {'message': 'User {} is not authorised to access Sharing Cities Dashboard'. format(args['email'])}, 403 #t
 
-		# if not Users.verify_hash(args['password'].encode("utf8"), current_user.password.encode("utf8")):
-		# 	return {'message': 'The password entered does not correspond to the password sent to {}. Please try again'. format(args['email'])}, 403
+		if not Users.verify_hash(args['password'].encode("utf8"), current_user.password.encode("utf8")):
+			return {'message': 'The password entered does not correspond to the password sent to {}. Please try again'. format(args['email'])}, 403
 
-		if not args['password'] == current_user.password:
-			return {'message': 'The password entered does not correspond to the password sent to {}. Please try again'. format(args['email'])}, 403 #t
+# 		if not args['password'] == current_user.password:
+# 			return {'message': 'The password entered does not correspond to the password sent to {}. Please try again'. format(args['email'])}, 403 #t
 
 
 		current_user.activated = True #t
