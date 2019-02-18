@@ -13,7 +13,7 @@ class ChangePassword(Resource):
 		args = self.parser.parse_args()
 		current_user = Users.find_by_email(args['email']) #t
 
-		if current_user and Users.verify_password(args['password_old'].encode("utf8"), current_user.password.encode("utf8")):
+		if current_user and Users.verify_hash(args['password_old'].encode("utf8"), current_user.password.encode("utf8")):
 			#  could include password strength check
 			current_user.password = Users.generate_hash(args["password_new"].encode("utf8")).decode("utf8") # decode necessary so that string (and not binary) is stored in the DB
 			current_user.commit()
