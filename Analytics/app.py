@@ -7,6 +7,8 @@ from resources.request_for_data import RequestForData
 from resources.login import Login, SecretResource
 from resources.refresh_token import TokenRefresh
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
+from resources.register import Register
+
 from db import db
 from flask_cors import CORS
 # from flask_bcrypt import Bcrypt
@@ -17,7 +19,7 @@ from models.revoked_tokens import RevokedTokens
 
 def create_app(**config_overrides):
     app = Flask(__name__)
-    app.config.from_pyfile('settings.py')
+    app.config.from_pyfile('settings.py') #TODO: change name of database in settings
     app.config.update(config_overrides)
     cors = CORS(app, resources={r"/*": {"origins":"*"}})
     api = Api(app)
@@ -75,12 +77,11 @@ def create_app(**config_overrides):
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
     api.add_resource(RequestForData, '/data')
-
-
     api.add_resource(Login, '/login')
     api.add_resource(TokenRefresh, '/refreshToken')
     api.add_resource(UserLogoutAccess, '/revokeAccess')
     api.add_resource(UserLogoutRefresh, '/revokeRefresh')
     api.add_resource(SecretResource, '/secret')
+    api.add_resource(Register, '/register')
 
     return app

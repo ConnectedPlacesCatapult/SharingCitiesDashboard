@@ -2,13 +2,13 @@ import React from "react";
 import PropTypes from 'prop-types';
 import Typography from "@material-ui/core/Typography";
 import Header from './../common/Header';
-import GridLayout from './GridLayout';
 import Button from '@material-ui/core/Button';
+import Paper from "@material-ui/core/Paper";
+import AdminSettings from "./AdminSettings"
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
 
-import {saveLayout} from "./../../actions/dashboardActions";
 import {initializeEditor} from "../../actions/widgetActions";
 import {connect} from "react-redux";
 
@@ -19,49 +19,19 @@ const styles = (theme) => ({
   content: {
     flexGrow: 1,
     //backgroundColor: theme.palette.background.default,
-    paddingTop: theme.spacing.unit * 4,
-    paddingBottom: theme.spacing.unit * 3,
-    paddingLeft: theme.spacing.unit * 1,
-    paddingRight: theme.spacing.unit * 1,
+    padding: theme.spacing.unit * 4,
     height: '100vh',
     overflow: 'auto'
   },
   appBarSpacer: theme.mixins.toolbar,
-  saveLayoutBar: {
-    background: "#212121",
-    width: "100%",
-    position: "fixed",
-    bottom: 0,
-    padding: "15px",
-    textAlign: "center"
-  },
-  saveLayoutButton: {
-    backgroundColor: "#79e8cb"
-  }
 });
 
-class DashboardPage extends React.Component {
+class AdminPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       loginModalOpen: false
-    }
-  }
-
-  showSaveLayout() {
-    const { classes, dashboard } = this.props;
-
-    if (dashboard.layoutChanged > 1) {
-      return (
-        <div className={classes.saveLayoutBar}>
-          <Button variant="contained" color="primary" onClick={this.props.saveLayout}>
-            Save New Layout
-          </Button>
-        </div>
-      )
-    } else {
-      return null
     }
   }
 
@@ -73,15 +43,14 @@ class DashboardPage extends React.Component {
         <Header location={location} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <GridLayout />
+          <AdminSettings/>
         </main>
-        {this.showSaveLayout()}
       </div>
     )
   }
 }
 
-DashboardPage.propTypes = {
+AdminPage.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -91,10 +60,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   initializeEditor: () => dispatch(initializeEditor()),
-  saveLayout: () => dispatch(saveLayout()),
 });
 
-DashboardPage = withStyles(styles)(DashboardPage);
-DashboardPage = connect(mapStateToProps, mapDispatchToProps)(DashboardPage);
+AdminPage = withStyles(styles)(AdminPage);
+AdminPage = connect(mapStateToProps, mapDispatchToProps)(AdminPage);
 
-export default DashboardPage
+export default AdminPage

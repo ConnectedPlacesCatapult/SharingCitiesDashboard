@@ -11,11 +11,10 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
-import { withRouter } from 'react-router-dom'
 
-import LoginMessage from './LoginMessage'
+import RegisterMessage from './RegisterMessage'
 
-import { doLogin } from "../../actions/userActions";
+import { doRegister } from "../../actions/userActions";
 
 // redux
 import { connect } from 'react-redux';
@@ -55,17 +54,19 @@ const styles = (theme) => ({
   },
 });
 
-class LoginForm extends React.Component {
+class RegisterForm extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       email: '',
+      fullName: '',
       password: '',
+      confirmPassword: '',
       errors: {},
       isLoading: false,
-      loginFailed: false,
-      loginError: ''
+      registrationFailed: false,
+      registrationError: ''
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -74,13 +75,12 @@ class LoginForm extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    doLogin(this.state.email, this.state.password, this.loginFailed, this.props)
-  };
-
-  loginFailed = (e) => {
-    this.setState({loginFailed: true, loginError: e.response.data.message})
-    console.log('failed set')
-    console.log(e.response.data.message)
+    if (this.state.password === this.state.confirmPassword) {
+      doRegister(this.state.email, this.state.fullName, this.state.password)
+    } else {
+      this.setState(
+        {registrationError: 'Passwords do not match', registrationFailed: true})
+    }
   };
 
   onChange = (e) => {
@@ -92,7 +92,7 @@ class LoginForm extends React.Component {
   }
 
   render() {
-    const { email, password, errors, isLoading } = this.state;
+    const { email, password, confirmPassword, fullName, errors, isLoading } = this.state;
     const { classes } = this.props;
 
     return (
@@ -100,7 +100,7 @@ class LoginForm extends React.Component {
         <Paper className={classes.paper}>
           <img className={classes.logoImage} src={bgImage} width="220px" height="auto" style={{marginBottom: 20}}/>
           <Typography variant="h5">
-            Login
+            Register
           </Typography>
           <form className={classes.form} onSubmit={this.onSubmit}>
             <FormControl margin="normal" required fullWidth>
@@ -117,22 +117,42 @@ class LoginForm extends React.Component {
               />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="fullName">Full Name</InputLabel>
+              <Input
+                id="fullName"
+                name="fullName"
+                type="string"
+                autoComplete="fullName"
+                error={errors.fullName}
+                onChange={this.onChange}
+                value={fullName}
+              />
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Password</InputLabel>
               <Input
                 name="password"
                 type="password"
                 id="password"
-                autoComplete="current-password"
+                autoComplete="off"
                 error={errors.password}
                 onChange={this.onChange}
                 value={password}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <LoginMessage loginFailed={this.state.loginFailed} loginError={this.state.loginError}/>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="confirmPassword">Confirm Password</InputLabel>
+              <Input
+                name="confirmPassword"
+                type="password"
+                id="confirmPassword"
+                autoComplete="off"
+                error={errors.confirmPassword}
+                onChange={this.onChange}
+                value={confirmPassword}
+              />
+            </FormControl>
+            <RegisterMessage registrationFailed={this.state.registrationFailed} registrationError={this.state.registrationError}/>
             <Button
               type="submit"
               fullWidth
@@ -141,7 +161,7 @@ class LoginForm extends React.Component {
               className={classes.submit}
               disabled={isLoading}
             >
-              Sign in
+              Submit
             </Button>
             <Button
               fullWidth
@@ -149,7 +169,7 @@ class LoginForm extends React.Component {
               color="primary"
               className={classes.submit}
               onClick={this.toggleForm}>
-              Register
+              Back to Login
             </Button>
           </form>
         </Paper>
@@ -158,7 +178,7 @@ class LoginForm extends React.Component {
   }
 }
 
-LoginForm.propTypes = {
+RegisterForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -170,8 +190,7 @@ const madDispatchToProps = (dispatch) => ({
 
 });
 
-LoginForm = withStyles(styles)(LoginForm);
-LoginForm = withRouter(LoginForm);
-LoginForm = connect(mapStateToProps, madDispatchToProps)(LoginForm);
+RegisterForm = withStyles(styles)(RegisterForm);
+RegisterForm = connect(mapStateToProps, madDispatchToProps)(RegisterForm);
 
-export default LoginForm
+export default RegisterForm

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import {
   PURGE_EDITOR,
   SET_MAP_DATA,
@@ -187,3 +188,20 @@ export const toggleMapTooltipField = (field, checked) => ({
     checked,
   },
 });
+
+export function saveWidget() {
+  return (dispatch, getState) => {
+    console.log(getState())
+    const state = getState()
+    const widgetType = _.get(state, 'widget.type')
+    let config = null
+    if (widgetType === 'plot') {
+      config = _.get(state, 'widget.plotConfig' )
+    } else if (widgetType === 'map') {
+      config = _.get(state, 'widget.mapConfig' )
+    } else {
+      config = _.get(state, 'widget.alertConfig' )
+    }
+    console.log(config)
+  }
+}

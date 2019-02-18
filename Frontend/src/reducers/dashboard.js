@@ -13,6 +13,7 @@ const initialState = {
   widgets: [],
   fetching: false,
   fetched: false,
+  layoutChanged: 0,
   error: null,
 };
 
@@ -48,6 +49,7 @@ export default (state=initialState, action={}) => {
       return {
         ...state,
         layout: action.payload,
+        layoutChanged: state.layoutChanged + 1
       }
     }
 

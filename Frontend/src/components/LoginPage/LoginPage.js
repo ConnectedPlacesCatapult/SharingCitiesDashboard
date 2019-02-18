@@ -6,6 +6,7 @@ import DataTable from '../DataPage/DataTable/index';
 import OptionsSidePanel from '../DataPage/OptionsSidePanel';
 import NoData from '../DataPage/NoData';
 import LoginForm from '../LoginPage/LoginForm'
+import RegisterForm from '../LoginPage/RegisterForm'
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -37,6 +38,7 @@ const styles = (theme) => ({
 class LoginPage extends React.Component {
   state = {
     widgetModalOpen: false,
+    showLogin: true,
   };
 
   openWidgetMaker = () => {
@@ -47,18 +49,51 @@ class LoginPage extends React.Component {
     this.setState({ widgetModalOpen: false })
   };
 
+  toggleForm = () => {
+    console.log('toggled')
+    this.setState({ showLogin: !this.state.showLogin });
+  }
+
+  renderForm() {
+    if (this.state.showLogin === true) {
+      return (
+        <LoginForm onToggleForm={this.toggleForm}/>
+      )
+    } else {
+      return (
+        <RegisterForm onToggleForm={this.toggleForm}/>
+      )
+    }
+  }
+
   render() {
     const { classes, location, api } = this.props;
 
     return (
       <div className={classes.root}>
         <main className={classes.content}>
-          <LoginForm/>
+          { this.renderForm() }
         </main>
       </div>
     )
   }
 }
+
+function toggleForm() {
+  console.log('form toggled')
+}
+//
+// function renderForm(showLogin) {
+//   if (showLogin) {
+//     return (
+//       <LoginForm onToggleForm={this.toggleForm}/>
+//     )
+//   } else {
+//     return (
+//       <RegisterForm/>
+//     )
+//   }
+// }
 
 LoginPage.propTypes = {
   classes: PropTypes.object.isRequired,
