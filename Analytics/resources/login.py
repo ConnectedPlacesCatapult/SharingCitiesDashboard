@@ -17,19 +17,15 @@ class Login(Resource):
 		args = self.parser.parse_args()
 		current_user = Users.find_by_email(args['email']) #t
 
-		if current_user: 
+		if current_user and Users.verify_hash(args['password'].encode("utf8"), current_user.password.encode("utf8")): 
 			if current_user.activated:
-				if Users.verify_hash(args['password'].encode("utf8"), current_user.password.encode("utf8")):
 					access_token = create_access_token(identity = current_user)
 					refresh_token = create_refresh_token(identity = current_user)
 					return {'message': 'Logged in as {}'.format(current_user.email), 'access_token': access_token, 'refresh_token': refresh_token}, 200
-				else:
-					return {'message': 'Incorrect credentials. Please try again'}, 403
-
 			else:
 				return {'message': 'User {} has not been activated. Please register when redirected to regirstration page'.format(current_user.email)}, 403
 		else:
-			return {'message': 'User {} does not exist. Please try again'.format(args["email"])}, 403
+			return {'message': 'Incorrect credentials. Please try again'}, 403
 
 class SecretResource(Resource):
 	@jwt_required
