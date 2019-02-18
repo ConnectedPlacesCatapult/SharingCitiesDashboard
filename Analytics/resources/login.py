@@ -17,7 +17,9 @@ class Login(Resource):
 		args = self.parser.parse_args()
 		current_user = Users.find_by_email(args['email']) #t
 
-		if current_user and Users.verify_hash(args['password'].encode("utf8"), current_user.password.encode("utf8")):
+		# and Users.verify_hash(args['password'].encode("utf8"), current_user.password.encode("utf8")):
+
+		if current_user:
 			if current_user.activated:
 				if args['password'] == current_user.password:
 					access_token = create_access_token(identity = current_user)

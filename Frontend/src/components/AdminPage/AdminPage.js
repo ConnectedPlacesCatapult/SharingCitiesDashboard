@@ -10,7 +10,12 @@ import AdminSettings from "./AdminSettings"
 import { withStyles } from '@material-ui/core/styles';
 
 import {initializeEditor} from "../../actions/widgetActions";
-import {connect} from "react-redux";
+
+// redux
+import { connect } from 'react-redux';
+import {
+  fetchAdmin
+} from "./../../actions/apiActions";
 
 const styles = (theme) => ({
   root: {
@@ -33,10 +38,14 @@ class AdminPage extends React.Component {
     this.state = {
       loginModalOpen: false
     }
+    //
+    this.props.fetchAdmin()
   }
 
   render() {
-    const { classes, location } = this.props;
+    const { adminItems, classes, location } = this.props;
+
+    console.log(adminItems)
 
     return (
       <div className={classes.root}>
@@ -51,14 +60,18 @@ class AdminPage extends React.Component {
 }
 
 AdminPage.propTypes = {
+  // adminItems: PropTypes.array.isRequired,
+  fetchAdmin: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
+  api: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  dashboard: state.dashboard,
+  api: state.api,
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  fetchAdmin: () => dispatch(fetchAdmin()),
   initializeEditor: () => dispatch(initializeEditor()),
 });
 

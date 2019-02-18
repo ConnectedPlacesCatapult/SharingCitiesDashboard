@@ -3,6 +3,9 @@ import {
   FETCH_THEMES,
   FETCH_THEMES_FULFILLED,
   FETCH_THEMES_REJECTED,
+  FETCH_ADMIN,
+  FETCH_ADMIN_FULFILLED,
+  FETCH_ADMIN_REJECTED,
   TOGGLE_THEME_SELECTED,
   FETCH_SUBTHEMES,
   FETCH_SUBTHEMES_FULFILLED,
@@ -29,7 +32,7 @@ export const fetchThemes = () => {
     });
 
     axios({
-      url: config.apiRoot,
+      url: config.apiRoot + 'data',
       method: 'get',
       params: {},
     })
@@ -42,6 +45,41 @@ export const fetchThemes = () => {
       .catch((err) => {
         dispatch({
           type: FETCH_THEMES_REJECTED,
+          payload: err,
+        })
+      })
+  };
+};
+
+// Admin
+export const fetchAdmin = () => {
+  return (dispatch, getState) => {
+    const currentState = getState();
+    const config = currentState.config.config;
+
+    dispatch({
+      type: FETCH_ADMIN,
+    });
+
+    axios({
+      url: config.apiRoot + 'admin/list_users',
+      method: 'post',
+      headers: {
+        Authorization: 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTA1MDUzNTgsIm5iZiI6MTU1MDUwNTM1OCwianRpIjoiZDA4ZGRiNGQtNDE4YS00YWMwLWFkODYtZDQ3ZGM0ZTUyYTQ4IiwiZXhwIjoxNTUxMTEwMTU4LCJpZGVudGl0eSI6InBhdHJpY2tAZG90bW9kdXMuY29tIiwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIiwidXNlcl9jbGFpbXMiOnsiYWRtaW4iOm51bGx9fQ.N_fD7BGjnRL47YFoclmIBnoWzub2ugDJUSNuLwRA0B4'
+      },
+      data: {
+        limit: '10'
+      },
+    })
+      .then((response) => {
+        dispatch({
+          type: FETCH_ADMIN_FULFILLED,
+          payload: response.data,
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: FETCH_ADMIN_REJECTED,
           payload: err,
         })
       })
@@ -64,7 +102,7 @@ export const fetchSubthemes = (themeId) => {
     });
 
     axios({
-      url: config.apiRoot,
+      url: config.apiRoot + 'data',
       method: 'get',
       params: {
         [QUERY_PARAMS.THEME_ID]: themeId,
@@ -107,7 +145,7 @@ export const fetchAttributes = (themeId, subthemeId) => {
     });
 
     axios({
-      url: config.apiRoot,
+      url: config.apiRoot + 'data',
       method: 'get',
       params: {
         [QUERY_PARAMS.SUBTHEME_ID]: subthemeId,
@@ -178,7 +216,7 @@ export const fetchAttributeData = (themeId, subthemeId, queryParams = {}) => {
     });
 
     axios({
-      url: config.apiRoot,
+      url: config.apiRoot + 'data',
       method: 'get',
       params: {
         ...queryParams,
