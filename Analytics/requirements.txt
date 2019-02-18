@@ -18,3 +18,5 @@ geojson
 shapely
 bcrypt
 flask-jwt-extended
+pyyaml
+requests
