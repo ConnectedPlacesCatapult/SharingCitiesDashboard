@@ -6,9 +6,17 @@ from datetime import datetime
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity,get_jwt_claims)
 from models.users import Users
 
-#TODO: add doc string 
 
 class Login(Resource):
+	"""API that grants users access to the Sharing Cities Dashboard aswell as sends their correpsonding access and refresh JWT
+       Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :param email: users email address
+        :param password: users password 
+        :type email: string
+        :type password: string
+        :return: A message that indicates whether a user has been logged in. If they have not, the message indicates why not. If they have, their access and refresh JWTs are also returned
+        :rtype: JSON
+    	"""
 	parser = reqparse.RequestParser()
 	parser.add_argument('email', type=str, store_missing=False, help = 'This field cannot be blank', required = True)
 	parser.add_argument('password', type=str, store_missing=False, help= 'This field cannot be blank', required = True)
@@ -32,6 +40,10 @@ class Login(Resource):
 			return {'message': 'User {} does not exist. Please try again'.format(args["email"])}, 403
 
 class SecretResource(Resource):
+	"""API that is solely used to test the functionality of access JWT
+        :required: A valid access JWT in the Authorization Header in the format - Bearer <JWT>
+        :rtype: JSON
+    	"""
 	@jwt_required
 	def get(self):
 		if get_jwt_claims()["admin"]:
