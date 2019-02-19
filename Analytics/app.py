@@ -15,7 +15,8 @@ from resources.refresh_token import TokenRefresh
 from resources.request_for_data import RequestForData
 
 from resources.Widgets.widgets import Widgets
-from resources.Widgets.get_widget import GetWidgets
+from resources.Widgets.get_widgets import GetWidgets
+from resources.Widgets.get_layouts import GetLayouts
 from resources.Widgets.get_widget_layout import GetWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
@@ -107,6 +108,7 @@ def create_app(**config_overrides):
     api.add_resource(GetWidgets, '/widgets/load_widgets')
     api.add_resource(DeleteWidgets, '/widgets/delete_widget')
     api.add_resource(GetWidgetLayout, '/widgets/get_layout')
+    api.add_resource(GetLayouts, '/widgets/get_layouts')
     api.add_resource(SaveWidgetLayout, '/widgets/save_layouts')
 
     # Admin Endpoints
