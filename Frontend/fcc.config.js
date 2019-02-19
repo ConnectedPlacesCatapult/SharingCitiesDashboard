@@ -80,5 +80,10 @@ module.exports = {
     plotMarker: "point",
     widgetName: "New Widget",
     widgetType: "plot",
-  }
+  },
+  dataTableDefaults: {
+    order: 'desc',
+    orderBy: 'Timestamp',
+    rowsPerPage: 20,
+  },
 };
