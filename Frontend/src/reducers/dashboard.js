@@ -6,7 +6,10 @@ import {
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
   FETCH_WIDGETS_REJECTED,
+  PROMPT_WIDGET_DELETE,
+  CANCEL_WIDGET_DELETE
 } from "./../constants";
+import {DELETE_WIDGET_FULFILLED} from "../constants";
 
 const initialState = {
   layout: [],
@@ -14,6 +17,8 @@ const initialState = {
   fetching: false,
   fetched: false,
   layoutChanged: 0,
+  deleteWidgetDialogOpen: false,
+  widgetToDelete: null,
   error: null,
 };
 
@@ -75,6 +80,30 @@ export default (state=initialState, action={}) => {
         fetching: false,
         fetched: false,
         error: action.payload,
+      }
+    }
+
+    case PROMPT_WIDGET_DELETE: {
+      return {
+        ...state,
+        deleteWidgetDialogOpen: true,
+        widgetToDelete: action.widgetToDelete,
+      }
+    }
+
+    case CANCEL_WIDGET_DELETE: {
+      return {
+        ...state,
+        deleteWidgetDialogOpen: false,
+        widgetToDelete: null,
+      }
+    }
+
+    case DELETE_WIDGET_FULFILLED: {
+      return {
+        ...state,
+        fetching: false,
+        deleteWidgetDialogOpen: false,
       }
     }
 

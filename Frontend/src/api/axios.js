@@ -1,8 +1,6 @@
 import { LOCAL_URL } from './urls'
+import { getAuthToken } from './session'
 import axios from 'axios'
-// import { getAuthToken } from '../mixins/session'
-// import { getActiveSite } from '../mixins/session'
-// import cachedAxios from './cached_axios'
 
 export const axiosInstance = axios.create({
   baseURL: LOCAL_URL
@@ -10,12 +8,8 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(function (config) {
   // Do something before request is sent
-  // const authToken = getAuthToken()
-  // const activeSite = getActiveSite()
-  // config.headers.Authorization = 'Token ' + authToken
-  // if (activeSite) {
-  //   config.headers.site = activeSite
-  // }
+  const authToken = getAuthToken()
+  config.headers.Authorization = 'Bearer ' + authToken
   return config
 })
 

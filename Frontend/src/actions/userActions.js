@@ -22,11 +22,12 @@ export function doLogin(email, password, loginFailedFN, props) {
   })
 }
 
-export function doRegister(email, fullName, password) {
+export function doRegister(email, fullName, password, passwordNew) {
   const userInfo = {
     email: email,
     fullName: fullName,
-    password: password
+    password: password,
+    password_new: passwordNew
   }
 
   const session = axiosInstance.post('/register', userInfo).then((res) => {
@@ -34,6 +35,24 @@ export function doRegister(email, fullName, password) {
   }).catch(function (e) {
     console.log('registration failed', e)
   })
+}
+
+export function doUserDelete(email, fullName, password, passwordNew) {
+
+  const userInfo = {
+    email: email,
+    fullName: fullName,
+    password: password,
+    password_new: passwordNew
+  }
+
+  console.log(userInfo)
+
+  // const session = axiosInstance.post('/admin/delete_user', userInfo).then((res) => {
+  //   console.log(res.data)
+  // }).catch(function (e) {
+  //   console.log('Failed to delete user', e)
+  // })
 }
 
 export function doLogout(props) {

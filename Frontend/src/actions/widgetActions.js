@@ -200,6 +200,7 @@ export function saveWidget() {
     const currentState = getState();
     const config = currentState.config.config;
 
+    const widgetName = _.get(currentState, 'widget.name' )
     const widgetType = _.get(currentState, 'widget.type')
     let widgetConfig = null
     if (widgetType === 'plot') {
@@ -210,8 +211,6 @@ export function saveWidget() {
       widgetConfig = _.get(currentState, 'widget.alertConfig' )
     }
 
-    console.log(widgetConfig)
-
     axios({
       url: config.apiRoot + 'widgets',
       method: 'post',
@@ -219,8 +218,10 @@ export function saveWidget() {
         Authorization: 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTA1MDUzNTgsIm5iZiI6MTU1MDUwNTM1OCwianRpIjoiZDA4ZGRiNGQtNDE4YS00YWMwLWFkODYtZDQ3ZGM0ZTUyYTQ4IiwiZXhwIjoxNTUxMTEwMTU4LCJpZGVudGl0eSI6InBhdHJpY2tAZG90bW9kdXMuY29tIiwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIiwidXNlcl9jbGFpbXMiOnsiYWRtaW4iOm51bGx9fQ.N_fD7BGjnRL47YFoclmIBnoWzub2ugDJUSNuLwRA0B4'
       },
       data: {
-        ...widgetConfig
-      },
+        ...widgetConfig,
+        "title": widgetName,
+        "type": widgetType
+      }
     })
       .then((response) => {
         dispatch({

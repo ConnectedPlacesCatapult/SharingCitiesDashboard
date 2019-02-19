@@ -13,6 +13,12 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import InfoIcon from '@material-ui/icons/Info';
 import OpenWithIcon from '@material-ui/icons/OpenWith';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+import { promptDeleteWidget } from "./../../actions/dashboardActions";
+import {saveLayout} from "../../actions/dashboardActions";
+import {initializeEditor} from "../../actions/widgetActions";
+import {connect} from "react-redux";
 
 const styles = (theme) => ({
   widget: {
@@ -24,6 +30,11 @@ const styles = (theme) => ({
     // padding: theme.spacing.unit,
     overflow: 'hidden',
     backgroundColor: "#212121"
+  },
+  widgetDeleteConfirmation: {
+    // padding: theme.spacing.unit,
+    overflow: 'hidden',
+    backgroundColor: "#b74218"
   },
   widgetTitleContainer: {
     // backgroundColor: "#fafafa",
@@ -58,7 +69,7 @@ const styles = (theme) => ({
 
 class Widget extends React.Component {
   render() {
-    const { classes, title, isStatic, type, data } = this.props;
+    const { classes, title, isStatic, type, data, widgetID, promptDeleteWidget } = this.props;
 
     return (
       <Paper className={classes.widget}>
@@ -79,23 +90,24 @@ class Widget extends React.Component {
                 </IconButton>
               : ''
             }
+            {/*<IconButton*/}
+              {/*color="primary"*/}
+              {/*className={classes.smallerButton}*/}
+            {/*>*/}
+              {/*<InfoIcon fontSize="small" />*/}
+            {/*</IconButton>*/}
+            {/*<IconButton*/}
+              {/*color="primary"*/}
+              {/*className={classes.smallerButton}*/}
+            {/*>*/}
+              {/*<AddCircleIcon fontSize="small" />*/}
+            {/*</IconButton>*/}
             <IconButton
+              onClick={() => promptDeleteWidget(widgetID)}
               color="primary"
               className={classes.smallerButton}
             >
-              <InfoIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              color="primary"
-              className={classes.smallerButton}
-            >
-              <AddCircleIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              color="primary"
-              className={classes.smallerButton}
-            >
-              <SettingsIcon fontSize="small" />
+              <DeleteIcon fontSize="small" />
             </IconButton>
           </div>
         </div>
@@ -116,6 +128,15 @@ Widget.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
+const mapStateToProps = (state) => ({
+  dashboard: state.dashboard,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  promptDeleteWidget: (widgetID) => dispatch(promptDeleteWidget(widgetID)),
+});
+
 Widget = withStyles(styles, { withTheme: true })(Widget);
+Widget = connect(mapStateToProps, mapDispatchToProps)(Widget);
 
 export default Widget

@@ -52,40 +52,6 @@ export const fetchThemes = () => {
 };
 
 // Admin
-export const fetchAdmin = () => {
-  return (dispatch, getState) => {
-    const currentState = getState();
-    const config = currentState.config.config;
-
-    dispatch({
-      type: FETCH_ADMIN,
-    });
-
-    axios({
-      url: config.apiRoot + 'admin/list_users',
-      method: 'post',
-      headers: {
-        Authorization: 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTA1MDUzNTgsIm5iZiI6MTU1MDUwNTM1OCwianRpIjoiZDA4ZGRiNGQtNDE4YS00YWMwLWFkODYtZDQ3ZGM0ZTUyYTQ4IiwiZXhwIjoxNTUxMTEwMTU4LCJpZGVudGl0eSI6InBhdHJpY2tAZG90bW9kdXMuY29tIiwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIiwidXNlcl9jbGFpbXMiOnsiYWRtaW4iOm51bGx9fQ.N_fD7BGjnRL47YFoclmIBnoWzub2ugDJUSNuLwRA0B4'
-      },
-      data: {
-        limit: '10'
-      },
-    })
-      .then((response) => {
-        dispatch({
-          type: FETCH_ADMIN_FULFILLED,
-          payload: response.data,
-        })
-      })
-      .catch((err) => {
-        dispatch({
-          type: FETCH_ADMIN_REJECTED,
-          payload: err,
-        })
-      })
-  };
-};
-
 export const toggleThemeSelected = (themeId) => ({
   type: TOGGLE_THEME_SELECTED,
   payload: themeId,

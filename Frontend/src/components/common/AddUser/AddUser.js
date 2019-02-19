@@ -1,27 +1,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Paper from "@material-ui/core/Paper";
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import Button from '@material-ui/core/Button';
+import SaveIcon from '@material-ui/icons/Save';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@material-ui/core/Input';
+import RegisterMessage from './../../LoginPage/RegisterMessage'
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
-import Typography from "@material-ui/core/Typography";
-import Paper from '@material-ui/core/Paper';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-
-import RegisterMessage from './RegisterMessage'
-
-import { doRegister } from "../../actions/userActions";
 
 // redux
-import { connect } from 'react-redux';
-
-const bgImage = require('./../../images/Lisbon-logo-med.png');
+import {connect} from "react-redux";
+import { createUser } from "../../../actions/adminActions";
 
 const styles = (theme) => ({
+  root: {
+    display: 'flex',
+    alignItems: 'center',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+  },
   layout: {
     width: 'auto',
     display: 'block', // Fix IE 11 issue.
@@ -45,7 +51,7 @@ const styles = (theme) => ({
     margin: theme.spacing.unit,
     //backgroundColor: theme.palette.secondary.main,
   },
-  form: {
+  folist_usersrm: {
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing.unit,
   },
@@ -54,33 +60,30 @@ const styles = (theme) => ({
   },
 });
 
-class RegisterForm extends React.Component {
+class AddUser extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       email: '',
       fullName: '',
-      oldPassword: '',
-      passwordNew: '',
-      confirmPasswordNew: '',
-      errors: {},
-      isLoading: false,
+      password: '',
+      confirmPassword: '',
+      isAdmin: false,
       registrationFailed: false,
-      registrationError: ''
+      registrationError: null,
+      errors: {}
     };
-
     this.onSubmit = this.onSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
   }
 
   onSubmit = (e) => {
     e.preventDefault();
-    if (this.state.passwordNew === this.state.confirmPasswordNew) {
-      doRegister(this.state.email, this.state.fullName, this.state.password, this.state.passwordNew)
+    if (this.state.password === this.state.confirmPassword) {
+      this.props.createUser(this.state)
     } else {
       this.setState(
-        {registrationError: 'Passwords do not match', registrationFailed: true})
+      {registrationError: 'Passwords do not match', registrationFailed: true})
     }
   };
 
@@ -88,20 +91,19 @@ class RegisterForm extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  toggleForm = () => {
-    this.props.onToggleForm();
-  }
+  onCheckChange = name => event => {
+    this.setState({ [name]: event.target.checked });
+  };
 
   render() {
-    const { email, password, passwordNew, confirmPasswordNew, fullName, errors, isLoading } = this.state;
+    const { email, password, confirmPassword, fullName, errors, isLoading, isAdmin } = this.state;
     const { classes } = this.props;
 
     return (
       <main className={classes.layout}>
         <Paper className={classes.paper}>
-          <img className={classes.logoImage} src={bgImage} width="220px" height="auto" style={{marginBottom: 20}}/>
           <Typography variant="h5">
-            Register
+            Add User
           </Typography>
           <form className={classes.form} onSubmit={this.onSubmit}>
             <FormControl margin="normal" required fullWidth>
@@ -130,7 +132,7 @@ class RegisterForm extends React.Component {
               />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="password">Old Password</InputLabel>
+              <InputLabel htmlFor="password">Password</InputLabel>
               <Input
                 name="password"
                 type="password"
@@ -142,29 +144,28 @@ class RegisterForm extends React.Component {
               />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="passwordNew">New Password</InputLabel>
+              <InputLabel htmlFor="confirmPassword">Confirm Password</InputLabel>
               <Input
-                name="passwordNew"
+                name="confirmPassword"
                 type="password"
-                id="passwordNew"
+                id="confirmPassword"
                 autoComplete="off"
-                error={errors.passwordNew}
+                error={errors.confirmPassword}
                 onChange={this.onChange}
-                value={passwordNew}
+                value={confirmPassword}
               />
             </FormControl>
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="confirmPasswordNew">Confirm New Password</InputLabel>
-              <Input
-                name="confirmPasswordNew"
-                type="password"
-                id="confirmPasswordNew"
-                autoComplete="off"
-                error={errors.confirmPasswordNew}
-                onChange={this.onChange}
-                value={confirmPasswordNew}
-              />
-            </FormControl>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={this.state.isAdmin}
+                  onChange={this.onCheckChange("isAdmin")}
+                  color="primary"
+                />
+              }
+              label="Admin User"
+              style={{marginTop: "10px"}}
+            />
             <RegisterMessage registrationFailed={this.state.registrationFailed} registrationError={this.state.registrationError}/>
             <Button
               type="submit"
@@ -181,8 +182,8 @@ class RegisterForm extends React.Component {
               variant="text"
               color="primary"
               className={classes.submit}
-              onClick={this.toggleForm}>
-              Back to Login
+              onClick={this.props.closeAddUser}>
+              Cancel
             </Button>
           </form>
         </Paper>
@@ -191,7 +192,7 @@ class RegisterForm extends React.Component {
   }
 }
 
-RegisterForm.propTypes = {
+AddUser.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -199,11 +200,11 @@ const mapStateToProps = (state) => ({
 
 });
 
-const madDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({
+  createUser: (userInfo) => dispatch(createUser(userInfo)),
+})
 
-});
+AddUser = withStyles(styles)(AddUser);
+AddUser = connect(mapStateToProps, mapDispatchToProps)(AddUser);
 
-RegisterForm = withStyles(styles)(RegisterForm);
-RegisterForm = connect(mapStateToProps, madDispatchToProps)(RegisterForm);
-
-export default RegisterForm
+export default AddUser

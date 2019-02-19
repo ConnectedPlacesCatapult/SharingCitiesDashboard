@@ -48,29 +48,45 @@ class GridLayout extends React.Component {
   render() {
     const { classes, dashboard } = this.props;
 
-    const gridItems = dashboard.layout.map((gridItem) => {
-      let gridItemWidget = dashboard.widgets.find((widget) => gridItem.i === widget.i);
+    const layout = []
+    for (let i = 0; i < dashboard.widgets.length; i++) {
+      const layoutItem = {
+        "i": i.toString(),
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 3,
+        "static": false
+      }
+      layout.push(layoutItem)
+    }
 
+    const gridItems = layout.map((gridItem) => {
+      let gridItemWidget = dashboard.widgets.find((widget) => gridItem.i === widget.i);
       return (
         <div key={gridItem.i}>
-          <Widget {...gridItemWidget} isStatic={gridItem.static || false} />
+          <Widget widgetID={gridItem.widgetID} {...gridItemWidget} isStatic={gridItem.static || false} />
         </div>
       )
     });
 
-    return (
-      <ReactGridLayout
-        layout={dashboard.layout}
-        cols={12}
-        rowHeight={30}
-        width={1200}
-        onLayoutChange={this.onLayoutChange}
-        className={classes.root}
-        draggableHandle='.draggableHandle'
-      >
-        {gridItems}
-      </ReactGridLayout>
-    )
+    if (dashboard.widgets.length) {
+      return (
+        <ReactGridLayout
+          layout={dashboard.layout}
+          cols={12}
+          rowHeight={30}
+          width={1200}
+          onLayoutChange={this.onLayoutChange}
+          className={classes.root}
+          draggableHandle='.draggableHandle'
+        >
+          {gridItems}
+        </ReactGridLayout>
+      )
+    } else {
+      return null
+    }
   }
 }
 

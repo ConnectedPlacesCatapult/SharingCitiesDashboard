@@ -13,13 +13,13 @@ from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.request_for_data import RequestForData
-
-from resources.Widgets.widgets import Widgets
-from resources.Widgets.get_widget import GetWidgets
-from resources.Widgets.get_widget_layout import GetWidgetLayout
-from resources.Widgets.delete_widget import DeleteWidgets
-from resources.Widgets.create_widget_layout import CreateWidgetLayout
-from resources.Widgets.save_layouts import SaveWidgetLayout
+#
+# from resources.Widgets.widgets import Widgets
+# from resources.Widgets.get_widget import GetWidgets
+# from resources.Widgets.get_widget_layout import GetWidgetLayout
+# from resources.Widgets.delete_widget import DeleteWidgets
+# from resources.Widgets.create_widget_layout import CreateWidgetLayout
+# from resources.Widgets.save_layouts import SaveWidgetLayout
 
 from resources.admin.create_new_user import CreateNewUser
 from resources.admin.user_permissions import UserPermissions
@@ -102,12 +102,12 @@ def create_app(**config_overrides):
     api.add_resource(SecretResource, '/secret')
 
     # Widget Endpoints
-    api.add_resource(Widgets, '/widgets/create_widget')
-    api.add_resource(CreateWidgetLayout, '/widgets/create_layout')
-    api.add_resource(GetWidgets, '/widgets/load_widgets')
-    api.add_resource(DeleteWidgets, '/widgets/delete_widget')
-    api.add_resource(GetWidgetLayout, '/widgets/get_layout')
-    api.add_resource(SaveWidgetLayout, '/widgets/save_layouts')
+    # api.add_resource(Widgets, '/widgets/create_widget')
+    # api.add_resource(CreateWidgetLayout, '/widgets/create_layout')
+    # api.add_resource(GetWidgets, '/widgets/load_widgets')
+    # api.add_resource(DeleteWidgets, '/widgets/delete_widget')
+    # api.add_resource(GetWidgetLayout, '/widgets/get_layout')
+    # api.add_resource(SaveWidgetLayout, '/widgets/save_layouts')
 
     # Admin Endpoints
     api.add_resource(CreateNewUser, '/admin/create_new_user')

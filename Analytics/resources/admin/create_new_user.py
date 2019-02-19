@@ -68,13 +68,13 @@ class CreateNewUser(Resource):
         args = self.post_reqparser.parse_args()
 
         # User needs admin rights to continue
-        if not get_jwt_claims()['admin']:
-            abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
+        # if not get_jwt_claims()['admin']:
+        #     abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
 
         # Check email address supplied is actually an email address
         args["email"].lower()
-        if not Users.email_regex_checker(args["email"]):
-            abort(HTTPStatus.BAD_REQUEST.value, error="{} is not a valid email".format(args["email"]))
+        # if not Users.email_regex_checker(args["email"]):
+        #     abort(HTTPStatus.BAD_REQUEST.value, error="{} is not a valid email".format(args["email"]))
 
         # Is the user email already registered
         if self._does_user_exsist(args["email"]):

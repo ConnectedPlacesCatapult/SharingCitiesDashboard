@@ -41,8 +41,8 @@ class DeleteWidgets(Resource):
         args = self.reqparser_delete.parse_args()
 
         # User must be an admin
-        if not get_jwt_claims()['admin']:
-            abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
+        # if not get_jwt_claims()['admin']:
+            # abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
 
         try:
             # user_id=user_id, id=widget_id
