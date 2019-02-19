@@ -68,6 +68,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 AttributeListItem = withStyles(styles)(AttributeListItem);
-AttributeListItem = connect({}, mapDispatchToProps)(AttributeListItem);
+AttributeListItem = connect(null, mapDispatchToProps)(AttributeListItem);
 
 export default AttributeListItem

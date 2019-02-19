@@ -15,6 +15,7 @@ import {
   FETCH_ATTRIBUTE_DATA,
   FETCH_ATTRIBUTE_DATA_FULFILLED,
   FETCH_ATTRIBUTE_DATA_REJECTED,
+  REMOVE_ATTRIBUTE_DATA,
   QUERY_PARAMS,
 } from "./../constants";
 
@@ -132,46 +133,20 @@ export const fetchAttributes = (themeId, subthemeId) => {
   }
 };
 
-export const toggleAttributeSelected = (themeId, subthemeId, attributeId) => ({
+export const toggleAttributeSelected = (themeId, subthemeId, attributeName) => ({
   type: TOGGLE_ATTRIBUTE_SELECTED,
   payload: {
     themeId,
     subthemeId,
-    attributeId,
+    attributeName,
   },
 });
 
 // data
-export const fetchAttributeData = (themeId, subthemeId, queryParams = {}) => {
+export const fetchAttributeData = (attributeName, queryParams = {}) => {
   return (dispatch, getState) => {
     const currentState = getState();
     const config = currentState.config.config;
-    const themes = currentState.api.themes;
-
-    // gather all selected attributes
-    const selectedAttributes = themes.find((theme) => theme.id === themeId)
-      .subthemes.find((subtheme) => subtheme.id === subthemeId)
-      .attributes.filter((attr) => attr.isSelected)
-      .map((attr) => attr.name)
-    ;
-
-    // catch no attributes selected
-    if (!selectedAttributes.length) {
-      dispatch({
-        type: FETCH_ATTRIBUTE_DATA_FULFILLED,
-        payload: {
-          themeId,
-          subthemeId,
-          queryParams: {
-            ...queryParams,
-            attributedata: selectedAttributes.join(),
-          },
-          data: [],
-        },
-      });
-
-      return
-    }
 
     dispatch({
       type: FETCH_ATTRIBUTE_DATA,
@@ -182,18 +157,16 @@ export const fetchAttributeData = (themeId, subthemeId, queryParams = {}) => {
       method: 'get',
       params: {
         ...queryParams,
-        attributedata: selectedAttributes.join(),
+        ['attributedata']: attributeName,
       },
     })
       .then((response) => {
         dispatch({
           type: FETCH_ATTRIBUTE_DATA_FULFILLED,
           payload: {
-            themeId,
-            subthemeId,
             queryParams: {
               ...queryParams,
-              attributedata: selectedAttributes.join(),
+              attributedata: attributeName,
             },
             data: response.data,
           },
@@ -207,3 +180,8 @@ export const fetchAttributeData = (themeId, subthemeId, queryParams = {}) => {
       })
   }
 };
+
+export const removeAttributeData = (attributeId) => ({
+  type: REMOVE_ATTRIBUTE_DATA,
+  payload: attributeId,
+});
