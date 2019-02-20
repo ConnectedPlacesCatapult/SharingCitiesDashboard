@@ -15,6 +15,7 @@ from models import location
 from datetime import datetime, timedelta
 import json
 import pandas as pd
+import numpy as np
 
 config = get_config()
 config = config[config['environment']]['milan']
@@ -243,27 +244,19 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
         super()._create_datasource(headers)
 
         data = self.load_dataset(headers)
-
-        df = pd.DataFrame(columns=['plate','rentalState', 'date', 'whichDate'])
+        df = pd.DataFrame(columns=['plate','rentalState', 'date', 'duration'])
         index = 0
 
-        ### Creating two attributes for each car, one for the 'dateFrom' and one for 'dateTo'
-        ### e.g. BOOKED_dateFrom, BOOKED_dateTo. The api_timestamp is the time information for eac case
         for plate in data[0]['vehicles']:
             for s in plate['statuses']:
                 df.at[index, 'plate'] = plate['plate']
-                df.at[index, 'rentalState'] = s['rentalState'] + '_dateFrom'
+                df.at[index, 'rentalState'] = s['rentalState']
                 df.at[index, 'date'] = s['dateFrom']
+                df.at[index, 'duration'] = np.abs((datetime.strptime(s['dateTill'], '%Y-%m-%dT%H:%M:%SZ') - \
+                                                   datetime.strptime(s['dateFrom'], '%Y-%m-%dT%H:%M:%SZ')).total_seconds())
                 index = index+1
 
-        for plate in data[0]['vehicles']:
-            for s in plate['statuses']:
-                df.at[index, 'plate'] = plate['plate']
-                df.at[index, 'rentalState'] = s['rentalState'] + '_dateTill'
-                df.at[index, 'date'] = s['dateTill']
-                index = index+1
 
-        ### Using the centroid coordinates of viale Bacchiglione since no location information is present
         df['latitude'] = 45.443384
         df['longitude'] = 9.221501
         loc = Location('latitude', 'longitude')
@@ -272,8 +265,10 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
         df['api_timestamp_tag'] = df['api_timestamp_tag'].astype(int)
         
         self.create_datasource(dataframe=df, sensor_tag='plate', 
-                                attribute_tag=['rentalState'], 
-                                unit_value=[], bespoke_unit_tag=[], description=['Information on activities relted to two e-car used by the inhabitants of a condominium located in viale Bacchiglione'],
-                                bespoke_sub_theme=[], location_tag=loc, sensor_prefix='', 
+                                attribute_tag=['rentalState', 'duration'], 
+                                unit_value=[7,8], bespoke_unit_tag=[], description=['Information on activities relted to two e-car used by the inhabitants of a condominium located in viale Bacchiglione'],
+                                bespoke_sub_theme=[2,2], location_tag=loc, sensor_prefix='', 
                                 api_timestamp_tag='api_timestamp_tag')
 
+    def _refresh_token(self, *args):
+        print('Token Expired')
