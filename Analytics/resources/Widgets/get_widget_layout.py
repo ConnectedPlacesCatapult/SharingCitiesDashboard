@@ -1,23 +1,23 @@
 from http import HTTPStatus
 
-from flask import jsonify
-from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
-from flask_restful import abort, inputs
+from flask_restful import abort
 from flask_restful import reqparse
-from sqlalchemy import exc
 
-from db import db
-from models.users import Users
 from models.widget import WidgetModel
-from models.layout_model import Layouts
 
+"""
+                    TODO: DocString
+"""
 
 class GetWidgetLayout(Resource):
+    """
 
+                        TODO: DocString
+    """
     def __init__(self):
-        # Get args parser ( Get widgets)
+        # Arguments required to fetch the layout the widget related to the userID
         self.reqparser_get = reqparse.RequestParser()
         self.reqparser_get.add_argument('widgetID', required=True, help='A widgetID is required',
                                         location=['form', 'json'])
@@ -25,16 +25,21 @@ class GetWidgetLayout(Resource):
 
     @jwt_required
     def post(self):
-        """ Get Widget layout for widgetID
-
+        """
+            Fetches layout for widget with the passed widgetID
+                    TODO: DocString
         """
 
         args = self.reqparser_get.parse_args()
+        # Fetch the instances of the widget to get the related layout.
         widget = WidgetModel.query.filter_by(id=args["widgetID"]).first()
 
+        # does the widget exist?
         if not widget:
-            abort(HTTPStatus.BAD_REQUEST.value, error="no widget found with widgetID: {}".format(args["widgetID"]))
+            # Widget instance not found
+            abort(HTTPStatus.NOT_FOUND.value, error="no widget found with widgetID: {}".format(args["widgetID"]))
         if not widget.layout:
-            abort(HTTPStatus.BAD_REQUEST.value, error="no widget layout found for widgetID: {}".format(args["widgetID"]))
+            # Widget instance found but no layout instance is present
+            abort(HTTPStatus.NOT_FOUND.value, error="no widget layout found for widgetID: {}".format(args["widgetID"]))
 
         return widget.layout.json(), HTTPStatus.OK.value

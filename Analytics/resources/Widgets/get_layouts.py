@@ -1,23 +1,21 @@
 from http import HTTPStatus
 
-from flask import jsonify
-from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
-from flask_restful import abort, inputs
+from flask_restful import abort
 from flask_restful import reqparse
-from sqlalchemy import exc
 
-from db import db
-from models.users import Users
 from models.widget import WidgetModel
-from models.layout_model import Layouts
-
+"""
+            TODO: DocString
+    """
 
 class GetLayouts(Resource):
-
+    """
+                TODO: DocString
+        """
     def __init__(self):
-        # Get args parser ( Get widgets)
+        # Arguments required to fetch the layouts for all the widget related to a userID
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('userID', required=True, help='A userID is required',
                                         location=['form', 'json'])
@@ -27,17 +25,27 @@ class GetLayouts(Resource):
 
     @jwt_required
     def post(self):
+        """
+                    TODO: DocString
+            """
+        # Fetch the userID from post content ( limit is optional )
         args = self.reqparser.parse_args()
+        # Fetch the instances of the widgets to assign the new layouts
         widgets = WidgetModel.query.filter_by(user_id=args["userID"]).limit(args["limit"]).all()
 
+        # Where widgets returned
         if not widgets:
-            abort(HTTPStatus.BAD_REQUEST.value, error="no widgets found")
+            # no widgets related to the userID supplied
+            abort(HTTPStatus.NOT_FOUND.value, error="no widgets found")
 
+        # Store layout instances to be returned
         layout_list = []
 
+        # Get all layout instances for the widgets
         for widget in widgets:
             widget = WidgetModel.get_widget_by_id(widget.id)
             widget.layout.widgetID = widget.id
+            # Format layouts to be return
             layout_list.append(widget.layout.json())
 
         return layout_list, HTTPStatus.OK.value

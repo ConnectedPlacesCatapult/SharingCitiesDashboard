@@ -14,14 +14,17 @@ from models.widget import WidgetModel
 
 
 class GetWidgets(Resource):
-
+    """
+                Fetches widgets related to the passed userID
+                        TODO: DocString
+    """
     def __init__(self):
-        # Get args parser ( Get widgets)
+        # Arguments required to fetch the widgets related to the userID
         self.reqparser_get = reqparse.RequestParser()
         self.reqparser_get.add_argument('userID', required=True, help='A user_id is required',
                                         location=['form', 'json'])
         self.reqparser_get.add_argument('limit', default=1, required=False, type=int,
-                                        help='Limit needs to be an Integer', location=['form', 'json'])
+                                        help='unable to parse limit', location=['form', 'json'])
         super().__init__()
 
     @jwt_required
@@ -39,17 +42,20 @@ class GetWidgets(Resource):
         """
 
         args = self.reqparser_get.parse_args()
+        # Fetch the widget instances related to the userID passed
         widgets = WidgetModel.query.filter_by(user_id=args["userID"]).limit(args["limit"]).all()
 
-
-
+        # Were widget instances returned
         if not widgets:
-            abort(HTTPStatus.BAD_REQUEST.value, error="no widgets found")
+            # No widgets found for userID
+            abort(HTTPStatus.NOT_FOUND.value, error="no widgets found for userID {}".format(args["userID"]))
 
+        # Store widgets to be returned
         widget_list = []
 
         for widget in widgets:
             widget = WidgetModel.get_widget_by_id(widget.id)
+            # Format widget data for response
             widget_list.append(widget.json())
 
         return widget_list, HTTPStatus.OK.value

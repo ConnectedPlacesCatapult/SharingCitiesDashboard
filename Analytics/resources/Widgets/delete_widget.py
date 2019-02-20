@@ -1,22 +1,23 @@
 from http import HTTPStatus
 
-from flask import jsonify
-from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required, get_jwt_claims
 from flask_restful import Resource
-from flask_restful import abort, inputs
+from flask_restful import abort
 from flask_restful import reqparse
 from sqlalchemy import exc
 
 from db import db
-from models.users import Users
 from models.widget import WidgetModel
-
+"""
+        TODO: DocString
+"""
 
 class DeleteWidgets(Resource):
-
+    """
+            TODO: DocString
+    """
     def __init__(self):
-        # Delete args parser (delete widgets)
+        # Arguments required to delete a widget
         self.reqparser_delete = reqparse.RequestParser()
         self.reqparser_delete.add_argument('userID', required=True, help='A userID is required',
                                            location=['form', 'json'])
@@ -27,7 +28,8 @@ class DeleteWidgets(Resource):
 
     @jwt_required
     def post(self):
-        """ Delete a widget from the database
+        """
+            Delete a widget from the database
 
             :param  userID: Unique user identification number
             :param  widgetID: Unique widget identification number
@@ -35,26 +37,29 @@ class DeleteWidgets(Resource):
             :type userID: Integer
             :type widgetID: Integer
 
-            :returns: A message and a status code of 200
+            :raises SQLAlchemyError: when a SQLAlchemyError is raised a status of code Bad Request (400) and the
+                    error is returned
+
+            :returns: A message and a status code of No Content (204) when a widget is deleted
+                      When the widget does not exist in the database table 'widgets' a status code of
+                      Not Found (404) is returned.
             :rtype: <class 'tuple'>
         """
         args = self.reqparser_delete.parse_args()
 
-        # User must be an admin
-        # if not get_jwt_claims()['admin']:
-        #     abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
-
         try:
-            # user_id=user_id, id=widget_id
-            #widget = WidgetModel.query.filter_by(id=args["widgetID"], user_id=args["userID"]).delete()
+            # Get widget instance from db to be delete
             widget = WidgetModel.query.filter_by(id=args["widgetID"], user_id=args["userID"]).first()
-            widget.delete()
 
+            # Does the widget instance exist with the supplied widgetID
             if not widget:
-                abort(HTTPStatus.BAD_REQUEST,
+                # The widget with the supplied widgetID does not exist
+                abort(HTTPStatus.NOT_FOUND.value,
                       error="WidgetID {} with userID {} not found!".format(args["widgetID"], args["userID"]))
+            # the widget exists, therefore delete the widget from the db
+            widget.delete()
             db.session.commit()
         except exc.SQLAlchemyError:
-            abort(HTTPStatus.BAD_REQUEST.value)
+            abort(HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: delete_widget")
 
-        return "", 204
+        return "", HTTPStatus.NO_CONTENT.value
