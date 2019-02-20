@@ -45,6 +45,7 @@ export const createUser = (userInfo) => {
       admin: userInfo.isAdmin.toString()
     }
     axiosInstance.post('admin/create_new_user', requestData).then((response) => {
+      fetchUsers()(dispatch)
       dispatch({
         type: CREATE_NEW_USER_FULFILLED,
         payload: response.data,
@@ -88,6 +89,7 @@ export const deleteUser = () => {
     };
 
     axiosInstance.post('admin/delete_user', requestData).then((response) => {
+      fetchUsers()(dispatch, getState)
       dispatch({
         type: DELETE_USER_FULFILLED,
         payload: response.data,

@@ -6,6 +6,7 @@ import GridLayout from './GridLayout';
 import Button from '@material-ui/core/Button';
 import DeleteWidgetDialog from './../common/DeleteWidgetDialog/DeleteWidgetDialog'
 import Dialog from '@material-ui/core/Dialog';
+import CheckIcon from '@material-ui/icons/Check';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -39,8 +40,10 @@ const styles = (theme) => ({
     padding: "15px",
     textAlign: "center"
   },
-  saveLayoutButton: {
-    backgroundColor: "#79e8cb"
+  saveLayoutSuccess: {
+    textAlign: "center",
+    color: "#47e04d",
+    textTransform: "uppercase"
   }
 });
 
@@ -58,6 +61,14 @@ class DashboardPage extends React.Component {
           <Button variant="contained" color="primary" onClick={this.props.saveLayout}>
             Save New Layout
           </Button>
+        </div>
+      )
+    } else if (dashboard.layoutSaved) {
+      return (
+        <div className={classes.saveLayoutBar}>
+          <Typography variant="subtitle1" className={classes.saveLayoutSuccess}>
+            Layout Saved
+          </Typography>
         </div>
       )
     } else {
