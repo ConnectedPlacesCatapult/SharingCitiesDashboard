@@ -62,7 +62,7 @@ def test_attributedata_params(test_client, attributedata_param_value):
  												])
 def test_attributedata_limit_and_offset_params(test_client, attributedata,limit,offset):
 	""" Test whether the proposed /data endpoint functions the same as the 
-		current one for the attributedata parameter together within the limit
+		current one for the attributedata parameter together with the limit
 		and offset parameters
 	"""
 	data = "attribute"
@@ -80,7 +80,7 @@ def test_attributedata_limit_and_offset_params(test_client, attributedata,limit,
  												])
 def test_attributedata_operation_params(test_client, attributedata,operation):
 	""" Test whether the proposed /data endpoint functions the same as the 
-		current one for the attributedata parameter together within the operation
+		current one for the attributedata parameter together with the operation
 		parameter
 	"""
 	data = "attribute"
@@ -88,6 +88,44 @@ def test_attributedata_operation_params(test_client, attributedata,operation):
 
 	response_fcc_enpoint = test_client.get('/data?{}={}&operation={}'.format(param,attributedata,operation))
 	response_dotmodus_enpoint = test_client.get('/data/{}?{}={}&operation={}'.format(data,param,attributedata,operation))
+	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
+	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
+
+@pytest.mark.parametrize("attributedata,grouped,", [("temperature",True),\
+ 												("NO2,SO2",True),\
+ 												("energy_consumed",True),\
+ 												("b1_flow_value,b1_temp_out_value,b1_temp_back_value",True)
+ 												])
+
+def test_attributedata_grouped_params(test_client, attributedata,grouped):
+	""" Test whether the proposed /data endpoint functions the same as the 
+		current one for attributedata parameter together with the operation
+		parameter
+	"""
+	data = "attribute"
+	param = "attributedata"
+
+	response_fcc_enpoint = test_client.get('/data?{}={}&grouped={}'.format(param,attributedata,grouped))
+	response_dotmodus_enpoint = test_client.get('/data/{}?{}={}&grouped={}'.format(data,param,attributedata,grouped))
+	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
+	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
+
+@pytest.mark.parametrize("attributedata,harmonising_method,", [
+ 												("NO2,SO2","geo"),\
+ 												("free","wide"),\
+ 												("b1_flow_value,b1_temp_out_value,b1_temp_back_value","long")
+ 												])
+
+def test_attributedata_harmonising_method_params(test_client, attributedata,harmonising_method):
+	""" Test whether the proposed /data endpoint functions the same as the 
+		current one for attributedata parameter together with the operation
+		parameter
+	"""
+	data = "attribute"
+	param = "attributedata"
+
+	response_fcc_enpoint = test_client.get('/data?{}={}&grouped=true&harmonising_method={}'.format(param,attributedata,harmonising_method))
+	response_dotmodus_enpoint = test_client.get('/data/{}?{}={}&grouped=true&harmonising_method={}'.format(data,param,attributedata,harmonising_method))
 	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
 	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
 
