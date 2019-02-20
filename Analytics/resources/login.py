@@ -7,7 +7,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_r
 from models.users import Users
 
 class Login(Resource):
-	"""API that grants users access to the Sharing Cities Dashboard aswell as sends their correpsonding access and refresh JWT
+	"""API endpoint, grant users access to Sharing Cities Dashboard and send  correpsonding access and refresh JWT.
 	   Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param email: users email address
         :param password: users password 
