@@ -77,7 +77,6 @@ def create_app(**config_overrides):
     api.add_resource(Analytics, '/analytics')
     api.add_resource(RequestForData, '/data')
 
-
     api.add_resource(Login, '/login')
     api.add_resource(TokenRefresh, '/refreshToken')
     api.add_resource(UserLogoutAccess, '/revokeAccess')
