@@ -29,7 +29,7 @@ class DeleteUser(Resource):
         super().__init__()
 
     @jwt_required
-    def delete(self):
+    def post(self):
         args = self.delete_reqparser.parse_args()
 
         # User needs admin rights to continue
