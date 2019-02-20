@@ -1,77 +1,70 @@
-from db import db
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.exc import IntegrityError
-import json
-from sqlalchemy.orm import joinedload
+
+from db import db
 
 
 class WidgetModel(db.Model):
+    """ Database model for the widget table used to persist widget data
+                :param _WIDGET_DB_TABLE_NAME: table name
+                :param  id:         primary key
+                :param  user_id:    users unique identification number
+                :param  data:       widget data to be persisted in table
+
+                :type _WIDGET_DB_TABLE_NAME: String
+                :type id:       Integer
+                :type user_id:  Integer
+                :type data:     JSON
+
+            """
     _WIDGET_DB_TABLE_NAME = 'widgets'
 
     __tablename__ = _WIDGET_DB_TABLE_NAME
 
-
     id = db.Column('id', db.Integer, primary_key=True)
     user_id = db.Column('user_id', db.Integer, nullable=False)
-    title = db.Column('title', db.String, nullable=False)
-    type = db.Column('type', db.String, nullable=False)
-    tile_layer = db.Column('tile_layer', db.String, nullable=True)
-    is_heat_map = db.Column('is_heat_map', db.String, nullable=True)
-
-    spec = db.Column('spec', JSON, nullable=False)
     data = db.Column('data', JSON, nullable=False)
 
     layout_id = db.Column(db.Integer, db.ForeignKey('layouts.id'))
+    #TODO: Change lazy loading to joined query loading for production
     layout = db.relationship('Layouts', backref=db.backref('layouts', lazy=True))
 
-    def __init__(self, user_id, layout, title, type, spec, data, tile_layer=None, is_heat_map = None):
+    def __init__(self, user_id, layout, data):
         self.user_id = user_id
-        self.title = title
-        self.type = type
-        self.spec = spec
         self.data = data
-        self.tile_layer = tile_layer
-        self.is_heat_map = is_heat_map
         self.layout = layout
 
-        # Check if tables exsists
-        self.create_table();
+        # Does the database table exist?
+        self.create_table()
 
     def __str__(self):
-        return """"user_id:\t{}\n
-        Title:\t{}\n
-        titleLayer:\t{}\n
-        isHeatMap\t{}\n
-        type:\t{}\n
-        spec:\t{}\n
-        data:\t{}\n""".format(self.user_id, self.title, self.tile_layer,
-                              self.is_heat_map, self.type, self.spec, self.data)
+        return "UserID: {} \t\tWidgetID: {}".format(self.user_id,self.id)
 
     def json(self):
-        response_data = {'id': str(self.id), 'title': self.title, 'type': self.type,
-                         'data': self.data}
-        # if self.layout:
-        #     response_data["layout"] = {
-        #                                 'id': str(self.id),
-        #                                 'x': self.layout.x_coord,
-        #                                 'y': self.layout.y_coord,
-        #                                 'h': self.layout.height,
-        #                                 'w': self.layout.width,
-        #                                 'static': self.layout.static
-        #                                }
+        """
+            formats response to be sent to user
 
-        if self.spec:
-            response_data["spec"] = self.spec
-
-        if self.tile_layer:
-            response_data["titleLayer"] = self.tile_layer
-
-        if self.is_heat_map:
-            response_data["isHeatMap"] = self.is_heat_map
-
+        :return:  a Dictionary of the response data
+                            :param  id:      widgetID
+                            :param  userID:  users identification number
+                            :param  data:    widget JSON data
+                            :type   Integer:
+                            :type   Integer:
+                            :type   JSON:
+        :rtype:   <class 'dict'>
+        """
+        # format response
+        response_data = {"id": str(self.id), "userID": self.user_id, "data": self.data}
         return response_data
 
     def save(self):
+        """
+            Adds widget instance to the database session to be committed
+
+            :raises IntegrityError:
+            
+        :return:
+        """
         try:
             db.session.add(self)
             db.session.flush()
@@ -89,27 +82,28 @@ class WidgetModel(db.Model):
         db.session.commit()
 
     def create_table(self):
-        if not self.table_exists():  # If table don't exist, Create.
+        # If table don't exist, Create.
+        if not self.table_exists():
             # Create a table with the appropriate Columns
             db.Table(self._WIDGET_DB_TABLE_NAME, db.MetaData(bind=db.engine),
                      db.Column('id', db.Integer, primary_key=True),
                      db.Column('user_id', db.Integer, nullable=False),
-                     db.Column('title', db.String, nullable=False),
-                     db.Column('type', db.String, nullable=False),
-                     db.Column('tile_layer', db.String, nullable=True),
-                     db.Column('is_heat_map', db.String, nullable=True),
-                     db.Column('spec', JSON, nullable=False),
                      db.Column('data', JSON, nullable=False),
                      db.Column('layout_id',db.Integer, db.ForeignKey('layouts.id')),
                      db.relationship('Layouts', backref=db.backref('layouts', lazy=True)),
                      schema=None).create()
 
-
     def table_exists(self):
-        has_table = db.engine.dialect.has_table(db.engine, self._WIDGET_DB_TABLE_NAME)
-        print('Table "{}" exists: {}'.format(self._WIDGET_DB_TABLE_NAME, has_table))
-        return has_table
+        """
+            Check if table exists
 
+            :return: True if the table exists in the database otherwise False
+            :rtype: Boolean
+
+        """
+        # Does the table exist?
+        has_table = db.engine.dialect.has_table(db.engine, self._WIDGET_DB_TABLE_NAME)
+        return has_table
 
     @classmethod
     def get_widget_by_id(cls,widgetID):
@@ -118,9 +112,3 @@ class WidgetModel(db.Model):
     #.options(joinedload('layouts'))
 
 
-
-
-
-
-if __name__ == '__main__':
-    pass
