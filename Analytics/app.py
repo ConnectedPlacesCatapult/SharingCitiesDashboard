@@ -69,8 +69,6 @@ def create_app(**config_overrides):
     from models.unit import Unit
     from models.sensor_attribute import SensorAttribute 
     from models.theme import Theme, SubTheme
-
-
     from models.users import Users
 
     db.create_all()
