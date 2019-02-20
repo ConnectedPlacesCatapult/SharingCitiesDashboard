@@ -5,17 +5,13 @@ from flask_restful import abort
 from flask_restful import reqparse
 from models.widget import WidgetModel
 
-"""
 
-                        TODO: DocString
-"""
 
 
 class SaveWidgetLayout(Resource):
     """
-
-                            TODO: DocString
-        """
+        Persists a widgets layout to the database
+    """
 
     def __init__(self):
         # Arguments passer to save layouts appends values sent in post to a list
@@ -26,7 +22,7 @@ class SaveWidgetLayout(Resource):
 
     def post(self):
         """
-            Save widget layout to the posgres database
+            Pesists widget layout to the database
             :param layouts: layouts to be saved
             :type layouts: a JSON array of JSON objects containing:
                                 :param id: Related widget identification number
@@ -82,6 +78,7 @@ class SaveWidgetLayout(Resource):
                 widget.save()
                 widget.commit()
 
+        # Where all widget layouts updated?
         if len(widgets_not_found) >= 1:
             abort(404, error="Widgets not found", widgets_not_found=len(widgets_not_found),
                   widget_ids=json.dumps(widgets_not_found), widgets_updated=json.dumps(widgets_updated))
