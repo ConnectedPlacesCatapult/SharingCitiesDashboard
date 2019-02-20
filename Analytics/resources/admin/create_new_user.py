@@ -80,7 +80,6 @@ class CreateNewUser(Resource):
         if self._does_user_exsist(args["email"]):
             abort(HTTPStatus.BAD_REQUEST.value, error='User email exists. email address must be unique')
 
-        print("got here ---------------------------------------3-----------------------------")
         # Create new user database entry in users table
         try:
             hashed_password = Users.generate_hash(args["password"].encode("utf-8")).decode("utf-8")
