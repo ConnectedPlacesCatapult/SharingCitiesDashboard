@@ -11,6 +11,7 @@ class RevokedTokens(db.Model):
     
     def add(self):
         """ Adds the current values of the Users fields to SQLAlchemy session and then writes the changes to the database """
+       
         db.session.add(self)
         db.session.commit()
     
@@ -22,5 +23,6 @@ class RevokedTokens(db.Model):
             :return: Whether the jti is present in the revoked tokens table
             :rtype: boolean
         """
+        
         query = cls.query.filter_by(jti = jti).first()
         return bool(query)
