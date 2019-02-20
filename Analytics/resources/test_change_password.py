@@ -73,6 +73,3 @@ def test_invalid_inputs(test_client,dummy_user):
 
     db.session.delete(dummy_user)
     db.session.commit()
-
-
-
