@@ -53,6 +53,12 @@ class Users(db.Model):
             db.session.rollback()
             print(self.fullname, 'User already exists')
 
+    def delete(self):
+        try:
+            db.session.delete(self)
+        except IntegrityError as ie:
+            db.session.rollback()
+
     def commit(self):
         db.session.commit()
 

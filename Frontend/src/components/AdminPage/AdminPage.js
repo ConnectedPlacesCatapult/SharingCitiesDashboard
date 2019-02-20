@@ -4,15 +4,20 @@ import Typography from "@material-ui/core/Typography";
 import Header from './../common/Header';
 import Button from '@material-ui/core/Button';
 import Paper from "@material-ui/core/Paper";
+import Dialog from "@material-ui/core/Dialog";
 import Modal from "@material-ui/core/Modal";
 import UserList from "./UserList"
 import AddUser from "../common/AddUser/AddUser"
+import DeleteUserDialog from "../common/DeleteUserDialog/DeleteUserDialog"
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
 
 // redux
 import { connect } from 'react-redux';
+import { promptDeleteUser } from "../../actions/adminActions";
+import { deleteUser } from "../../actions/adminActions";
+import { cancelDeleteUser } from "../../actions/adminActions";
 
 const styles = (theme) => ({
   root: {
@@ -45,7 +50,7 @@ class AdminPage extends React.Component {
   };
 
   render() {
-    const { classes, location } = this.props;
+    const { classes, location, admin } = this.props;
 
     return (
       <div className={classes.root}>
@@ -53,6 +58,13 @@ class AdminPage extends React.Component {
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <UserList openAddUser={this.openAddUser}/>
+          <Dialog
+            open={admin.deleteUserDialogOpen}
+            onClose={this.props.cancelDeleteUser}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description">
+            <DeleteUserDialog cancelDelete={this.props.cancelDeleteUser} deleteUser={this.props.deleteUser}/>
+          </Dialog>
         </main>
         <Modal
           open={this.state.addUserModalOpen}
@@ -71,9 +83,13 @@ AdminPage.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  admin: state.admin
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  promptDeleteUser: () => dispatch(promptDeleteUser()),
+  deleteUser: () => dispatch(deleteUser()),
+  cancelDeleteUser: () => dispatch(cancelDeleteUser()),
 });
 
 AdminPage = withStyles(styles)(AdminPage);

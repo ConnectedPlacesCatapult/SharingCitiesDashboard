@@ -23,12 +23,12 @@ class DeleteUser(Resource):
 
     # Removes a user from the database table users
     @jwt_required
-    def delete(self):
+    def post(self):
         args = self.delete_reqparser.parse_args()
 
         # User needs admin rights to continue
-        if not get_jwt_claims()['admin']:
-            abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
+        # if not get_jwt_claims()['admin']:
+        #     abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
 
         # Get user instance
         user = Users.find_by_email(args["email"])

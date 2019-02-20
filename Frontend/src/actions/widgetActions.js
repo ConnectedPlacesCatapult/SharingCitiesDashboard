@@ -1,4 +1,6 @@
 import axios from "axios";
+import { axiosInstance } from '../api/axios'
+
 import _ from 'lodash'
 import {
   PURGE_EDITOR,
@@ -211,8 +213,16 @@ export function saveWidget() {
       widgetConfig = _.get(currentState, 'widget.alertConfig' )
     }
 
+    const dataTest = {
+      ...widgetConfig,
+      "title": widgetName,
+      "type": widgetType
+    }
+
+    console.log("dataTest", JSON.stringify(dataTest))
+
     axios({
-      url: config.apiRoot + 'widgets',
+      url: config.apiRoot + 'widgets/create_widget',
       method: 'post',
       headers: {
         Authorization: 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTA1MDUzNTgsIm5iZiI6MTU1MDUwNTM1OCwianRpIjoiZDA4ZGRiNGQtNDE4YS00YWMwLWFkODYtZDQ3ZGM0ZTUyYTQ4IiwiZXhwIjoxNTUxMTEwMTU4LCJpZGVudGl0eSI6InBhdHJpY2tAZG90bW9kdXMuY29tIiwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIiwidXNlcl9jbGFpbXMiOnsiYWRtaW4iOm51bGx9fQ.N_fD7BGjnRL47YFoclmIBnoWzub2ugDJUSNuLwRA0B4'

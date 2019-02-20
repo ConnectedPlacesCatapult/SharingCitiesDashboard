@@ -16,7 +16,7 @@ class WidgetModel(db.Model):
     title = db.Column('title', db.String, nullable=False)
     type = db.Column('type', db.String, nullable=False)
     tile_layer = db.Column('tile_layer', db.String, nullable=True)
-    is_heat_map = db.Column('is_heat_map', db.Boolean, nullable=True)
+    is_heat_map = db.Column('is_heat_map', db.String, nullable=True)
 
     spec = db.Column('spec', JSON, nullable=False)
     data = db.Column('data', JSON, nullable=False)
@@ -97,7 +97,7 @@ class WidgetModel(db.Model):
                      db.Column('title', db.String, nullable=False),
                      db.Column('type', db.String, nullable=False),
                      db.Column('tile_layer', db.String, nullable=True),
-                     db.Column('is_heat_map', db.Boolean, nullable=True),
+                     db.Column('is_heat_map', db.String, nullable=True),
                      db.Column('spec', JSON, nullable=False),
                      db.Column('data', JSON, nullable=False),
                      db.Column('layout_id',db.Integer, db.ForeignKey('layouts.id')),

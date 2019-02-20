@@ -69,7 +69,7 @@ class Widgets(Resource):
         layout = Layouts(1, 0, 0, 5, 5, False)
         new_widget = WidgetModel(current_user.id, layout, args["title"], args["type"],
                                  args["spec"], args["data"], tile_layer=args["tileLayer"],
-                                 is_heat_map=inputs.boolean(args["isHeatMap"]))
+                                 is_heat_map=args["isHeatMap"])
 
 
 

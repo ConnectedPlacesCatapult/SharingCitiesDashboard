@@ -16,8 +16,6 @@ import OpenWithIcon from '@material-ui/icons/OpenWith';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import { promptDeleteWidget } from "./../../actions/dashboardActions";
-import {saveLayout} from "../../actions/dashboardActions";
-import {initializeEditor} from "../../actions/widgetActions";
 import {connect} from "react-redux";
 
 const styles = (theme) => ({
@@ -69,7 +67,7 @@ const styles = (theme) => ({
 
 class Widget extends React.Component {
   render() {
-    const { classes, title, isStatic, type, data, widgetID, promptDeleteWidget } = this.props;
+    const { classes, title, isStatic, type, data, i, promptDeleteWidget } = this.props;
 
     return (
       <Paper className={classes.widget}>
@@ -103,7 +101,7 @@ class Widget extends React.Component {
               {/*<AddCircleIcon fontSize="small" />*/}
             {/*</IconButton>*/}
             <IconButton
-              onClick={() => promptDeleteWidget(widgetID)}
+              onClick={() => promptDeleteWidget(i)}
               color="primary"
               className={classes.smallerButton}
             >
@@ -113,7 +111,7 @@ class Widget extends React.Component {
         </div>
         <div className={classes.widgetBodyWrapper}>
           <div className={classes.widgetBodyContent}>
-            { type === 'plot'
+            { type === "plot"
               ? <PlotWidget spec={this.props.spec} data={data} />
               : <MapWidget tileLayer={this.props.tileLayer} data={data} />
             }

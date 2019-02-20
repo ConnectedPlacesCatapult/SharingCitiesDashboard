@@ -19,9 +19,9 @@ import PlusIcon from '@material-ui/icons/Add';
 // redux
 import { connect } from 'react-redux';
 import {
-  fetchUsers
+  fetchUsers,
+  promptDeleteUser
 } from "./../../actions/adminActions";
-import { doUserDelete } from "../../actions/userActions";
 
 const styles = (theme) => ({
   root: {
@@ -69,7 +69,7 @@ class UserList extends React.Component {
   }
 
   render() {
-    const { classes, admin } = this.props;
+    const { classes, admin, promptDeleteUser } = this.props;
 
     return (
       <div className={classes.root}>
@@ -106,7 +106,7 @@ class UserList extends React.Component {
                   <TableCell align="right">{row.admin ? 'Yes' : 'No'}</TableCell>
                   <TableCell align="right">{row.activated ? 'Yes' : 'No'}</TableCell>
                   <TableCell align="right" style={{textAlign: 'right'}}>
-                    <IconButton onClick={() => { doUserDelete(row) }}>
+                    <IconButton onClick={() => promptDeleteUser(row)}>
                       <DeleteIcon color="primary" />
                     </IconButton>
                   </TableCell>
@@ -131,6 +131,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchUsers: () => dispatch(fetchUsers()),
+  promptDeleteUser: (userID) => dispatch(promptDeleteUser(userID)),
 });
 
 UserList = withStyles(styles)(UserList);

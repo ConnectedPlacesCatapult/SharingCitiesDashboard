@@ -5,6 +5,7 @@ import Widget from './Widget';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 
 // grid-layout
 import RGL from "react-grid-layout";
@@ -37,8 +38,8 @@ class GridLayout extends React.Component {
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
 
-    this.props.fetchLayout();
     this.props.fetchWidgets();
+    this.props.fetchLayout();
   }
 
   onLayoutChange(layout) {
@@ -48,29 +49,20 @@ class GridLayout extends React.Component {
   render() {
     const { classes, dashboard } = this.props;
 
-    const layout = []
-    for (let i = 0; i < dashboard.widgets.length; i++) {
-      const layoutItem = {
-        "i": i.toString(),
-        "x": 0,
-        "y": 0,
-        "w": 5,
-        "h": 3,
-        "static": false
-      }
-      layout.push(layoutItem)
-    }
+    console.log("layouts", dashboard.layout.length)
+    console.log("widgets", dashboard.widgets.length)
 
-    const gridItems = layout.map((gridItem) => {
-      let gridItemWidget = dashboard.widgets.find((widget) => gridItem.i === widget.i);
-      return (
-        <div key={gridItem.i}>
-          <Widget widgetID={gridItem.widgetID} {...gridItemWidget} isStatic={gridItem.static || false} />
-        </div>
-      )
-    });
+    if (dashboard.layout.length === dashboard.widgets.length) {
 
-    if (dashboard.widgets.length) {
+      const gridItems = dashboard.layout.map((gridItem) => {
+        let gridItemWidget = dashboard.widgets.find((widget) => gridItem.i === widget.i);
+        return (
+          <div key={gridItem.i}>
+            <Widget widgetID={gridItem.widgetID} {...gridItemWidget} isStatic={gridItem.static || false} />
+          </div>
+        )
+      });
+
       return (
         <ReactGridLayout
           layout={dashboard.layout}
@@ -85,7 +77,11 @@ class GridLayout extends React.Component {
         </ReactGridLayout>
       )
     } else {
-      return null
+      return (
+        <Typography variant="subtitle1">
+          Problem Loading Layout
+        </Typography>
+      )
     }
   }
 }
