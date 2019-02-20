@@ -16,8 +16,8 @@ class UserPermissions(Resource):
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :required: valid access JWT where the admin claim has to be true
         :param email: users email address
-        :param activated: the value of the user's activated field 
-        :param admin: whether the the value of the user's activated field 
+        :param activated: the value of the user's activated field
+        :param admin: whether the the value of the user's activated field
         :type email: string
         :type activated: string
         :type admin: string

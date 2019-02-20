@@ -1,6 +1,3 @@
-import os, sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-
 import json
 import random
 import unittest
@@ -16,11 +13,11 @@ class UserCreationTests(unittest.TestCase):
 
     def setUp(self):
 
-        self.fullname = "Matthew Jacobs"
-        self.email = "mattyj@gmail.com"
-        self.password = "fid71?dummying"
+        self.fullname = "abcdefg hijklmnop"
+        self.email = "james.bond@email.com"
+        self.password = "password"
 
-        self.url = "http://0.0.0.0:5000/admin"
+        self.url = "http://0.0.0.0:8005/admin"
         self.jwt_access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTA0MDczMDUsIm5iZiI6MTU1MD" \
                                 "QwNzMwNSwianRpIjoiOWUyNjc4YWUtNjU5Ny00Mjg2LWFlMmUtNzMzOTI0NDlmYmMzIiwiZXhwI" \
                                 "joxNTUxMDEyMTA1LCJpZGVudGl0eSI6ImphbWVzLmJvbmRAZW1haWwuY29tIiwiZnJlc2giOmZh" \
@@ -41,7 +38,7 @@ class UserCreationTests(unittest.TestCase):
                            "password": self.password,
                            }).encode("ascii")
 
-        request = urllib.request.Request('http://0.0.0.0:5000/login', data, method='POST')
+        request = urllib.request.Request('http://0.0.0.0:8005/login', data, method='POST')
         response = self.send_request(request)
         if "message" in response and "access_token" in response and "refresh_token" in response:
             return response["access_token"]
@@ -65,7 +62,7 @@ class UserCreationTests(unittest.TestCase):
 
     def get_user_request(self):
         data = json.dumps({"email": self.email}).encode("ascii")
-        return urllib.request.Request("http://0.0.0.0:5000/admin", data, self.http_headers, method='GET')
+        return urllib.request.Request("http://0.0.0.0:8005/admin", data, self.http_headers, method='GET')
 
     def send_request(self, request):
         json_response = dict()
@@ -118,6 +115,21 @@ class UserCreationTests(unittest.TestCase):
 
         assert False
 
+    def test_value_error_email_address_checker(self):
+        with self.assertRaises(ValueError):
+            fake_email = "freddy.email.com"
+            Users.email_regex_checker(fake_email)
+
+    def test_email_checker_list(self):
+        email_list = ['sam@sam.com', 'me@me.com', 'test@test.com', 'hey@hey.com', 'james@james.com',
+                      'what@what.com', 'me2@me.com', 'h@h.com', 'sean.cunningham@crownpeak.com',
+                      'freddy.lenzy@jeffrey.co.ku']
+        try:
+            for email in email_list:
+                Users.email_regex_checker(email)
+            self.assertTrue(True)
+        except ValueError:
+            self.assertTrue(False)
 
 
 

@@ -1,7 +1,5 @@
 from http import HTTPStatus
 
-import bcrypt
-from flask import jsonify
 from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
