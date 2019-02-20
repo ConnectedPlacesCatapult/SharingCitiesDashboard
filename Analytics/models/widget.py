@@ -16,7 +16,7 @@ class WidgetModel(db.Model):
                 :type user_id:  Integer
                 :type data:     JSON
 
-            """
+    """
     _WIDGET_DB_TABLE_NAME = 'widgets'
 
     __tablename__ = _WIDGET_DB_TABLE_NAME
@@ -59,11 +59,11 @@ class WidgetModel(db.Model):
 
     def save(self):
         """
-            Adds widget instance to the database session to be committed
+            Adds widget entry to the database session to be committed
 
-            :raises IntegrityError:
-            
-        :return:
+            :raises IntegrityError: performs a database session rollback
+
+            :return: None
         """
         try:
             db.session.add(self)
@@ -72,6 +72,13 @@ class WidgetModel(db.Model):
             db.session.rollback()
 
     def delete(self):
+        """
+            Deletes a widget entry and its related layout entry from the database session to be committed
+
+            :raises IntegrityError: performs a database session rollback
+
+            :return: None
+        """
         try:
             db.session.delete(self.layout)
             db.session.delete(self)
@@ -81,7 +88,14 @@ class WidgetModel(db.Model):
     def commit(self):
         db.session.commit()
 
+
     def create_table(self):
+        """
+            Database model for the widget table used to persist widget data
+
+        """
+
+
         # If table don't exist, Create.
         if not self.table_exists():
             # Create a table with the appropriate Columns
@@ -107,8 +121,15 @@ class WidgetModel(db.Model):
 
     @classmethod
     def get_widget_by_id(cls,widgetID):
+        """
+            Fetches a widget by its id
+            :param widgetID: the widgets identification number to fetch
+            :return: Widget instance if found otherwise None
+            :rtype <class 'Widget'>:    an instance of a widget
 
+        """
+        # find widget by its id  and return it
         return cls.query.filter_by(id=widgetID).first()
-    #.options(joinedload('layouts'))
+
 
 
