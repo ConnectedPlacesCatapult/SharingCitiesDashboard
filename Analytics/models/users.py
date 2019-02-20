@@ -40,6 +40,7 @@ class Users(db.Model):
 
     def json(self):
         """ Returns a JSON representation of Users attributes """
+        
         return {
             'id': self.id,
             'fullname': self.firstname,
@@ -59,6 +60,7 @@ class Users(db.Model):
 
     def commit(self):
         """ Writes all updates done via db.session.add() or manual update of the model class fields to the database """
+        
         db.session.commit()
 
     @classmethod
@@ -69,6 +71,7 @@ class Users(db.Model):
             :return: a Users instance where the contained attributes correspond to that of the email provided
             :rtype: Instance of Users model class 
         """
+        
         return cls.query.filter_by(email = email).first()
 
     @staticmethod
@@ -79,6 +82,7 @@ class Users(db.Model):
         :return: a hash of the password. The password has salt appeneded to it before it is hashed
         :rtype: string
         """
+        
         return bcrypt.hashpw(password, bcrypt.gensalt())
     
     @staticmethod
@@ -92,5 +96,6 @@ class Users(db.Model):
         :return: whether the password, when hashed, corresponds to the password hash stored in the users table
         :rtype: boolean
         """
+        
         return bcrypt.checkpw(password, hash)
 
