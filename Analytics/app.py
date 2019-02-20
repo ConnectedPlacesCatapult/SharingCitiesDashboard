@@ -13,6 +13,7 @@ from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.request_for_data import RequestForData
+from resources.register import Register
 
 from resources.Widgets.widgets import Widgets
 from resources.Widgets.get_widgets import GetWidgets
@@ -97,6 +98,7 @@ def create_app(**config_overrides):
     api.add_resource(Analytics, '/analytics')
     api.add_resource(RequestForData, '/data')
 
+    api.add_resource(Register, '/register')
     api.add_resource(Login, '/login')
     api.add_resource(TokenRefresh, '/refreshToken')
     api.add_resource(UserLogoutAccess, '/revokeAccess')
