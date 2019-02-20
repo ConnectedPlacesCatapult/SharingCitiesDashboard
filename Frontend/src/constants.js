@@ -33,6 +33,14 @@ export const ADD_WIDGET = "ADD_WIDGET";
 export const UPDATE_WIDGET = "UPDATE_WIDGET";
 export const DELETE_WIDGET = "DELETE_WIDGET";
 
+// filters
+export const FILTER_VALUE_EXACT = "FILTER_VALUE_EXACT";
+export const FILTER_VALUE_MIN = "FILTER_VALUE_MIN";
+export const FILTER_VALUE_MAX = "FILTER_VALUE_MAX";
+export const FILTER_VALUE_RANGE = "FILTER_VALUE_RANGE";
+export const CLEAR_FILTERS = "CLEAR_FILTERS";
+export const TOGGLE_FILTER = "TOGGLE_FILTER";
+
 // widget
 export const PURGE_EDITOR = "PURGE_EDITOR";
 export const SET_MAP_DATA = "SET_MAP_DATA";
