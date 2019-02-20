@@ -50,7 +50,7 @@ class Users(db.Model):
         }
 
     def save(self):
-        """ Adds the current values of the Users fields to SQLAlchemy session but does not write to the database """
+        """ Add the current Users fields to the SQLAlchemy session """
         try:
             db.session.add(self)
             db.session.flush()
@@ -59,13 +59,13 @@ class Users(db.Model):
             print(self.fullname, 'User already exists')
 
     def commit(self):
-        """ Writes all updates done via db.session.add() or manual update of the model class fields to the database """
+        """ Writes all updated fields to the database  """
         
         db.session.commit()
 
     @classmethod
     def find_by_email(cls, email):
-        """ Queries the users table according the email attribute
+        """ Return the user corresponding to the email argument from the Users table
             :param email: the email address of the user that is being looked up
             :type email: string
             :return: a Users instance where the contained attributes correspond to that of the email provided
@@ -76,7 +76,7 @@ class Users(db.Model):
 
     @staticmethod
     def generate_hash(password):
-        """A method that uses the provided password and additional salt in order to generate a hash that is to be stored in the DB
+        """Generate a secure hash
         :param password: the plaintext user password
         :type password: UTF8 encoded string
         :return: a hash of the password. The password has salt appeneded to it before it is hashed
@@ -87,7 +87,7 @@ class Users(db.Model):
     
     @staticmethod
     def verify_hash(password, hash):
-        """A method that verifies whether the password provided matches the corresponding password stored in the database
+        """Verify password matches the hashed password in the database
         
         :param password: the plaintext user password
         :param hash: the user's hashed password that is stored in the user table
