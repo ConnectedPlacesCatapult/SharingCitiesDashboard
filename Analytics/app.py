@@ -29,6 +29,7 @@ from resources.admin.change_user_password import ChangeUserPassword
 from resources.admin.delete_user import DeleteUser
 from resources.admin.change_user_name import ChangeUserName
 from resources.admin.get_user import GetUserByEmail
+from resources.admin.edit_user import EditUser
 
 
 # from flask_bcrypt import Bcrypt
@@ -119,6 +120,7 @@ def create_app(**config_overrides):
     api.add_resource(ChangeUserName, '/admin/change_user_fullname')
     api.add_resource(ChangeUserPassword, '/admin/change_user_password')
     api.add_resource(DeleteUser, '/admin/delete_user')
+    api.add_resource(EditUser, '/admin/edit_user')
 
 
     return app
