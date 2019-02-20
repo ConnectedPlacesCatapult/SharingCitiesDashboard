@@ -5,8 +5,8 @@ from db import db
 
 @pytest.fixture()
 def test_client():
-	""" A fixture that initialises the Flask application, saves the current application context for the duration of a single
-	    test and yields a testing client that can be used for making requests to the endpoints exposed by the application
+	""" Initialise Flask application, save the current application context for the duration of a single
+	    test and yield a testing client for making requests to the endpoints exposed by the application
 	"""
 	test_app = create_app(DATABASE_NAME='test_analysis', TESTING=True)
 	testing_client = test_app.test_client()
@@ -20,7 +20,7 @@ def test_client():
 
 @pytest.fixture()
 def dummy_user():
-	""" Creates and saves a user to the database that is to be used for testing purposes """
+	""" Create and save a user to the database for duration of test """
 	
     not_activated = Users("Not Activated","not_activated@FCC.com",Users.generate_hash("1234".encode("utf8")).decode("utf8"),True,False)
 
