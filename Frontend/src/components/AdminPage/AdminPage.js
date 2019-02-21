@@ -4,13 +4,20 @@ import Typography from "@material-ui/core/Typography";
 import Header from './../common/Header';
 import Button from '@material-ui/core/Button';
 import Paper from "@material-ui/core/Paper";
-import AdminSettings from "./AdminSettings"
+import Dialog from "@material-ui/core/Dialog";
+import Modal from "@material-ui/core/Modal";
+import UserList from "./UserList"
+import AddUser from "../common/AddUser/AddUser"
+import DeleteUserDialog from "../common/DeleteUserDialog/DeleteUserDialog"
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
 
-import {initializeEditor} from "../../actions/widgetActions";
-import {connect} from "react-redux";
+// redux
+import { connect } from 'react-redux';
+import { promptDeleteUser } from "../../actions/adminActions";
+import { deleteUser } from "../../actions/adminActions";
+import { cancelDeleteUser } from "../../actions/adminActions";
 
 const styles = (theme) => ({
   root: {
@@ -18,7 +25,6 @@ const styles = (theme) => ({
   },
   content: {
     flexGrow: 1,
-    //backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 4,
     height: '100vh',
     overflow: 'auto'
@@ -29,22 +35,44 @@ const styles = (theme) => ({
 class AdminPage extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      loginModalOpen: false
-    }
   }
 
+  state = {
+    addUserModalOpen: false,
+  };
+
+  openAddUser = () => {
+    this.setState({ addUserModalOpen: true })
+  };
+
+  handleAddUserClose = () => {
+    this.setState({ addUserModalOpen: false })
+  };
+
   render() {
-    const { classes, location } = this.props;
+    const { classes, location, admin } = this.props;
 
     return (
       <div className={classes.root}>
         <Header location={location} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <AdminSettings/>
+          <UserList openAddUser={this.openAddUser}/>
+          <Dialog
+            open={admin.deleteUserDialogOpen}
+            onClose={this.props.cancelDeleteUser}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description">
+            <DeleteUserDialog cancelDelete={this.props.cancelDeleteUser} deleteUser={this.props.deleteUser}/>
+          </Dialog>
         </main>
+        <Modal
+          open={this.state.addUserModalOpen}
+          onClose={this.handleAddUserClose}
+          disableAutoFocus={true}
+        >
+          <AddUser closeAddUser={this.handleAddUserClose}/>
+        </Modal>
       </div>
     )
   }
@@ -55,11 +83,13 @@ AdminPage.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  dashboard: state.dashboard,
+  admin: state.admin
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  initializeEditor: () => dispatch(initializeEditor()),
+  promptDeleteUser: () => dispatch(promptDeleteUser()),
+  deleteUser: () => dispatch(deleteUser()),
+  cancelDeleteUser: () => dispatch(cancelDeleteUser()),
 });
 
 AdminPage = withStyles(styles)(AdminPage);

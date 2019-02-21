@@ -23,6 +23,7 @@ from resources.admin.change_user_name import ChangeUserName
 from resources.admin.get_user import GetUserByEmail
 
 
+
 # from flask_bcrypt import Bcrypt
 
 def create_app(**config_overrides):
@@ -50,8 +51,10 @@ def create_app(**config_overrides):
     # # for how safely store JWTs in cookies
     # app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 
+
     app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'  # TODO: change before deployement
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=1)  # TODO: change before deployement
+
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
@@ -88,11 +91,14 @@ def create_app(**config_overrides):
     api.add_resource(Analytics, '/analytics')
     api.add_resource(RequestForData, '/data')
 
+
+    api.add_resource(Register, '/register')
     api.add_resource(Login, '/login')
     api.add_resource(TokenRefresh, '/refreshToken')
     api.add_resource(UserLogoutAccess, '/revokeAccess')
     api.add_resource(UserLogoutRefresh, '/revokeRefresh')
     api.add_resource(SecretResource, '/secret')
+
 
     # Admin Endpoints
     api.add_resource(CreateNewUser, '/admin/create_new_user')
@@ -102,5 +108,6 @@ def create_app(**config_overrides):
     api.add_resource(ChangeUserName, '/admin/change_user_fullname')
     api.add_resource(ChangeUserPassword, '/admin/change_user_password')
     api.add_resource(DeleteUser, '/admin/delete_user')
+
 
     return app

@@ -61,8 +61,9 @@ class RegisterForm extends React.Component {
     this.state = {
       email: '',
       fullName: '',
-      password: '',
-      confirmPassword: '',
+      oldPassword: '',
+      passwordNew: '',
+      confirmPasswordNew: '',
       errors: {},
       isLoading: false,
       registrationFailed: false,
@@ -75,8 +76,8 @@ class RegisterForm extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    if (this.state.password === this.state.confirmPassword) {
-      doRegister(this.state.email, this.state.fullName, this.state.password)
+    if (this.state.passwordNew === this.state.confirmPasswordNew) {
+      doRegister(this.state.email, this.state.fullName, this.state.password, this.state.passwordNew)
     } else {
       this.setState(
         {registrationError: 'Passwords do not match', registrationFailed: true})
@@ -92,7 +93,7 @@ class RegisterForm extends React.Component {
   }
 
   render() {
-    const { email, password, confirmPassword, fullName, errors, isLoading } = this.state;
+    const { email, password, passwordNew, confirmPasswordNew, fullName, errors, isLoading } = this.state;
     const { classes } = this.props;
 
     return (
@@ -129,7 +130,7 @@ class RegisterForm extends React.Component {
               />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="password">Password</InputLabel>
+              <InputLabel htmlFor="password">Old Password</InputLabel>
               <Input
                 name="password"
                 type="password"
@@ -141,15 +142,27 @@ class RegisterForm extends React.Component {
               />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="confirmPassword">Confirm Password</InputLabel>
+              <InputLabel htmlFor="passwordNew">New Password</InputLabel>
               <Input
-                name="confirmPassword"
+                name="passwordNew"
                 type="password"
-                id="confirmPassword"
+                id="passwordNew"
                 autoComplete="off"
-                error={errors.confirmPassword}
+                error={errors.passwordNew}
                 onChange={this.onChange}
-                value={confirmPassword}
+                value={passwordNew}
+              />
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="confirmPasswordNew">Confirm New Password</InputLabel>
+              <Input
+                name="confirmPasswordNew"
+                type="password"
+                id="confirmPasswordNew"
+                autoComplete="off"
+                error={errors.confirmPasswordNew}
+                onChange={this.onChange}
+                value={confirmPasswordNew}
               />
             </FormControl>
             <RegisterMessage registrationFailed={this.state.registrationFailed} registrationError={this.state.registrationError}/>

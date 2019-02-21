@@ -18,6 +18,7 @@ class GetUserByEmail(Resource):
         :return: The user's credentials on success or an error message and relevant status code when unsuccessful
         :rtype: JSON
     """
+
     def __init__(self):
         # Post request parser
         self.get_reqparser = reqparse.RequestParser()

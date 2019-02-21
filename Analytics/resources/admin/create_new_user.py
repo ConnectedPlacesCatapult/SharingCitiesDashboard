@@ -13,6 +13,7 @@ from models.users import Users
 
 
 class CreateNewUser(Resource):
+
     """ API resource class which creates a new user and adds it to the database
 
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -29,21 +30,25 @@ class CreateNewUser(Resource):
         :rtype: JSON
      """
 
+
     def __init__(self):
 
         # Create User (Post request parser)
         self.post_reqparser = reqparse.RequestParser()
         self.post_reqparser.add_argument('email', required=True, help='email is required', location=['form', 'json'])
+
         self.post_reqparser.add_argument('fullname', required=True, help='fullname is required',
                                          location=['form', 'json'])
         self.post_reqparser.add_argument('admin', required=True, help='User level is required',
                                          location=['form', 'json'])
+
         self.post_reqparser.add_argument('password', required=False, location=['form', 'json'])
 
         # From the request headers
         self.post_reqparser.add_argument('Authorization', location='headers')
 
         super().__init__()
+
 
     def _hash_password(self, plain_password):
         """ Generate a secure hash of the password arguement """
@@ -60,9 +65,23 @@ class CreateNewUser(Resource):
             return abort(HTTPStatus.BAD_REQUEST.value, jsonify({'error': error}))
         return user_exsists is not None
 
+
     @jwt_required
     def post(self):
+        '''Creates a user (POST METHOD)
+            Required:   User needs to have administration privileges to create a user.
+                        Content-Type:   application/json
+                        Content:        JSON {  "email": "<users email address>(String)",
+                                                "fullname": "<users fullname>(String)",
+                                                "admin": "<is the user an Admin (Boolean)>"
+                                            }
+                        Headers:
+                        Authorization: Bearer <JWT Token>
 
+
+
+            Returns:    JSON with status of request
+        '''
         args = self.post_reqparser.parse_args()
 
         # User needs admin rights to continue
@@ -76,7 +95,6 @@ class CreateNewUser(Resource):
         if self._does_user_exsist(args["email"]):
             abort(HTTPStatus.BAD_REQUEST.value, error='User email exists. email address must be unique')
 
-        print("got here ---------------------------------------3-----------------------------")
         # Create new user database entry in users table
         try:
             hashed_password = Users.generate_hash(args["password"].encode("utf-8")).decode("utf-8")

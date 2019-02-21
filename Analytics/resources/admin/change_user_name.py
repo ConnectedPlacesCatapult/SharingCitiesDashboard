@@ -30,6 +30,12 @@ class ChangeUserName(Resource):
 
     @jwt_required
     def post(self):
+
+        """
+        Changes users fullname
+
+        """
+
         args = self.post_reqparser.parse_args()
         user = Users.find_by_email(args["email"])
         if not user:
