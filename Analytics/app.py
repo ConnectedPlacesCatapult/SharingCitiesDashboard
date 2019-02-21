@@ -75,20 +75,17 @@ def create_app(**config_overrides):
         jti = decrypted_token['jti']
         return RevokedTokens.is_jti_blacklisted(jti)
 
-    # Create a function that will be called whenever create_access_token
-    # is used. It will take whatever object is passed into the
-    # create_access_token method, and lets us define what custom claims
-    # should be added to the access token.
+   
     @jwt.user_claims_loader
     def add_claims_to_access_token(user):
+        """ Add admin claim to access token """
+        
         return {'admin': user.admin}
 
-    # Create a function that will be called whenever create_access_token
-    # is used. It will take whatever object is passed into the
-    # create_access_token method, and lets us define what the identity
-    # of the access token should be.
     @jwt.user_identity_loader
     def user_identity_lookup(user):
+        """ Define identity claim within JWT token """
+        
         return user.email
 
     db.create_all()
