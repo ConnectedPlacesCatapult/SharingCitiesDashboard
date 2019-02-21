@@ -13,12 +13,9 @@ from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.request_for_data import RequestForData
-
-
-from resources.Widgets.save_widgets import Widgets
-
 from resources.register import Register
 
+from resources.Widgets.save_widgets import Widgets
 from resources.Widgets.get_widgets import GetWidgets
 from resources.Widgets.get_layouts import GetLayouts
 from resources.Widgets.get_widget_layout import GetWidgetLayout
@@ -34,10 +31,6 @@ from resources.admin.delete_user import DeleteUser
 from resources.admin.change_user_name import ChangeUserName
 from resources.admin.get_user import GetUserByEmail
 from resources.admin.edit_user import EditUser
-
-
-
-# from flask_bcrypt import Bcrypt
 
 def create_app(**config_overrides):
     app = Flask(__name__)
@@ -109,15 +102,12 @@ def create_app(**config_overrides):
     api.add_resource(RequestForSensor, '/data/sensor')
     api.add_resource(RequestForAttribute, '/data/attribute')
 
-
     api.add_resource(Register, '/register')
     api.add_resource(Login, '/login')
     api.add_resource(TokenRefresh, '/refreshToken')
     api.add_resource(UserLogoutAccess, '/revokeAccess')
     api.add_resource(UserLogoutRefresh, '/revokeRefresh')
     api.add_resource(SecretResource, '/secret')
-
-
 
     # Widget Endpoints
     api.add_resource(Widgets, '/widgets/create_widget')
@@ -128,7 +118,6 @@ def create_app(**config_overrides):
     api.add_resource(GetLayouts, '/widgets/get_layouts')
     api.add_resource(SaveWidgetLayout, '/widgets/save_layouts')
 
-
     # Admin Endpoints
     api.add_resource(CreateNewUser, '/admin/create_new_user')
     api.add_resource(GetUserByEmail, '/admin/get_user_by_email')
@@ -138,7 +127,5 @@ def create_app(**config_overrides):
     api.add_resource(ChangeUserPassword, '/admin/change_user_password')
     api.add_resource(DeleteUser, '/admin/delete_user')
     api.add_resource(EditUser, '/admin/edit_user')
-
-
 
     return app
