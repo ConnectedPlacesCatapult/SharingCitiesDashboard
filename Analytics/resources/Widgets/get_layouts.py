@@ -20,6 +20,7 @@ class GetLayouts(Resource):
         :type userID: Integer
         :type limit: Integer
     """
+
     def __init__(self):
         # Arguments required to fetch the layouts for all the widget related to a userID
         self.reqparser = reqparse.RequestParser()
@@ -46,6 +47,7 @@ class GetLayouts(Resource):
                 :rtype <class 'Tuple'>:
 
         """
+        
         # Fetch the userID from post content ( limit is optional )
         args = self.reqparser.parse_args()
         # Fetch the instances of the widgets to assign the new layouts

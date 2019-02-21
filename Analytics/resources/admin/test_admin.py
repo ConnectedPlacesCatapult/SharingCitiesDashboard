@@ -11,6 +11,7 @@ def test_client():
 	""" Initialise Flask application, save the current application context for duration of single
 	    test and yield testing client for making requests to  endpoints exposed by  application
 	"""
+
 	test_app = create_app(DATABASE_NAME='test_analysis', TESTING=True)
 	testing_client = test_app.test_client()
 
@@ -24,6 +25,7 @@ def test_client():
 @pytest.fixture()
 def admin_user():
 	""" Create and save admin user to the database for duration of test and delete it afterwards """
+
     user = Users("Admin","admin@FCC.com",Users.generate_hash("wfnbqk".encode("utf8")).decode("utf8"),True,True)
 
     try:
@@ -54,6 +56,7 @@ def dummy_user():
 
     db.session.delete(user)
     db.session.commit()
+
 
 def test_create_user(test_client,admin_user):
 	""" Test for successful creation of a new user by an admin and for presense of user in the database  """
@@ -93,26 +96,22 @@ def test_get_user(test_client,admin_user,dummy_user):
 	assert response_get.status_code == 200
 	assert dummy_user.email == response_get.get_json()["email"]
 
-def test_change_fullname(test_client,admin_user,dummy_user):
+
+def test_edit_user(test_client,admin_user,dummy_user):
 	""" Test that the changes a user makes to their fullname persists to the database """
 
 	response_login = test_client.post('/login', data=dict(email=admin_user.email, password="wfnbqk"), follow_redirects=True)
 	response_login_json = response_login.get_json()
 	header = {'Authorization': 'Bearer {}'.format(response_login_json["access_token"])}  
 
-	response_change = test_client.post('/admin/change_user_fullname', data=dict(email=dummy_user.email, fullname="Changed Name"), headers=header, follow_redirects=True)
-	assert response_change.status_code == 204
-	assert Users.find_by_email(dummy_user.email).fullname == "Changed Name"
+	response_change = test_client.post('/admin/edit_user', data=dict(email=dummy_user.email, fullname="Not a dummy", password="new password", admin=False,activated=False), headers=header, follow_redirects=True)
+	assert response_change.status_code == 200
+	changed_user = Users.find_by_email(dummy_user.email)
+	assert changed_user.fullname == "Not a dummy"
+	assert Users.verify_hash("new password".encode("utf8"),dummy_user.password.encode("utf8")) == True
+	assert changed_user.admin == False
+	assert changed_user.admin == False
 
-def test_change_password(test_client,admin_user,dummy_user):
-	""" Test that the changes a user makes to their password persists to the database """
-	response_login = test_client.post('/login', data=dict(email=admin_user.email, password="wfnbqk"), follow_redirects=True)
-	response_login_json = response_login.get_json()
-	header = {'Authorization': 'Bearer {}'.format(response_login_json["access_token"])}  
-
-	response_change = test_client.post('/admin/change_user_password', data=dict(email=dummy_user.email, password="abc", verify_password="abc"), headers=header, follow_redirects=True)
-	assert response_change.status_code == 201
-	assert Users.verify_hash("abc".encode("utf8"),dummy_user.password.encode("utf8")) == True
 	
 
 

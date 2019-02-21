@@ -12,6 +12,7 @@ from models.users import Users
 
 
 class DeleteUser(Resource):
+
     """ API resource class which deletes a user from the database
 
         Parameters can be passed using a DELETE request that contains a JSON with the following fields:
@@ -23,9 +24,9 @@ class DeleteUser(Resource):
     """
 
     def __init__(self):
+        # Remove User (Delete request parser)
         self.delete_reqparser = reqparse.RequestParser()
         self.delete_reqparser.add_argument('email', required=True, location=['form', 'json'])
-
         super().__init__()
 
     @jwt_required

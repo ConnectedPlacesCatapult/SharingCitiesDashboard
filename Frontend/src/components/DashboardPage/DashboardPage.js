@@ -4,11 +4,16 @@ import Typography from "@material-ui/core/Typography";
 import Header from './../common/Header';
 import GridLayout from './GridLayout';
 import Button from '@material-ui/core/Button';
+import DeleteWidgetDialog from './../common/DeleteWidgetDialog/DeleteWidgetDialog'
+import Dialog from '@material-ui/core/Dialog';
+import CheckIcon from '@material-ui/icons/Check';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
 
 import {saveLayout} from "./../../actions/dashboardActions";
+import {cancelDeleteWidget} from "../../actions/dashboardActions";
+import {deleteWidget} from "../../actions/dashboardActions";
 import {initializeEditor} from "../../actions/widgetActions";
 import {connect} from "react-redux";
 
@@ -35,18 +40,16 @@ const styles = (theme) => ({
     padding: "15px",
     textAlign: "center"
   },
-  saveLayoutButton: {
-    backgroundColor: "#79e8cb"
+  saveLayoutSuccess: {
+    textAlign: "center",
+    color: "#47e04d",
+    textTransform: "uppercase"
   }
 });
 
 class DashboardPage extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      loginModalOpen: false
-    }
   }
 
   showSaveLayout() {
@@ -60,13 +63,21 @@ class DashboardPage extends React.Component {
           </Button>
         </div>
       )
+    } else if (dashboard.layoutSaved) {
+      return (
+        <div className={classes.saveLayoutBar}>
+          <Typography variant="subtitle1" className={classes.saveLayoutSuccess}>
+            Layout Saved
+          </Typography>
+        </div>
+      )
     } else {
       return null
     }
   }
 
   render() {
-    const { classes, location } = this.props;
+    const { classes, location, dashboard } = this.props;
 
     return (
       <div className={classes.root}>
@@ -74,6 +85,13 @@ class DashboardPage extends React.Component {
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <GridLayout />
+          <Dialog
+            open={dashboard.deleteWidgetDialogOpen}
+            onClose={this.props.cancelDeleteWidget}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description">
+            <DeleteWidgetDialog cancelDelete={this.props.cancelDeleteWidget} deleteWidget={this.props.deleteWidget}/>
+          </Dialog>
         </main>
         {this.showSaveLayout()}
       </div>
@@ -92,6 +110,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   initializeEditor: () => dispatch(initializeEditor()),
   saveLayout: () => dispatch(saveLayout()),
+  cancelDeleteWidget: () => dispatch(cancelDeleteWidget()),
+  deleteWidget: () => dispatch(deleteWidget()),
 });
 
 DashboardPage = withStyles(styles)(DashboardPage);

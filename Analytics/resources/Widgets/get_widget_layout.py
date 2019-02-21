@@ -35,7 +35,7 @@ class GetWidgetLayout(Resource):
                         is not found a HTTP status code 404, Not Found is returned with a error discription
             :rtype <class 'Tuple'>:
         """
-
+        
         args = self.reqparser_get.parse_args()
         # Fetch the instances of the widget to get the related layout.
         widget = WidgetModel.query.filter_by(id=args["widgetID"]).first()

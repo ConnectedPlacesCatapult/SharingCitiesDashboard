@@ -9,6 +9,7 @@ from models.users import Users
 
 
 class GetUserByEmail(Resource):
+
     """ API resource class which returns a user from the database
 
         Parameters can be passed using a GET request that contains the following fields in the url:
@@ -18,6 +19,7 @@ class GetUserByEmail(Resource):
         :return: The user's credentials on success or an error message and relevant status code when unsuccessful
         :rtype: JSON
     """
+
     def __init__(self):
         # Post request parser
         self.get_reqparser = reqparse.RequestParser()

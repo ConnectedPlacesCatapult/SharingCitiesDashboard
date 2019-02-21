@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask_jwt_extended import jwt_required, get_jwt_claims
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import abort
 from flask_restful import reqparse
@@ -8,7 +8,6 @@ from sqlalchemy import exc
 
 from db import db
 from models.widget import WidgetModel
-
 
 class DeleteWidgets(Resource):
     """
@@ -21,6 +20,7 @@ class DeleteWidgets(Resource):
             :type widgetID: Integer
 
         """
+
     def __init__(self):
         # Arguments required to delete a widget
         self.reqparser_delete = reqparse.RequestParser()

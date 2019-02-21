@@ -58,9 +58,8 @@ class Users(db.Model):
             print(self.fullname, 'User already exists')
 
     def delete(self):
-        """
-        Add the current Users fields to the SQLAlchemy session to be delete
-        """
+        """ Add the current Users fields to the SQLAlchemy session to be delete"""
+        
         try:
             db.session.delete(self)
             db.session.flush()

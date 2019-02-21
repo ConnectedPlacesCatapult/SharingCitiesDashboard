@@ -1,3 +1,6 @@
+import axios from "axios";
+import { axiosInstance } from '../api/axios'
+
 import _ from 'lodash'
 import {
   PURGE_EDITOR,
@@ -7,8 +10,13 @@ import {
   SET_PLOT_ENCODING,
   SET_PLOT_PROPERTY,
   SET_WIDGET_PROPERTY,
+  SAVE_WIDGET_FULFILLED,
+  SAVE_WIDGET_REJECTED,
+  LOAD_WIDGET_FULFILLED,
+  LOAD_WIDGET_REJECTED,
   TOGGLE_MAP_TOOLTIP_FIELD,
 } from "./../constants";
+import {FETCH_ADMIN_FULFILLED, FETCH_ADMIN_REJECTED} from "../constants";
 
 /**
  * Simply returns true if a record object contains both "Latitude" and "Longitude" fields
@@ -189,19 +197,28 @@ export const toggleMapTooltipField = (field, checked) => ({
   },
 });
 
-export function saveWidget() {
+// Save Widget
+export const saveWidget = () => {
   return (dispatch, getState) => {
-    console.log(getState())
-    const state = getState()
-    const widgetType = _.get(state, 'widget.type')
-    let config = null
-    if (widgetType === 'plot') {
-      config = _.get(state, 'widget.plotConfig' )
-    } else if (widgetType === 'map') {
-      config = _.get(state, 'widget.mapConfig' )
-    } else {
-      config = _.get(state, 'widget.alertConfig' )
+    const currentState = getState();
+
+    const widgetConfig = _.get(currentState, 'widget' )
+
+    const requestData = {
+      data: widgetConfig,
     }
-    console.log(config)
-  }
-}
+
+    axiosInstance.post('widgets/create_widget', requestData).then((response) => {
+      dispatch({
+        type: SAVE_WIDGET_FULFILLED,
+        payload: response.data,
+      })
+    })
+      .catch((err) => {
+        dispatch({
+          type: SAVE_WIDGET_REJECTED,
+          payload: err,
+        })
+      })
+  };
+};

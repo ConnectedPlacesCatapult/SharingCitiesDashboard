@@ -11,6 +11,7 @@ from models.users import Users
 
 
 class ChangeUserPassword(Resource):
+
     """ API resource class which changes a users password and saves changes to the database
 
         Parameters can be passed using a POST request that contains a JSON with the following fields:

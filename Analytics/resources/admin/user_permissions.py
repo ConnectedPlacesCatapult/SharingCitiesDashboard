@@ -11,6 +11,7 @@ from models.users import Users
 
 
 class UserPermissions(Resource):
+
     """ API resource class which updates a users admin and/or activated field
 
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -26,6 +27,7 @@ class UserPermissions(Resource):
 
         Example: {"email" : "Johnny@gmail.com", "activated" : "true" , "admin" : "true"}
     """
+
 
     def __init__(self):
         # Post request parser
