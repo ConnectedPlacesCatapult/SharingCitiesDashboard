@@ -1,4 +1,3 @@
-
 from http import HTTPStatus
 
 import bcrypt
@@ -15,6 +14,22 @@ from models.users import Users
 
 class CreateNewUser(Resource):
 
+    """ API resource class which creates a new user and adds it to the database
+
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :required: valid access JWT where the admin claim has to be true
+        :param email: users email address
+        :param fullname: users fullname
+        :param admin: whether the user will be an admin user or not
+        :param password: users password
+        :type email: string
+        :type fullname: string
+        :type admin: string
+        :type password: string
+        :return: A message indicating a successful or unsuccessful addition of user to the database
+        :rtype: JSON
+     """
+
     def __init__(self):
 
         # Create User (Post request parser)
@@ -24,18 +39,19 @@ class CreateNewUser(Resource):
         self.post_reqparser.add_argument('admin', required=True, help='User level is required', location=['form', 'json'])
         self.post_reqparser.add_argument('password', required=False, location=['form', 'json'])
 
-        # From the request headers
+        # Form the request headers
         self.post_reqparser.add_argument('Authorization', location='headers')
 
         super().__init__()
 
-    # Creates a hash from plain text password with salt
     def _hash_password(self, plain_password):
+        """ Generate a secure hash of the password arguement """
         return bcrypt.hashpw(plain_password, bcrypt.gensalt())
 
-    # Checks if user email exsists in table
     @staticmethod
     def _does_user_exsist(email=None):
+        """ Return the user corresponding to the email argument from the Users table """
+
         if not email:
             return abort(HTTPStatus.BAD_REQUEST.value, error='email not supplied')
         try:
@@ -43,7 +59,6 @@ class CreateNewUser(Resource):
         except exc.SQLAlchemyError as error:
             return abort(HTTPStatus.BAD_REQUEST.value, jsonify({'error': error}))
         return user_exsists is not None
-
 
 
     # Creates a new user entry in the database table users

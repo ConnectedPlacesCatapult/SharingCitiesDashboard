@@ -15,8 +15,14 @@ from models.widget import WidgetModel
 
 class GetWidgets(Resource):
     """
-                Fetches widgets related to the passed userID
-                        TODO: DocString
+        Get one or more widgets from the database with a userID
+
+        :param  userID: Unique user identification number
+        :param  limit: the max count of widgets to be returned (optional)
+
+        :type userID: Integer
+        :type limit: Integer
+
     """
     def __init__(self):
         # Arguments required to fetch the widgets related to the userID
@@ -29,6 +35,7 @@ class GetWidgets(Resource):
 
     @jwt_required
     def post(self):
+
         """ Get one or more widgets from the database with a userID
 
             :param  userID: Unique user identification number

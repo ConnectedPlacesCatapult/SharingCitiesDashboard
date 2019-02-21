@@ -12,8 +12,15 @@ from models.widget import WidgetModel
 
 class GetLayouts(Resource):
     """
-                TODO: DocString
-        """
+        Fetches all layouts for the widgets with a specific userID
+
+        :param  userID: Unique user identification number
+        :param  limit:  maximum count of widgets to be returned (optional)
+
+        :type userID: Integer
+        :type limit: Integer
+    """
+
     def __init__(self):
         # Arguments required to fetch the layouts for all the widget related to a userID
         self.reqparser = reqparse.RequestParser()
@@ -26,8 +33,21 @@ class GetLayouts(Resource):
     @jwt_required
     def post(self):
         """
-                    TODO: DocString
-            """
+                Fetches all layouts for the widgets with a specific userID
+
+                :param  userID: Unique user identification number
+                :param  limit:  maximum count of widgets to be returned (optional)
+
+                :type userID: Integer
+                :type limit: Integer
+
+                :returns: on success a list of all the widget layouts related to the userID are returned. If no
+                          widget are found for the userID a HTTP status code 404, Not Found is returned with an
+                          error message "no widgets found".
+                :rtype <class 'Tuple'>:
+
+        """
+        
         # Fetch the userID from post content ( limit is optional )
         args = self.reqparser.parse_args()
         # Fetch the instances of the widgets to assign the new layouts

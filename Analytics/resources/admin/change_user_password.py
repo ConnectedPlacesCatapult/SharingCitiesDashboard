@@ -1,7 +1,5 @@
 from http import HTTPStatus
 
-import bcrypt
-from flask import jsonify
 from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
@@ -13,6 +11,20 @@ from models.users import Users
 
 
 class ChangeUserPassword(Resource):
+
+    """ API resource class which changes a users password and saves changes to the database
+
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :required: valid access JWT where the admin claim may be either true or false
+        :param email: users email address
+        :param password: the new password which the user wants to store in the database
+        :param verify_password: a repitition of the the 'password' param
+        :type email: string
+        :type password: string
+        :type verify_password: string
+        :return: A message indicating a successful or unsuccessful change
+        :rtype: JSON
+     """
 
     def __init__(self):
 

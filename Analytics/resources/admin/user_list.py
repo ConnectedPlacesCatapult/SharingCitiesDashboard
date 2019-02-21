@@ -14,6 +14,15 @@ from models.users import Users
 
 class UsersList(Resource):
 
+    """ API resource class that returns a list of users from the database
+
+      Parameters can be passed using a GET request that contains the following fields in the url:
+      :param  limit: the max count of users to be returned
+      :type limit: integer
+      :returns: A list of widgets with a maximum length of limit and a status code 200
+      :rtype: JSON
+  """
+
     user_fields = {"id": fields.Integer,
                    "email": fields.String,
                    "fullname": fields.String,
@@ -21,6 +30,7 @@ class UsersList(Resource):
                    "activated": fields.Boolean,
                    "admin": fields.Boolean
                    }
+
 
     def __init__(self):
         self.get_reqparser = reqparse.RequestParser()
@@ -49,6 +59,7 @@ class UsersList(Resource):
         users = (marshal(user, self.user_fields)
                  for user in Users.query.filter_by().limit(args["limit"]))
         # Format user data
+
         user_list = []
         for user in users:
             user_list.append(user)

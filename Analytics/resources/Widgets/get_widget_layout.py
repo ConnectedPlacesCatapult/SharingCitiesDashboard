@@ -7,15 +7,15 @@ from flask_restful import reqparse
 
 from models.widget import WidgetModel
 
-"""
-                    TODO: DocString
-"""
 
 class GetWidgetLayout(Resource):
     """
+        Fetches a layout for a widgets
 
-                        TODO: DocString
+        :param  widgetID: Unique widget identification number
+        :type widgetID:   Integer
     """
+
     def __init__(self):
         # Arguments required to fetch the layout the widget related to the userID
         self.reqparser_get = reqparse.RequestParser()
@@ -27,9 +27,15 @@ class GetWidgetLayout(Resource):
     def post(self):
         """
             Fetches layout for widget with the passed widgetID
-                    TODO: DocString
-        """
 
+            :param  widgetID: Unique widget identification number
+            :type widgetID:   Integer
+
+            :returns:   on success the widgets layout instance is return if the widget or layout
+                        is not found a HTTP status code 404, Not Found is returned with a error discription
+            :rtype <class 'Tuple'>:
+        """
+        
         args = self.reqparser_get.parse_args()
         # Fetch the instances of the widget to get the related layout.
         widget = WidgetModel.query.filter_by(id=args["widgetID"]).first()

@@ -6,6 +6,7 @@ from datetime import datetime
 class Register(Resource):
 	"""API which allows users to activate their Shared Cities Dashboard account
 	   Parameters can be passed using a POST request that contains a JSON of the following fields:
+
         :param fullname: users fullname
         :param email: users email address
         :param password: users password that was sent when they were added on the admin page

@@ -10,7 +10,8 @@ from sqlalchemy import func
 def test_client():
 	""" Initialise Flask application, save the current application context for duration of single
 	    test and yield testing client for making requests to  endpoints exposed by  application
-	    """
+	"""
+
 	test_app = create_app(DATABASE_NAME='test_analysis', TESTING=True)
 	testing_client = test_app.test_client()
 
@@ -24,35 +25,38 @@ def test_client():
 @pytest.fixture()
 def admin_user():
 	""" Create and save admin user to the database for duration of test and delete it afterwards """
-	user = Users("Admin","admin@FCC.com",Users.generate_hash("wfnbqk".encode("utf8")).decode("utf8"),True,True)
 
-	try:
-		user.save()
-		user.commit()
-	except Exception as e:
-		pass
+    user = Users("Admin","admin@FCC.com",Users.generate_hash("wfnbqk".encode("utf8")).decode("utf8"),True,True)
 
+    try:
+    	user.save()
+    	user.commit()
+    except Exception as e:
+    	pass
+    
 
-	yield user
+    yield user
 
-	db.session.delete(user)
-	db.session.commit()
+    db.session.delete(user)
+    db.session.commit()
 
 @pytest.fixture()
 def dummy_user():
-	user = Users("Dummy","dummy@FCC.com",Users.generate_hash("1234".encode("utf8")).decode("utf8"),True,True)
+	""" Create and save regular user to the database for duration of test and delete it afterwards """
+    user = Users("Dummy","dummy@FCC.com",Users.generate_hash("1234".encode("utf8")).decode("utf8"),True,True)
 
-	try:
-		user.save()
-		user.commit()
-	except Exception as e:
-		pass
+    try:
+    	user.save()
+    	user.commit()
+    except Exception as e:
+    	pass
+    
 
+    yield user
 
-	yield user
+    db.session.delete(user)
+    db.session.commit()
 
-	db.session.delete(user)
-	db.session.commit()
 
 def test_create_user(test_client,admin_user):
 	""" Test for successful creation of a new user by an admin and for presense of user in the database  """
@@ -92,6 +96,7 @@ def test_get_user(test_client,admin_user,dummy_user):
 	assert response_get.status_code == 200
 	assert dummy_user.email == response_get.get_json()["email"]
 
+
 def test_edit_user(test_client,admin_user,dummy_user):
 	""" Test that the changes a user makes to their fullname persists to the database """
 
@@ -106,6 +111,7 @@ def test_edit_user(test_client,admin_user,dummy_user):
 	assert Users.verify_hash("new password".encode("utf8"),dummy_user.password.encode("utf8")) == True
 	assert changed_user.admin == False
 	assert changed_user.admin == False
+
 	
 
 

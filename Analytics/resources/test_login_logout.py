@@ -9,6 +9,10 @@ from sqlalchemy import func
 
 @pytest.fixture()
 def test_client():
+	""" A fixture that initialises the Flask application, saves the current application context for the duration of a single
+	    test and yields a testing client that can be used for making requests to the endpoints exposed by the application
+	"""
+	
 	test_app = create_app(DATABASE_NAME='test_analysis', TESTING=True)
 	testing_client = test_app.test_client()
 
@@ -21,6 +25,8 @@ def test_client():
 
 @pytest.fixture()
 def dummy_user():
+	""" A fixture that creates and saves a user to the database that is to be used for testing purposes """
+	
     user = Users("User","user@FCC.com",Users.generate_hash("wfnbqk".encode("utf8")).decode("utf8"),True,True)
 
     user.save()
@@ -31,6 +37,10 @@ def dummy_user():
 
 
 def test_login_correct_details(test_client, dummy_user):
+	""" Tests whether the correct response message, response code and corresponding access and refresh tokens are
+	    returned when the correct login credentials are supplied 
+	"""
+	
     response = test_client.post('/login', data=dict(email=dummy_user.email, password="wfnbqk"), follow_redirects=True)
     response_json = response.get_json()
     assert "Logged in as" in response_json["message"]
@@ -42,6 +52,9 @@ def test_login_correct_details(test_client, dummy_user):
     db.session.commit()
 
 def test_login_incorrect_details(test_client, dummy_user):
+	""" Tests whether an unsuccessful response message and response code are returned when the incorrect login credentials are supplied 
+	    and ensures that no access or refresh JWT is issued
+	"""
     response = test_client.post('/login', data=dict(email="not_a_user@FCC.com", password="wfnbqk"), follow_redirects=True)
     response_json = response.get_json()
     assert "Incorrect credentials. Please try again" in response_json["message"]
@@ -61,6 +74,9 @@ def test_login_incorrect_details(test_client, dummy_user):
 
 
 def test_revoke_access(test_client,dummy_user):
+	""" Tests whether when a access JWT is revoked that the the token is added to the revoked tokens table and that a user is
+	    is not able to use that token on subsequent requests
+	"""
     response_login = test_client.post('/login', data=dict(email="user@FCC.com", password="wfnbqk"), follow_redirects=True)
     response_login_json = response_login.get_json()
     header = {'Authorization': 'Bearer {}'.format(response_login_json["access_token"])}   
@@ -77,6 +93,9 @@ def test_revoke_access(test_client,dummy_user):
     db.session.commit()
 
 def test_revoke_refresh(test_client,dummy_user):
+	""" Tests whether when a refresh JWT is revoked that the the token is added to the revoked tokens table and that a user is
+	    is not able to use that token to generate new access JWTs
+	"""
     response_login = test_client.post('/login', data=dict(email="user@FCC.com", password="wfnbqk"), follow_redirects=True)
     response_login_json = response_login.get_json()
     header = {'Authorization': 'Bearer {}'.format(response_login_json["refresh_token"])}   
@@ -94,6 +113,7 @@ def test_revoke_refresh(test_client,dummy_user):
 
 
 def test_refresh_token(test_client,dummy_user):
+	""" Tests whether when supplied a refresh JWT, this endpoint provides a new access token that can be used to access other restricted endpoints """
     response_login = test_client.post('/login', data=dict(email="user@FCC.com", password="wfnbqk"), follow_redirects=True)
     response_login_json = response_login.get_json()
     header = {'Authorization': 'Bearer {}'.format(response_login_json["refresh_token"])}   
@@ -108,6 +128,7 @@ def test_refresh_token(test_client,dummy_user):
 
     db.session.delete(dummy_user)
     db.session.commit()
+
 
 
 
