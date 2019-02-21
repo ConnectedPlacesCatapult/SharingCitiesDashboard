@@ -1,9 +1,9 @@
-from flask_restful import Resource, reqparse, inputs
-from db import db
-from models.users import Users
 from datetime import datetime
 
+from flask_restful import Resource, reqparse, inputs
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity,get_jwt_claims)
+
+from db import db
 from models.users import Users
 
 class Login(Resource):
