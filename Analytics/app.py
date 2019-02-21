@@ -78,13 +78,23 @@ def create_app(**config_overrides):
    
     @jwt.user_claims_loader
     def add_claims_to_access_token(user):
-        """ Add admin claim to access token """
+        """ Add admin claim to access token 
+            :param user: Users model
+            :type user: Users instance
+            :return: Admin claim to be added to access JWT
+            :rtype: JSON
+        """
         
         return {'admin': user.admin}
 
     @jwt.user_identity_loader
     def user_identity_lookup(user):
-        """ Define identity claim within JWT token """
+        """ Define identity claim within JWT token
+            :param user: Users model
+            :type user: Users instance
+            :return: Identifier for a JWT
+            :rtype: string
+        """
         
         return user.email
 
