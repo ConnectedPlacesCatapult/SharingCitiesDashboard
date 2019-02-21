@@ -68,7 +68,7 @@ class AddUser extends React.Component {
       fullName: '',
       password: '',
       confirmPassword: '',
-      isAdmin: false,
+      admin: false,
       registrationFailed: false,
       registrationError: null,
       errors: {}
@@ -96,7 +96,7 @@ class AddUser extends React.Component {
   };
 
   render() {
-    const { email, password, confirmPassword, fullName, errors, isLoading, isAdmin } = this.state;
+    const { email, password, confirmPassword, fullName, errors, isLoading, admin } = this.state;
     const { classes } = this.props;
 
     return (
@@ -158,8 +158,8 @@ class AddUser extends React.Component {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={this.state.isAdmin}
-                  onChange={this.onCheckChange("isAdmin")}
+                  checked={this.state.admin}
+                  onChange={this.onCheckChange("admin")}
                   color="primary"
                 />
               }

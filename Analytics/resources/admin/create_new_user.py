@@ -4,7 +4,7 @@ import bcrypt
 from flask import jsonify
 from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
-from flask_restful import Resource
+from flask_restful import Resource, inputs
 from flask_restful import abort
 from flask_restful import reqparse
 from sqlalchemy import exc
@@ -36,7 +36,7 @@ class CreateNewUser(Resource):
         self.post_reqparser = reqparse.RequestParser()
         self.post_reqparser.add_argument('email', required=True, help='email is required', location=['form', 'json'])
         self.post_reqparser.add_argument('fullname', required=True, help='fullname is required', location=['form', 'json'])
-        self.post_reqparser.add_argument('admin', required=True, help='User level is required', location=['form', 'json'])
+        self.post_reqparser.add_argument('admin', type=inputs.boolean, required=True, help='User level is required', location=['form', 'json'])
         self.post_reqparser.add_argument('password', required=False, location=['form', 'json'])
 
         # Form the request headers

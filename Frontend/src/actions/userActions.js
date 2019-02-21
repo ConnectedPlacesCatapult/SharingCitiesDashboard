@@ -30,7 +30,7 @@ export function doRegister(email, fullName, password, passwordNew) {
     password: password,
     password_new: passwordNew
   }
-  const session = axios.post('/register', userInfo).then((res) => {
+  const session = axiosInstance.post('/register', userInfo).then((res) => {
     console.log(res.data)
   }).catch(function (e) {
     console.log('registration failed', e)
