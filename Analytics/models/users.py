@@ -1,12 +1,11 @@
+""" Data model class for Users table """
+
 from datetime import datetime
 
 import bcrypt
 from sqlalchemy.exc import IntegrityError
 
 from db import db
-
-
-# TODO: add doc string
 
 class Users(db.Model):
     __tablename__ = 'users'
@@ -73,19 +72,36 @@ class Users(db.Model):
 
     @classmethod
     def find_by_email(cls, email):
-        """ Return the user corresponding to the email argument from the Users table """
+        """ Return the user corresponding to the email argument from the Users table 
+            :param email: user's email
+            :type email: string
+            :return: Users credentials
+            :rtype: Users instance
+        """
 
         return cls.query.filter_by(email=email).first()
 
     @staticmethod
     def generate_hash(password):
-        """ Generate a secure hash """
+        """ Generate a secure hash 
+            :param password: user's to be password
+            :type password: string
+            :return: a hashed version of the password string
+            :rtype: unicode encoded string
+        """
 
         return bcrypt.hashpw(password, bcrypt.gensalt())
 
     @staticmethod
     def verify_hash(password, hash):
-        """ Verify password matches the hashed password in the database. """
+        """ Verify password matches the hashed password in the database. 
+            :param password: user's to be password
+            :param hash: the password hash that would be stored in the database
+            :type password: string
+            :type hash: string
+            :return: whether the password arguement corresponds to the hash
+            :rtype: boolean
+        """
 
         return bcrypt.checkpw(password, hash)
 
