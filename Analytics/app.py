@@ -96,7 +96,12 @@ def create_app(**config_overrides):
 
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
-    api.add_resource(RequestForData, '/data')
+    api.add_resource(RequestForData, '/data')#current /data endpoint
+
+    # proposed /data endpoint
+    api.add_resource(RequestForTheme, '/data/theme')
+    api.add_resource(RequestForSensor, '/data/sensor')
+    api.add_resource(RequestForAttribute, '/data/attribute')
 
     api.add_resource(Register, '/register')
     api.add_resource(Login, '/login')
