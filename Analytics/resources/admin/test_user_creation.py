@@ -8,7 +8,6 @@ from urllib.error import HTTPError
 from models.users import Users
 
 
-
 class UserCreationTests(unittest.TestCase):
 
     def setUp(self):
@@ -22,15 +21,11 @@ class UserCreationTests(unittest.TestCase):
                                 "QwNzMwNSwianRpIjoiOWUyNjc4YWUtNjU5Ny00Mjg2LWFlMmUtNzMzOTI0NDlmYmMzIiwiZXhwI" \
                                 "joxNTUxMDEyMTA1LCJpZGVudGl0eSI6ImphbWVzLmJvbmRAZW1haWwuY29tIiwiZnJlc2giOmZh" \
                                 "bHNlLCJ0eXBlIjoiYWNjZXNzIiwidXNlcl9jbGFpbXMiOnsiYWRtaW4iOnRydWV9fQ.G80Kgoqa" \
-                                "YroMvb-_bx_GADcynFq90MgO2YB8Jgwa4kY" #self.login_user()
+                                "YroMvb-_bx_GADcynFq90MgO2YB8Jgwa4kY"  # self.login_user()
 
         self.auth = 'Bearer {}'.format(self.jwt_access_token)
         self.http_headers = {'Content-Type': 'application/json',
                              'Authorization': self.auth}
-
-
-
-
 
     def login_user(self, email=None, password=None):
 
@@ -45,8 +40,6 @@ class UserCreationTests(unittest.TestCase):
         else:
             print(response)
             return None
-
-
 
     def create_user_request(self):
         data = json.dumps({"email": self.email,
@@ -72,7 +65,7 @@ class UserCreationTests(unittest.TestCase):
             json_response = json.loads(response.decode())
         except HTTPError as error:
             json_response = json.loads(error.read())
-        #print("\n\nJSON Response:  {} \n\n".format(json_response))
+        # print("\n\nJSON Response:  {} \n\n".format(json_response))
         return json_response
 
     def test_create_user_db_entry(self):
@@ -130,9 +123,6 @@ class UserCreationTests(unittest.TestCase):
             self.assertTrue(True)
         except ValueError:
             self.assertTrue(False)
-
-
-
 
 
 if __name__ == '__main__':

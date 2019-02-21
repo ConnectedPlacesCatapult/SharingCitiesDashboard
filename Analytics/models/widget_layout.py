@@ -48,6 +48,24 @@ class Layouts(db.Model):
         return self.json()
 
     def json(self):
+        """
+        formats response to be sent to user
+
+        :return:  a Dictionary of the response data
+                            :param id: widgetID
+                            :param x:  x coordinate of widget
+                            :param y:  y coordinate of widget
+                            :param w:  width of widget
+                            :param h:  height of widget
+                            :param static: is the widget is static true/ false
+                            :type Integer
+                            :type Integer
+                            :type Integer
+                            :type Integer
+                            :type Integer
+                            :type String
+        :rtype:   JSON
+        """
         return {
             'id': str(self.widget_id),
             'x': self.x_coord,
@@ -63,20 +81,18 @@ class Layouts(db.Model):
         if not self.table_exists():  # If table don't exist, Create.
             # Create a table with the appropriate Columns
             db.Table('layouts', db.MetaData(bind=db.engine),
-                        db.Column('id', db.Integer, primary_key=True),
-                        db.Column('widget_id', db.Integer, nullable=True),
-                        db.Column('x', db.Integer, nullable=False),
-                        db.Column('y', db.Integer, nullable=False),
-                        db.Column('h', db.Integer, nullable=False),
-                        db.Column('w', db.Integer, nullable=False),
-                        db.Column('static', db.Boolean, nullable=False),
-                        schema=None).create()
-            
-        
+                     db.Column('id', db.Integer, primary_key=True),
+                     db.Column('widget_id', db.Integer, nullable=True),
+                     db.Column('x', db.Integer, nullable=False),
+                     db.Column('y', db.Integer, nullable=False),
+                     db.Column('h', db.Integer, nullable=False),
+                     db.Column('w', db.Integer, nullable=False),
+                     db.Column('static', db.Boolean, nullable=False),
+                     schema=None).create()
 
     def save(self):
         """ Adds object instance to the db session to be commited"""
-        
+
         try:
             db.session.add(self)
             db.session.flush()
@@ -93,7 +109,7 @@ class Layouts(db.Model):
             db.session.delete(self)
         except IntegrityError as ie:
             db.session.rollback()
-            
+
     @staticmethod
     def table_exists():
         """
@@ -116,13 +132,7 @@ class Layouts(db.Model):
             :type Integer:
 
             :returns: on success a layout instance is return otherwise None
-            :rtype <class 'Layouts'>:
+            :rtype Layout:
 
         """
         return cls.query.filter_by(id=widgetID).first()
-
-
-
-
-
-

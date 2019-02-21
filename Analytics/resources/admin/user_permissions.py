@@ -25,7 +25,6 @@ class UserPermissions(Resource):
         :return: The user's credentials on success or an error message and corresponding status code when unsuccessful
         :rtype: JSON
 
-        Example: {"email" : "Johnny@gmail.com", "activated" : "true" , "admin" : "true"}
     """
 
 

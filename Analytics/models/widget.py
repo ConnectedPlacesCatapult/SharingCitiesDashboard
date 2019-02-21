@@ -26,7 +26,7 @@ class WidgetModel(db.Model):
     data = db.Column('data', JSON, nullable=False)
 
     layout_id = db.Column(db.Integer, db.ForeignKey('layouts.id'))
-    #TODO: Change lazy loading to joined query loading for production
+
     layout = db.relationship('Layouts', backref=db.backref('layouts', lazy=True))
 
     def __init__(self, user_id, layout, data):
@@ -38,7 +38,7 @@ class WidgetModel(db.Model):
         self.create_table()
 
     def __str__(self):
-        return "UserID: {} \t\tWidgetID: {}".format(self.user_id,self.id)
+        return "UserID: {} \t\tWidgetID: {}".format(self.user_id, self.id)
 
     def json(self):
         """
@@ -51,7 +51,7 @@ class WidgetModel(db.Model):
                             :type   Integer:
                             :type   Integer:
                             :type   JSON:
-        :rtype:   <class 'dict'>
+        :rtype:   JSON
         """
         # format response
         response_data = {"id": str(self.id), "userID": self.user_id, "data": self.data}
@@ -88,13 +88,11 @@ class WidgetModel(db.Model):
     def commit(self):
         db.session.commit()
 
-
     def create_table(self):
         """
             Database model for the widget table used to persist widget data
 
         """
-
 
         # If table don't exist, Create.
         if not self.table_exists():
@@ -103,7 +101,7 @@ class WidgetModel(db.Model):
                      db.Column('id', db.Integer, primary_key=True),
                      db.Column('user_id', db.Integer, nullable=False),
                      db.Column('data', JSON, nullable=False),
-                     db.Column('layout_id',db.Integer, db.ForeignKey('layouts.id')),
+                     db.Column('layout_id', db.Integer, db.ForeignKey('layouts.id')),
                      db.relationship('Layouts', backref=db.backref('layouts', lazy=True)),
                      schema=None).create()
 
@@ -120,16 +118,13 @@ class WidgetModel(db.Model):
         return has_table
 
     @classmethod
-    def get_widget_by_id(cls,widgetID):
+    def get_widget_by_id(cls, widgetID):
         """
             Fetches a widget by its id
             :param widgetID: the widgets identification number to fetch
             :return: Widget instance if found otherwise None
-            :rtype <class 'Widget'>:    an instance of a widget
+            :rtype Widget:    an instance of a widget
 
         """
         # find widget by its id  and return it
         return cls.query.filter_by(id=widgetID).first()
-
-
-

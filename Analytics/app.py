@@ -2,9 +2,9 @@ import datetime
 
 from flask import Flask
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_restful import Api
+from flask_jwt_extended import JWTManager
 
 from db import db
 from models.revoked_tokens import RevokedTokens
@@ -32,6 +32,7 @@ from resources.admin.change_user_name import ChangeUserName
 from resources.admin.get_user import GetUserByEmail
 from resources.admin.edit_user import EditUser
 
+
 def create_app(**config_overrides):
     app = Flask(__name__)
     app.config.from_pyfile('settings.py')
@@ -56,7 +57,6 @@ def create_app(**config_overrides):
     # # this is a bad idea. See examples/csrf_protection_with_cookies.py
     # # for how safely store JWTs in cookies
     # app.config['JWT_COOKIE_CSRF_PROTECT'] = True
-
 
     app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'  # TODO: change before deployement
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=1)  # TODO: change before deployement
@@ -95,7 +95,7 @@ def create_app(**config_overrides):
 
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
-    api.add_resource(RequestForData, '/data')#current /data endpoint
+    api.add_resource(RequestForData, '/data')  # current /data endpoint
 
     # proposed /data endpoint
     api.add_resource(RequestForTheme, '/data/theme')
