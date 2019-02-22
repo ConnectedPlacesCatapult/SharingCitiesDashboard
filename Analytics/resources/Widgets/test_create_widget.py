@@ -1,11 +1,14 @@
+import re
+
 import pytest
-from models.users import Users
-from models.revoked_tokens import RevokedTokens
+from sqlalchemy import func
+from flask_jwt_extended import create_access_token
+
 from app import create_app
 from db import db
-from flask_jwt_extended import create_access_token
-from sqlalchemy import func
-import re
+from models.users import Users
+from models.users import Users
+from models.revoked_tokens import RevokedTokens
 
 
 @pytest.fixture()
