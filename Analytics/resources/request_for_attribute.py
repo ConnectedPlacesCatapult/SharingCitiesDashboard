@@ -41,8 +41,11 @@ API resource class, retrieve attriubte data from database
 
 """
 
+from datetime import datetime
 
+import statistics
 from flask_restful import Resource, reqparse, inputs
+
 from db import db
 from models.theme import Theme
 from models.attributes import Attributes
@@ -52,9 +55,6 @@ from models.sensor_attribute import SensorAttribute
 from models.sensor import Sensor
 from resources.predict import predict
 from resources.helper_functions import is_number
-from sqlalchemy import desc
-from datetime import datetime
-import statistics
 from resources.request_grouped import request_grouped_data, request_harmonised_data
 
 

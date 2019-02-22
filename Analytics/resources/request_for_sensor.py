@@ -1,36 +1,34 @@
-"""
-API for retrieving sensor data from database
-	One of the following parameters can be passed with url using GET requests
-	:param sensor: accepts an id of the sensor and return its details, also accept a 
-			value 'all' which would return all the sensor in the system
-	:param sensorname: accepts the name of the sensor, works same as attribute can 
-				return information about multiple sensor names when passed as
-				comma separated string
-	:param sensorattribute: accepts the id(s) of the sensor and returns the attributes 
-					associated with the sensor
-	:type sensor: string 
-	:type sensorname: string
-	:type sensorattribute: string
-	:return: The requested sensor data from the database
-	:rtype: JSON
-
-	Few example queries:
-		{URL}?sensor='<id-of-sensor>' // Retriving a single sensor
-		{URL}?sensor=all 			  // Retriving all the sensors
-		{URL}?sensorname='<name-of-sensor>' // Retriving by name
-		{URL}?sensor='<name1>,<name2>' // To retrieve multiple records
-"""
-
-
 from flask_restful import Resource, reqparse, inputs
+
 from db import db
 from models.attributes import Attributes
 from models.sensor_attribute import SensorAttribute
 from models.sensor import Sensor
 
 
-
 class RequestForSensor(Resource):
+	"""
+	API for retrieving sensor data from database
+		One of the following parameters can be passed with url using GET requests
+		:param sensor: accepts an id of the sensor and return its details, also accept a 
+				value 'all' which would return all the sensor in the system
+		:param sensorname: accepts the name of the sensor, works same as attribute can 
+					return information about multiple sensor names when passed as
+					comma separated string
+		:param sensorattribute: accepts the id(s) of the sensor and returns the attributes 
+						associated with the sensor
+		:type sensor: string 
+		:type sensorname: string
+		:type sensorattribute: string
+		:return: The requested sensor data from the database
+		:rtype: JSON
+
+		Few example queries:
+			{URL}?sensor='<id-of-sensor>' // Retriving a single sensor
+			{URL}?sensor=all 			  // Retriving all the sensors
+			{URL}?sensorname='<name-of-sensor>' // Retriving by name
+			{URL}?sensor='<name1>,<name2>' // To retrieve multiple records
+	"""
 	parser = reqparse.RequestParser()
 
 	parser.add_argument('sensor', type=str, store_missing=False)

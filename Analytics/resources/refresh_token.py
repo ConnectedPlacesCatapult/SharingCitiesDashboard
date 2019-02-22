@@ -5,11 +5,13 @@ from models.users import Users
 
 
 class TokenRefresh(Resource):
-    """API that creates a new valid access JWT for the requesting user
-        :required: A valid refresh JWT in the Authorization Header in the format - Bearer <JWT>
-        :return: The user's corresponding access JWT
-        :rtype: JSON
+    """
+    API that creates a new valid access JWT for the requesting user
+    :required: A valid refresh JWT in the Authorization Header in the format - Bearer <JWT>
+    :return: The user's corresponding access JWT
+    :rtype: JSON
     """  
+    
     @jwt_refresh_token_required
     def post(self):
         current_user = get_jwt_identity() # extracts the users identity from the refresh token

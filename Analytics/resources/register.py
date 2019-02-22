@@ -6,8 +6,9 @@ from db import db
 from models.users import Users
 
 class Register(Resource):
-	"""API resource class, Activate users Shared Cities Dashboard account
-	   Parameters can be passed using a POST request that contains a JSON of the following fields:
+	"""
+	API resource class, Activate users Shared Cities Dashboard account
+	Parameters can be passed using a POST request that contains a JSON of the following fields:
 
         :param fullname: users fullname
         :param email: users email address
