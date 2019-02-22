@@ -4,9 +4,10 @@ from db import db
 
 @pytest.fixture()
 def test_client():
-	""" Initialise Flask application, save the current application context for
-		 the duration of a single test and yield a testing client for making 
-		 requests to the endpoints exposed by the application
+	""" 
+	Initialise Flask application, save the current application context for
+	the duration of a single test and yield a testing client for making 
+	requests to the endpoints exposed by the application
 	"""
 	test_app = create_app(DATABASE_NAME='fcc_dump', TESTING=True)
 	testing_client = test_app.test_client()
@@ -25,8 +26,9 @@ def test_client():
  												b1_temp_back_value"
  												])
 def test_attribute_params(test_client, attribute_param_value):
-	""" Test whether the proposed /data endpoint functions the same as the 
-		current one for the attribute parameter 
+	""" 
+	Test whether the proposed /data endpoint functions the same as the 
+	current one for the attribute parameter 
 	"""
 
 	data = "attribute"
@@ -43,8 +45,9 @@ def test_attribute_params(test_client, attribute_param_value):
  												"b1_flow_value,b1_temp_out_value, b1_temp_back_value"
  												])
 def test_attributedata_params(test_client, attributedata_param_value):
-	""" Test whether the proposed /data endpoint functions the same as the 
-		current one for the attributedata parameter 
+	""" 
+	Test whether the proposed /data endpoint functions the same as the 
+	current one for the attributedata parameter 
 	"""
 
 	data = "attribute"
@@ -61,10 +64,12 @@ def test_attributedata_params(test_client, attributedata_param_value):
  												("b1_flow_value,b1_temp_out_value,b1_temp_back_value","100","10")
  												])
 def test_attributedata_limit_and_offset_params(test_client, attributedata,limit,offset):
-	""" Test whether the proposed /data endpoint functions the same as the 
-		current one for the attributedata parameter together with the limit
-		and offset parameters
+	""" 
+	Test whether the proposed /data endpoint functions the same as the 
+	current one for the attributedata parameter together with the limit
+	and offset parameters
 	"""
+	
 	data = "attribute"
 	param = "attributedata"
 
@@ -79,10 +84,12 @@ def test_attributedata_limit_and_offset_params(test_client, attributedata,limit,
  												("b1_flow_value,b1_temp_out_value,b1_temp_back_value","sum")
  												])
 def test_attributedata_operation_params(test_client, attributedata,operation):
-	""" Test whether the proposed /data endpoint functions the same as the 
-		current one for the attributedata parameter together with the operation
-		parameter
+	""" 
+	Test whether the proposed /data endpoint functions the same as the 
+	current one for the attributedata parameter together with the operation
+	parameter
 	"""
+	
 	data = "attribute"
 	param = "attributedata"
 
@@ -98,10 +105,12 @@ def test_attributedata_operation_params(test_client, attributedata,operation):
  												])
 
 def test_attributedata_grouped_params(test_client, attributedata,grouped):
-	""" Test whether the proposed /data endpoint functions the same as the 
-		current one for attributedata parameter together with the operation
-		parameter
+	""" 
+	Test whether the proposed /data endpoint functions the same as the 
+	current one for attributedata parameter together with the operation
+	parameter
 	"""
+	
 	data = "attribute"
 	param = "attributedata"
 
@@ -117,10 +126,12 @@ def test_attributedata_grouped_params(test_client, attributedata,grouped):
  												])
 
 def test_attributedata_harmonising_method_params(test_client, attributedata,harmonising_method):
-	""" Test whether the proposed /data endpoint functions the same as the 
-		current one for attributedata parameter together with the operation
-		parameter
+	""" 
+	Test whether the proposed /data endpoint functions the same as the 
+	current one for attributedata parameter together with the operation
+	parameter
 	"""
+	
 	data = "attribute"
 	param = "attributedata"
 
@@ -128,6 +139,5 @@ def test_attributedata_harmonising_method_params(test_client, attributedata,harm
 	response_dotmodus_enpoint = test_client.get('/data/{}?{}={}&grouped=true&harmonising_method={}'.format(data,param,attributedata,harmonising_method))
 	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
 	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
-
 
 
