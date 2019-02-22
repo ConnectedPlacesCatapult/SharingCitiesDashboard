@@ -21,7 +21,7 @@ class ChangeUserPassword(Resource):
     :type email: string
     :type password: string
     :type verify_password: string
-    :return: A message indicating a successful or unsuccessful change
+    :return: A message indicating a successful or unsuccessful change.
      """
 
     def __init__(self):
