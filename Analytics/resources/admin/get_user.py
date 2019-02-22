@@ -10,27 +10,46 @@ from models.users import Users
 
 class GetUserByEmail(Resource):
 
-    """ API resource class which returns a user from the database
+    """
+    API resource class which returns a user from the database
+    Parameters can be passed using a GET request that contains the following fields in the url:
+    :required: valid access JWT where the admin claim may be true or false
+    :param email: users email address
+    :type email: string
+    :return: The user's credentials on success or an error message and relevant status code when unsuccessful
+    :rtype: JSON
+    """
 
+    def __init__(self):
+        """
+        Instantiates the get user endpoint
         Parameters can be passed using a GET request that contains the following fields in the url:
         :required: valid access JWT where the admin claim may be true or false
         :param email: users email address
         :type email: string
         :return: The user's credentials on success or an error message and relevant status code when unsuccessful
         :rtype: JSON
-    """
-
-    def __init__(self):
+        """
         # Post request parser
         self.get_reqparser = reqparse.RequestParser()
         self.get_reqparser.add_argument('email', required=True, location=['form', 'json'])
 
     @jwt_required
-    def post(self):
+    def post(self)-> tuple:
+        """
+        API resource class which returns a user from the database
+        Parameters can be passed using a GET request that contains the following fields in the url:
+        :required: valid access JWT where the admin claim may be true or false
+        :param email: users email address
+        :type email: string
+        :return: The user's credentials on success or an error message and relevant status code when unsuccessful
+        :rtype tuple: JSON with http status code
+        """
         args = self.get_reqparser.parse_args()
+        # Fetch user from database using the users email
         user = Users.find_by_email(args["email"])
 
         if not user:
+            # No user with that email address
             return abort(HTTPStatus.BAD_REQUEST.value, error='User not found')
-
         return user.json(), HTTPStatus.OK.value
