@@ -10,28 +10,48 @@ from models.users import Users
 
 
 class EditUser(Resource):
-    """ API resource class which changes user credentials and saves changes to the database
-		
-		A valid access JWT is required where the admin claim has to be True
-		Parameters can be passed using a POST request that contains a JSON with the following fields:
-		:required: 
-			:param email: users current email address
-			:type email: string
-		:optional:
-			:param fullname: users to be fullname 
-			:param password: users to be password
-			:param admin: users to be admin status 
-			:param activated: users to be activated status 
-			:type fullname: string
-			:type password: string
-			:type admin: boolean 
-			:type activated: boolean
-		
-		:return: A message indicating success or failure and the corresponding response code 
-		:rtype: JSON
+    """
+    API resource class which changes user credentials and saves changes to the database
+    A valid access JWT is required where the admin claim has to be True
+    Parameters can be passed using a POST request that contains a JSON with the following fields:
+    :required:
+    :param email: users current email address
+    :type email: string
+    :optional:
+    :param fullname: users to be fullname
+    :param password: users to be password
+    :param admin: users to be admin status
+    :param activated: users to be activated status
+    :type fullname: string
+    :type password: string
+    :type admin: boolean
+    :type activated: boolean
+
+    :return: A message indicating success or failure and the corresponding response code
+    :rtype: JSON
 	"""
 
     def __init__(self):
+        """
+        Initialises the edit user end point
+        A valid access JWT is required where the admin claim has to be True
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :required:
+            :param email: users current email address
+            :type email: string
+        :optional:
+            :param fullname: users to be fullname
+            :param password: users to be password
+            :param admin: users to be admin status
+            :param activated: users to be activated status
+            :type fullname: string
+            :type password: string
+            :type admin: boolean
+            :type activated: boolean
+
+        :return: A message indicating success or failure and the corresponding response code
+        :rtype: JSON
+        """
 
         # Create User (Post request parser)
         self.post_reqparser = reqparse.RequestParser()
@@ -45,7 +65,27 @@ class EditUser(Resource):
                                          store_missing=False)
 
     @jwt_required
-    def post(self):
+    def post(self) -> tuple:
+        """
+        API resource class which changes user credentials and saves changes to the database
+        A valid access JWT is required where the admin claim has to be True
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :required:
+            :param email: users current email address
+            :type email: string
+        :optional:
+            :param fullname: users to be fullname
+            :param password: users to be password
+            :param admin: users to be admin status
+            :param activated: users to be activated status
+            :type fullname: string
+            :type password: string
+            :type admin: boolean
+            :type activated: boolean
+
+        :return: A message indicating success or failure and the corresponding response code
+        :rtype: JSON
+        """
 
         if not get_jwt_claims()['admin']:
             abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
