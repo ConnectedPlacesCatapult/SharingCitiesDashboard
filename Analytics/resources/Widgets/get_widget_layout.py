@@ -19,9 +19,9 @@ class GetWidgetLayout(Resource):
                     is not found a HTTP status code 404, Not Found is returned with a error discription
         :rtype JSON:
     """
-
     def __init__(self):
         """
+        Instantiates the get widget endpoint
         Fetches layout for widget with the passed widgetID
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param  widgetID: Unique widget identification number
@@ -36,16 +36,15 @@ class GetWidgetLayout(Resource):
     @jwt_required
     def post(self) -> tuple:
         """
-            Fetches layout for widget with the passed widgetID
-            Parameters can be passed using a POST request that contains a JSON with the following fields:
-            :param  widgetID: Unique widget identification number
-            :type widgetID:   Integer
+        Fetches layout for widget with the passed widgetID
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :param  widgetID: Unique widget identification number
+        :type widgetID:   Integer
 
-            :returns:   on success the widgets layout instance is return if the widget or layout
-                        is not found a HTTP status code 404, Not Found is returned with a error discription
-            :rtype JSON:
+        :returns:   on success the widgets layout instance is return if the widget or layout
+                    is not found a HTTP status code 404, Not Found is returned with a error discription
+        :rtype JSON:
         """
-
         args = self.reqparser_get.parse_args()
         # Fetch the instances of the widget to get the related layout.
         widget = WidgetModel.query.filter_by(id=args["widgetID"]).first()
