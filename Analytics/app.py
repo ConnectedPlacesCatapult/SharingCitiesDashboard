@@ -68,32 +68,35 @@ def create_app(**config_overrides):
 
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
-        """ Query revoked tokens table for presence of decrypted_token argument
-            :param decrypted_token: Decrypted version of a user's JWT
-            :type decrypted_token: string
-            :return: Whether the decrypted token is present in revoked tokens table
-            :rtype: boolean
+        """ 
+        Query revoked tokens table for presence of decrypted_token argument
+        :param decrypted_token: Decrypted version of a user's JWT
+        :type decrypted_token: string
+        :return: Whether the decrypted token is present in revoked tokens table
+        :rtype: boolean
         """
         jti = decrypted_token['jti']
         return RevokedTokens.is_jti_blacklisted(jti)
 
     @jwt.user_claims_loader
     def add_claims_to_access_token(user):
-        """ Add admin claim to access token
-            :param user: Users model
-            :type user: Users instance
-            :return: Admin claim to be added to access JWT
-            :rtype: JSON
+        """ 
+        Add admin claim to access token
+        :param user: Users model
+        :type user: Users instance
+        :return: Admin claim to be added to access JWT
+        :rtype: JSON
         """
         return {'admin': user.admin}
 
     @jwt.user_identity_loader
     def user_identity_lookup(user):
-        """ Define identity claim within JWT token
-            :param user: Users model
-            :type user: Users instance
-            :return: Identifier for a JWT
-            :rtype: string
+        """ 
+        Define identity claim within JWT token
+        :param user: Users model
+        :type user: Users instance
+        :return: Identifier for a JWT
+        :rtype: string
         """
         return user.email
 
