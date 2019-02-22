@@ -1,10 +1,12 @@
-from flask_restful import Resource, reqparse, inputs
-from db import db
-from models.users import Users
 from datetime import datetime
 
+from flask_restful import Resource, reqparse, inputs
+
+from db import db
+from models.users import Users
+
 class Register(Resource):
-	"""API which allows users to activate their Shared Cities Dashboard account
+	"""API resource class, Activate users Shared Cities Dashboard account
 	   Parameters can be passed using a POST request that contains a JSON of the following fields:
 
         :param fullname: users fullname
