@@ -81,7 +81,7 @@ class WidgetModel(db.Model):
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            logging.error(ie)
+            logger.error(ie)
 
     def delete(self) -> NoReturn:
         """
@@ -93,7 +93,7 @@ class WidgetModel(db.Model):
             db.session.delete(self)
         except IntegrityError as ie:
             db.session.rollback()
-            logging.error(ie)
+            logger.error(ie)
 
     def commit(self) -> NoReturn:
         """
