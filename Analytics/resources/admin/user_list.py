@@ -1,4 +1,5 @@
 from http import HTTPStatus
+
 from flask import jsonify
 from flask import abort
 from flask_jwt_extended import jwt_required
@@ -14,7 +15,7 @@ class UsersList(Resource):
     """
     API resource class that returns a list of users from the database
 
-    Parameters can be passed using a GET request that contains the following fields in the url:
+    Parameters can be passed using a POST request that contains the following fields in the url:
     :param  limit: the max count of users to be returned
     :type limit: integer
     :returns: A list of widgets with a maximum length of limit and a status code 200
