@@ -1,4 +1,3 @@
-
 from http import HTTPStatus
 
 from flask_jwt_extended import jwt_required
@@ -10,8 +9,36 @@ from models.users import Users
 
 
 class ChangeUserName(Resource):
-    """ API resource class which changes username and saves changes to the database
+    """
+    API resource class which changes username and saves changes to the database
+    Parameters can be passed using a POST request that contains a JSON with the following fields:
+    :required: valid access JWT where the admin claim may be either true or false
+    :param email: users email address
+    :param fullname: users fullname
+    :type email: string
+    :type fullname: string
+    :return: Empty string and 204 status code
+    :rtype: tuple
+    """
+    def __init__(self):
+        """
+        Instanciates the Change users endpoint to change the users full name
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :required: valid access JWT where the admin claim may be either true or false
+        :param email: users email address
+        :param fullname: users fullname
+        :type email: string
+        :type fullname: string
+        """
+        self.post_reqparser = reqparse.RequestParser()
+        self.post_reqparser.add_argument('email', required=True, help='email is required', location=['form', 'json'])
+        self.post_reqparser.add_argument('fullname', required=True, help='fullname is required',
+                                         location=['form', 'json'])
 
+    @jwt_required
+    def post(self) -> tuple:
+        """
+        API resource class which changes username and saves changes to the database
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :required: valid access JWT where the admin claim may be either true or false
         :param email: users email address
@@ -19,19 +46,8 @@ class ChangeUserName(Resource):
         :type email: string
         :type fullname: string
         :return: Empty string and 204 status code
-        :rtype: String
-     """
-
-    def __init__(self):
-        # Create User (Post request parser)
-        self.post_reqparser = reqparse.RequestParser()
-        self.post_reqparser.add_argument('email', required=True, help='email is required', location=['form', 'json'])
-        self.post_reqparser.add_argument('fullname', required=True, help='fullname is required',
-                                         location=['form', 'json'])
-
-    @jwt_required
-    def post(self):
-        """ Changes users fullname """
+        :rtype: tupple
+        """
         args = self.post_reqparser.parse_args()
         user = Users.find_by_email(args["email"])
         if not user:
