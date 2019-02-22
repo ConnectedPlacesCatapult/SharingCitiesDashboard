@@ -7,8 +7,9 @@ from db import db
 from models.users import Users
 
 class Login(Resource):
-	"""API that grants users access to the Sharing Cities Dashboard aswell as sends their correpsonding access and refresh JWT
-	   Parameters can be passed using a POST request that contains a JSON with the following fields:
+	"""
+	API that grants users access to the Sharing Cities Dashboard aswell as sends their correpsonding access and refresh JWT
+	Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param email: users email address
         :param password: users password 
         :type email: string
@@ -36,7 +37,8 @@ class Login(Resource):
 			return {'message': 'Incorrect credentials. Please try again'}, 403
 
 class SecretResource(Resource):
-	"""API that is solely used to test the functionality of access JWT
+	"""
+	API that is solely used to test the functionality of access JWT
         :required: A valid access JWT in the Authorization Header in the format - Bearer <JWT>
         :rtype: JSON
 	"""
