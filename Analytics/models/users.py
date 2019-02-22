@@ -79,17 +79,13 @@ class Users(db.Model):
         """
         return self.json()
 
-<<<<<<< HEAD
     def json(self) -> dict:
         """
         Create a JSON dict of the User objects attributes
         :return: the User objects attributes as a JSON (dict)
         :rtype: (JSON) dict
         """
-=======
-    def json(self):
-        """ Return User model fields in JSON format """
->>>>>>> e84c99e79bbe955f4354a29f8426412be595abd4
+        
         return {
             'id': self.id,
             'fullname': self.fullname,
