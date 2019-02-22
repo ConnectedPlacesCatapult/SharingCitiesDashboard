@@ -2,9 +2,9 @@ import datetime
 
 from flask import Flask
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_restful import Api
+from flask_jwt_extended import JWTManager
 
 from db import db
 from models.revoked_tokens import RevokedTokens
@@ -13,12 +13,9 @@ from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.request_for_data import RequestForData
-
-
-from resources.Widgets.save_widgets import Widgets
-
 from resources.register import Register
 
+from resources.Widgets.save_widgets import Widgets
 from resources.Widgets.get_widgets import GetWidgets
 from resources.Widgets.get_layouts import GetLayouts
 from resources.Widgets.get_widget_layout import GetWidgetLayout
@@ -35,9 +32,6 @@ from resources.admin.change_user_name import ChangeUserName
 from resources.admin.get_user import GetUserByEmail
 from resources.admin.edit_user import EditUser
 
-
-
-# from flask_bcrypt import Bcrypt
 
 def create_app(**config_overrides):
     app = Flask(__name__)
@@ -64,14 +58,11 @@ def create_app(**config_overrides):
     # # for how safely store JWTs in cookies
     # app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 
-
     app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'  # TODO: change before deployement
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=1)  # TODO: change before deployement
-
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
-    # password_bcrypt = Bcrypt(app)
     db.init_app(app)
     db.app = app
 
@@ -82,42 +73,44 @@ def create_app(**config_overrides):
         jti = decrypted_token['jti']
         return RevokedTokens.is_jti_blacklisted(jti)
 
-    # Create a function that will be called whenever create_access_token
-    # is used. It will take whatever object is passed into the
-    # create_access_token method, and lets us define what custom claims
-    # should be added to the access token.
     @jwt.user_claims_loader
     def add_claims_to_access_token(user):
+        """ Add admin claim to access token
+            :param user: Users model
+            :type user: Users instance
+            :return: Admin claim to be added to access JWT
+            :rtype: JSON
+        """
         return {'admin': user.admin}
 
-    # Create a function that will be called whenever create_access_token
-    # is used. It will take whatever object is passed into the
-    # create_access_token method, and lets us define what the identity
-    # of the access token should be.
     @jwt.user_identity_loader
     def user_identity_lookup(user):
+        """ Define identity claim within JWT token
+            :param user: Users model
+            :type user: Users instance
+            :return: Identifier for a JWT
+            :rtype: string
+        """
         return user.email
 
     db.create_all()
 
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
-    api.add_resource(RequestForData, '/data')#current /data endpoint
+    api.add_resource(RequestForData, '/data')  # current /data endpoint
 
     # proposed /data endpoint
     api.add_resource(RequestForTheme, '/data/theme')
     api.add_resource(RequestForSensor, '/data/sensor')
     api.add_resource(RequestForAttribute, '/data/attribute')
 
-
+    # login Endpoints
     api.add_resource(Register, '/register')
     api.add_resource(Login, '/login')
     api.add_resource(TokenRefresh, '/refreshToken')
     api.add_resource(UserLogoutAccess, '/revokeAccess')
     api.add_resource(UserLogoutRefresh, '/revokeRefresh')
     api.add_resource(SecretResource, '/secret')
-
-
 
     # Widget Endpoints
     api.add_resource(Widgets, '/widgets/create_widget')
@@ -128,7 +121,6 @@ def create_app(**config_overrides):
     api.add_resource(GetLayouts, '/widgets/get_layouts')
     api.add_resource(SaveWidgetLayout, '/widgets/save_layouts')
 
-
     # Admin Endpoints
     api.add_resource(CreateNewUser, '/admin/create_new_user')
     api.add_resource(GetUserByEmail, '/admin/get_user_by_email')
@@ -138,7 +130,5 @@ def create_app(**config_overrides):
     api.add_resource(ChangeUserPassword, '/admin/change_user_password')
     api.add_resource(DeleteUser, '/admin/delete_user')
     api.add_resource(EditUser, '/admin/edit_user')
-
-
 
     return app

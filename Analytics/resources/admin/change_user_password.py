@@ -11,7 +11,6 @@ from models.users import Users
 
 
 class ChangeUserPassword(Resource):
-
     """ API resource class which changes a users password and saves changes to the database
 
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -40,7 +39,7 @@ class ChangeUserPassword(Resource):
         args = self.post_reqparser.parse_args()
         user = None
 
-        #User must be an admin
+        # User must be an admin
         if not get_jwt_claims()['admin']:
             abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
 
@@ -60,5 +59,3 @@ class ChangeUserPassword(Resource):
             abort(HTTPStatus.BAD_REQUEST.value, error="User password not changed")
 
         return {"user": "{} password changed".format(args["email"])}, 201
-
-

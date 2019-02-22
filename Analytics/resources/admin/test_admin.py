@@ -1,10 +1,9 @@
-import pytest 
-from models.users import Users
-from models.revoked_tokens import RevokedTokens
+import pytest
+
 from app import create_app
 from db import db
-from flask_jwt_extended import create_access_token
-from sqlalchemy import func
+from models.users import Users
+
 
 @pytest.fixture()
 def test_client():
