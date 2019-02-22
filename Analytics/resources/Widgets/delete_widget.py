@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import logging
 
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
@@ -44,6 +45,7 @@ class DeleteWidgets(Resource):
         self.reqparser_delete.add_argument('widgetID', required=True, help='widgetID required',
                                            location=['form', 'json'])
         super().__init__()
+        logging.basicConfig(filename='event.log', level=logging.DEBUG)
 
     @jwt_required
     def post(self) -> tuple:
@@ -78,5 +80,6 @@ class DeleteWidgets(Resource):
             db.session.commit()
         except exc.SQLAlchemyError:
             abort(HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: delete_widget")
+            logging.debug(status_code=HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: delete_widget")
 
         return "", HTTPStatus.NO_CONTENT.value

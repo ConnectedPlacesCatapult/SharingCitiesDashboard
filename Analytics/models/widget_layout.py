@@ -1,4 +1,5 @@
 from typing import NoReturn
+import logging
 
 from sqlalchemy.exc import IntegrityError
 
@@ -59,7 +60,7 @@ class Layouts(db.Model):
 
         # Check if tables exsists
         # self.create_table()
-
+        logging.basicConfig(filename='event.log', level=logging.DEBUG)
         super().__init__()
 
     def __str__(self) -> str:
@@ -125,6 +126,7 @@ class Layouts(db.Model):
             db.session.add(self)
             db.session.flush()
         except IntegrityError as ie:
+            logging.debug(ie)
             db.session.rollback()
 
     def commit(self) -> NoReturn:
@@ -136,6 +138,7 @@ class Layouts(db.Model):
         try:
             db.session.delete(self)
         except IntegrityError as ie:
+            logging.debug(ie)
             db.session.rollback()
 
     @staticmethod

@@ -1,4 +1,5 @@
 from typing import NoReturn
+import logging
 
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.exc import IntegrityError
@@ -44,6 +45,7 @@ class WidgetModel(db.Model):
 
         # Does the database table exist?
         self.create_table()
+        logging.basicConfig(filename="widget_event.log", level=logging.DEBUG)
 
     def __str__(self) -> str:
         """
@@ -77,6 +79,7 @@ class WidgetModel(db.Model):
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
+            logging.debug(ie)
 
     def delete(self) -> NoReturn:
         """
@@ -88,6 +91,7 @@ class WidgetModel(db.Model):
             db.session.delete(self)
         except IntegrityError as ie:
             db.session.rollback()
+            logging.debug(ie)
 
     def commit(self) -> NoReturn:
         """

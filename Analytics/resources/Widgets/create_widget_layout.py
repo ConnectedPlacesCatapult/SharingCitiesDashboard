@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import logging
 
 from flask_restful import Resource
 from flask_restful import abort
@@ -58,6 +59,7 @@ class CreateWidgetLayout(Resource):
         self.post_reqparser.add_argument("static", default=False, help='Widget layout: error passing static variable',
                                          location=['form', 'json'])
         super().__init__()
+        logging.basicConfig(filename="widget_event.log", level=logging.DEBUG)
 
     def post(self) -> tuple:
         """
@@ -89,7 +91,8 @@ class CreateWidgetLayout(Resource):
         # does the widget with the passed widgetID exist?
         if not widget.layout:
             # No widget return with the passed widgetID
-            abort(HTTPStatus.NOT_FOUND, error="layout object not found")
+            logging.debug("CreateWidgetLayout(): ", status_code=HTTPStatus.NOT_FOUND.value, error="layout object not found")
+            abort(HTTPStatus.NOT_FOUND.value, error="layout object not found")
 
         # Modify layout instance for widget
         widget.layout.widgetID = int(args["widgetID"])
