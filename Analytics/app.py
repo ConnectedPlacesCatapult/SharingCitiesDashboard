@@ -62,11 +62,12 @@ def create_app(**config_overrides):
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=1)  # TODO: change before deployement
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
-    
+
     db.init_app(app)
     db.app = app
-    
+
     jwt = JWTManager(app)
+
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
         jti = decrypted_token['jti']
@@ -74,13 +75,12 @@ def create_app(**config_overrides):
 
     @jwt.user_claims_loader
     def add_claims_to_access_token(user):
-        """ Add admin claim to access token 
+        """ Add admin claim to access token
             :param user: Users model
             :type user: Users instance
             :return: Admin claim to be added to access JWT
             :rtype: JSON
         """
-        
         return {'admin': user.admin}
 
     @jwt.user_identity_loader
@@ -91,7 +91,6 @@ def create_app(**config_overrides):
             :return: Identifier for a JWT
             :rtype: string
         """
-        
         return user.email
 
     db.create_all()
@@ -105,6 +104,7 @@ def create_app(**config_overrides):
     api.add_resource(RequestForSensor, '/data/sensor')
     api.add_resource(RequestForAttribute, '/data/attribute')
 
+    # login Endpoints
     api.add_resource(Register, '/register')
     api.add_resource(Login, '/login')
     api.add_resource(TokenRefresh, '/refreshToken')
