@@ -66,8 +66,4 @@ def test_sensorattribute_params(test_client, sensorattribute_param_value):
 	response_dotmodus_enpoint = test_client.get('/data/{}?{}={}'.format(data,param,sensorattribute_param_value))
 	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
 	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
-
-
-
-
-
+	
