@@ -7,8 +7,9 @@ from models.users import Users
 
 @pytest.fixture()
 def test_client():
-	""" Initialise Flask application, save the current application context for duration of single
-	    test and yield testing client for making requests to  endpoints exposed by  application
+	""" 
+	Initialise Flask application, save the current application context for duration of single
+	test and yield testing client for making requests to  endpoints exposed by  application
 	"""
 
 	test_app = create_app(DATABASE_NAME='test_analysis', TESTING=True)
