@@ -70,6 +70,12 @@ def create_app(**config_overrides):
 
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
+        """ Query revoked tokens table for presence of decrypted_token argument
+            :param decrypted_token: Decrypted version of a user's JWT
+            :type decrypted_token: string
+            :return: Whether the decrypted token is present in revoked tokens table
+            :rtype: boolean
+        """
         jti = decrypted_token['jti']
         return RevokedTokens.is_jti_blacklisted(jti)
 
