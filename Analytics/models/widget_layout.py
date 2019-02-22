@@ -157,8 +157,5 @@ class Layouts(db.Model):
     def get_layout_by_widget_id(cls, widgetID: int) -> object:
         """
         fetch layout instance using the widgets id from database
-        :param widgetID: the identification number of the widget related to the layout to fetch
-        :type Integer:
-        :returns: on success a layout instance is return otherwise None
         """
         return cls.query.filter_by(id=widgetID).first()
