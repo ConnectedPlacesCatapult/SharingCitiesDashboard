@@ -37,6 +37,7 @@ class Users(db.Model):
         return self.json()
 
     def json(self):
+        """ Return User model fields in JSON format """
         return {
             'id': self.id,
             'fullname': self.fullname,
