@@ -2,35 +2,33 @@ import datetime
 
 from flask import Flask
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_restful import Api
-from flask_jwt_extended import JWTManager
 
 from db import db
 from models.revoked_tokens import RevokedTokens
+from resources.Widgets.create_widget_layout import CreateWidgetLayout
+from resources.Widgets.delete_widget import DeleteWidgets
+from resources.Widgets.get_layouts import GetLayouts
+from resources.Widgets.get_widget_layout import GetWidgetLayout
+from resources.Widgets.get_widgets import GetWidgets
+from resources.Widgets.save_layouts import SaveWidgetLayout
+from resources.Widgets.save_widgets import Widgets
+from resources.admin.change_user_name import ChangeUserName
+from resources.admin.change_user_password import ChangeUserPassword
+from resources.admin.create_new_user import CreateNewUser
+from resources.admin.delete_user import DeleteUser
+from resources.admin.edit_user import EditUser
+from resources.admin.get_user import GetUserByEmail
+from resources.admin.user_list import UsersList
+from resources.admin.user_permissions import UserPermissions
 from resources.analytics import Analytics
 from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
-from resources.request_for_data import RequestForData
 from resources.register import Register
-
-from resources.Widgets.save_widgets import Widgets
-from resources.Widgets.get_widgets import GetWidgets
-from resources.Widgets.get_layouts import GetLayouts
-from resources.Widgets.get_widget_layout import GetWidgetLayout
-from resources.Widgets.delete_widget import DeleteWidgets
-from resources.Widgets.create_widget_layout import CreateWidgetLayout
-from resources.Widgets.save_layouts import SaveWidgetLayout
-
-from resources.admin.create_new_user import CreateNewUser
-from resources.admin.user_permissions import UserPermissions
-from resources.admin.user_list import UsersList
-from resources.admin.change_user_password import ChangeUserPassword
-from resources.admin.delete_user import DeleteUser
-from resources.admin.change_user_name import ChangeUserName
-from resources.admin.get_user import GetUserByEmail
-from resources.admin.edit_user import EditUser
+from resources.request_for_data import RequestForData
 
 
 def create_app(**config_overrides):
