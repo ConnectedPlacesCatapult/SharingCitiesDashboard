@@ -1,6 +1,5 @@
 """
 API for retrieving theme data from database
-@params
 	One of these parameters can be passed with url using get requests
 	:param theme: accepts an integer id and return subthemes for that theme
 	:param subtheme: accepts an integer id and returns all the attributes 
@@ -9,7 +8,6 @@ API for retrieving theme data from database
 	:type subtheme: string
 	:return: the requested theme data from the database
 	:rtype JSON
-
 """
 
 
@@ -18,8 +16,6 @@ from db import db
 from models.theme import Theme
 from models.attributes import Attributes
 from models.theme import SubTheme
-
-
 
 
 class RequestForTheme(Resource):
