@@ -68,7 +68,7 @@ class Widgets(Resource):
             layout.widget_id = new_widget.id
             db.session.commit()
         except exc.SQLAlchemyError as e:
-            logging.info(e, status_code=HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: create_widget")
+            logging.critical(e, status_code=HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: create_widget")
             abort(HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: create_widget")
 
         layout.widget_id = new_widget.id

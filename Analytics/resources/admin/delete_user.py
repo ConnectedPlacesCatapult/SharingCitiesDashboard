@@ -1,5 +1,5 @@
-from http import HTTPStatus
 import logging
+from http import HTTPStatus
 
 from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
@@ -9,6 +9,9 @@ from flask_restful import reqparse
 from sqlalchemy import exc
 
 from models.users import Users
+
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 
 class DeleteUser(Resource):
@@ -31,7 +34,6 @@ class DeleteUser(Resource):
         """
         self.delete_reqparser = reqparse.RequestParser()
         self.delete_reqparser.add_argument('email', required=True, location=['form', 'json'])
-        logging.basicConfig(filename='event.log', level=logging.DEBUG)
         super().__init__()
 
     @jwt_required
@@ -62,7 +64,7 @@ class DeleteUser(Resource):
             user.delete()
             user.commit()
         except exc.SQLAlchemyError as e:
-            logging.debug(e, HTTPStatus.BAD_REQUEST.value, error="User not removed")
+            logging.critical(e, HTTPStatus.BAD_REQUEST.value, error="User not removed")
             abort(HTTPStatus.BAD_REQUEST.value, error="User not removed")
 
         return "", 204

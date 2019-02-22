@@ -82,7 +82,7 @@ class DeleteWidgets(Resource):
             widget.delete()
             db.session.commit()
         except exc.SQLAlchemyError:
+            logging.critical(status_code=HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: delete_widget")
             abort(HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: delete_widget")
-            logging.info(status_code=HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: delete_widget")
 
         return "", HTTPStatus.NO_CONTENT.value

@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import logging
 
 from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
@@ -8,6 +9,8 @@ from flask_restful import reqparse, inputs
 
 from models.users import Users
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 class EditUser(Resource):
     """
@@ -101,6 +104,7 @@ class EditUser(Resource):
             try:
                 current_user.commit()
             except Exception as e:
+                logging.error(e)
                 return {"message": "failed saving details to database"}, 500
 
             return {"message": "success"}, 200
