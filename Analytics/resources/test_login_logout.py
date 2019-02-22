@@ -9,7 +9,7 @@ from models.users import Users
 
 @pytest.fixture()
 def test_client():
-    """ 
+    """
     A fixture that initialises the Flask application, saves the current application context for the duration of a single
     test and yields a testing client that can be used for making requests to the endpoints exposed by the application
     """
@@ -33,9 +33,13 @@ def dummy_user():
 
 
 def test_login_correct_details(test_client, dummy_user):
-    """ 
+    """
     Tests whether the correct response message, response code and corresponding access and refresh tokens are
-    returned when the correct login credentials are supplied 
+    returned when the correct login credentials are supplied
+    :param test_client: Flask test client
+    :type test_client: FlaskClient
+    :param dummy_user: Dummy user for tests
+    :type dummy_user: <class 'Users> 
     """
     response = test_client.post('/login', data=dict(email=dummy_user.email, password="wfnbqk"), follow_redirects=True)
     response_json = response.get_json()
@@ -49,9 +53,13 @@ def test_login_correct_details(test_client, dummy_user):
 
 
 def test_login_incorrect_details(test_client, dummy_user):
-    """ 
-    Tests whether an unsuccessful response message and response code are returned when the incorrect login credentials are supplied 
-    and ensures that no access or refresh JWT is issued
+    """
+    Tests whether an unsuccessful response message and response code are returned when the incorrect login credentials 
+    are supplied and ensures that no access or refresh JWT is issued
+    :param test_client: Flask test client
+    :type test_client: FlaskClient
+    :param dummy_user: Dummy user for tests
+    :type dummy_user: <class 'Users> 
     """
     response = test_client.post('/login', data=dict(email="not_a_user@FCC.com", password="wfnbqk"),
                                 follow_redirects=True)
@@ -73,9 +81,13 @@ def test_login_incorrect_details(test_client, dummy_user):
 
 
 def test_revoke_access(test_client, dummy_user):
-    """ 
-    Tests whether when a access JWT is revoked that the the token is added to the revoked tokens table and that a user is
+    """
+    Tests whether when a access JWT is revoked that the the token is added to the revoked tokens table and that a user 
     is not able to use that token on subsequent requests
+    :param test_client: Flask test client
+    :type test_client: FlaskClient
+    :param dummy_user: Dummy user for tests
+    :type dummy_user: <class 'Users>  
     """
     response_login = test_client.post('/login', data=dict(email="user@FCC.com", password="wfnbqk"),
                                       follow_redirects=True)
@@ -95,9 +107,13 @@ def test_revoke_access(test_client, dummy_user):
 
 
 def test_revoke_refresh(test_client, dummy_user):
-    """ 
-    Tests whether when a refresh JWT is revoked that the the token is added to the revoked tokens table and that a user is
-    is not able to use that token to generate new access JWTs
+    """
+    Tests whether when a refresh JWT is revoked that the the token is added to the revoked tokens table and that 
+    a user is is not able to use that token to generate new access JWTs
+    :param test_client: Flask test client
+    :type test_client: FlaskClient
+    :param dummy_user: Dummy user for tests
+    :type dummy_user: <class 'Users>  
     """
     response_login = test_client.post('/login', data=dict(email="user@FCC.com", password="wfnbqk"),
                                       follow_redirects=True)
@@ -117,8 +133,13 @@ def test_revoke_refresh(test_client, dummy_user):
 
 
 def test_refresh_token(test_client, dummy_user):
-    """ 
-    Tests whether when supplied a refresh JWT, this endpoint provides a new access token that can be used to access other restricted endpoints
+    """
+    Tests whether when supplied a refresh JWT, this endpoint provides a new access token that can be used to access 
+    other restricted endpoints
+    :param test_client: Flask test client
+    :type test_client: FlaskClient
+    :param dummy_user: Dummy user for tests
+    :type dummy_user: <class 'Users> 
     """
     response_login = test_client.post('/login', data=dict(email="user@FCC.com", password="wfnbqk"),
                                       follow_redirects=True)
