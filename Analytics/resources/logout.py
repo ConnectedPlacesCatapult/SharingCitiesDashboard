@@ -5,11 +5,13 @@ from models.revoked_tokens import RevokedTokens
 
 
 class UserLogoutAccess(Resource):
-    """API that revokes a users access JWT by adding it to the revoked_tokens table
-        :required: A valid access JWT in the Authorization Header in the format - Bearer <JWT>
-        :return: A message that indicates whether the token has been revoked 
-        :rtype: JSON
     """
+    API that revokes a users access JWT by adding it to the revoked_tokens table
+    :required: A valid access JWT in the Authorization Header in the format - Bearer <JWT>
+    :return: A message that indicates whether the token has been revoked 
+    :rtype: JSON
+    """
+    
     @jwt_required
     def post(self):
         jti = get_raw_jwt()['jti']
@@ -22,11 +24,13 @@ class UserLogoutAccess(Resource):
 
 
 class UserLogoutRefresh(Resource):
-    """API that revokes a users refresh JWT by adding it to the revoked_tokens table
-        :required: A valid refresh JWT in the Authorization Header in the format - Bearer <JWT>
-        :return: A message that indicates whether the token has been revoked 
-        :rtype: JSON
     """
+    API that revokes a users refresh JWT by adding it to the revoked_tokens table
+    :required: A valid refresh JWT in the Authorization Header in the format - Bearer <JWT>
+    :return: A message that indicates whether the token has been revoked 
+    :rtype: JSON
+    """
+    
     @jwt_refresh_token_required
     def post(self):
         jti = get_raw_jwt()['jti']
