@@ -82,10 +82,6 @@ class Users(db.Model):
         Create a JSON dict of the User objects attributes
         :return: the User objects attributes as a JSON (dict)
         """
-<<<<<<< HEAD
-=======
-        
->>>>>>> c7eb421928183f26805c9b66a4eea5ebeca6de48
         return {
             'id': self.id,
             'fullname': self.fullname,
