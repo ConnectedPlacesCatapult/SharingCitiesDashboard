@@ -1,27 +1,27 @@
+from typing import NoReturn
+
 from db import db
 from sqlalchemy.exc import IntegrityError
 
 
 class Layouts(db.Model):
     """
-        Database model for the layouts table used to persist widget layout data
+    Database model for the layouts table used to persist widget layout data
 
-        :param widgetID:    The widget identification the layout belongs to
-        :param x:           x coordinate of the widget layout
-        :param y:           y coordinate of the widget layout
-        :param h:           height of the widget layout
-        :param w:           width of the widget layout
-        :param static:      layout static property
+    :param widgetID:    The widget identification the layout belongs to
+    :param x:           x coordinate of the widget layout
+    :param y:           y coordinate of the widget layout
+    :param h:           height of the widget layout
+    :param w:           width of the widget layout
+    :param static:      layout static property
 
-        :type widgetID: String
-        :type x:        Integer
-        :type y:        Integer
-        :type h:        Integer
-        :type w:        Integer
-        :type static:   String
-
+    :type widgetID: String
+    :type x:        Integer
+    :type y:        Integer
+    :type h:        Integer
+    :type w:        Integer
+    :type static:   String
     """
-
     __tablename__ = 'layouts'
 
     id = db.Column('id', db.Integer, primary_key=True)
@@ -33,6 +33,23 @@ class Layouts(db.Model):
     static = db.Column('static', db.Boolean, nullable=False)
 
     def __init__(self, widget_id, x, y, height, width, static):
+        """
+        Layouts initialise
+        :param widget_id: widgets identification number the layout is related to
+        :param x: x coordinate
+        :param y: y coordinate
+        :param height: height
+        :param width:   width
+        :param static:  true if the layout is static and cannot be moved
+
+        :type widget_id: int
+        :type x: int
+        :type y: int
+        :type height: int
+        :type width:   int
+        :type static:  bool
+
+        """
         self.widget_id = widget_id
         self.x_coord = x
         self.y_coord = y
@@ -41,30 +58,29 @@ class Layouts(db.Model):
         self.static = static
 
         # Check if tables exsists
-        self.create_table()
+        # self.create_table()
+
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Overides the dunder string method an returns the layout as a JSON
+        :return: a json as a string
+        :rtype: str
+        """
         return self.json()
 
-    def json(self):
+    def json(self) -> dict:
         """
-        formats response to be sent to user
-
-        :return:  a Dictionary of the response data
-                            :param id: widgetID
-                            :param x:  x coordinate of widget
-                            :param y:  y coordinate of widget
-                            :param w:  width of widget
-                            :param h:  height of widget
-                            :param static: is the widget is static true/ false
-                            :type Integer
-                            :type Integer
-                            :type Integer
-                            :type Integer
-                            :type Integer
-                            :type String
-        :rtype:   JSON
+        Creates a JSON object of the Layouts instance
+        :param widget_id: widgets identification number the layout is related to
+        :param x: x coordinate
+        :param y: y coordinate
+        :param height: height
+        :param width:   width
+        :param static:  true if the layout is static and cannot be moved
+        :return: Layout attributes formatted to JSON
+        :rtype dict:
         """
         return {
             'id': str(self.widget_id),
@@ -75,9 +91,26 @@ class Layouts(db.Model):
             'static': self.static
         }
 
-    def create_table(self):
-        """ creates layout db table if it does not exist """
+    def create_table(self) -> NoReturn:
 
+        """
+        creates layout db table if a layouts table does not exist in the database
+        :column id:         the layout entry's identification number (auto generated)
+        :type id:           Integer (Primary Key)
+        :column widget_id:  the id of the widget the layout belongs to
+        :type widget_id:    Integer (Foreign Key)
+        :column x:          x coordinate of the layout
+        :type x:            Integer
+        :column y:          y coordinate of the layout
+        :type y:            Integer
+        :column h:          height of the layout
+        :type h:            Integer
+        :column w:          width of the layout
+        :type w:            Integer
+        :column static:     static property of the widget
+        :type static:       Boolean
+
+        """
         if not self.table_exists():  # If table don't exist, Create.
             # Create a table with the appropriate Columns
             db.Table('layouts', db.MetaData(bind=db.engine),
@@ -90,20 +123,20 @@ class Layouts(db.Model):
                      db.Column('static', db.Boolean, nullable=False),
                      schema=None).create()
 
-    def save(self):
-        """ Adds object instance to the db session to be commited"""
+    def save(self) -> NoReturn:
 
+        """ Adds object instance to the db session to be commited"""
         try:
             db.session.add(self)
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
 
-    def commit(self):
+    def commit(self) -> NoReturn:
         """ save changes to the database"""
         db.session.commit()
 
-    def delete(self):
+    def delete(self) -> NoReturn:
         """ Delete object instance from the db session to be commited"""
         try:
             db.session.delete(self)
@@ -111,28 +144,25 @@ class Layouts(db.Model):
             db.session.rollback()
 
     @staticmethod
-    def table_exists():
+    def table_exists() -> bool:
         """
-            Check if db table exists
-
-            :return: True if the table exists in the database otherwise False
-            :rtype: Boolean
-
+        Check if databse table exists
+        :return: True if the table exists in the database otherwise False
+        :rtype: Boolean
         """
         # Does the table exist?
         has_table = db.engine.dialect.has_table(db.engine, 'layouts')
         return has_table
 
     @classmethod
-    def get_layout_by_widget_id(cls, widgetID):
-
+    def get_layout_by_widget_id(cls, widgetID: int) -> object:
         """
-            fetch layout instance using the widgets id from database
-            :param widgetID: the identification number of the widget related to the layout to fetch
-            :type Integer:
+        fetch layout instance using the widgets id from database
+        :param widgetID: the identification number of the widget related to the layout to fetch
+        :type Integer:
 
-            :returns: on success a layout instance is return otherwise None
-            :rtype Layout:
+        :returns: on success a layout instance is return otherwise None
+        :rtype <class 'Layouts'>:
 
         """
         return cls.query.filter_by(id=widgetID).first()
