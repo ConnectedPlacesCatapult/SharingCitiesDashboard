@@ -9,49 +9,73 @@ from sqlalchemy import exc
 from db import db
 from models.widget import WidgetModel
 
+
 class DeleteWidgets(Resource):
     """
-            Delete a widget from the database
+    Delete a widget from the database
+    Parameters can be passed using a POST request that contains a JSON with the following fields:
+    :param  userID: Unique user identification number
+    :param  widgetID: Unique widget identification number
 
-            :param  userID: Unique user identification number
-            :param  widgetID: Unique widget identification number
+    :type userID: Integer
+    :type widgetID: Integer
 
-            :type userID: Integer
-            :type widgetID: Integer
+    :raises SQLAlchemyError: when a SQLAlchemyError is raised a status of code Bad Request (400) and the
+            error is returned
 
-        """
+    :returns: A message and a status code of No Content (204) when a widget is deleted
+              When the widget does not exist in the database table 'widgets' a status code of
+              Not Found (404) is returned.
+    :rtype: <class 'tuple'>
+
+    """
 
     def __init__(self):
-        # Arguments required to delete a widget
+        """
+        Instciates the delete widget endpoint
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :param  userID: Unique user identification number
+        :param  widgetID: Unique widget identification number
+
+        :type userID: Integer
+        :type widgetID: Integer
+
+        :raises SQLAlchemyError: when a SQLAlchemyError is raised a status of code Bad Request (400) and the
+                error is returned
+
+        :returns: A message and a status code of No Content (204) when a widget is deleted
+                  When the widget does not exist in the database table 'widgets' a status code of
+                  Not Found (404) is returned.
+        :rtype: <class 'tuple'>
+
+        """
         self.reqparser_delete = reqparse.RequestParser()
         self.reqparser_delete.add_argument('userID', required=True, help='A userID is required',
                                            location=['form', 'json'])
         self.reqparser_delete.add_argument('widgetID', required=True, help='widgetID required',
                                            location=['form', 'json'])
-
         super().__init__()
 
     @jwt_required
-    def post(self):
+    def post(self) -> tuple:
         """
-            Delete a widget from the database
+        Delete a widget from the database
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :param  userID: Unique user identification number
+        :param  widgetID: Unique widget identification number
 
-            :param  userID: Unique user identification number
-            :param  widgetID: Unique widget identification number
+        :type userID: Integer
+        :type widgetID: Integer
 
-            :type userID: Integer
-            :type widgetID: Integer
+        :raises SQLAlchemyError: when a SQLAlchemyError is raised a status of code Bad Request (400) and the
+                error is returned
 
-            :raises SQLAlchemyError: when a SQLAlchemyError is raised a status of code Bad Request (400) and the
-                    error is returned
-
-            :returns: A message and a status code of No Content (204) when a widget is deleted
-                      When the widget does not exist in the database table 'widgets' a status code of
-                      Not Found (404) is returned.
-            :rtype: <class 'tuple'>
+        :returns: A message and a status code of No Content (204) when a widget is deleted
+                  When the widget does not exist in the database table 'widgets' a status code of
+                  Not Found (404) is returned.
+        :rtype: <class 'tuple'>
         """
         args = self.reqparser_delete.parse_args()
-
         try:
             # Get widget instance from db to be delete
             widget = WidgetModel.query.filter_by(id=args["widgetID"], user_id=args["userID"]).first()
