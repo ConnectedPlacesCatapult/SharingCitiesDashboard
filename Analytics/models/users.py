@@ -104,7 +104,7 @@ class Users(db.Model):
             db.session.rollback()
             print(self.fullname, 'User already exists')
 
-    def delete(self)-> NoReturn:
+    def delete(self) -> NoReturn:
         """
         Add the current Users fields to the SQLAlchemy session to be delete
         """
