@@ -14,7 +14,6 @@ from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.request_for_data import RequestForData
 from resources.register import Register
-
 from resources.Widgets.save_widgets import Widgets
 from resources.Widgets.get_widgets import GetWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -22,7 +21,6 @@ from resources.Widgets.get_widget_layout import GetWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.save_layouts import SaveWidgetLayout
-
 from resources.admin.create_new_user import CreateNewUser
 from resources.admin.user_permissions import UserPermissions
 from resources.admin.user_list import UsersList
