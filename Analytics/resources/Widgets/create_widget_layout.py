@@ -9,11 +9,52 @@ from models.widget import WidgetModel
 
 class CreateWidgetLayout(Resource):
     """
-        Creates a Widget layout to the database table 'layouts'
+    Creates a Widget layout to the database table 'layouts'
+    Parameters can be passed using a POST request that contains a JSON with the following fields:
+    :param widgetID: The widget identification the layout belongs to
+    :param x: x coordinate of the widget layout
+    :param y: y coordinate of the widget layout
+    :param h: height of the widget layout
+    :param w: width of the widget layout
+    :param static: layout static property
+
+    :type widgetID: String
+    :type x: Integer
+    :type y: Integer
+    :type h: Integer
+    :type w: Integer
+    :type static: String
+
+    :returns:  on success a HTTP status code 204, executed successful with no content. otherwise
+               if the layout instance is not found a HTTP status code 404, Not Found with json with
+               a key "error" containing a message "layout object not found"
+    :rtype: <class 'tuple'>
+
     """
 
     def __init__(self):
+        """
+        Instantiates the create widget endpoint
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :param widgetID: The widget identification the layout belongs to
+        :param x: x coordinate of the widget layout
+        :param y: y coordinate of the widget layout
+        :param h: height of the widget layout
+        :param w: width of the widget layout
+        :param static: layout static property
 
+        :type widgetID: String
+        :type x: Integer
+        :type y: Integer
+        :type h: Integer
+        :type w: Integer
+        :type static: String
+
+        :returns:  on success a HTTP status code 204, executed successful with no content. otherwise
+                   if the layout instance is not found a HTTP status code 404, Not Found with json with
+                   a key "error" containing a message "layout object not found"
+        :rtype: <class 'tuple'>
+        """
         # Argument required to create a widget layout
         self.post_reqparser = reqparse.RequestParser()
         self.post_reqparser.add_argument("widgetID",  help='widgetID required', location=['form', 'json'])
@@ -22,31 +63,30 @@ class CreateWidgetLayout(Resource):
         self.post_reqparser.add_argument("h", help='Widget layout: height found', location=['form', 'json'])
         self.post_reqparser.add_argument("w", help='Widget layout: width found', location=['form', 'json'])
         self.post_reqparser.add_argument("static", default=False, help='Widget layout: error passing static variable', location=['form', 'json'])
-
         super().__init__()
 
-    def post(self):
+    def post(self) -> tuple:
         """
-            Creates a Widget layout to the database table 'layouts'
+        Creates a Widget layout to the database table 'layouts'
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :param widgetID: The widget identification the layout belongs to
+        :param x: x coordinate of the widget layout
+        :param y: y coordinate of the widget layout
+        :param h: height of the widget layout
+        :param w: width of the widget layout
+        :param static: layout static property
 
-            :param widgetID: The widget identification the layout belongs to
-            :param x: x coordinate of the widget layout
-            :param y: y coordinate of the widget layout
-            :param h: height of the widget layout
-            :param w: width of the widget layout
-            :param static: layout static property
+        :type widgetID: String
+        :type x: Integer
+        :type y: Integer
+        :type h: Integer
+        :type w: Integer
+        :type static: String
 
-            :type widgetID: String
-            :type x: Integer
-            :type y: Integer
-            :type h: Integer
-            :type w: Integer
-            :type static: String
-
-            :returns:  on success a HTTP status code 204, executed successful with no content. otherwise
-                       if the layout instance is not found a HTTP status code 404, Not Found with json with
-                       a key "error" containing a message "layout object not found"
-            :rtype: <class 'tuple'>
+        :returns:  on success a HTTP status code 204, executed successful with no content. otherwise
+                   if the layout instance is not found a HTTP status code 404, Not Found with json with
+                   a key "error" containing a message "layout object not found"
+        :rtype: <class 'tuple'>
 
         """
         # Fetch layout values from post content
@@ -72,7 +112,6 @@ class CreateWidgetLayout(Resource):
         widget.save()
         widget.commit()
 
-        # TODO: Correct HTTPstatus code
         return "", 204
 
 
