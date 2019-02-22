@@ -15,7 +15,7 @@ class Users(db.Model):
     :param email:       users email addresas
     :param admin:       true if the user is a admin, false if the user is not an admin
     :param activated:   true if the account has been activated and false if it is not activated
-    :param timestamp:   time stamp of when the user was created
+    :param timestamp:   time stamp of when the user was created.
 
     :type id:           Integer
     :type fullname:     String
