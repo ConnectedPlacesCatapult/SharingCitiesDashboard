@@ -1,7 +1,8 @@
 from typing import NoReturn
 
-from db import db
 from sqlalchemy.exc import IntegrityError
+
+from db import db
 
 
 class Layouts(db.Model):
@@ -48,7 +49,6 @@ class Layouts(db.Model):
         :type height: int
         :type width:   int
         :type static:  bool
-
         """
         self.widget_id = widget_id
         self.x_coord = x
@@ -66,7 +66,6 @@ class Layouts(db.Model):
         """
         Overides the dunder string method an returns the layout as a JSON
         :return: a json as a string
-        :rtype: str
         """
         return self.json()
 
@@ -80,7 +79,6 @@ class Layouts(db.Model):
         :param width:   width
         :param static:  true if the layout is static and cannot be moved
         :return: Layout attributes formatted to JSON
-        :rtype dict:
         """
         return {
             'id': str(self.widget_id),
@@ -92,7 +90,6 @@ class Layouts(db.Model):
         }
 
     def create_table(self) -> NoReturn:
-
         """
         creates layout db table if a layouts table does not exist in the database
         :column id:         the layout entry's identification number (auto generated)
@@ -109,7 +106,6 @@ class Layouts(db.Model):
         :type w:            Integer
         :column static:     static property of the widget
         :type static:       Boolean
-
         """
         if not self.table_exists():  # If table don't exist, Create.
             # Create a table with the appropriate Columns
@@ -124,7 +120,6 @@ class Layouts(db.Model):
                      schema=None).create()
 
     def save(self) -> NoReturn:
-
         """ Adds object instance to the db session to be commited"""
         try:
             db.session.add(self)
@@ -148,7 +143,6 @@ class Layouts(db.Model):
         """
         Check if databse table exists
         :return: True if the table exists in the database otherwise False
-        :rtype: Boolean
         """
         # Does the table exist?
         has_table = db.engine.dialect.has_table(db.engine, 'layouts')
@@ -160,9 +154,6 @@ class Layouts(db.Model):
         fetch layout instance using the widgets id from database
         :param widgetID: the identification number of the widget related to the layout to fetch
         :type Integer:
-
         :returns: on success a layout instance is return otherwise None
-        :rtype <class 'Layouts'>:
-
         """
         return cls.query.filter_by(id=widgetID).first()
