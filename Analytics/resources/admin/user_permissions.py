@@ -21,8 +21,6 @@ class UserPermissions(Resource):
     :type email: string
     :type activated: string
     :type admin: string
-    :return: The user's credentials on success or an error message and corresponding status code when unsuccessful
-    :rtype: JSON
     """
 
     def __init__(self):
@@ -36,8 +34,6 @@ class UserPermissions(Resource):
         :type email: string
         :type activated: string
         :type admin: string
-        :return: The user's credentials on success or an error message and corresponding status code when unsuccessful
-        :rtype: JSON
         """
         # Post request parser
         self.post_reqparser = reqparse.RequestParser()
@@ -60,7 +56,6 @@ class UserPermissions(Resource):
         :type activated: string
         :type admin: string
         :return: The user's credentials on success or an error message and corresponding status code when unsuccessful
-        :rtype: JSON
         """
         args = self.post_reqparser.parse_args()
 

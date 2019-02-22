@@ -9,7 +9,6 @@ from models.users import Users
 
 
 class GetUserByEmail(Resource):
-
     """
     API resource class which returns a user from the database
     Parameters can be passed using a GET request that contains the following fields in the url:
@@ -17,33 +16,29 @@ class GetUserByEmail(Resource):
     :param email: users email address
     :type email: string
     :return: The user's credentials on success or an error message and relevant status code when unsuccessful
-    :rtype: JSON
     """
 
     def __init__(self):
         """
         Instantiates the get user endpoint
-        Parameters can be passed using a GET request that contains the following fields in the url:
+        Parameters can be passed using a POST request that contains the following fields in the url:
         :required: valid access JWT where the admin claim may be true or false
         :param email: users email address
         :type email: string
-        :return: The user's credentials on success or an error message and relevant status code when unsuccessful
-        :rtype: JSON
         """
         # Post request parser
         self.get_reqparser = reqparse.RequestParser()
         self.get_reqparser.add_argument('email', required=True, location=['form', 'json'])
 
     @jwt_required
-    def post(self)-> tuple:
+    def post(self) -> tuple:
         """
         API resource class which returns a user from the database
-        Parameters can be passed using a GET request that contains the following fields in the url:
+        Parameters can be passed using a POST request that contains the following fields in the url:
         :required: valid access JWT where the admin claim may be true or false
         :param email: users email address
         :type email: string
         :return: The user's credentials on success or an error message and relevant status code when unsuccessful
-        :rtype tuple: JSON with http status code
         """
         args = self.get_reqparser.parse_args()
         # Fetch user from database using the users email

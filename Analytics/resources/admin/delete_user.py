@@ -17,8 +17,6 @@ class DeleteUser(Resource):
     :required: valid access JWT where the admin claim has to be true
     :param email: users email address
     :type email: string
-    :return: An empty string and a 204 response on success or an error message and relevant status code when unsuccessful
-    :rtype: tuple
     """
 
     def __init__(self):
@@ -29,7 +27,6 @@ class DeleteUser(Resource):
         :param email: users email address
         :type email: string
         :return: An empty string and a 204 response on success or an error message and relevant status code when unsuccessful
-        :rtype: tuple
         """
         self.delete_reqparser = reqparse.RequestParser()
         self.delete_reqparser.add_argument('email', required=True, location=['form', 'json'])
@@ -45,7 +42,6 @@ class DeleteUser(Resource):
         :param email: users email address
         :type email: string
         :return: An empty string and a 204 response on success or an error message and relevant status code when unsuccessful
-        :rtype: tuple
         """
         args = self.delete_reqparser.parse_args()
 

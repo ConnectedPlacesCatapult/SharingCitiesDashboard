@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
-from flask import jsonify
 from flask import abort
+from flask import jsonify
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import fields
@@ -19,7 +19,6 @@ class UsersList(Resource):
     :param  limit: the max count of users to be returned
     :type limit: integer
     :returns: A list of widgets with a maximum length of limit and a status code 200
-    :rtype: JSON
     """
     user_fields = {"id": fields.Integer,
                    "email": fields.String,
@@ -35,8 +34,6 @@ class UsersList(Resource):
         Parameters can be passed using a GET request that contains the following fields in the url:
         :param  limit: the max count of users to be returned
         :type limit: integer
-        :returns: A list of widgets with a maximum length of limit and a status code 200
-        :rtype: JSON
         """
         self.get_reqparser = reqparse.RequestParser()
         self.get_reqparser.add_argument("limit", required=True, help='limit is required', location=['form', 'json'])
@@ -49,7 +46,6 @@ class UsersList(Resource):
         :param  limit: the max count of widgets to be returned
         :type limit: Integer
         :returns: A list of widgets with a maximum length of limit and a status code 200
-        :rtype dict: A dict of widgets
         """
         args = self.get_reqparser.parse_args()
 

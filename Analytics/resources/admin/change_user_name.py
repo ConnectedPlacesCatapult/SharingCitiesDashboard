@@ -18,8 +18,8 @@ class ChangeUserName(Resource):
     :type email: string
     :type fullname: string
     :return: Empty string and 204 status code
-    :rtype: tuple
     """
+
     def __init__(self):
         """
         Instanciates the Change users endpoint to change the users full name
@@ -46,7 +46,6 @@ class ChangeUserName(Resource):
         :type email: string
         :type fullname: string
         :return: Empty string and 204 status code
-        :rtype: tupple
         """
         args = self.post_reqparser.parse_args()
         user = Users.find_by_email(args["email"])

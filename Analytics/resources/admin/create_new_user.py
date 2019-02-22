@@ -26,7 +26,6 @@ class CreateNewUser(Resource):
     :type admin: string
     :type password: string
     :return: A message indicating a successful or unsuccessful addition of user to the database
-    :rtype: JSON
      """
 
     def __init__(self):
@@ -43,7 +42,6 @@ class CreateNewUser(Resource):
         :type admin: string
         :type password: string
         :return: A message indicating a successful or unsuccessful addition of user to the database
-        :rtype: JSON
          """
         # Create User (Post request parser)
         self.post_reqparser = reqparse.RequestParser()
@@ -63,7 +61,6 @@ class CreateNewUser(Resource):
         :param plain_password: plain text user password
         :type plain_password: str
         :return: hash of password
-        :rtype: bytes
         """
         return bcrypt.hashpw(plain_password, bcrypt.gensalt())
 
@@ -74,7 +71,6 @@ class CreateNewUser(Resource):
         :param email: users email address
         :type email: String
         :return: true if the user exists otherwise false
-        :rtype: bool
         """
         if not email:
             return abort(HTTPStatus.BAD_REQUEST.value, error='email not supplied')
@@ -85,7 +81,7 @@ class CreateNewUser(Resource):
         return user_exsists is not None
 
     @jwt_required
-    def post(self):
+    def post(self) -> tuple:
         """
         API resource class which creates a new user and adds it to the database
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -99,7 +95,6 @@ class CreateNewUser(Resource):
         :type admin: string
         :type password: string
         :return: A message indicating a successful or unsuccessful addition of user to the database
-        :rtype: JSON
         """
         args = self.post_reqparser.parse_args()
         # User needs admin rights to continue

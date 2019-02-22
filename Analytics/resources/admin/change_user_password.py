@@ -22,8 +22,8 @@ class ChangeUserPassword(Resource):
     :type password: string
     :type verify_password: string
     :return: A message indicating a successful or unsuccessful change
-    :rtype: tuple
      """
+
     def __init__(self):
         """
         Instantiates the change user password endpoint
@@ -56,7 +56,6 @@ class ChangeUserPassword(Resource):
         :type password: string
         :type verify_password: string
         :return: A message indicating a successful or unsuccessful change
-        :rtype: tuple
          """
         args = self.post_reqparser.parse_args()
         user = None

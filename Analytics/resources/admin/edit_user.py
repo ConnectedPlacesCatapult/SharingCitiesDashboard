@@ -28,8 +28,7 @@ class EditUser(Resource):
     :type activated: boolean
 
     :return: A message indicating success or failure and the corresponding response code
-    :rtype: JSON
-	"""
+    """
 
     def __init__(self):
         """
@@ -48,11 +47,7 @@ class EditUser(Resource):
             :type password: string
             :type admin: boolean
             :type activated: boolean
-
-        :return: A message indicating success or failure and the corresponding response code
-        :rtype: JSON
         """
-
         # Create User (Post request parser)
         self.post_reqparser = reqparse.RequestParser()
         self.post_reqparser.add_argument('email', required=True, help="email field is required",
@@ -70,23 +65,23 @@ class EditUser(Resource):
         API resource class which changes user credentials and saves changes to the database
         A valid access JWT is required where the admin claim has to be True
         Parameters can be passed using a POST request that contains a JSON with the following fields:
+
         :required:
-            :param email: users current email address
-            :type email: string
+        :param email: users current email address
+        :type email: string
+
         :optional:
-            :param fullname: users to be fullname
-            :param password: users to be password
-            :param admin: users to be admin status
-            :param activated: users to be activated status
-            :type fullname: string
-            :type password: string
-            :type admin: boolean
-            :type activated: boolean
+        :param fullname: users to be fullname
+        :param password: users to be password
+        :param admin: users to be admin status
+        :param activated: users to be activated status
+        :type fullname: string
+        :type password: string
+        :type admin: boolean
+        :type activated: boolean
 
         :return: A message indicating success or failure and the corresponding response code
-        :rtype: JSON
         """
-
         if not get_jwt_claims()['admin']:
             abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
 
@@ -96,13 +91,10 @@ class EditUser(Resource):
         if current_user:
             if "fullname" in args:
                 current_user.fullname = args["fullname"]
-
             if "activated" in args:
                 current_user.activated = bool(args["activated"])
-
             if "admin" in args:
                 current_user.admin = bool(args["admin"])
-
             if "password" in args:
                 current_user.password = Users.generate_hash(args["password"].encode("utf8")).decode("utf8")
 
