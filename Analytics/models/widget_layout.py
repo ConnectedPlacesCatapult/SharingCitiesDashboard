@@ -5,6 +5,9 @@ from sqlalchemy.exc import IntegrityError
 
 from db import db
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
+
 
 class Layouts(db.Model):
     """
@@ -126,7 +129,7 @@ class Layouts(db.Model):
             db.session.add(self)
             db.session.flush()
         except IntegrityError as ie:
-            logging.debug(ie)
+            logging.info(ie)
             db.session.rollback()
 
     def commit(self) -> NoReturn:
@@ -138,7 +141,7 @@ class Layouts(db.Model):
         try:
             db.session.delete(self)
         except IntegrityError as ie:
-            logging.debug(ie)
+            logging.info(ie)
             db.session.rollback()
 
     @staticmethod

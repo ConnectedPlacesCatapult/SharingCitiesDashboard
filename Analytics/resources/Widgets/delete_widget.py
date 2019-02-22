@@ -10,6 +10,9 @@ from sqlalchemy import exc
 from db import db
 from models.widget import WidgetModel
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
+
 
 class DeleteWidgets(Resource):
     """
@@ -45,7 +48,7 @@ class DeleteWidgets(Resource):
         self.reqparser_delete.add_argument('widgetID', required=True, help='widgetID required',
                                            location=['form', 'json'])
         super().__init__()
-        logging.basicConfig(filename='event.log', level=logging.DEBUG)
+
 
     @jwt_required
     def post(self) -> tuple:
@@ -80,6 +83,6 @@ class DeleteWidgets(Resource):
             db.session.commit()
         except exc.SQLAlchemyError:
             abort(HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: delete_widget")
-            logging.debug(status_code=HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: delete_widget")
+            logging.info(status_code=HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: delete_widget")
 
         return "", HTTPStatus.NO_CONTENT.value

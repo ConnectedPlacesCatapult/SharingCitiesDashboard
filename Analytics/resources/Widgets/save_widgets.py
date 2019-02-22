@@ -13,6 +13,8 @@ from models.users import Users
 from models.widget import WidgetModel
 from models.widget_layout import Layouts
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 class Widgets(Resource):
     """
@@ -37,7 +39,6 @@ class Widgets(Resource):
         # Post request arguments parser ( Save widget)
         self.reqparse_post = reqparse.RequestParser()
         self.reqparse_post.add_argument('data', help='data required', required=True, location=['form', 'json'])
-        logging.basicConfig(filename='event.log', level=logging.DEBUG)
         super().__init__()
 
     @jwt_required
@@ -67,7 +68,7 @@ class Widgets(Resource):
             layout.widget_id = new_widget.id
             db.session.commit()
         except exc.SQLAlchemyError as e:
-            logging.debug(e, status_code=HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: create_widget")
+            logging.info(e, status_code=HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: create_widget")
             abort(HTTPStatus.BAD_REQUEST.value, error="exc.SQLAlchemyError: create_widget")
 
         layout.widget_id = new_widget.id

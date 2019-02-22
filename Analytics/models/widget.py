@@ -6,6 +6,9 @@ from sqlalchemy.exc import IntegrityError
 
 from db import db
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
+
 
 class WidgetModel(db.Model):
     """
@@ -45,7 +48,6 @@ class WidgetModel(db.Model):
 
         # Does the database table exist?
         self.create_table()
-        logging.basicConfig(filename="widget_event.log", level=logging.DEBUG)
 
     def __str__(self) -> str:
         """
@@ -79,7 +81,7 @@ class WidgetModel(db.Model):
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            logging.debug(ie)
+            logging.info(ie)
 
     def delete(self) -> NoReturn:
         """
@@ -91,7 +93,7 @@ class WidgetModel(db.Model):
             db.session.delete(self)
         except IntegrityError as ie:
             db.session.rollback()
-            logging.debug(ie)
+            logging.info(ie)
 
     def commit(self) -> NoReturn:
         """

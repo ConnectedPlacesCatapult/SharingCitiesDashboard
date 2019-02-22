@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import logging
 
 from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
@@ -8,6 +9,9 @@ from flask_restful import reqparse
 from sqlalchemy import exc
 
 from models.users import Users
+
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 
 class ChangeUserPassword(Resource):
@@ -76,7 +80,8 @@ class ChangeUserPassword(Resource):
         try:
             user.save()
             user.commit()
-        except exc.SQLAlchemyError:
+        except exc.SQLAlchemyError as e:
+            logging.info(e)
             abort(HTTPStatus.BAD_REQUEST.value, error="User password not changed")
 
         return {"user": "{} password changed".format(args["email"])}, 201

@@ -7,6 +7,8 @@ from flask_restful import reqparse
 
 from models.widget import WidgetModel
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 class CreateWidgetLayout(Resource):
     """
@@ -59,7 +61,7 @@ class CreateWidgetLayout(Resource):
         self.post_reqparser.add_argument("static", default=False, help='Widget layout: error passing static variable',
                                          location=['form', 'json'])
         super().__init__()
-        logging.basicConfig(filename="widget_event.log", level=logging.DEBUG)
+
 
     def post(self) -> tuple:
         """
