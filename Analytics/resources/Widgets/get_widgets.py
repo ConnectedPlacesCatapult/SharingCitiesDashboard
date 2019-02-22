@@ -49,7 +49,6 @@ class GetWidgets(Resource):
         :type limit: Integer
 
         :returns [widget]: A list of widgets with a maximum length of limit and a status code 200
-        :rtype List(widget): A list of widgets
         """
         args = self.reqparser_get.parse_args()
         # Fetch the widget instances related to the userID passed

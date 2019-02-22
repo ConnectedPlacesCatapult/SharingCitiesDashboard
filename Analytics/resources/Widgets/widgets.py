@@ -24,7 +24,6 @@ class Widgets(Resource):
     :type  data: JSON
 
     :returns : a message containing the widget id with a satus code 200 on success
-    :rtype: JSON
     """
 
     def __init__(self):
@@ -52,7 +51,6 @@ class Widgets(Resource):
         :type  data: JSON
 
         :returns : a message containing the widget id with a satus code 200 on success
-        :rtype: tuple
         """
         args = self.reqparse_post.parse_args()
         current_user = Users.find_by_email(get_jwt_identity())

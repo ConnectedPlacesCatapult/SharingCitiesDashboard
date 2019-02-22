@@ -17,8 +17,8 @@ class GetWidgetLayout(Resource):
 
         :returns:   on success the widgets layout instance is return if the widget or layout
                     is not found a HTTP status code 404, Not Found is returned with a error discription
-        :rtype JSON:
     """
+
     def __init__(self):
         """
         Instantiates the get widget endpoint
@@ -43,7 +43,6 @@ class GetWidgetLayout(Resource):
 
         :returns:   on success the widgets layout instance is return if the widget or layout
                     is not found a HTTP status code 404, Not Found is returned with a error discription
-        :rtype JSON:
         """
         args = self.reqparser_get.parse_args()
         # Fetch the instances of the widget to get the related layout.

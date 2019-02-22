@@ -16,6 +16,7 @@ class GetLayouts(Resource):
     :type userID: Integer
     :type limit: Integer
     """
+
     def __init__(self):
         """
         Fetches all layouts for the widgets with a specific userID
@@ -26,9 +27,9 @@ class GetLayouts(Resource):
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('userID', required=True, help='A userID is required',
-                                        location=['form', 'json'])
+                                    location=['form', 'json'])
         self.reqparser.add_argument('limit', required=False, default=10, help='A userID is required',
-                                        location=['form', 'json'])
+                                    location=['form', 'json'])
         super().__init__()
 
     @jwt_required
@@ -45,8 +46,6 @@ class GetLayouts(Resource):
         :returns: on success a list of all the widget layouts related to the userID are returned. If no
                   widget are found for the userID a HTTP status code 404, Not Found is returned with an
                   error message "no widgets found".
-        :rtype <class 'Tuple'>:
-
         """
         # Fetch the userID from post content ( limit is optional )
         args = self.reqparser.parse_args()
@@ -69,4 +68,3 @@ class GetLayouts(Resource):
             layout_list.append(widget.layout.json())
 
         return layout_list, HTTPStatus.OK.value
-

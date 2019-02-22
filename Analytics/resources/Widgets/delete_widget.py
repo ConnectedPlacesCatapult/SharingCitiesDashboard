@@ -26,28 +26,17 @@ class DeleteWidgets(Resource):
     :returns: A message and a status code of No Content (204) when a widget is deleted
               When the widget does not exist in the database table 'widgets' a status code of
               Not Found (404) is returned.
-    :rtype: <class 'tuple'>
-
     """
 
     def __init__(self):
         """
-        Instciates the delete widget endpoint
+        Initiates the delete widget endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param  userID: Unique user identification number
         :param  widgetID: Unique widget identification number
 
         :type userID: Integer
         :type widgetID: Integer
-
-        :raises SQLAlchemyError: when a SQLAlchemyError is raised a status of code Bad Request (400) and the
-                error is returned
-
-        :returns: A message and a status code of No Content (204) when a widget is deleted
-                  When the widget does not exist in the database table 'widgets' a status code of
-                  Not Found (404) is returned.
-        :rtype: <class 'tuple'>
-
         """
         self.reqparser_delete = reqparse.RequestParser()
         self.reqparser_delete.add_argument('userID', required=True, help='A userID is required',
@@ -73,7 +62,6 @@ class DeleteWidgets(Resource):
         :returns: A message and a status code of No Content (204) when a widget is deleted
                   When the widget does not exist in the database table 'widgets' a status code of
                   Not Found (404) is returned.
-        :rtype: <class 'tuple'>
         """
         args = self.reqparser_delete.parse_args()
         try:

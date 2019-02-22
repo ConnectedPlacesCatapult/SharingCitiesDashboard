@@ -28,8 +28,6 @@ class CreateWidgetLayout(Resource):
     :returns:  on success a HTTP status code 204, executed successful with no content. otherwise
                if the layout instance is not found a HTTP status code 404, Not Found with json with
                a key "error" containing a message "layout object not found"
-    :rtype: <class 'tuple'>
-
     """
 
     def __init__(self):
@@ -49,20 +47,16 @@ class CreateWidgetLayout(Resource):
         :type h: Integer
         :type w: Integer
         :type static: String
-
-        :returns:  on success a HTTP status code 204, executed successful with no content. otherwise
-                   if the layout instance is not found a HTTP status code 404, Not Found with json with
-                   a key "error" containing a message "layout object not found"
-        :rtype: <class 'tuple'>
         """
         # Argument required to create a widget layout
         self.post_reqparser = reqparse.RequestParser()
-        self.post_reqparser.add_argument("widgetID",  help='widgetID required', location=['form', 'json'])
+        self.post_reqparser.add_argument("widgetID", help='widgetID required', location=['form', 'json'])
         self.post_reqparser.add_argument("x", help='Widget layout: x coordinate found', location=['form', 'json'])
         self.post_reqparser.add_argument("y", help='Widget layout: y coordinate found', location=['form', 'json'])
         self.post_reqparser.add_argument("h", help='Widget layout: height found', location=['form', 'json'])
         self.post_reqparser.add_argument("w", help='Widget layout: width found', location=['form', 'json'])
-        self.post_reqparser.add_argument("static", default=False, help='Widget layout: error passing static variable', location=['form', 'json'])
+        self.post_reqparser.add_argument("static", default=False, help='Widget layout: error passing static variable',
+                                         location=['form', 'json'])
         super().__init__()
 
     def post(self) -> tuple:
@@ -86,8 +80,6 @@ class CreateWidgetLayout(Resource):
         :returns:  on success a HTTP status code 204, executed successful with no content. otherwise
                    if the layout instance is not found a HTTP status code 404, Not Found with json with
                    a key "error" containing a message "layout object not found"
-        :rtype: <class 'tuple'>
-
         """
         # Fetch layout values from post content
         args = self.post_reqparser.parse_args()
@@ -97,7 +89,6 @@ class CreateWidgetLayout(Resource):
         # does the widget with the passed widgetID exist?
         if not widget.layout:
             # No widget return with the passed widgetID
-            # TODO: Correct HTTPStatus code for widget not existing
             abort(HTTPStatus.NOT_FOUND, error="layout object not found")
 
         # Modify layout instance for widget
@@ -113,9 +104,3 @@ class CreateWidgetLayout(Resource):
         widget.commit()
 
         return "", 204
-
-
-
-
-
-

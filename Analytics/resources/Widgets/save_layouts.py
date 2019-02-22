@@ -9,8 +9,7 @@ from models.widget import WidgetModel
 
 class SaveWidgetLayout(Resource):
     """
-    Pesists widget layout to the database
-
+    Persists widget layout to the database
     Parameters can be passed using a POST request that contains a JSON with the following fields:
     :param layouts: layouts to be saved
     :type layouts: a JSON array of JSON objects containing:
@@ -29,9 +28,6 @@ class SaveWidgetLayout(Resource):
 
     :return: On success a HTTP status code 204, executed successfully with no content is return
              otherwise, a HTTP status code 404, not found with content containing JSON objects
-             :param error: a message of "Widgets not found"
-             :type String:
-    :rtype: JSON
     """
 
     def __init__(self):
@@ -61,10 +57,6 @@ class SaveWidgetLayout(Resource):
 
         :return: On success a HTTP status code 204, executed successfully with no content is return
                  otherwise, a HTTP status code 404, not found with content containing JSON objects
-                 :param error: a message of "Widgets not found"
-                 :type String:
-
-        :rtype: JSON
         """
         # Keep track of widgetIDs that are not found to inform user
         widgets_not_found = []
