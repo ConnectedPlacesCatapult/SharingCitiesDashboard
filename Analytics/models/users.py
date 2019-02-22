@@ -39,7 +39,7 @@ class Users(db.Model):
         Initialises the Users object instance
         :param fullname:    users full name
         :param email:       users email address
-        :param password:
+        :param password:    plain text password
         :param admin:       true if the user is a admin, false if the user is not an admin
         :param activated:   true if the account has been activated and false if it is not activated
         :param timestamp:   time stamp of when the user was created
@@ -67,7 +67,6 @@ class Users(db.Model):
         """
         overrides the dunder repr method
         :return: the users email address
-        :rtype: str
         """
         return 'Users email is: %s' % self.email
 
@@ -75,21 +74,14 @@ class Users(db.Model):
         """
         overrides the dunder string method to cast user to a string
         :return: a JSON string of the Users objects attributes
-        :rtype: JSON
         """
         return self.json()
 
-<<<<<<< HEAD
     def json(self) -> dict:
         """
         Create a JSON dict of the User objects attributes
         :return: the User objects attributes as a JSON (dict)
-        :rtype: (JSON) dict
         """
-=======
-    def json(self):
-        """ Return User model fields in JSON format """
->>>>>>> e84c99e79bbe955f4354a29f8426412be595abd4
         return {
             'id': self.id,
             'fullname': self.fullname,
@@ -155,6 +147,5 @@ class Users(db.Model):
         :type password: string
         :type hash: string
         :return: whether the password arguement corresponds to the hash
-        :rtype: boolean
         """
         return bcrypt.checkpw(password, hash)
