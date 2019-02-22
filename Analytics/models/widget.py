@@ -49,7 +49,6 @@ class WidgetModel(db.Model):
         """
         returns the layout instance as a string
         :return:  JSONified string of the layouts attributes
-        :rtype: String
         """
         return "UserID: {} \t\tWidgetID: {}".format(self.user_id, self.id)
 
@@ -63,7 +62,6 @@ class WidgetModel(db.Model):
         :type:   Integer
         :type:   Integer
         :type:   JSON
-        :rtype:  dict
         """
         # format response
         response_data = {"id": str(self.id), "userID": self.user_id, "data": self.data}
@@ -73,7 +71,6 @@ class WidgetModel(db.Model):
         """
         Adds widget entry to the database session to be committed
         :raises IntegrityError: performs a database session rollback
-        :return: None
         """
         try:
             db.session.add(self)
@@ -85,7 +82,6 @@ class WidgetModel(db.Model):
         """
         Deletes a widget entry and its related layout entry from the database session to be committed
         :raises IntegrityError: performs a database session rollback
-        :return: None
         """
         try:
             db.session.delete(self.layout)
@@ -96,7 +92,6 @@ class WidgetModel(db.Model):
     def commit(self) -> NoReturn:
         """
         Commits session changes to the database
-        :return: None
         """
         db.session.commit()
 
@@ -128,7 +123,6 @@ class WidgetModel(db.Model):
         """
         Check if table exists
         :return: True if the table exists in the database otherwise False
-        :rtype: Boolean
         """
         # Does the table exist?
         has_table = db.engine.dialect.has_table(db.engine, self._WIDGET_DB_TABLE_NAME)
@@ -140,8 +134,6 @@ class WidgetModel(db.Model):
         Fetches a widget by its id
         :param widgetID: the widgets identification number to fetch
         :return: Widget instance if found otherwise None
-        :rtype <class 'Widget'>:    an instance of a widget
-
         """
         # find widget by its id  and return it
         return cls.query.filter_by(id=widgetID).first()
