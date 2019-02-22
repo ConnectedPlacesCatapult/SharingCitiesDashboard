@@ -6,67 +6,55 @@ from flask_restful import abort
 from flask_restful import reqparse
 
 from models.widget import WidgetModel
-"""
-            TODO: DocString
+
+
+class GetWidgetLayout(Resource):
     """
+    Fetches layout for widget with the passed widgetID
+    Parameters can be passed using a POST request that contains a JSON with the following fields:
+    :param  widgetID: Unique widget identification number
+    :type widgetID:   Integer
 
-class GetLayouts(Resource):
+    :returns:   on success the widgets layout instance is return if the widget or layout
+                is not found a HTTP status code 404, Not Found is returned with a error discription
+    :rtype JSON:
     """
-        Fetches all layouts for the widgets with a specific userID
-
-        :param  userID: Unique user identification number
-        :param  limit:  maximum count of widgets to be returned (optional)
-
-        :type userID: Integer
-        :type limit: Integer
-    """
-
     def __init__(self):
-        # Arguments required to fetch the layouts for all the widget related to a userID
-        self.reqparser = reqparse.RequestParser()
-        self.reqparser.add_argument('userID', required=True, help='A userID is required',
-                                        location=['form', 'json'])
-        self.reqparser.add_argument('limit', required=False, default=10, help='A userID is required',
+        """
+        Instantiates the get widget endpoint
+        Fetches layout for widget with the passed widgetID
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :param  widgetID: Unique widget identification number
+        :type widgetID:   Integer
+        """
+        # Arguments required to fetch the layout the widget related to the userID
+        self.reqparser_get = reqparse.RequestParser()
+        self.reqparser_get.add_argument('widgetID', required=True, help='A widgetID is required',
                                         location=['form', 'json'])
         super().__init__()
 
     @jwt_required
-    def post(self):
+    def post(self) -> tuple:
         """
-                Fetches all layouts for the widgets with a specific userID
+        Fetches layout for widget with the passed widgetID
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :param  widgetID: Unique widget identification number
+        :type widgetID:   Integer
 
-                :param  userID: Unique user identification number
-                :param  limit:  maximum count of widgets to be returned (optional)
-
-                :type userID: Integer
-                :type limit: Integer
-
-                :returns: on success a list of all the widget layouts related to the userID are returned. If no
-                          widget are found for the userID a HTTP status code 404, Not Found is returned with an
-                          error message "no widgets found".
-                :rtype <class 'Tuple'>:
-
+        :returns:   on success the widgets layout instance is return if the widget or layout
+                    is not found a HTTP status code 404, Not Found is returned with a error discription
+        :rtype JSON:
         """
-        
-        # Fetch the userID from post content ( limit is optional )
-        args = self.reqparser.parse_args()
-        # Fetch the instances of the widgets to assign the new layouts
-        widgets = WidgetModel.query.filter_by(user_id=args["userID"]).limit(args["limit"]).all()
+        args = self.reqparser_get.parse_args()
+        # Fetch the instances of the widget to get the related layout.
+        widget = WidgetModel.query.filter_by(id=args["widgetID"]).first()
 
-        # Where widgets returned
-        if not widgets:
-            # no widgets related to the userID supplied
-            abort(HTTPStatus.NOT_FOUND.value, error="no widgets found")
+        # does the widget exist?
+        if not widget:
+            # Widget instance not found
+            abort(HTTPStatus.NOT_FOUND.value, error="no widget found with widgetID: {}".format(args["widgetID"]))
+        if not widget.layout:
+            # Widget instance found but no layout instance is present
+            abort(HTTPStatus.NOT_FOUND.value, error="no widget layout found for widgetID: {}".format(args["widgetID"]))
 
-        # Store layout instances to be returned
-        layout_list = []
-
-        # Get all layout instances for the widgets
-        for widget in widgets:
-            widget = WidgetModel.get_widget_by_id(widget.id)
-            widget.layout.widgetID = widget.id
-            # Format layouts to be return
-            layout_list.append(widget.layout.json())
-
-        return layout_list, HTTPStatus.OK.value
-
+        return widget.layout.json(), HTTPStatus.OK.value
