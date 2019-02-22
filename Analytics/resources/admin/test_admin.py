@@ -43,6 +43,7 @@ def admin_user():
 @pytest.fixture()
 def dummy_user():
 	""" Create and save regular user to the database for duration of test and delete it afterwards """
+	
     user = Users("Dummy","dummy@FCC.com",Users.generate_hash("1234".encode("utf8")).decode("utf8"),True,True)
 
     try:
