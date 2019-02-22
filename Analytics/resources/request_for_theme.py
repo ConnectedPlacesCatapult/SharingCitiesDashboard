@@ -47,7 +47,4 @@ class RequestForTheme(Resource):
 		return {
 			"error": "error occured while processing request"
 		}, 400
-
-
-
-		
+	
