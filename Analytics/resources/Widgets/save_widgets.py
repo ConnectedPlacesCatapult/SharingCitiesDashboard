@@ -23,8 +23,8 @@ class Widgets(Resource):
     :param  userID: Unique user identification number
     :param  data: the widgets data
 
-    :type  userID: Integer
-    :type  data: JSON
+    :type  userID: int
+    :type  data: str
 
     :returns : a message containing the widget id with a satus code 200 on success
     """
@@ -42,15 +42,15 @@ class Widgets(Resource):
         super().__init__()
 
     @jwt_required
-    def post(self) -> tuple:
+    def post(self) -> (str, int):
         """
         Saves a widget to the database with a userID
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param  userID: Unique user identification number
         :param  data: the widgets data
 
-        :type  userID: Integer
-        :type  data: JSON
+        :type  userID: int
+        :type  data: str
 
         :returns : a message containing the widget id with a satus code 200 on success
         """

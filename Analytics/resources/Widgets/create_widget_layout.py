@@ -1,5 +1,5 @@
-from http import HTTPStatus
 import logging
+from http import HTTPStatus
 
 from flask_restful import Resource
 from flask_restful import abort
@@ -9,6 +9,7 @@ from models.widget import WidgetModel
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
+
 
 class CreateWidgetLayout(Resource):
     """
@@ -21,16 +22,15 @@ class CreateWidgetLayout(Resource):
     :param w: width of the widget layout
     :param static: layout static property
 
-    :type widgetID: String
-    :type x: Integer
-    :type y: Integer
-    :type h: Integer
-    :type w: Integer
-    :type static: String
+    :type widgetID: str
+    :type x: int
+    :type y: int
+    :type h: int
+    :type w: int
+    :type static: str
 
-    :returns:  on success a HTTP status code 204, executed successful with no content. otherwise
-               if the layout instance is not found a HTTP status code 404, Not Found with json with
-               a key "error" containing a message "layout object not found"
+    :returns:  on success a HTTP status code 200, otherwiseif the layout instance is not found a HTTP status
+        code 404, Not Found with json with a key "error" containing a message "layout object not found"
     """
 
     def __init__(self):
@@ -44,12 +44,12 @@ class CreateWidgetLayout(Resource):
         :param w: width of the widget layout
         :param static: layout static property
 
-        :type widgetID: String
-        :type x: Integer
-        :type y: Integer
-        :type h: Integer
-        :type w: Integer
-        :type static: String
+        :type widgetID: str
+        :type x: int
+        :type y: int
+        :type h: int
+        :type w: int
+        :type static: str
         """
         # Argument required to create a widget layout
         self.post_reqparser = reqparse.RequestParser()
@@ -62,8 +62,7 @@ class CreateWidgetLayout(Resource):
                                          location=['form', 'json'])
         super().__init__()
 
-
-    def post(self) -> tuple:
+    def post(self) -> (str, int):
         """
         Creates a Widget layout to the database table 'layouts'
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -74,16 +73,15 @@ class CreateWidgetLayout(Resource):
         :param w: width of the widget layout
         :param static: layout static property
 
-        :type widgetID: String
-        :type x: Integer
-        :type y: Integer
-        :type h: Integer
-        :type w: Integer
-        :type static: String
+        :type widgetID: str
+        :type x: int
+        :type y: int
+        :type h: int
+        :type w: int
+        :type static: str
 
-        :returns:  on success a HTTP status code 204, executed successful with no content. otherwise
-                   if the layout instance is not found a HTTP status code 404, Not Found with json with
-                   a key "error" containing a message "layout object not found"
+        :returns:  on success a HTTP status code 200, otherwiseif the layout instance is not found a HTTP status
+        code 404, Not Found with json with a key "error" containing a message "layout object not found"
         """
         # Fetch layout values from post content
         args = self.post_reqparser.parse_args()
@@ -93,7 +91,8 @@ class CreateWidgetLayout(Resource):
         # does the widget with the passed widgetID exist?
         if not widget.layout:
             # No widget return with the passed widgetID
-            logging.debug("CreateWidgetLayout(): ", status_code=HTTPStatus.NOT_FOUND.value, error="layout object not found")
+            logging.debug("CreateWidgetLayout(): ", status_code=HTTPStatus.NOT_FOUND.value,
+                          error="layout object not found")
             abort(HTTPStatus.NOT_FOUND.value, error="layout object not found")
 
         # Modify layout instance for widget
@@ -108,4 +107,4 @@ class CreateWidgetLayout(Resource):
         widget.save()
         widget.commit()
 
-        return "", 204
+        return "Widget crearted", 200

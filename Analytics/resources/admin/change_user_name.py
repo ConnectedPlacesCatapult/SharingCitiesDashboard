@@ -15,9 +15,9 @@ class ChangeUserName(Resource):
     :required: valid access JWT where the admin claim may be either true or false
     :param email: users email address
     :param fullname: users fullname
-    :type email: string
-    :type fullname: string
-    :return: Empty string and 204 status code
+    :type email: str
+    :type fullname: str
+    :return: Empty string and 200 status code
     """
 
     def __init__(self):
@@ -27,8 +27,8 @@ class ChangeUserName(Resource):
         :required: valid access JWT where the admin claim may be either true or false
         :param email: users email address
         :param fullname: users fullname
-        :type email: string
-        :type fullname: string
+        :type email: str
+        :type fullname: str
         """
         self.post_reqparser = reqparse.RequestParser()
         self.post_reqparser.add_argument('email', required=True, help='email is required', location=['form', 'json'])
@@ -36,16 +36,16 @@ class ChangeUserName(Resource):
                                          location=['form', 'json'])
 
     @jwt_required
-    def post(self) -> tuple:
+    def post(self) -> (str, int):
         """
         API resource class which changes username and saves changes to the database
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :required: valid access JWT where the admin claim may be either true or false
         :param email: users email address
         :param fullname: users fullname
-        :type email: string
-        :type fullname: string
-        :return: Empty string and 204 status code
+        :type email: str
+        :type fullname: str
+        :return: Empty string and 200 status code
         """
         args = self.post_reqparser.parse_args()
         user = Users.find_by_email(args["email"])
@@ -54,4 +54,4 @@ class ChangeUserName(Resource):
         user.fullname = args["fullname"]
         user.save()
         user.commit()
-        return "", 204
+        return "", 200

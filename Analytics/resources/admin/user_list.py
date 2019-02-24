@@ -17,7 +17,7 @@ class UsersList(Resource):
 
     Parameters can be passed using a POST request that contains the following fields in the url:
     :param  limit: the max count of users to be returned
-    :type limit: integer
+    :type limit: int
     :returns: A list of widgets with a maximum length of limit and a status code 200
     """
     user_fields = {"id": fields.Integer,
@@ -33,18 +33,18 @@ class UsersList(Resource):
         Instantiates the list user endpoint
         Parameters can be passed using a GET request that contains the following fields in the url:
         :param  limit: the max count of users to be returned
-        :type limit: integer
+        :type limit: int
         """
         self.get_reqparser = reqparse.RequestParser()
         self.get_reqparser.add_argument("limit", required=True, help='limit is required', location=['form', 'json'])
 
     # Returns a list of users
     @jwt_required
-    def post(self) -> dict:
+    def post(self) -> (str, int):
         """
         Get a list of user with from the database
         :param  limit: the max count of widgets to be returned
-        :type limit: Integer
+        :type limit: int
         :returns: A list of widgets with a maximum length of limit and a status code 200
         """
         args = self.get_reqparser.parse_args()
@@ -60,4 +60,4 @@ class UsersList(Resource):
         for user in users:
             user_list.append(user)
 
-        return jsonify({"users": user_list})
+        return jsonify({"users": user_list}), 200

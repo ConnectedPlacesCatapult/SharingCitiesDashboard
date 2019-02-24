@@ -12,21 +12,21 @@ class SaveWidgetLayout(Resource):
     Persists widget layout to the database
     Parameters can be passed using a POST request that contains a JSON with the following fields:
     :param layouts: layouts to be saved
-    :type layouts: a JSON array of JSON objects containing:
+    :type layouts: str
     :param id: Related widget identification number
-    :type id:   String
+    :type id:   str
     :param x: x coordinate of widget
-    :type x:   Integer
+    :type x:   int
     :param y: y coordinate of widget
-    :type y:   Integer
+    :type y:   int
     :param h: height of widget
-    :type h:   Integer
+    :type h:   int
     :param w: width of widget
-    :type w:   Integer
+    :type w:   int
     :param static: static state
-    :type static:   String
+    :type static:   str
 
-    :return: On success a HTTP status code 204, executed successfully with no content is return
+    :return: On success a HTTP status code 200, executed successfully with no content is return
              otherwise, a HTTP status code 404, not found with content containing JSON objects
     """
 
@@ -36,26 +36,26 @@ class SaveWidgetLayout(Resource):
         self.post_reqparser.add_argument('layouts', action='append')
         super().__init__()
 
-    def post(self) -> tuple:
+    def post(self) -> (str, int):
         """
         Pesists widget layout to the database
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param layouts: layouts to be saved
-        :type layouts: a JSON array of JSON objects containing:
+        :type layouts: str
         :param id: Related widget identification number
-        :type id:   String
+        :type id:   str
         :param x: x coordinate of widget
-        :type x:   Integer
+        :type x:   int
         :param y: y coordinate of widget
-        :type y:   Integer
+        :type y:   int
         :param h: height of widget
-        :type h:   Integer
+        :type h:   int
         :param w: width of widget
-        :type w:   Integer
+        :type w:   int
         :param static: static state
-        :type static:   String
+        :type static:   str
 
-        :return: On success a HTTP status code 204, executed successfully with no content is return
+        :return: On success a HTTP status code 200, executed successfully with no content is return
                  otherwise, a HTTP status code 404, not found with content containing JSON objects
         """
         # Keep track of widgetIDs that are not found to inform user
@@ -95,4 +95,4 @@ class SaveWidgetLayout(Resource):
             abort(404, error="Widgets not found", widgets_not_found=len(widgets_not_found),
                   widget_ids=json.dumps(widgets_not_found), widgets_updated=json.dumps(widgets_updated))
 
-        return "", 204
+        return "", 200

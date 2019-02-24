@@ -20,7 +20,7 @@ class DeleteUser(Resource):
     Parameters can be passed using a DELETE request that contains a JSON with the following fields:
     :required: valid access JWT where the admin claim has to be true
     :param email: users email address
-    :type email: string
+    :type email: str
     """
 
     def __init__(self):
@@ -29,7 +29,7 @@ class DeleteUser(Resource):
         Parameters can be passed using a DELETE request that contains a JSON with the following fields:
         :required: valid access JWT where the admin claim has to be true
         :param email: users email address
-        :type email: string
+        :type email: str
         :return: An empty string and a 204 response on success or an error message and relevant status code when unsuccessful
         """
         self.delete_reqparser = reqparse.RequestParser()
@@ -37,14 +37,14 @@ class DeleteUser(Resource):
         super().__init__()
 
     @jwt_required
-    def post(self) -> tuple:
+    def post(self) -> (str, int):
         """
         API resource class which deletes a user from the database
 
         Parameters can be passed using a DELETE request that contains a JSON with the following fields:
         :required: valid access JWT where the admin claim has to be true
         :param email: users email address
-        :type email: string
+        :type email: str
         :return: An empty string and a 204 response on success or an error message and relevant status code when unsuccessful
         """
         args = self.delete_reqparser.parse_args()

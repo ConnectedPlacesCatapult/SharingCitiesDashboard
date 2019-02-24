@@ -14,7 +14,7 @@ class GetUserByEmail(Resource):
     Parameters can be passed using a GET request that contains the following fields in the url:
     :required: valid access JWT where the admin claim may be true or false
     :param email: users email address
-    :type email: string
+    :type email: str
     :return: The user's credentials on success or an error message and relevant status code when unsuccessful
     """
 
@@ -24,20 +24,20 @@ class GetUserByEmail(Resource):
         Parameters can be passed using a POST request that contains the following fields in the url:
         :required: valid access JWT where the admin claim may be true or false
         :param email: users email address
-        :type email: string
+        :type email: str
         """
         # Post request parser
         self.get_reqparser = reqparse.RequestParser()
         self.get_reqparser.add_argument('email', required=True, location=['form', 'json'])
 
     @jwt_required
-    def post(self) -> tuple:
+    def post(self) -> (str, int):
         """
         API resource class which returns a user from the database
         Parameters can be passed using a POST request that contains the following fields in the url:
         :required: valid access JWT where the admin claim may be true or false
         :param email: users email address
-        :type email: string
+        :type email: str
         :return: The user's credentials on success or an error message and relevant status code when unsuccessful
         """
         args = self.get_reqparser.parse_args()

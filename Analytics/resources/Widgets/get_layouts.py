@@ -13,8 +13,8 @@ class GetLayouts(Resource):
     Fetches all layouts for the widgets with a specific userID
     :param  userID: Unique user identification number
     :param  limit:  maximum count of widgets to be returned (optional)
-    :type userID: Integer
-    :type limit: Integer
+    :type userID: int
+    :type limit: int
     """
 
     def __init__(self):
@@ -22,8 +22,8 @@ class GetLayouts(Resource):
         Fetches all layouts for the widgets with a specific userID
         :param  userID: Unique user identification number
         :param  limit:  maximum count of widgets to be returned (optional)
-        :type userID: Integer
-        :type limit: Integer
+        :type userID: int
+        :type limit: int
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('userID', required=True, help='A userID is required',
@@ -33,15 +33,15 @@ class GetLayouts(Resource):
         super().__init__()
 
     @jwt_required
-    def post(self) -> tuple:
+    def post(self) -> ([str], int):
         """
         Fetches all layouts for the widgets with a specific userID
 
         :param  userID: Unique user identification number
         :param  limit:  maximum count of widgets to be returned (optional)
 
-        :type userID: Integer
-        :type limit: Integer
+        :type userID: int
+        :type limit: int
 
         :returns: on success a list of all the widget layouts related to the userID are returned. If no
                   widget are found for the userID a HTTP status code 404, Not Found is returned with an

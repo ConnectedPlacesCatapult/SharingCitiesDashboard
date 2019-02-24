@@ -20,12 +20,12 @@ class Layouts(db.Model):
     :param w:           width of the widget layout
     :param static:      layout static property
 
-    :type widgetID: String
-    :type x:        Integer
-    :type y:        Integer
-    :type h:        Integer
-    :type w:        Integer
-    :type static:   String
+    :type widgetID: str
+    :type x:        int
+    :type y:        int
+    :type h:        int
+    :type w:        int
+    :type static:   str
     """
     __tablename__ = 'layouts'
 
@@ -37,7 +37,7 @@ class Layouts(db.Model):
     width = db.Column('w', db.Integer, nullable=False)
     static = db.Column('static', db.Boolean, nullable=False)
 
-    def __init__(self, widget_id, x, y, height, width, static):
+    def __init__(self, widget_id: int, x: int, y: int, height: int, width: int, static: int):
         """
         Layouts initialise
         :param widget_id: widgets identification number the layout is related to
@@ -72,7 +72,7 @@ class Layouts(db.Model):
         """
         return self.json()
 
-    def json(self) -> dict:
+    def json(self) -> {str: any}:
         """
         Creates a JSON object of the Layouts instance
         :param widget_id: widgets identification number the layout is related to
@@ -96,19 +96,19 @@ class Layouts(db.Model):
         """
         creates layout db table if a layouts table does not exist in the database
         :column id:         the layout entry's identification number (auto generated)
-        :type id:           Integer (Primary Key)
+        :type id:           int (Primary Key)
         :column widget_id:  the id of the widget the layout belongs to
-        :type widget_id:    Integer (Foreign Key)
+        :type widget_id:    int (Foreign Key)
         :column x:          x coordinate of the layout
-        :type x:            Integer
+        :type x:            int
         :column y:          y coordinate of the layout
-        :type y:            Integer
+        :type y:            int
         :column h:          height of the layout
-        :type h:            Integer
+        :type h:            int
         :column w:          width of the layout
-        :type w:            Integer
+        :type w:            int
         :column static:     static property of the widget
-        :type static:       Boolean
+        :type static:       bool
         """
         if not self.table_exists():  # If table don't exist, Create.
             # Create a table with the appropriate Columns
@@ -123,7 +123,7 @@ class Layouts(db.Model):
                      schema=None).create()
 
     def save(self) -> NoReturn:
-        """ Adds object instance to the db session to be commited"""
+        """ Adds object instance to the db session to be committed"""
         try:
             db.session.add(self)
             db.session.flush()
@@ -136,7 +136,7 @@ class Layouts(db.Model):
         db.session.commit()
 
     def delete(self) -> NoReturn:
-        """ Delete object instance from the db session to be commited"""
+        """ Delete object instance from the db session to be committed"""
         try:
             db.session.delete(self)
         except IntegrityError as ie:
@@ -146,7 +146,7 @@ class Layouts(db.Model):
     @staticmethod
     def table_exists() -> bool:
         """
-        Check if databse table exists
+        Check if database table exists
         :return: True if the table exists in the database otherwise False
         """
         # Does the table exist?
@@ -154,7 +154,7 @@ class Layouts(db.Model):
         return has_table
 
     @classmethod
-    def get_layout_by_widget_id(cls, widgetID: int) -> object:
+    def get_layout_by_widget_id(cls, widgetID: int) -> db.Model:
         """
         fetch layout instance using the widgets id from database
         """

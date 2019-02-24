@@ -96,6 +96,7 @@ def create_app(**config_overrides):
         :param user: Users model
         :type user: Users instance
         :return: Identifier for a JWT
+        :rtype: string
         """
         return user.email
 
