@@ -90,13 +90,12 @@ def create_app(**config_overrides):
         return {'admin': user.admin}
 
     @jwt.user_identity_loader
-    def user_identity_lookup(user):
+    def user_identity_lookup(user) -> str:
         """ 
         Define identity claim within JWT token
         :param user: Users model
         :type user: Users instance
         :return: Identifier for a JWT
-        :rtype: string
         """
         return user.email
 
@@ -105,11 +104,6 @@ def create_app(**config_overrides):
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
     api.add_resource(RequestForData, '/data')  # current /data endpoint
-
-    # proposed /data endpoint
-    api.add_resource(RequestForTheme, '/data/theme')
-    api.add_resource(RequestForSensor, '/data/sensor')
-    api.add_resource(RequestForAttribute, '/data/attribute')
 
     # login Endpoints
     api.add_resource(Register, '/register')
