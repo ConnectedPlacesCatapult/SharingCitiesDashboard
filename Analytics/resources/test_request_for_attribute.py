@@ -139,5 +139,3 @@ def test_attributedata_harmonising_method_params(test_client, attributedata,harm
 	response_dotmodus_enpoint = test_client.get('/data/{}?{}={}&grouped=true&harmonising_method={}'.format(data,param,attributedata,harmonising_method))
 	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
 	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
-
-
