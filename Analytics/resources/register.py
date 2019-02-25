@@ -1,3 +1,4 @@
+""" API Resource class that allows user's to activate their dashboard account """
 from datetime import datetime
 
 from flask_restful import Resource, reqparse, inputs
@@ -6,31 +7,16 @@ from db import db
 from models.users import Users
 
 class Register(Resource):
-	"""
-	API resource class, Activate users Shared Cities Dashboard account
-	Parameters can be passed using a POST request that contains a JSON of the following fields:
-
-        :param fullname: users fullname
-        :param email: users email address
-        :param password: users password that was sent when they were added on the admin page
-        :type fullname: string
-        :type email: string
-        :type password: string
-        :return: A message that indicates whether a user has been registered. If they have not, the message indicates why not
-        :rtype: JSON
-	"""     
-
+	
 	parser = reqparse.RequestParser()
-	parser.add_argument('fullname', type=str, store_missing=False) 
 	parser.add_argument('email', type=str, store_missing=False, help = 'This field cannot be blank', required = True)
 	parser.add_argument('password', type=str, store_missing=False,  help = 'This field cannot be blank', required = True)
 	parser.add_argument('password_new', type=str, store_missing=False,  help = 'This field cannot be blank', required = True)
 
-	def post(self):
+	def post(self) ->(str,int):
 		"""
-		API resource class, Activate users Shared Cities Dashboard account
+		POST requests, activate user's account and change their password
 		Parameters can be passed using a POST request that contains a JSON of the following fields:
-
 		:param fullname: users fullname
 		:param email: users email address
 		:param password: users password that was sent when they were added on the admin page
