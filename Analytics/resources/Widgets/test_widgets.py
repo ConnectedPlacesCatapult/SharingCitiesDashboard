@@ -67,6 +67,7 @@ def test_create_widget_endpoint() -> NoReturn:
                                         headers=dependencies.auth_header,
                                         follow_redirects=True)
     assert response.status_code == 200
+    print(response.get_json())
 
 
 def test_list_all_widgets_endpoint() -> NoReturn:

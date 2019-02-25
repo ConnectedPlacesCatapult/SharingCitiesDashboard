@@ -18,7 +18,9 @@ Params:
 
 '''
 
-import os, sys
+import os
+import sys
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from db import db
@@ -29,19 +31,17 @@ from models.theme import Theme, SubTheme
 from models.sensor import Sensor
 from models.attributes import Attributes
 from models.sensor_attribute import SensorAttribute
-from importers.read_json import ReadJson
 import json, requests
-from importers.attr_unit_desc import AttributeUnitDescription
 from importers.json_reader import JsonReader
-import pandas as pd
 import uuid
 from geoalchemy2.elements import WKTElement
 from models.attribute_data import ModelClass
 from datetime import datetime
-from sqlalchemy.exc import ProgrammingError, IntegrityError, InvalidRequestError
+from sqlalchemy.exc import IntegrityError
 from utility import convert_unix_to_timestamp, convert_to_date
 import yaml
 import sqlalchemy
+
 
 def get_config():
     config = None
@@ -52,6 +52,7 @@ def get_config():
         print("Ensure that you have provided a config.yml file")
 
     return config
+
 
 class BaseImporter(object):
     def __init__(self, api_name, url, refresh_time, api_key, api_class, token_expiry):
@@ -76,12 +77,12 @@ class BaseImporter(object):
         self.dataset = json.loads(data.text)
         return self.dataset, data.status_code
 
-    def create_dataframe(self, object_separator: str = None, ignore_tags: list = [], ignore_values: list = [], 
-                            ignore_tag_values: dict= {}, ignore_object_tags: list = []):
-        
+    def create_dataframe(self, object_separator: str = None, ignore_tags: list = [], ignore_values: list = [],
+                         ignore_tag_values: dict = {}, ignore_object_tags: list = []):
+
         jr = JsonReader(object_seperator=object_separator)
-        jr.create_objects(self.dataset, ignore_tags=ignore_tags, ignore_values= ignore_values, 
-                            ignore_tag_values= ignore_tag_values, ignore_object_tags=ignore_object_tags)
+        jr.create_objects(self.dataset, ignore_tags=ignore_tags, ignore_values=ignore_values,
+                          ignore_tag_values=ignore_tag_values, ignore_object_tags=ignore_object_tags)
         df = jr.create_dataframe()
         return df
 
@@ -108,16 +109,17 @@ class BaseImporter(object):
     location_tag: Takes an object of Location class which in turn contains the name of the latitude and longitude cols.
     sensor_prefix: Takes a string, which would be prefixed to all the sensor tags
     '''
-    def create_datasource(self, dataframe, sensor_tag: str, attribute_tag: list, 
-                            unit_value: list, description: list, bespoke_unit_tag: list, 
-                            bespoke_sub_theme: list, location_tag: location.Location, 
-                            data_tag: list = [], sensor_prefix: str = None, api_timestamp_tag: str = None, 
-                            check_sensor_exists_by_name: bool = False,
-                            check_sensor_exists_by_name_loc: bool = False,
-                            check_sensor_exists_by_name_api: bool = False, is_dependent: bool=False):
+
+    def create_datasource(self, dataframe, sensor_tag: str, attribute_tag: list,
+                          unit_value: list, description: list, bespoke_unit_tag: list,
+                          bespoke_sub_theme: list, location_tag: location.Location,
+                          data_tag: list = [], sensor_prefix: str = None, api_timestamp_tag: str = None,
+                          check_sensor_exists_by_name: bool = False,
+                          check_sensor_exists_by_name_loc: bool = False,
+                          check_sensor_exists_by_name_api: bool = False, is_dependent: bool = False):
 
         api_id = self.stage_api_commit()
-        
+
         # Location tag
         latitude, longitude = None, None
 
@@ -127,14 +129,14 @@ class BaseImporter(object):
 
         # Save location and sensor
         sensor_objects = self.save_sensors(dataframe[sensor_tag].tolist(), latitude, longitude, api_id,
-                                        sensor_prefix,
-                                        check_sensor_exists_by_name=check_sensor_exists_by_name,
-                                        check_sensor_exists_by_name_loc=check_sensor_exists_by_name_loc,
-                                        check_sensor_exists_by_name_api=check_sensor_exists_by_name_api,
-                                        is_dependent=is_dependent)
+                                           sensor_prefix,
+                                           check_sensor_exists_by_name=check_sensor_exists_by_name,
+                                           check_sensor_exists_by_name_loc=check_sensor_exists_by_name_loc,
+                                           check_sensor_exists_by_name_api=check_sensor_exists_by_name_api,
+                                           is_dependent=is_dependent)
 
         # Save Attributes
-        attr_objects = self.save_attributes(attribute_tag, unit_value, description, 
+        attr_objects = self.save_attributes(attribute_tag, unit_value, description,
                                             bespoke_unit_tag, bespoke_sub_theme)
 
         # Save attribute and sensor relation
@@ -160,11 +162,12 @@ class BaseImporter(object):
 
     That is why it has an additional value tag
     '''
+
     def create_datasource_with_values(self, dataframe, sensor_tag, attribute_tag, value_tag,
-                                        latitude_tag, longitude_tag, description_tag, 
-                                        api_timestamp_tag = None,
-                                        unit_tag = None, unit_value_tag = None, 
-                                        unit_id = 1, unit_value = 1, sub_theme = 1):
+                                      latitude_tag, longitude_tag, description_tag,
+                                      api_timestamp_tag=None,
+                                      unit_tag=None, unit_value_tag=None,
+                                      unit_id=1, unit_value=1, sub_theme=1):
         api_id = self.stage_api_commit()
         _unit = None
         _unit_value = None
@@ -185,11 +188,11 @@ class BaseImporter(object):
         else:
             _unit_value = dataframe[unit_value_tag].tolist()
 
-        sensor_objects = self.save_sensors(sensors, latitude, longitude, api_id, None, 
-                                            check_sensor_exists_by_name= False,
-                                            check_sensor_exists_by_name_loc= False,
-                                            check_sensor_exists_by_name_api=False)
-        attr_objects = self.save_attributes(attributes, 
+        sensor_objects = self.save_sensors(sensors, latitude, longitude, api_id, None,
+                                           check_sensor_exists_by_name=False,
+                                           check_sensor_exists_by_name_loc=False,
+                                           check_sensor_exists_by_name_api=False)
+        attr_objects = self.save_attributes(attributes,
                                             _unit_value if isinstance(_unit_value, list) else [_unit_value],
                                             description,
                                             _unit if isinstance(_unit, list) else [_unit],
@@ -197,10 +200,8 @@ class BaseImporter(object):
 
         self.save_attr_sensor(attr_objects, sensor_objects.values())
         self.create_tables(attr_objects)
-        self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, '', 
-                            api_timestamp_tag, value_tag, attribute_tag, unit_value_tag)
-
-        
+        self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, '',
+                         api_timestamp_tag, value_tag, attribute_tag, unit_value_tag)
 
     def save_sensors(self, sensors: list, latitude: list, longitude: list, api_id, sensor_prefix, **kwargs) -> dict:
         sensor_objects = {}
@@ -214,10 +215,10 @@ class BaseImporter(object):
                 if _sensor:
                     sensor_objects[_sensor.name] = _sensor
                     continue
-            
+
             if kwargs['check_sensor_exists_by_name_loc']:
                 s_name = sensor_prefix + str(sensors[i]) if sensor_prefix is not None else str(sensors[i])
-                _sensor = Sensor.get_by_name_loc(s_name, None) # This needs to be fixed
+                _sensor = Sensor.get_by_name_loc(s_name, None)  # This needs to be fixed
                 if _sensor:
                     sensor_objects[_sensor.name] = _sensor
                     continue
@@ -230,7 +231,7 @@ class BaseImporter(object):
                     continue
 
             loc = self.save_location(float(latitude[i]), float(longitude[i]))
-            
+
             s_name = sensor_prefix + str(sensors[i]) if sensor_prefix is not None else str(sensors[i])
             _hash = self._hash_it(str(api_id), str(loc.id), s_name)
             if _hash in sensor_exists:
@@ -242,7 +243,8 @@ class BaseImporter(object):
                     if _sensor:
                         sensor_objects[_sensor.name] = _sensor
                         sensor_exists.add(_hash)
-                        print(s_name, 'sensor already exists with API ID:', str(api_id), 'and Location ID:', str(loc.id))
+                        print(s_name, 'sensor already exists with API ID:', str(api_id), 'and Location ID:',
+                              str(loc.id))
                         continue
 
             sensor = Sensor(str(uuid.uuid4()), api_id, loc.id, s_name)
@@ -250,7 +252,6 @@ class BaseImporter(object):
 
             sensor = sensor.save()
             sensor_objects[sensor.name] = sensor
-
 
         # db.session.flush()
         return sensor_objects
@@ -262,7 +263,7 @@ class BaseImporter(object):
             loc.save()
         return loc
 
-    def save_attributes(self, attribute_tag: list, unit_value: list, description:list, 
+    def save_attributes(self, attribute_tag: list, unit_value: list, description: list,
                         bespoke_unit_tag: list, bespoke_sub_theme: list) -> list:
         attr_objects = []
         attr_exists = set()
@@ -306,17 +307,19 @@ class BaseImporter(object):
         # db.session.flush()
         return attr_objects
 
-    def stage_attributes(self, attribute: str, unit_value: str, 
-                        bespoke_unit_tag: int, bespoke_sub_theme: int,
-                        description: str):
+    def stage_attributes(self, attribute: str, unit_value: str,
+                         bespoke_unit_tag: int, bespoke_sub_theme: int,
+                         description: str):
         _a = Attributes._get_by_name_unit_unitvalue(attribute, bespoke_unit_tag, unit_value)
         if _a:
-            print(attribute, 'attribute with Unit ID:', str(bespoke_unit_tag), 'and Unit Value:', unit_value, 'already exists')
+            print(attribute, 'attribute with Unit ID:', str(bespoke_unit_tag), 'and Unit Value:', unit_value,
+                  'already exists')
             return _a
 
-        a = Attributes(id=str(uuid.uuid4()), name=attribute, table_name=(attribute + '_' + str(uuid.uuid4()).replace('-', '_')), 
-                        sub_theme=bespoke_sub_theme, unit=bespoke_unit_tag, 
-                        unit_value=str(unit_value), description=description)
+        a = Attributes(id=str(uuid.uuid4()), name=attribute,
+                       table_name=(attribute + '_' + str(uuid.uuid4()).replace('-', '_')),
+                       sub_theme=bespoke_sub_theme, unit=bespoke_unit_tag,
+                       unit_value=str(unit_value), description=description)
         a = a.save()
         return a
 
@@ -341,13 +344,15 @@ class BaseImporter(object):
 
         for attr in attributes:
             if attr.table_name.lower() not in tables:
-                db.session.execute('CREATE TABLE %s (s_id TEXT NOT NULL, value TEXT NOT NULL, api_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL, timestamp TIMESTAMP WITHOUT TIME ZONE, PRIMARY KEY(s_id, value, api_timestamp))' % (attr.table_name))
+                db.session.execute(
+                    'CREATE TABLE %s (s_id TEXT NOT NULL, value TEXT NOT NULL, api_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL, timestamp TIMESTAMP WITHOUT TIME ZONE, PRIMARY KEY(s_id, value, api_timestamp))' % (
+                        attr.table_name))
                 print('Created Table', attr.table_name.lower())
             else:
                 print(attr.table_name.replace('-', '_'), 'already exists')
 
-    def insert_data(self, attr_objects, sensor_objects: dict, dataframe, 
-                    sensor_tag, sensor_prefix, api_timestamp_tag, attr_value_tag = None, 
+    def insert_data(self, attr_objects, sensor_objects: dict, dataframe,
+                    sensor_tag, sensor_prefix, api_timestamp_tag, attr_value_tag=None,
                     attribute_tag=None, unit_value_tag=None):
         db.metadata.clear()
         sensors = dataframe[sensor_tag].tolist()
@@ -363,7 +368,8 @@ class BaseImporter(object):
             if attr_value_tag is not None:
                 _dataframe = None
                 if unit_value_tag is not None:
-                    _dataframe = dataframe[(dataframe[attribute_tag]  == attr.name) & (dataframe[unit_value_tag]  == attr.unit_value)]
+                    _dataframe = dataframe[
+                        (dataframe[attribute_tag] == attr.name) & (dataframe[unit_value_tag] == attr.unit_value)]
                 else:
                     _dataframe = dataframe[dataframe[attribute_tag] == attr.name]
 
@@ -388,7 +394,7 @@ class BaseImporter(object):
                 if len(api_timestamp) > 0 and api_timestamp[i]:
                     a_date = convert_unix_to_timestamp(str(api_timestamp[i]))
                     _, a_date = convert_to_date(a_date)
-                
+
                 if a_date is None:
                     a_date = datetime.utcnow()
 
@@ -402,9 +408,9 @@ class BaseImporter(object):
                 m.api_timestamp = a_date
                 m.timestamp = datetime.utcnow()
                 models.append(m)
-                
+
                 try:
-                    if i%10 == 0:
+                    if i % 10 == 0:
                         db.session.add_all(models)
                         db.session.commit()
                 except IntegrityError:
@@ -430,16 +436,15 @@ class BaseImporter(object):
         for a in args:
             to_hash += a
 
-        return abs(hash(to_hash))%(10**8)
+        return abs(hash(to_hash)) % (10 ** 8)
 
     def stage_api_commit(self):
-        api = API(name=self.api_name, 
-                    url=self.url, refresh_time=self.refresh_time,
-                    token_expiry=self.token_expiry,
-                    api_key=self.api_key, api_class=self.api_class)
+        api = API(name=self.api_name,
+                  url=self.url, refresh_time=self.refresh_time,
+                  token_expiry=self.token_expiry,
+                  api_key=self.api_key, api_class=self.api_class)
         _api = api.save()
         return _api.id
-
 
     def create_unit(self, _type, description):
         unit = Unit(_type=_type, description=description)
@@ -458,6 +463,7 @@ class BaseImporter(object):
 
     def commit(self):
         db.session.commit()
+
 
 class Location(object):
     def __init__(self, lat, lon):
