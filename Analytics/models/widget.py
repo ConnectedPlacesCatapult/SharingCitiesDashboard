@@ -1,5 +1,5 @@
-from typing import NoReturn
 import logging
+from typing import NoReturn
 
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.exc import IntegrityError
@@ -18,10 +18,10 @@ class WidgetModel(db.Model):
     :param  user_id:    users unique identification number
     :param  data:       widget data to be persisted in table
 
-    :type _WIDGET_DB_TABLE_NAME: String
-    :type id:       Integer
-    :type user_id:  Integer
-    :type data:     JSON
+    :type _WIDGET_DB_TABLE_NAME: str
+    :type id:       int
+    :type user_id:  int
+    :type data:     str
 
     """
     _WIDGET_DB_TABLE_NAME = 'widgets'
@@ -32,15 +32,15 @@ class WidgetModel(db.Model):
     layout_id = db.Column(db.Integer, db.ForeignKey('layouts.id'))
     layout = db.relationship('Layouts', backref=db.backref('layouts', lazy=True))
 
-    def __init__(self, user_id, layout, data):
+    def __init__(self, user_id: int, layout: object, data: str) -> None:
         """
         Initiates the new widget instance
         :param user_id: The users identification number the widget belongs to
-        :type user_id: Integer
+        :type user_id: int
         :param layout: Layout for the widget
-        :type layout: Layouts
+        :type layout: <class 'Layouts'>
         :param data:  widgets JSON data
-        :type data:   JSON
+        :type data:   str
         """
         self.user_id = user_id
         self.data = data
@@ -63,9 +63,9 @@ class WidgetModel(db.Model):
         :param  id:      widgetID
         :param  userID:  users identification number
         :param  data:    widget JSON data
-        :type:   Integer
-        :type:   Integer
-        :type:   JSON
+        :type:   int
+        :type:   int
+        :type:   dict
         """
         # format response
         response_data = {"id": str(self.id), "userID": self.user_id, "data": self.data}
@@ -109,10 +109,10 @@ class WidgetModel(db.Model):
         :param  user_id:    users unique identification number
         :param  data:       widget data to be persisted in table
 
-        :type _WIDGET_DB_TABLE_NAME: String
-        :type id:       Integer
-        :type user_id:  Integer
-        :type data:     JSON
+        :type _WIDGET_DB_TABLE_NAME: str
+        :type id:       int
+        :type user_id:  int
+        :type data:     dict
         """
         # If table don't exist, Create.
         if not self.table_exists():
@@ -135,7 +135,7 @@ class WidgetModel(db.Model):
         return has_table
 
     @classmethod
-    def get_widget_by_id(cls, widgetID) -> object:
+    def get_widget_by_id(cls, widgetID: int) -> db.Model:
         """
         Fetches a widget by its id
         :param widgetID: the widgets identification number to fetch

@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import NoReturn
 
@@ -17,12 +18,12 @@ class Users(db.Model):
     :param activated:   true if the account has been activated and false if it is not activated
     :param timestamp:   time stamp of when the user was created.
 
-    :type id:           Integer
-    :type fullname:     String
-    :type email:        String
-    :type admin:        Boolean
-    :type activated:    Boolean
-    :type timestamp:    DateTime
+    :type id:           int
+    :type fullname:     str
+    :type email:        str
+    :type admin:        bool
+    :type activated:    bool
+    :type timestamp:    datetime
     """
     __tablename__ = 'users'
 
@@ -34,7 +35,8 @@ class Users(db.Model):
     activated = db.Column(db.Boolean)
     timestamp = db.Column(db.DateTime)
 
-    def __init__(self, fullname, email, password, admin, activated, timestamp=None):
+    def __init__(self, fullname: str, email: str, password: str, admin: bool, activated: bool,
+                 timestamp: datetime = None) -> None:
         """
         Initialises the Users object instance
         :param fullname:    users full name
@@ -44,12 +46,12 @@ class Users(db.Model):
         :param activated:   true if the account has been activated and false if it is not activated
         :param timestamp:   time stamp of when the user was created
 
-        :type fullname:     String
-        :type email:        String
-        :type password:     String
-        :type admin:        Boolean
-        :type activated:    Boolean
-        :type timestamp:    DateTime
+        :type fullname:     str
+        :type email:        str
+        :type password:     str
+        :type admin:        bool
+        :type activated:    bool
+        :type timestamp:    datetime
 
         """
         self.fullname = fullname
@@ -75,7 +77,7 @@ class Users(db.Model):
         overrides the dunder string method to cast user to a string
         :return: a JSON string of the Users objects attributes
         """
-        return self.json()
+        return json.dumps(self.json())
 
     def json(self) -> dict:
         """
@@ -117,7 +119,7 @@ class Users(db.Model):
         db.session.commit()
 
     @classmethod
-    def find_by_email(cls, email) -> object:
+    def find_by_email(cls, email: str) -> db.Model:
         """
         Return the user corresponding to the email argument from the Users table
         :param email: user's email
@@ -128,7 +130,7 @@ class Users(db.Model):
         return cls.query.filter_by(email=email).first()
 
     @staticmethod
-    def generate_hash(password) -> bytes:
+    def generate_hash(password: str) -> bytes:
         """
         Generate a secure hash
         :param password: user's to be password
@@ -139,7 +141,7 @@ class Users(db.Model):
         return bcrypt.hashpw(password, bcrypt.gensalt())
 
     @staticmethod
-    def verify_hash(password, hash) -> bool:
+    def verify_hash(password: str, hash: bytes) -> bool:
         """
         Verify password matches the hashed password in the database.
         :param password: user's to be password

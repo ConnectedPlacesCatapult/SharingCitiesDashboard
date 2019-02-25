@@ -1,5 +1,5 @@
-from http import HTTPStatus
 import logging
+from http import HTTPStatus
 
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
@@ -21,8 +21,8 @@ class DeleteWidgets(Resource):
     :param  userID: Unique user identification number
     :param  widgetID: Unique widget identification number
 
-    :type userID: Integer
-    :type widgetID: Integer
+    :type userID: int
+    :type widgetID: int
 
     :raises SQLAlchemyError: when a SQLAlchemyError is raised a status of code Bad Request (400) and the
             error is returned
@@ -32,15 +32,15 @@ class DeleteWidgets(Resource):
               Not Found (404) is returned.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initiates the delete widget endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param  userID: Unique user identification number
         :param  widgetID: Unique widget identification number
 
-        :type userID: Integer
-        :type widgetID: Integer
+        :type userID: int
+        :type widgetID: int
         """
         self.reqparser_delete = reqparse.RequestParser()
         self.reqparser_delete.add_argument('userID', required=True, help='A userID is required',
@@ -49,17 +49,16 @@ class DeleteWidgets(Resource):
                                            location=['form', 'json'])
         super().__init__()
 
-
     @jwt_required
-    def post(self) -> tuple:
+    def post(self) -> (str, int):
         """
         Delete a widget from the database
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param  userID: Unique user identification number
         :param  widgetID: Unique widget identification number
 
-        :type userID: Integer
-        :type widgetID: Integer
+        :type userID: int
+        :type widgetID: int
 
         :raises SQLAlchemyError: when a SQLAlchemyError is raised a status of code Bad Request (400) and the
                 error is returned

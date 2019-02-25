@@ -22,13 +22,13 @@ class ChangeUserPassword(Resource):
     :param email: users email address
     :param password: the new password which the user wants to store in the database
     :param verify_password: a repitition of the the 'password' param
-    :type email: string
-    :type password: string
-    :type verify_password: string
+    :type email: str
+    :type password: str
+    :type verify_password: str
     :return: A message indicating a successful or unsuccessful change.
      """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Instantiates the change user password endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -36,9 +36,9 @@ class ChangeUserPassword(Resource):
         :param email: users email address
         :param password: the new password which the user wants to store in the database
         :param verify_password: a repitition of the the 'password' param
-        :type email: string
-        :type password: string
-        :type verify_password: string
+        :type email: str
+        :type password: str
+        :type verify_password: str
         """
         # Create User (Post request parser)
         self.post_reqparser = reqparse.RequestParser()
@@ -48,7 +48,7 @@ class ChangeUserPassword(Resource):
         super().__init__()
 
     @jwt_required
-    def post(self) -> tuple:
+    def post(self) -> (dict, int):
         """
         API resource class which changes a users password and saves changes to the database
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -56,9 +56,9 @@ class ChangeUserPassword(Resource):
         :param email: users email address
         :param password: the new password which the user wants to store in the database
         :param verify_password: a repitition of the the 'password' param
-        :type email: string
-        :type password: string
-        :type verify_password: string
+        :type email: str
+        :type password: str
+        :type verify_password: str
         :return: A message indicating a successful or unsuccessful change
          """
         args = self.post_reqparser.parse_args()

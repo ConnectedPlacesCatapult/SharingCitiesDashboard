@@ -5,7 +5,7 @@ from typing import NoReturn
 from db import db
 from models.widget import WidgetModel
 from models.widget_layout import Layouts
-from resources.Widgets.test_dependencies import TestDependencies
+from resources.Widgets.widget_test_dependencies import TestDependencies
 
 dependencies = None
 
@@ -82,7 +82,7 @@ def test_list_all_widgets_endpoint() -> NoReturn:
     assert response.status_code == 200
 
 
-def test_delete_widget_endpoint():
+def test_delete_widget_endpoint() -> NoReturn:
     """
     Tests the '/widgets/load_widgets' endpoint. Dummy widgets are created and persisted to the database. The dummy
     widgets are then deleted and the status code is checked. The number of dummy widgets created and delete are tracked
@@ -143,7 +143,7 @@ def test_save_layouts_endpoints() -> NoReturn:
                                         headers=dependencies.auth_header,
                                         follow_redirects=True)
 
-    assert response.status_code == 204
+    assert response.status_code == 200
     # Check layout changed for each widget
     for widget_id in widget_ids:
         widget = WidgetModel.get_widget_by_id(widget_id)

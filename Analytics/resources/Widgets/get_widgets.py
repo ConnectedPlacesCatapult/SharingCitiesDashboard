@@ -15,19 +15,19 @@ class GetWidgets(Resource):
     :param  userID: Unique user identification number
     :param  limit: the max count of widgets to be returned (optional)
 
-    :type userID: Integer
-    :type limit: Integer
+    :type userID: int
+    :type limit: int
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         instantiates the get_widgets endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param  userID: Unique user identification number
         :param  limit: the max count of widgets to be returned (optional)
 
-        :type userID: Integer
-        :type limit: Integer
+        :type userID: int
+        :type limit: int
         """
         # Arguments required to fetch the widgets related to the userID
         self.reqparser_get = reqparse.RequestParser()
@@ -38,15 +38,15 @@ class GetWidgets(Resource):
         super().__init__()
 
     @jwt_required
-    def post(self) -> tuple:
+    def post(self) -> ([WidgetModel], int):
         """
         Get one or more widgets from the database with a userID
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param  userID: Unique user identification number
         :param  limit: the max count of widgets to be returned
 
-        :type userID: Integer
-        :type limit: Integer
+        :type userID: int
+        :type limit: int
 
         :returns [widget]: A list of widgets with a maximum length of limit and a status code 200
         """

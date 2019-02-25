@@ -2,6 +2,7 @@ import json
 from typing import NoReturn
 
 import bcrypt
+from flask.testing import FlaskClient
 
 from app import create_app
 from db import db
@@ -15,7 +16,7 @@ class TestDependencies:
     Creates the dependencies needed to execute tests on the widgets
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialises the dependencies required for the widget tests
         """
@@ -30,11 +31,10 @@ class TestDependencies:
         except Exception as e:
             pass
 
-    def create_test_client(self):
+    def create_test_client(self) -> FlaskClient:
         """
         Creates a flask client for testing
         :return: A flask client
-        :rtype: <class 'flask.testing.FlaskClient'>
         """
         test_app = create_app(DATABASE_NAME='test_analysis', TESTING=True)
         testing_client = test_app.test_client()
@@ -43,11 +43,10 @@ class TestDependencies:
         self.app_context = test_app_context
         return testing_client
 
-    def create_admin_user(self):
+    def create_admin_user(self) -> Users:
         """
         Creates an admin user for the tests
         :return: an admin user for tests
-        :rtype: <class 'models.users.Users'>
         """
         password_hash = bcrypt.hashpw("wfnbqk".encode("utf-8"), bcrypt.gensalt())
         user = Users.find_by_email("admin@FCC.com")
@@ -60,7 +59,7 @@ class TestDependencies:
                 pass
         return user
 
-    def get_auth_header(self) -> dict:
+    def get_auth_header(self) -> {str: str}:
         """
         # Creates an Authorization header for testing endpoints
         :return: An authorization header
@@ -79,7 +78,7 @@ class TestDependencies:
             json_data = json.load(active_file)
         return json_data
 
-    def make_dummy_widgets(self, number_of_widgets=1) -> list:
+    def make_dummy_widgets(self, number_of_widgets: int = 1) -> [int]:
         """
         Creates widgets for tests
         :param number_of_widgets: the number of widgets to create

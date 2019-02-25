@@ -16,6 +16,7 @@ from models.widget_layout import Layouts
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
+
 class Widgets(Resource):
     """
     Saves a widget to the database with a userID
@@ -23,13 +24,13 @@ class Widgets(Resource):
     :param  userID: Unique user identification number
     :param  data: the widgets data
 
-    :type  userID: Integer
-    :type  data: JSON
+    :type  userID: int
+    :type  data: dict
 
     :returns : a message containing the widget id with a satus code 200 on success
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initiates the widgets resource
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -42,15 +43,15 @@ class Widgets(Resource):
         super().__init__()
 
     @jwt_required
-    def post(self) -> tuple:
+    def post(self) -> (str, int):
         """
         Saves a widget to the database with a userID
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param  userID: Unique user identification number
         :param  data: the widgets data
 
-        :type  userID: Integer
-        :type  data: JSON
+        :type  userID: int
+        :type  data: dict
 
         :returns : a message containing the widget id with a satus code 200 on success
         """

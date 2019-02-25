@@ -21,14 +21,14 @@ class CreateNewUser(Resource):
     :param fullname: users fullname
     :param admin: whether the user will be an admin user or not
     :param password: users password
-    :type email: string
-    :type fullname: string
-    :type admin: string
-    :type password: string
+    :type email: str
+    :type fullname: str
+    :type admin: str
+    :type password: str
     :return: A message indicating a successful or unsuccessful addition of user to the database
      """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Instantiates the create user endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -37,10 +37,10 @@ class CreateNewUser(Resource):
         :param fullname: users fullname
         :param admin: whether the user will be an admin user or not
         :param password: users password
-        :type email: string
-        :type fullname: string
-        :type admin: string
-        :type password: string
+        :type email: str
+        :type fullname: str
+        :type admin: str
+        :type password: str
         :return: A message indicating a successful or unsuccessful addition of user to the database
          """
         # Create User (Post request parser)
@@ -55,7 +55,7 @@ class CreateNewUser(Resource):
         self.post_reqparser.add_argument('Authorization', location='headers')
         super().__init__()
 
-    def _hash_password(self, plain_password) -> bytes:
+    def _hash_password(self, plain_password: str) -> bytes:
         """
         Generate a secure hash of the plain string password
         :param plain_password: plain text user password
@@ -65,11 +65,11 @@ class CreateNewUser(Resource):
         return bcrypt.hashpw(plain_password, bcrypt.gensalt())
 
     @staticmethod
-    def _does_user_exsist(email=None) -> bool:
+    def _does_user_exsist(email: str = None) -> bool:
         """
         Checks if a user with the email passed exists
         :param email: users email address
-        :type email: String
+        :type email: str
         :return: true if the user exists otherwise false
         """
         if not email:
@@ -81,7 +81,7 @@ class CreateNewUser(Resource):
         return user_exsists is not None
 
     @jwt_required
-    def post(self) -> tuple:
+    def post(self) -> (dict, int):
         """
         API resource class which creates a new user and adds it to the database
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -90,10 +90,10 @@ class CreateNewUser(Resource):
         :param fullname: users fullname
         :param admin: whether the user will be an admin user or not
         :param password: users password
-        :type email: string
-        :type fullname: string
-        :type admin: string
-        :type password: string
+        :type email: str
+        :type fullname: str
+        :type admin: str
+        :type password: str
         :return: A message indicating a successful or unsuccessful addition of user to the database
         """
         args = self.post_reqparser.parse_args()
