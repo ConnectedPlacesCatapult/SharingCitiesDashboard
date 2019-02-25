@@ -4,27 +4,15 @@ import json
 
 import bcrypt
 from sqlalchemy.exc import IntegrityError
+import logging
 
 from db import db
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 class Users(db.Model):
-    """
-    Database model for the layouts table used to persist widget layout data
-    :param id:          Primary key for user entry
-    :param fullname:    users full name
-    :param email:       users email addresas
-    :param admin:       true if the user is a admin, false if the user is not an admin
-    :param activated:   true if the account has been activated and false if it is not activated
-    :param timestamp:   time stamp of when the user was created.
-
-    :type id:           int
-    :type fullname:     str
-    :type email:        str
-    :type admin:        bool
-    :type activated:    bool
-    :type timestamp:    datetime
-    """
+    
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -101,7 +89,7 @@ class Users(db.Model):
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            print(self.fullname, 'User already exists')
+            logger.error(self.fullname + ' User already exists')
 
     def delete(self) -> NoReturn:
         """
@@ -112,6 +100,7 @@ class Users(db.Model):
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
+            logger.error(self.fullname + ' User does not exists')
 
     @staticmethod
     def commit() -> NoReturn:
