@@ -44,7 +44,6 @@ export const createUser = (userInfo) => {
       password: userInfo.password,
       admin: userInfo.admin.toString()
     }
-    debugger
     axiosInstance.post('admin/create_new_user', requestData).then((response) => {
       fetchUsers()(dispatch)
       dispatch({

@@ -15,10 +15,9 @@ import { withRouter } from 'react-router-dom'
 
 import LoginMessage from './LoginMessage'
 
-import { doLogin } from "../../actions/userActions";
-
 // redux
 import { connect } from 'react-redux';
+import { login } from "../../actions/userActions";
 
 const bgImage = require('./../../images/Lisbon-logo-med.png');
 
@@ -74,7 +73,7 @@ class LoginForm extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    doLogin(this.state.email, this.state.password, this.loginFailed, this.props)
+    this.props.login(this.state, this.props)
   };
 
   loginFailed = (e) => {
@@ -167,7 +166,7 @@ const mapStateToProps = (state) => ({
 });
 
 const madDispatchToProps = (dispatch) => ({
-
+  login: (userCredentials, props) => dispatch(login(userCredentials, props)),
 });
 
 LoginForm = withStyles(styles)(LoginForm);

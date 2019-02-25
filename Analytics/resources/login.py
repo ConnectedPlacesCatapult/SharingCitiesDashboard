@@ -21,16 +21,15 @@ class Login(Resource):
 	parser.add_argument('email', type=str, store_missing=False, help = 'This field cannot be blank', required = True)
 	parser.add_argument('password', type=str, store_missing=False, help= 'This field cannot be blank', required = True)
 
-	def post(self):
+	def post(self) -> (str,int):
 		args = self.parser.parse_args()
 		current_user = Users.find_by_email(args['email']) #t
 
 		if current_user and Users.verify_hash(args['password'].encode("utf8"), current_user.password.encode("utf8")):
-
 			if current_user.activated:
-					access_token = create_access_token(identity = current_user)
-					refresh_token = create_refresh_token(identity = current_user)
-					return {'message': 'Logged in as {}'.format(current_user.email), 'access_token': access_token, 'refresh_token': refresh_token}, 200
+				access_token = create_access_token(identity = current_user)
+				refresh_token = create_refresh_token(identity = current_user)
+				return {'message': 'Logged in as {}'.format(current_user.email), 'access_token': access_token, 'refresh_token': refresh_token, 'id':current_user.id, 'fullname': current_user.fullname}, 200
 			else:
 				return {'message': 'User {} has not been activated. Please register when redirected to regirstration page'.format(current_user.email)}, 403
 		else:
