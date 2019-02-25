@@ -39,6 +39,6 @@ class UserLogoutRefresh(Resource):
         try:
             revoked_token = RevokedTokens(jti = jti)
             revoked_token.add()
-            return {'message': 'Refresh token has been revoked'}
+            return {'message': 'Refresh token has been revoked'}, 200
         except:
             return {'message': 'Something went wrong'}, 500
