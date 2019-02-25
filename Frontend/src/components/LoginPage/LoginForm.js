@@ -3,19 +3,24 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
+import Typography from "@material-ui/core/Typography";
 import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import LockIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
+import { withRouter } from 'react-router-dom'
+
+import LoginMessage from './LoginMessage'
+
+import { doLogin } from "../../actions/userActions";
 
 // redux
 import { connect } from 'react-redux';
+
+const bgImage = require('./../../images/Lisbon-logo-med.png');
 
 const styles = (theme) => ({
   layout: {
@@ -59,6 +64,8 @@ class LoginForm extends React.Component {
       password: '',
       errors: {},
       isLoading: false,
+      loginFailed: false,
+      loginError: ''
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -67,11 +74,22 @@ class LoginForm extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
+    doLogin(this.state.email, this.state.password, this.loginFailed, this.props)
+  };
+
+  loginFailed = (e) => {
+    this.setState({loginFailed: true, loginError: e.response.data.message})
+    console.log('failed set')
+    console.log(e.response.data.message)
   };
 
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
+
+  toggleForm = () => {
+    this.props.onToggleForm();
+  }
 
   render() {
     const { email, password, errors, isLoading } = this.state;
@@ -80,11 +98,9 @@ class LoginForm extends React.Component {
     return (
       <main className={classes.layout}>
         <Paper className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
+          <img className={classes.logoImage} src={bgImage} width="220px" height="auto" style={{marginBottom: 20}}/>
+          <Typography variant="h5">
+            Login
           </Typography>
           <form className={classes.form} onSubmit={this.onSubmit}>
             <FormControl margin="normal" required fullWidth>
@@ -116,6 +132,7 @@ class LoginForm extends React.Component {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+            <LoginMessage loginFailed={this.state.loginFailed} loginError={this.state.loginError}/>
             <Button
               type="submit"
               fullWidth
@@ -125,6 +142,14 @@ class LoginForm extends React.Component {
               disabled={isLoading}
             >
               Sign in
+            </Button>
+            <Button
+              fullWidth
+              variant="text"
+              color="primary"
+              className={classes.submit}
+              onClick={this.toggleForm}>
+              Register
             </Button>
           </form>
         </Paper>
@@ -146,6 +171,7 @@ const madDispatchToProps = (dispatch) => ({
 });
 
 LoginForm = withStyles(styles)(LoginForm);
-LoginForm = connect(styles)(LoginForm);
+LoginForm = withRouter(LoginForm);
+LoginForm = connect(mapStateToProps, madDispatchToProps)(LoginForm);
 
 export default LoginForm

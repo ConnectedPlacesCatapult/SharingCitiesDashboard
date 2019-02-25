@@ -1,7 +1,7 @@
 module.exports = {
 
   // root uri of the API
-  apiRoot: "http://172.16.2.123:5000/data",
+  apiRoot: "http://localhost:5000/",
 
   // optionally include localisation stylesheet (good for @font-face stuff)
   localeStyleSheet: "./styles/lisbon.css",
@@ -44,6 +44,12 @@ module.exports = {
       exact: false,
       component: "DataPage",
       name: "Data Tools",
+    },
+    {
+      path: "/admin",
+      exact: false,
+      component: "AdminPage",
+      name: "Admin",
     },
   ],
 
