@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import DeleteWidgetDialog from './../common/DeleteWidgetDialog/DeleteWidgetDialog'
 import Dialog from '@material-ui/core/Dialog';
 import CheckIcon from '@material-ui/icons/Check';
+import SaveLayoutPrompt from './SaveLayoutPrompt';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -52,29 +53,9 @@ class DashboardPage extends React.Component {
     super(props);
   }
 
-  showSaveLayout() {
-    const { classes, dashboard } = this.props;
-
-    if (dashboard.layoutChanged > 1) {
-      return (
-        <div className={classes.saveLayoutBar}>
-          <Button variant="contained" color="primary" onClick={this.props.saveLayout}>
-            Save New Layout
-          </Button>
-        </div>
-      )
-    } else if (dashboard.layoutSaved) {
-      return (
-        <div className={classes.saveLayoutBar}>
-          <Typography variant="subtitle1" className={classes.saveLayoutSuccess}>
-            Layout Saved
-          </Typography>
-        </div>
-      )
-    } else {
-      return null
-    }
-  }
+  state = {
+    open: true,
+  };
 
   render() {
     const { classes, location, dashboard } = this.props;
@@ -93,7 +74,7 @@ class DashboardPage extends React.Component {
             <DeleteWidgetDialog cancelDelete={this.props.cancelDeleteWidget} deleteWidget={this.props.deleteWidget}/>
           </Dialog>
         </main>
-        {this.showSaveLayout()}
+        <SaveLayoutPrompt></SaveLayoutPrompt>
       </div>
     )
   }

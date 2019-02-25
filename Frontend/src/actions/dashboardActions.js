@@ -8,6 +8,7 @@ import {
   SAVE_LAYOUT,
   SAVE_LAYOUT_FULFILLED,
   SAVE_LAYOUT_REJECTED,
+  SAVE_LAYOUT_DISMISSED,
   UPDATE_LAYOUT,
   LAYOUT_CHANGED,
   FETCH_WIDGETS,
@@ -195,6 +196,14 @@ export const saveLayout = () => {
           payload: err,
         })
       })
+  };
+};
+
+export const dismissSaveLayout = () => {
+  return (dispatch) => {
+    dispatch({
+      type: SAVE_LAYOUT_DISMISSED,
+    });
   };
 };
 

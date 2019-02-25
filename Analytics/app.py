@@ -13,6 +13,10 @@ from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.request_for_data import RequestForData
+
+from resources.request_for_theme import RequestForTheme
+from resources.request_for_sensor import RequestForSensor
+from resources.request_for_attribute import RequestForAttribute
 from resources.register import Register
 
 from resources.Widgets.save_widgets import Widgets

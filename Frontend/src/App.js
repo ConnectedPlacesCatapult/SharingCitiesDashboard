@@ -12,6 +12,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 // material-ui
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from '@material-ui/core/CssBaseline';
+import SnackBar from "./components/common/SnackBar/SnackBar"
 
 // redux
 import { connect } from 'react-redux';
@@ -24,7 +25,7 @@ require('typeface-roboto');
 
 class App extends React.Component {
   componentDidMount() {
-    const { error, fetched, fetching, fetchConfig } = this.props;
+    const { error, fetched, fetching, fetchConfig, state } = this.props;
 
     if (!error && !fetched && !fetching) {
       fetchConfig();
@@ -32,7 +33,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { config, fetched } = this.props;
+    const { config, fetched, notifications } = this.props;
 
     if (fetched) {
       // load local stylesheet if not null
@@ -41,11 +42,14 @@ class App extends React.Component {
         require(`${localStylesheet}`);
       }
 
+      console.log("state.config")
+
       // customise default MUI theme
       const localTheme = createMuiTheme(config.localeThemeData || {});
 
       return (
         <MuiThemeProvider theme={localTheme}>
+          <SnackBar notification={notifications}/>
           <div>
           <CssBaseline />
           <BrowserRouter>
@@ -70,6 +74,7 @@ const mapStateToProps = (state) => ({
   error: state.config.error,
   fetched: state.config.fetched,
   fetching: state.config.fetching,
+  notifications: state.notifications
 });
 
 const mapDispatchToProps = (dispatch) => ({
