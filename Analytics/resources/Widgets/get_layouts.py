@@ -6,48 +6,47 @@ from flask_restful import abort
 from flask_restful import reqparse
 
 from models.widget import WidgetModel
-"""
-            TODO: DocString
-    """
+
 
 class GetLayouts(Resource):
     """
+    Fetches all layouts for the widgets with a specific userID
+    :param  userID: Unique user identification number
+    :param  limit:  maximum count of widgets to be returned (optional)
+    :type userID: int
+    :type limit: int
+    """
+
+    def __init__(self) -> None:
+        """
+        Fetches all layouts for the widgets with a specific userID
+        :param  userID: Unique user identification number
+        :param  limit:  maximum count of widgets to be returned (optional)
+        :type userID: int
+        :type limit: int
+        """
+        self.reqparser = reqparse.RequestParser()
+        self.reqparser.add_argument('userID', required=True, help='A userID is required',
+                                    location=['form', 'json'])
+        self.reqparser.add_argument('limit', required=False, default=10, help='A userID is required',
+                                    location=['form', 'json'])
+        super().__init__()
+
+    @jwt_required
+    def post(self) -> ([str], int):
+        """
         Fetches all layouts for the widgets with a specific userID
 
         :param  userID: Unique user identification number
         :param  limit:  maximum count of widgets to be returned (optional)
 
-        :type userID: Integer
-        :type limit: Integer
-    """
+        :type userID: int
+        :type limit: int
 
-    def __init__(self):
-        # Arguments required to fetch the layouts for all the widget related to a userID
-        self.reqparser = reqparse.RequestParser()
-        self.reqparser.add_argument('userID', required=True, help='A userID is required',
-                                        location=['form', 'json'])
-        self.reqparser.add_argument('limit', required=False, default=10, help='A userID is required',
-                                        location=['form', 'json'])
-        super().__init__()
-
-    @jwt_required
-    def post(self):
+        :returns: on success a list of all the widget layouts related to the userID are returned. If no
+                  widget are found for the userID a HTTP status code 404, Not Found is returned with an
+                  error message "no widgets found".
         """
-                Fetches all layouts for the widgets with a specific userID
-
-                :param  userID: Unique user identification number
-                :param  limit:  maximum count of widgets to be returned (optional)
-
-                :type userID: Integer
-                :type limit: Integer
-
-                :returns: on success a list of all the widget layouts related to the userID are returned. If no
-                          widget are found for the userID a HTTP status code 404, Not Found is returned with an
-                          error message "no widgets found".
-                :rtype <class 'Tuple'>:
-
-        """
-        
         # Fetch the userID from post content ( limit is optional )
         args = self.reqparser.parse_args()
         # Fetch the instances of the widgets to assign the new layouts
@@ -69,4 +68,3 @@ class GetLayouts(Resource):
             layout_list.append(widget.layout.json())
 
         return layout_list, HTTPStatus.OK.value
-

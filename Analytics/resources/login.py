@@ -7,8 +7,9 @@ from db import db
 from models.users import Users
 
 class Login(Resource):
-	"""API that grants users access to the Sharing Cities Dashboard aswell as sends their correpsonding access and refresh JWT
-	   Parameters can be passed using a POST request that contains a JSON with the following fields:
+	"""
+	API that grants users access to the Sharing Cities Dashboard aswell as sends their correpsonding access and refresh JWT
+	Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param email: users email address
         :param password: users password 
         :type email: string
@@ -20,23 +21,23 @@ class Login(Resource):
 	parser.add_argument('email', type=str, store_missing=False, help = 'This field cannot be blank', required = True)
 	parser.add_argument('password', type=str, store_missing=False, help= 'This field cannot be blank', required = True)
 
-	def post(self):
+	def post(self) -> (str,int):
 		args = self.parser.parse_args()
 		current_user = Users.find_by_email(args['email']) #t
 
 		if current_user and Users.verify_hash(args['password'].encode("utf8"), current_user.password.encode("utf8")):
-
 			if current_user.activated:
-					access_token = create_access_token(identity = current_user)
-					refresh_token = create_refresh_token(identity = current_user)
-					return {'message': 'Logged in as {}'.format(current_user.email), 'access_token': access_token, 'refresh_token': refresh_token}, 200
+				access_token = create_access_token(identity = current_user)
+				refresh_token = create_refresh_token(identity = current_user)
+				return {'message': 'Logged in as {}'.format(current_user.email), 'access_token': access_token, 'refresh_token': refresh_token, 'id':current_user.id, 'fullname': current_user.fullname}, 200
 			else:
 				return {'message': 'User {} has not been activated. Please register when redirected to regirstration page'.format(current_user.email)}, 403
 		else:
 			return {'message': 'Incorrect credentials. Please try again'}, 403
 
 class SecretResource(Resource):
-	"""API that is solely used to test the functionality of access JWT
+	"""
+	API that is solely used to test the functionality of access JWT
         :required: A valid access JWT in the Authorization Header in the format - Bearer <JWT>
         :rtype: JSON
 	"""

@@ -1,3 +1,4 @@
+import logging
 from http import HTTPStatus
 
 from flask_restful import Resource
@@ -6,48 +7,81 @@ from flask_restful import reqparse
 
 from models.widget import WidgetModel
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
+
 
 class CreateWidgetLayout(Resource):
     """
-        Creates a Widget layout to the database table 'layouts'
+    Creates a Widget layout to the database table 'layouts'
+    Parameters can be passed using a POST request that contains a JSON with the following fields:
+    :param widgetID: The widget identification the layout belongs to
+    :param x: x coordinate of the widget layout
+    :param y: y coordinate of the widget layout
+    :param h: height of the widget layout
+    :param w: width of the widget layout
+    :param static: layout static property
+
+    :type widgetID: str
+    :type x: int
+    :type y: int
+    :type h: int
+    :type w: int
+    :type static: str
+
+    :returns:  on success a HTTP status code 200, otherwiseif the layout instance is not found a HTTP status
+        code 404, Not Found with json with a key "error" containing a message "layout object not found"
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Instantiates the create widget endpoint
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :param widgetID: The widget identification the layout belongs to
+        :param x: x coordinate of the widget layout
+        :param y: y coordinate of the widget layout
+        :param h: height of the widget layout
+        :param w: width of the widget layout
+        :param static: layout static property
 
+        :type widgetID: str
+        :type x: int
+        :type y: int
+        :type h: int
+        :type w: int
+        :type static: str
+        """
         # Argument required to create a widget layout
         self.post_reqparser = reqparse.RequestParser()
-        self.post_reqparser.add_argument("widgetID",  help='widgetID required', location=['form', 'json'])
+        self.post_reqparser.add_argument("widgetID", help='widgetID required', location=['form', 'json'])
         self.post_reqparser.add_argument("x", help='Widget layout: x coordinate found', location=['form', 'json'])
         self.post_reqparser.add_argument("y", help='Widget layout: y coordinate found', location=['form', 'json'])
         self.post_reqparser.add_argument("h", help='Widget layout: height found', location=['form', 'json'])
         self.post_reqparser.add_argument("w", help='Widget layout: width found', location=['form', 'json'])
-        self.post_reqparser.add_argument("static", default=False, help='Widget layout: error passing static variable', location=['form', 'json'])
-
+        self.post_reqparser.add_argument("static", default=False, help='Widget layout: error passing static variable',
+                                         location=['form', 'json'])
         super().__init__()
 
-    def post(self):
+    def post(self) -> (str, int):
         """
-            Creates a Widget layout to the database table 'layouts'
+        Creates a Widget layout to the database table 'layouts'
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :param widgetID: The widget identification the layout belongs to
+        :param x: x coordinate of the widget layout
+        :param y: y coordinate of the widget layout
+        :param h: height of the widget layout
+        :param w: width of the widget layout
+        :param static: layout static property
 
-            :param widgetID: The widget identification the layout belongs to
-            :param x: x coordinate of the widget layout
-            :param y: y coordinate of the widget layout
-            :param h: height of the widget layout
-            :param w: width of the widget layout
-            :param static: layout static property
+        :type widgetID: str
+        :type x: int
+        :type y: int
+        :type h: int
+        :type w: int
+        :type static: str
 
-            :type widgetID: String
-            :type x: Integer
-            :type y: Integer
-            :type h: Integer
-            :type w: Integer
-            :type static: String
-
-            :returns:  on success a HTTP status code 204, executed successful with no content. otherwise
-                       if the layout instance is not found a HTTP status code 404, Not Found with json with
-                       a key "error" containing a message "layout object not found"
-            :rtype: <class 'tuple'>
-
+        :returns:  on success a HTTP status code 200, otherwiseif the layout instance is not found a HTTP status
+        code 404, Not Found with json with a key "error" containing a message "layout object not found"
         """
         # Fetch layout values from post content
         args = self.post_reqparser.parse_args()
@@ -57,8 +91,9 @@ class CreateWidgetLayout(Resource):
         # does the widget with the passed widgetID exist?
         if not widget.layout:
             # No widget return with the passed widgetID
-            # TODO: Correct HTTPStatus code for widget not existing
-            abort(HTTPStatus.NOT_FOUND, error="layout object not found")
+            logging.debug("CreateWidgetLayout(): ", status_code=HTTPStatus.NOT_FOUND.value,
+                          error="layout object not found")
+            abort(HTTPStatus.NOT_FOUND.value, error="layout object not found")
 
         # Modify layout instance for widget
         widget.layout.widgetID = int(args["widgetID"])
@@ -72,11 +107,4 @@ class CreateWidgetLayout(Resource):
         widget.save()
         widget.commit()
 
-        # TODO: Correct HTTPstatus code
-        return "", 204
-
-
-
-
-
-
+        return "Widget crearted", 200

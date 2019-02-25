@@ -1,3 +1,4 @@
+import logging
 from http import HTTPStatus
 
 from flask_jwt_extended import get_jwt_claims
@@ -9,24 +10,36 @@ from sqlalchemy import exc
 
 from models.users import Users
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
+
 
 class ChangeUserPassword(Resource):
-    """ API resource class which changes a users password and saves changes to the database
+    """
+    API resource class which changes a users password and saves changes to the database
+    Parameters can be passed using a POST request that contains a JSON with the following fields:
+    :required: valid access JWT where the admin claim may be either true or false
+    :param email: users email address
+    :param password: the new password which the user wants to store in the database
+    :param verify_password: a repitition of the the 'password' param
+    :type email: str
+    :type password: str
+    :type verify_password: str
+    :return: A message indicating a successful or unsuccessful change.
+     """
 
+    def __init__(self):
+        """
+        Instantiates the change user password endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :required: valid access JWT where the admin claim may be either true or false
         :param email: users email address
         :param password: the new password which the user wants to store in the database
         :param verify_password: a repitition of the the 'password' param
-        :type email: string
-        :type password: string
-        :type verify_password: string
-        :return: A message indicating a successful or unsuccessful change
-        :rtype: JSON
-     """
-
-    def __init__(self):
-
+        :type email: str
+        :type password: str
+        :type verify_password: str
+        """
         # Create User (Post request parser)
         self.post_reqparser = reqparse.RequestParser()
         self.post_reqparser.add_argument('email', help='email is required', location=['form', 'json'])
@@ -35,7 +48,19 @@ class ChangeUserPassword(Resource):
         super().__init__()
 
     @jwt_required
-    def post(self):
+    def post(self) -> (dict, int):
+        """
+        API resource class which changes a users password and saves changes to the database
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :required: valid access JWT where the admin claim may be either true or false
+        :param email: users email address
+        :param password: the new password which the user wants to store in the database
+        :param verify_password: a repitition of the the 'password' param
+        :type email: str
+        :type password: str
+        :type verify_password: str
+        :return: A message indicating a successful or unsuccessful change
+         """
         args = self.post_reqparser.parse_args()
         user = None
 
@@ -55,7 +80,8 @@ class ChangeUserPassword(Resource):
         try:
             user.save()
             user.commit()
-        except exc.SQLAlchemyError:
+        except exc.SQLAlchemyError as e:
+            logging.critical(e)
             abort(HTTPStatus.BAD_REQUEST.value, error="User password not changed")
 
         return {"user": "{} password changed".format(args["email"])}, 201

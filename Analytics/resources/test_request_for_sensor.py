@@ -4,6 +4,8 @@ from db import db
 
 @pytest.fixture()
 def test_client():
+	""" Create API client for testing the endpoints exposed by the Flask application """
+	
 	test_app = create_app(DATABASE_NAME='fcc_dump', TESTING=True)
 	testing_client = test_app.test_client()
 
@@ -26,6 +28,8 @@ def test_client():
  												"496af333-165e-4e10-953b-c6f675480bbc"
  												])
 def test_sensor_params(test_client, sensor_param_value):
+	""" Test for correct functionality of /sensor endpoint when sensor parameters are passed """
+	
 	data = "sensor"
 	param = "sensor"
 
@@ -43,6 +47,8 @@ def test_sensor_params(test_client, sensor_param_value):
  												"smart_parking_2_16"
  												])
 def test_sensorname_params(test_client, sensorname_param_value):
+	""" Test for correct functionality of /sensor endpoint when sensorname parameters are passed """
+	
 	data = "sensor"
 	param = "sensorname"
 
@@ -59,6 +65,8 @@ def test_sensorname_params(test_client, sensorname_param_value):
 														"496af333-165e-4e10-953b-c6f675480bbc"
 														])
 def test_sensorattribute_params(test_client, sensorattribute_param_value):
+	""" Test for correct functionality of /sensor endpoint when sensorattribute parameters are passed """
+	
 	data = "sensor"
 	param = "sensorattribute"
 
@@ -66,8 +74,4 @@ def test_sensorattribute_params(test_client, sensorattribute_param_value):
 	response_dotmodus_enpoint = test_client.get('/data/{}?{}={}'.format(data,param,sensorattribute_param_value))
 	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
 	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
-
-
-
-
-
+	

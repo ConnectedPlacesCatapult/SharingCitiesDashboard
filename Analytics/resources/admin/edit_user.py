@@ -1,3 +1,6 @@
+"""" Edit User API Resource class """
+
+import logging
 from http import HTTPStatus
 
 from flask_jwt_extended import get_jwt_claims
@@ -8,31 +11,16 @@ from flask_restful import reqparse, inputs
 
 from models.users import Users
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
+
 
 class EditUser(Resource):
-    """ API resource class which changes user credentials and saves changes to the database
-		
-		A valid access JWT is required where the admin claim has to be True
-		Parameters can be passed using a POST request that contains a JSON with the following fields:
-		:required: 
-			:param email: users current email address
-			:type email: string
-		:optional:
-			:param fullname: users to be fullname 
-			:param password: users to be password
-			:param admin: users to be admin status 
-			:param activated: users to be activated status 
-			:type fullname: string
-			:type password: string
-			:type admin: boolean 
-			:type activated: boolean
-		
-		:return: A message indicating success or failure and the corresponding response code 
-		:rtype: JSON
-	"""
 
     def __init__(self):
-
+        """
+        Initialises the edit user end point
+        """
         # Create User (Post request parser)
         self.post_reqparser = reqparse.RequestParser()
         self.post_reqparser.add_argument('email', required=True, help="email field is required",
@@ -45,8 +33,27 @@ class EditUser(Resource):
                                          store_missing=False)
 
     @jwt_required
-    def post(self):
+    def post(self) -> (str, int):
+        """
+        POST request that allows user to change their credentials in the
+        Users table. A valid access JWT is required where the admin
+        claim has to be True
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :required:
+            :param email: users current email address
+            :type email: str
+        :optional:
+            :param fullname: users to be fullname
+            :param password: users to be password
+            :param admin: users to be admin status
+            :param activated: users to be activated status
+            :type fullname: str
+            :type password: str
+            :type admin: bool
+            :type activated: bool
 
+        :return: A message indicating success or failure and the corresponding response code
+        """
         if not get_jwt_claims()['admin']:
             abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
 
@@ -56,19 +63,17 @@ class EditUser(Resource):
         if current_user:
             if "fullname" in args:
                 current_user.fullname = args["fullname"]
-
             if "activated" in args:
                 current_user.activated = bool(args["activated"])
-
             if "admin" in args:
                 current_user.admin = bool(args["admin"])
-
             if "password" in args:
                 current_user.password = Users.generate_hash(args["password"].encode("utf8")).decode("utf8")
 
             try:
                 current_user.commit()
             except Exception as e:
+                logging.error(e)
                 return {"message": "failed saving details to database"}, 500
 
             return {"message": "success"}, 200

@@ -11,24 +11,30 @@ from models.users import Users
 
 
 class UserPermissions(Resource):
+    """
+    API resource class which updates a users admin and/or activated field
+    Parameters can be passed using a POST request that contains a JSON with the following fields:
+    :required: valid access JWT where the admin claim has to be true
+    :param email: users email address
+    :param activated: the value of the user's activated field
+    :param admin: whether the the value of the user's activated field
+    :type email: str
+    :type activated: str
+    :type admin: str
+    """
 
-    """ API resource class which updates a users admin and/or activated field
-
+    def __init__(self) -> None:
+        """
+        Instantiates the user permissions endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :required: valid access JWT where the admin claim has to be true
         :param email: users email address
         :param activated: the value of the user's activated field
         :param admin: whether the the value of the user's activated field
-        :type email: string
-        :type activated: string
-        :type admin: string
-        :return: The user's credentials on success or an error message and corresponding status code when unsuccessful
-        :rtype: JSON
-
-    """
-
-
-    def __init__(self):
+        :type email: str
+        :type activated: str
+        :type admin: str
+        """
         # Post request parser
         self.post_reqparser = reqparse.RequestParser()
         self.post_reqparser.add_argument('email', required=True, location=['form', 'json'])
@@ -37,9 +43,20 @@ class UserPermissions(Resource):
 
         super().__init__()
 
-
     @jwt_required
-    def post(self):
+    def post(self) -> (str, int):
+        """
+        API resource class which updates a users admin and/or activated field
+        Parameters can be passed using a POST request that contains a JSON with the following fields:
+        :required: valid access JWT where the admin claim has to be true
+        :param email: users email address
+        :param activated: the value of the user's activated field
+        :param admin: whether the the value of the user's activated field
+        :type email: str
+        :type activated: str
+        :type admin: str
+        :return: The user's credentials on success or an error message and corresponding status code when unsuccessful
+        """
         args = self.post_reqparser.parse_args()
 
         # User needs admin rights to continue
