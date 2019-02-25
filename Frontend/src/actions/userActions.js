@@ -1,27 +1,30 @@
 import { axiosInstance } from '../api/axios'
-import axios from "axios"
-import setAuthorizationToken from '../utils/setAuthorizationToken';
-import jwtDecode from 'jwt-decode';
-
 import { SET_CURRENT_USER } from './../constants';
-import {FETCH_CONFIG, FETCH_CONFIG_FULFILLED, FETCH_CONFIG_REJECTED} from "../constants";
 
-export function doLogin(email, password, loginFailedFN, props) {
-
-  const credentials = {
-    email: email,
-    password: password
-  }
-
-  const session = axiosInstance.post('/login', credentials).then((res) => {
-    const token = res.data.access_token
-    localStorage.setItem('token', token)
-    props.history.push('/')
-  }).catch(function (e) {
-    console.log('login failed', e)
-    loginFailedFN(e)
-  })
-}
+export const login = (userCredentials, props) => {
+  return (dispatch) => {
+    const credentials = {
+      email: userCredentials.email,
+      password: userCredentials.password
+    }
+    axiosInstance.post('/login', credentials).then((response) => {
+      dispatch({
+        type: SET_CURRENT_USER,
+        payload: response.data,
+      })
+      const token = response.data.access_token
+      const userName = response.data.fullname
+      const userID = response.data.id
+      localStorage.setItem('token', token)
+      localStorage.setItem('userName', userName)
+      localStorage.setItem('userID', userID)
+      props.history.push('/')
+    })
+    .catch((err) => {
+      console.log('login failed', err)
+    })
+  };
+};
 
 export function doRegister(email, fullName, password, passwordNew) {
   const userInfo = {
@@ -39,10 +42,7 @@ export function doRegister(email, fullName, password, passwordNew) {
 
 export function doLogout(props) {
   localStorage.removeItem('token');
+  localStorage.removeItem('fullname');
+  localStorage.removeItem('id');
   props.history.push('/login')
 }
-
-export const setCurrentUser = user => ({
-  type: SET_CURRENT_USER,
-  payload: user,
-});
