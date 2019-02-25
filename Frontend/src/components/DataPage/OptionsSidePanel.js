@@ -14,8 +14,6 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 const styles = (theme) => ({
   root: {
     marginLeft: theme.spacing.unit * 2,
-    width: "240px",
-    position: "relative",
   },
   paper: {
     padding: theme.spacing.unit * 2,

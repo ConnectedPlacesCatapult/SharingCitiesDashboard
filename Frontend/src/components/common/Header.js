@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import LoginForm from '../LoginPage/LoginForm';
+import LoginForm from './LoginForm';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -15,9 +15,7 @@ import Modal from '@material-ui/core/Modal';
 import { Login as LoginIcon } from 'mdi-material-ui'
 
 // router
-import {NavLink, withRouter} from "react-router-dom";
-
-import { doLogout } from "../../actions/userActions";
+import { NavLink } from "react-router-dom";
 
 // redux
 import { connect } from 'react-redux';
@@ -86,11 +84,6 @@ class Header extends React.Component {
     this.setState({ loginModalOpen: true });
   };
 
-  logOut = (e) =>  {
-    e.preventDefault();
-    doLogout(this.props)
-  }
-
   handleModalClose = () => {
     this.setState({ loginModalOpen: false });
   };
@@ -127,7 +120,7 @@ class Header extends React.Component {
           <div>
             {pageLinks}
           </div>
-          <Button className={classes.loginButton} onClick={this.logOut}>
+          <Button className={classes.loginButton} onClick={this.handleModalOpen}>
             <LoginIcon className={classes.loginIcon} />
           </Button>
           <Modal
@@ -156,7 +149,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 Header = withStyles(styles)(Header);
-Header = withRouter(Header);
 Header = connect(mapStateToProps, mapDispatchToProps)(Header);
 
 export default Header
