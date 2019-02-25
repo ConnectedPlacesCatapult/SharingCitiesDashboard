@@ -6,30 +6,27 @@ import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import KeyBoardArrowLeft from '@material-ui/icons/KeyBoardArrowLeft';
 
 const styles = (theme) => ({
   root: {
     width: 'auto',
     display: 'block', // Fix IE 11 issue.
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
     [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
-      width: 400,
-      marginLeft: 'auto',
-      marginRight: 'auto',
     },
   },
   paper: {
-    marginTop: theme.spacing.unit * 12,
+    marginTop: theme.spacing.unit * 3,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: `${theme.spacing.unit * 3}px`,
+    paddingTop: `${theme.spacing.unit * 3}px`,
+    paddingBottom: `${theme.spacing.unit * 2}px`,
   },
   icon: {
     margin: theme.spacing.unit,
     fontSize: 48,
+    float: "left",
   },
 });
 
@@ -40,14 +37,20 @@ class NoData extends React.Component {
     return (
       <div className={classes.root}>
         <Paper className={classes.paper}>
-          <Typography variant="h4" color="primary">
-            No data loaded
-          </Typography>
-          <Divider />
-          <Typography variant="subtitle1" color="primary">
-            Please select a data source
-          </Typography>
-          <KeyboardArrowLeftIcon className={classes.icon} color="secondary" />
+          <div style={{display: "flex"}}>
+            <div style={{margin: "auto"}}>
+              <KeyBoardArrowLeft className={classes.icon} color="secondary" />
+            </div>
+            <div style={{}}>
+              <Typography variant="h4" color="primary">
+                Select a Data Source
+              </Typography>
+              <Divider />
+              <Typography variant="subtitle1" color="primary">
+                Please select a data source from the sidebar to begin
+              </Typography>
+            </div>
+          </div>
         </Paper>
       </div>
     )
