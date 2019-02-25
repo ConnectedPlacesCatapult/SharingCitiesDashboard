@@ -29,7 +29,7 @@ class Login(Resource):
 			if current_user.activated:
 				access_token = create_access_token(identity = current_user)
 				refresh_token = create_refresh_token(identity = current_user)
-				return {'message': 'Logged in as {}'.format(current_user.email), 'access_token': access_token, 'refresh_token': refresh_token}, 200
+				return {'message': 'Logged in as {}'.format(current_user.email), 'access_token': access_token, 'refresh_token': refresh_token, 'id':current_user.id, 'fullname': current_user.fullname}, 200
 			else:
 				return {'message': 'User {} has not been activated. Please register when redirected to regirstration page'.format(current_user.email)}, 403
 		else:
