@@ -67,7 +67,7 @@ def create_app(**config_overrides):
     jwt = JWTManager(app)
 
     @jwt.token_in_blacklist_loader
-    def check_if_token_in_blacklist(decrypted_token):
+    def check_if_token_in_blacklist(decrypted_token:dict) -> bool:
         """ 
         Query revoked tokens table for presence of decrypted_token argument
         :param decrypted_token: Decrypted version of a user's JWT
@@ -79,7 +79,7 @@ def create_app(**config_overrides):
         return RevokedTokens.is_jti_blacklisted(jti)
 
     @jwt.user_claims_loader
-    def add_claims_to_access_token(user):
+    def add_claims_to_access_token(user:db.Model) -> dict:
         """ 
         Add admin claim to access token
         :param user: Users model
@@ -90,7 +90,7 @@ def create_app(**config_overrides):
         return {'admin': user.admin}
 
     @jwt.user_identity_loader
-    def user_identity_lookup(user) -> str:
+    def user_identity_lookup(user:db.Model) -> str:
         """ 
         Define identity claim within JWT token
         :param user: Users model
