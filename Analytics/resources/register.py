@@ -37,5 +37,5 @@ class Register(Resource):
 		current_user.activated = True 
 		current_user.password = Users.generate_hash(args["password_new"].encode("utf8")).decode("utf8")
 		current_user.commit()
-		return {'message': '{}\'s account has been registered. Redirect to login'. format(args['email'])}, 201 #t
+		return {'message': '{}\'s account has been registered. Redirect to login'. format(args['email'])}, 201
 
