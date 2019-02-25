@@ -45,7 +45,7 @@ class SaveLayoutPrompt extends React.Component {
           variant="primary"
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'center',
+            horizontal: 'left',
           }}
           open={dashboard.layoutChanged > 1}
           autoHideDuration={6000}

@@ -65,7 +65,7 @@ export default (state=initialState, action={}) => {
     case SAVE_LAYOUT_FULFILLED: {
       return {
         ...state,
-        layoutChanged: 0,
+        layoutChanged: 1,
         layoutSaved: true
       }
     }

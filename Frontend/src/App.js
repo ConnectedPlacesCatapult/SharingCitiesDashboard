@@ -42,8 +42,6 @@ class App extends React.Component {
         require(`${localStylesheet}`);
       }
 
-      console.log("state.config")
-
       // customise default MUI theme
       const localTheme = createMuiTheme(config.localeThemeData || {});
 

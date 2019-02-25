@@ -10,6 +10,7 @@ import {
   DELETE_USER_FULFILLED,
   DELETE_USER_REJECTED
 } from "./../constants";
+import {HIDE_NOTIFICATION} from "../constants";
 
 // Fetch Users for User List
 export const fetchUsers = () => {
@@ -44,13 +45,17 @@ export const createUser = (userInfo) => {
       password: userInfo.password,
       admin: userInfo.admin.toString()
     }
-    debugger
     axiosInstance.post('admin/create_new_user', requestData).then((response) => {
       fetchUsers()(dispatch)
       dispatch({
         type: CREATE_NEW_USER_FULFILLED,
         payload: response.data,
       })
+      setTimeout(() => {
+        dispatch({
+          type: HIDE_NOTIFICATION,
+        })
+      }, 2000)
     })
     .catch((err) => {
       dispatch({
@@ -95,6 +100,11 @@ export const deleteUser = () => {
         type: DELETE_USER_FULFILLED,
         payload: response.data,
       })
+      setTimeout(() => {
+        dispatch({
+          type: HIDE_NOTIFICATION,
+        })
+      }, 2000)
     })
     .catch((err) => {
       dispatch({

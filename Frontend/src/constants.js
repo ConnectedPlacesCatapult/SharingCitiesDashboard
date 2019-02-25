@@ -63,6 +63,9 @@ export const SET_PLOT_PROPERTY = "SET_PLOT_PROPERTY";
 export const SET_WIDGET_PROPERTY = "SET_WIDGET_PROPERTY";
 export const TOGGLE_MAP_TOOLTIP_FIELD = "TOGGLE_MAP_TOOLTIP_FIELD";
 
+// notifications
+export const HIDE_NOTIFICATION = "HIDE_NOTIFICATION";
+
 // query params
 export const QUERY_PARAMS = {
   ATTRIBUTE: "attribute",

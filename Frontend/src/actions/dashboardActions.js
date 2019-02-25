@@ -25,7 +25,8 @@ import {
   FETCH_USERS_FULFILLED,
   FETCH_USERS_REJECTED,
   SAVE_WIDGET_FULFILLED,
-  SAVE_WIDGET_REJECTED
+  SAVE_WIDGET_REJECTED,
+  HIDE_NOTIFICATION
 } from "./../constants";
 import {axiosInstance} from "../api/axios";
 
@@ -189,14 +190,21 @@ export const saveLayout = () => {
         type: SAVE_LAYOUT_FULFILLED,
         payload: cleanedLayout,
       })
-    })
-      .catch((err) => {
+
+      setTimeout(() => {
+        dispatch({
+          type: HIDE_NOTIFICATION,
+        })
+      }, 2000)
+
+    .catch((err) => {
         dispatch({
           type: SAVE_LAYOUT_REJECTED,
           payload: err,
         })
       })
-  };
+    })
+  }
 };
 
 export const dismissSaveLayout = () => {
