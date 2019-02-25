@@ -19,7 +19,7 @@ class GetWidgetLayout(Resource):
                     is not found a HTTP status code 404, Not Found is returned with a error discription
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Instantiates the get widget endpoint
         Fetches layout for widget with the passed widgetID

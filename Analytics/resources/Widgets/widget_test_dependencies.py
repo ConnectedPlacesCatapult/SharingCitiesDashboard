@@ -16,7 +16,7 @@ class TestDependencies:
     Creates the dependencies needed to execute tests on the widgets
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialises the dependencies required for the widget tests
         """
@@ -69,7 +69,7 @@ class TestDependencies:
         response_login_json = response_login.get_json()
         return {'Authorization': 'Bearer {}'.format(response_login_json["access_token"])}
 
-    def get_widget_data(self) -> {str: any}:
+    def get_widget_data(self) -> dict:
         """
         Gets widget data from a file for testing
         :return: json data used to create a widget on a users dashboard

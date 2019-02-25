@@ -32,7 +32,7 @@ class WidgetModel(db.Model):
     layout_id = db.Column(db.Integer, db.ForeignKey('layouts.id'))
     layout = db.relationship('Layouts', backref=db.backref('layouts', lazy=True))
 
-    def __init__(self, user_id: int, layout: object, data: str):
+    def __init__(self, user_id: int, layout: object, data: str) -> None:
         """
         Initiates the new widget instance
         :param user_id: The users identification number the widget belongs to
@@ -56,7 +56,7 @@ class WidgetModel(db.Model):
         """
         return "UserID: {} \t\tWidgetID: {}".format(self.user_id, self.id)
 
-    def json(self) -> {str: any}:
+    def json(self) -> dict:
         """
         formats response to be sent to user
         :return:  a Dictionary of the response data

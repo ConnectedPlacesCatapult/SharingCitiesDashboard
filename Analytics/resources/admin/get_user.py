@@ -18,7 +18,7 @@ class GetUserByEmail(Resource):
     :return: The user's credentials on success or an error message and relevant status code when unsuccessful
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Instantiates the get user endpoint
         Parameters can be passed using a POST request that contains the following fields in the url:

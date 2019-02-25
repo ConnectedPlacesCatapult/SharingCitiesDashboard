@@ -28,7 +28,7 @@ class CreateNewUser(Resource):
     :return: A message indicating a successful or unsuccessful addition of user to the database
      """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Instantiates the create user endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -65,7 +65,7 @@ class CreateNewUser(Resource):
         return bcrypt.hashpw(plain_password, bcrypt.gensalt())
 
     @staticmethod
-    def _does_user_exsist(email: str=None) -> bool:
+    def _does_user_exsist(email: str = None) -> bool:
         """
         Checks if a user with the email passed exists
         :param email: users email address

@@ -30,7 +30,7 @@ class SaveWidgetLayout(Resource):
              otherwise, a HTTP status code 404, not found with content containing JSON objects
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Arguments passer to save layouts appends values sent in post to a list
         self.post_reqparser = reqparse.RequestParser()
         self.post_reqparser.add_argument('layouts', action='append')

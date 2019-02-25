@@ -1,6 +1,7 @@
 from typing import NoReturn
 
 import bcrypt
+from flask.testing import FlaskClient
 
 from app import create_app
 from db import db
@@ -12,7 +13,7 @@ class TestDependencies:
     Creates the dependencies needed to execute tests on the widgets
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialises the dependencies required for the widget tests
         """
@@ -27,7 +28,7 @@ class TestDependencies:
         except Exception as e:
             pass
 
-    def create_test_client(self):
+    def create_test_client(self) -> FlaskClient:
         """
         Creates a flask client for testing
         :return: A flask client
@@ -40,7 +41,7 @@ class TestDependencies:
         self.app_context = test_app_context
         return testing_client
 
-    def create_admin_user(self):
+    def create_admin_user(self) -> Users:
         """
         Creates an admin user for the tests
         :return: an admin user for tests
@@ -67,11 +68,10 @@ class TestDependencies:
         response_login_json = response_login.get_json()
         return {'Authorization': 'Bearer {}'.format(response_login_json["access_token"])}
 
-    def get_dummy_user(self):
+    def get_dummy_user(self) -> Users:
         """
-
-        :return:
-        :rtype:
+        Creates a dummy user to be used in the unit tests for Users
+        :return: a user
         """
         new_user = Users("fullname", 'email@email.com', Users.generate_hash('top_secret'.encode("utf-8")), True, True)
         new_user.save()

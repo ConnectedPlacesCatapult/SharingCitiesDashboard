@@ -17,7 +17,7 @@ class GetLayouts(Resource):
     :type limit: int
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Fetches all layouts for the widgets with a specific userID
         :param  userID: Unique user identification number

@@ -33,7 +33,7 @@ class CreateWidgetLayout(Resource):
         code 404, Not Found with json with a key "error" containing a message "layout object not found"
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Instantiates the create widget endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:

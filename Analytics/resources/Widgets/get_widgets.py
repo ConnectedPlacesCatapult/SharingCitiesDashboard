@@ -19,7 +19,7 @@ class GetWidgets(Resource):
     :type limit: int
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         instantiates the get_widgets endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:

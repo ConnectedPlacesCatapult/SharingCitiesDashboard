@@ -23,7 +23,7 @@ class UserPermissions(Resource):
     :type admin: str
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Instantiates the user permissions endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -44,7 +44,7 @@ class UserPermissions(Resource):
         super().__init__()
 
     @jwt_required
-    def post(self) -> (str,int):
+    def post(self) -> (str, int):
         """
         API resource class which updates a users admin and/or activated field
         Parameters can be passed using a POST request that contains a JSON with the following fields:

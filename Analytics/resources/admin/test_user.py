@@ -1,7 +1,7 @@
 from typing import NoReturn
 
-from resources.admin.user_test_dependencies import TestDependencies
 from models.users import Users
+from resources.admin.user_test_dependencies import TestDependencies
 
 dependencies = None
 
@@ -31,7 +31,7 @@ def teardown_module() -> NoReturn:
     dependencies.clean_up()
 
 
-def test_create_user():
+def test_create_user() -> NoReturn:
     """tests the user creation"""
     global dependencies
     new_user = dependencies.get_dummy_user()
@@ -41,7 +41,7 @@ def test_create_user():
     new_user.commit()
 
 
-def test_create_user_endpoint():
+def test_create_user_endpoint() -> NoReturn:
     """
     tests the '/admin/create_new_user' endpoint
     """
@@ -62,7 +62,7 @@ def test_create_user_endpoint():
         user.commit
 
 
-def test_user_email_duplication():
+def test_user_email_duplication() -> NoReturn:
     """
     test that duplication of a user email is not possible
     """
@@ -82,7 +82,7 @@ def test_user_email_duplication():
     new_user.commit()
 
 
-def test_change_user_fullname():
+def test_change_user_fullname() -> NoReturn:
     """
     tests the user name is changed using the '/admin/change_user_fullname' endpoint
     """
@@ -98,7 +98,7 @@ def test_change_user_fullname():
     user.commit()
 
 
-def test_change_user_password():
+def test_change_user_password() -> NoReturn:
     """
     tests that the user password is changed using the '/admin/change_user_password' endpoint
     """

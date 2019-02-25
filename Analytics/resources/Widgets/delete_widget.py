@@ -1,5 +1,5 @@
-from http import HTTPStatus
 import logging
+from http import HTTPStatus
 
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
@@ -32,7 +32,7 @@ class DeleteWidgets(Resource):
               Not Found (404) is returned.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initiates the delete widget endpoint
         Parameters can be passed using a POST request that contains a JSON with the following fields:
@@ -48,7 +48,6 @@ class DeleteWidgets(Resource):
         self.reqparser_delete.add_argument('widgetID', required=True, help='widgetID required',
                                            location=['form', 'json'])
         super().__init__()
-
 
     @jwt_required
     def post(self) -> (str, int):

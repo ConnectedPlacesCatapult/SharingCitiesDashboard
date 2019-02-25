@@ -37,7 +37,7 @@ class Layouts(db.Model):
     width = db.Column('w', db.Integer, nullable=False)
     static = db.Column('static', db.Boolean, nullable=False)
 
-    def __init__(self, widget_id: int, x: int, y: int, height: int, width: int, static: int):
+    def __init__(self, widget_id: int, x: int, y: int, height: int, width: int, static: int) -> None:
         """
         Layouts initialise
         :param widget_id: widgets identification number the layout is related to
@@ -72,7 +72,7 @@ class Layouts(db.Model):
         """
         return self.json()
 
-    def json(self) -> {str: any}:
+    def json(self) -> dict:
         """
         Creates a JSON object of the Layouts instance
         :param widget_id: widgets identification number the layout is related to

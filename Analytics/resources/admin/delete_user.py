@@ -23,7 +23,7 @@ class DeleteUser(Resource):
     :type email: str
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Instanciates the delete user endpoint
         Parameters can be passed using a DELETE request that contains a JSON with the following fields:
