@@ -10,10 +10,10 @@ class UserLogoutAccess(Resource):
     
     @jwt_required
     def post(self) -> (str,int):
-         """
+        """
         POST request that revokes a users access JWT by adding it to the revoked_tokens table
         :required: A valid access JWT in the Authorization Header in the format - Bearer <JWT>
-        :return: A message that indicates whether the token has been revoked 
+        :return: A message that indicates whether the token has been revoked
         :rtype: JSON
         """
         jti = get_raw_jwt()['jti']

@@ -35,7 +35,7 @@ class Login(Resource):
 		else:
 			return {'message': 'Incorrect credentials. Please try again'}, 403
 
-class SecretResource(Resource) -> (str,int):
+class SecretResource(Resource):
 	"""
 	API that is solely used to test the functionality of access JWT
         :required: A valid access JWT in the Authorization Header in the format - Bearer <JWT>
