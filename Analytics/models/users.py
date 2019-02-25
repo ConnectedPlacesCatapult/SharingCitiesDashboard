@@ -34,13 +34,6 @@ class Users(db.Model):
         :param activated:   true if the account has been activated and false if it is not activated
         :param timestamp:   time stamp of when the user was created
 
-        :type fullname:     str
-        :type email:        str
-        :type password:     str
-        :type admin:        bool
-        :type activated:    bool
-        :type timestamp:    datetime
-
         """
         self.fullname = fullname
         self.email = email
@@ -111,32 +104,17 @@ class Users(db.Model):
     def find_by_email(cls, email: str) -> db.Model:
         """
         Return the user corresponding to the email argument from the Users table
-        :param email: user's email
-        :type email: string
-        :return: Users credentials
-        :rtype: Users instance
         """
         return cls.query.filter_by(email=email).first()
 
     @staticmethod
     def generate_hash(password: str) -> bytes:
-        """
-        Generate a secure hash
-        :param password: user's to be password
-        :type password: string
-        :return: a hashed version of the password string
-        :rtype: unicode encoded string
-        """
+        """ Generate a secure hash """
+        
         return bcrypt.hashpw(password, bcrypt.gensalt())
 
     @staticmethod
     def verify_hash(password: str, hash: bytes) -> bool:
-        """
-        Verify password matches the hashed password in the database.
-        :param password: user's to be password
-        :param hash: the password hash that would be stored in the database
-        :type password: string
-        :type hash: string
-        :return: whether the password arguement corresponds to the hash
-        """
+        """ Verify password matches the hashed password in the database."""
+        
         return bcrypt.checkpw(password, hash)
