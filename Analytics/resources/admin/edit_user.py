@@ -1,3 +1,5 @@
+"""" Edit User API Resource class """
+
 import logging
 from http import HTTPStatus
 
@@ -14,43 +16,10 @@ logger = logging.getLogger(__name__)
 
 
 class EditUser(Resource):
-    """
-    API resource class which changes user credentials and saves changes to the database
-    A valid access JWT is required where the admin claim has to be True
-    Parameters can be passed using a POST request that contains a JSON with the following fields:
-    :required:
-    :param email: users current email address
-    :type email: str
-    :optional:
-    :param fullname: users to be fullname
-    :param password: users to be password
-    :param admin: users to be admin status
-    :param activated: users to be activated status
-    :type fullname: str
-    :type password: str
-    :type admin: bool
-    :type activated: bool
-
-    :return: A message indicating success or failure and the corresponding response code
-    """
 
     def __init__(self):
         """
         Initialises the edit user end point
-        A valid access JWT is required where the admin claim has to be True
-        Parameters can be passed using a POST request that contains a JSON with the following fields:
-        :required:
-            :param email: users current email address
-            :type email: str
-        :optional:
-            :param fullname: users to be fullname
-            :param password: users to be password
-            :param admin: users to be admin status
-            :param activated: users to be activated status
-            :type fullname: str
-            :type password: str
-            :type admin: bool
-            :type activated: bool
         """
         # Create User (Post request parser)
         self.post_reqparser = reqparse.RequestParser()
@@ -66,23 +35,22 @@ class EditUser(Resource):
     @jwt_required
     def post(self) -> (str, int):
         """
-        API resource class which changes user credentials and saves changes to the database
-        A valid access JWT is required where the admin claim has to be True
+        POST request that allows user to change their credentials in the
+        Users table. A valid access JWT is required where the admin
+        claim has to be True
         Parameters can be passed using a POST request that contains a JSON with the following fields:
-
         :required:
-        :param email: users current email address
-        :type email: str
-
+            :param email: users current email address
+            :type email: str
         :optional:
-        :param fullname: users to be fullname
-        :param password: users to be password
-        :param admin: users to be admin status
-        :param activated: users to be activated status
-        :type fullname: str
-        :type password: str
-        :type admin: bool
-        :type activated: bool
+            :param fullname: users to be fullname
+            :param password: users to be password
+            :param admin: users to be admin status
+            :param activated: users to be activated status
+            :type fullname: str
+            :type password: str
+            :type admin: bool
+            :type activated: bool
 
         :return: A message indicating success or failure and the corresponding response code
         """
