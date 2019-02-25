@@ -18,7 +18,7 @@ class RevokedTokens(db.Model):
         db.session.commit()
 
     @classmethod
-    def is_jti_blacklisted(cls, jti: dict) -> bool:
+    def is_jti_blacklisted(cls, jti: str) -> bool:
         """ 
         Queries the revoked tokens table to determine if the provided JWT ID is presented and hence has been revoked
         :param jti: the JWT ID that is used when generating access and refresh JWTs
