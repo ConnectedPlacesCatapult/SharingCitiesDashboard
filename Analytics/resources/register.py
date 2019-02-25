@@ -24,7 +24,6 @@ class Register(Resource):
 		:type email: string
 		:type password: string
 		:return: A message that indicates whether a user has been registered. If they have not, the message indicates why not
-		:rtype: JSON
 		""" 
 		args = self.parser.parse_args()
 		current_user = Users.find_by_email(args['email']) #t
