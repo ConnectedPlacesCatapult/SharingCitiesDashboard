@@ -61,4 +61,4 @@ class UsersList(Resource):
         for user in users:
             user_list.append(user)
 
-        return jsonify({"users": user_list}), 200
+        return {"users": user_list}, 200

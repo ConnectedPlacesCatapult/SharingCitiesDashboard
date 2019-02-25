@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import axios from "axios";
+import {axiosInstance} from "../api/axios";
+import {getUserID} from "../api/session";
 
 import {
   FETCH_LAYOUT,
@@ -9,7 +10,6 @@ import {
   SAVE_LAYOUT_FULFILLED,
   SAVE_LAYOUT_REJECTED,
   UPDATE_LAYOUT,
-  LAYOUT_CHANGED,
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
   FETCH_WIDGETS_REJECTED,
@@ -26,15 +26,10 @@ import {
   SAVE_WIDGET_FULFILLED,
   SAVE_WIDGET_REJECTED
 } from "./../constants";
-import {axiosInstance} from "../api/axios";
 
 export const updateLayout = (layout) => ({
   type: UPDATE_LAYOUT,
   payload: layout,
-});
-
-export const layoutChanged = (layout) => ({
-  type: LAYOUT_CHANGED
 });
 
 export const promptDeleteWidget = (widgetID) => {
@@ -47,12 +42,14 @@ export const promptDeleteWidget = (widgetID) => {
 };
 
 export const fetchWidgets = () => {
+  const userID = getUserID()
+
   return (dispatch, getState) => {
     dispatch({
       type: FETCH_WIDGETS,
     });
     const requestData = {
-      userID: 1,
+      userID: userID,
       limit: 10
     };
 
@@ -109,13 +106,15 @@ export const fetchWidgets = () => {
 };
 
 export const fetchLayout = () => {
+  const userID = getUserID()
+
   return (dispatch, getState) => {
     dispatch({
       type: FETCH_LAYOUT,
     });
 
     const requestData = {
-      userID: '1'
+      userID: userID
     };
     axiosInstance.post('/widgets/get_layouts', requestData).then((response) => {
 
@@ -151,6 +150,8 @@ export const fetchLayout = () => {
 };
 
 export const saveLayout = () => {
+  const userID = getUserID()
+
   return (dispatch, getState) => {
     const state = getState()
     const newLayout = _.get(state, 'dashboard.layout')
@@ -180,7 +181,7 @@ export const saveLayout = () => {
     });
 
     const requestData = {
-      userID: '1'
+      userID: userID
     };
     axiosInstance.post('/widgets/save_layouts', newLayoutObject).then((response) => {
 
@@ -199,6 +200,8 @@ export const saveLayout = () => {
 };
 
 export const deleteWidget = () => {
+  const userID = getUserID()
+
   return (dispatch, getState) => {
 
     const currentState = getState();
@@ -206,7 +209,7 @@ export const deleteWidget = () => {
 
     const requestData = {
       limit: '10',
-      userID: '1',
+      userID: userID,
       widgetID: widgetID
     };
     axiosInstance.post('/widgets/delete_widget', requestData).then((response) => {
