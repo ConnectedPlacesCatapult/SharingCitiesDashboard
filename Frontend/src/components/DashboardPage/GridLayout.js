@@ -5,7 +5,6 @@ import Widget from './Widget';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 
 // grid-layout
 import RGL from "react-grid-layout";
@@ -13,7 +12,6 @@ import RGL from "react-grid-layout";
 // ToDo :: overwrite some of the original base styles
 import './../../../node_modules/react-grid-layout/css/styles.css';
 import './../../../node_modules/react-resizable/css/styles.css';
-import './../../styles/gridLayoutCustoms.css';
 
 // redux
 import { connect } from 'react-redux';
@@ -38,8 +36,8 @@ class GridLayout extends React.Component {
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
 
-    this.props.fetchWidgets();
     this.props.fetchLayout();
+    this.props.fetchWidgets();
   }
 
   onLayoutChange(layout) {
@@ -49,40 +47,29 @@ class GridLayout extends React.Component {
   render() {
     const { classes, dashboard } = this.props;
 
-    console.log("layouts", dashboard.layout.length)
-    console.log("widgets", dashboard.widgets.length)
-
-    if (dashboard.layout.length === dashboard.widgets.length) {
-
-      const gridItems = dashboard.layout.map((gridItem) => {
-        let gridItemWidget = dashboard.widgets.find((widget) => gridItem.i === widget.i);
-        return (
-          <div key={gridItem.i}>
-            <Widget widgetID={gridItem.widgetID} {...gridItemWidget} isStatic={gridItem.static || false} />
-          </div>
-        )
-      });
+    const gridItems = dashboard.layout.map((gridItem) => {
+      let gridItemWidget = dashboard.widgets.find((widget) => gridItem.i === widget.i);
 
       return (
-        <ReactGridLayout
-          layout={dashboard.layout}
-          cols={12}
-          rowHeight={30}
-          width={1200}
-          onLayoutChange={this.onLayoutChange}
-          className={classes.root}
-          draggableHandle='.draggableHandle'
-        >
-          {gridItems}
-        </ReactGridLayout>
+        <div key={gridItem.i}>
+          <Widget {...gridItemWidget} isStatic={gridItem.static || false} />
+        </div>
       )
-    } else {
-      return (
-        <Typography variant="subtitle1">
-          Problem Loading Layout
-        </Typography>
-      )
-    }
+    });
+
+    return (
+      <ReactGridLayout
+        layout={dashboard.layout}
+        cols={12}
+        rowHeight={30}
+        width={1200}
+        onLayoutChange={this.onLayoutChange}
+        className={classes.root}
+        draggableHandle='.draggableHandle'
+      >
+        {gridItems}
+      </ReactGridLayout>
+    )
   }
 }
 

@@ -14,7 +14,6 @@ import SaveIcon from '@material-ui/icons/Save';
 // redux
 import { connect } from 'react-redux';
 import { initializeEditor } from "./../../../actions/widgetActions";
-import { saveWidget } from "./../../../actions/widgetActions";
 
 // misc utils
 import classNames from 'classnames';
@@ -44,6 +43,10 @@ class ConfigPanel extends React.Component {
     props.initializeEditor();
   }
 
+  saveWidget = () => {
+    console.log("save widget")
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -55,7 +58,7 @@ class ConfigPanel extends React.Component {
         <Button
           variant="contained"
           size="small"
-          onClick={this.props.saveWidget}
+          onClick={this.saveWidget}
         >
           Save Widget
           <SaveIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
@@ -76,7 +79,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   initializeEditor: () => dispatch(initializeEditor()),
-  saveWidget: () => dispatch(saveWidget()),
 });
 
 ConfigPanel = withStyles(styles)(ConfigPanel);

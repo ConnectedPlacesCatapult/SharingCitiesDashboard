@@ -3,8 +3,6 @@ import React from 'react';
 // base components
 import DashboardPage from './components/DashboardPage';
 import DataPage from './components/DataPage';
-import LoginPage from './components/LoginPage';
-import AdminPage from './components/AdminPage';
 
 // router
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -52,8 +50,6 @@ class App extends React.Component {
             <Switch>
               <Route exact path="/" component={DashboardPage} />
               <Route path="/data" component={DataPage} />
-              <Route path="/admin" component={AdminPage} />
-              <Route path="/login" component={LoginPage} />
             </Switch>
           </BrowserRouter>
           </div>
