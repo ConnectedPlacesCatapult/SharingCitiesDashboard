@@ -1,3 +1,6 @@
+""" Define the html that is included in a forgot password email. """
+
+# formatted string used in order to customise the email with each user's fullname
 email_html = """
 <!doctype html>
 <html>
