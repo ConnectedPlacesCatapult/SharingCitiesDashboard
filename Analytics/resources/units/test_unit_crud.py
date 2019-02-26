@@ -73,7 +73,7 @@ def test_add_unit() -> NoReturn:
     assert response.status_code == 204
 
 
-def test_get_unit_of_measure_with_symbol(dummy_unit) -> NoReturn:
+def test_get_unit_of_measure_with_symbol(dummy_unit: Unit) -> NoReturn:
     """
     Tests a unit instance can be retrieved from the database by the units symbol using the '/admin/units/get' endpoint.
     :param dummy_unit: a dummy unit yielded from a pytest fixture
@@ -85,7 +85,7 @@ def test_get_unit_of_measure_with_symbol(dummy_unit) -> NoReturn:
     assert response.status_code == 200
 
 
-def test_get_unit_of_measure_with_description(dummy_unit) -> NoReturn:
+def test_get_unit_of_measure_with_description(dummy_unit: Unit) -> NoReturn:
     """
     Tests a unit instance can be retrieved from the database by the units description using the '/admin/units/get'
     endpoint.
@@ -98,7 +98,7 @@ def test_get_unit_of_measure_with_description(dummy_unit) -> NoReturn:
     assert response.status_code == 200
 
 
-def test_delete_unit(dummy_unit) -> NoReturn:
+def test_delete_unit(dummy_unit: Unit) -> NoReturn:
     """
     Tests a unit entry can be deleted from the database by the units symbol using the '/admin/units/delete'
     endpoint.
@@ -125,7 +125,7 @@ def test_delete_unit_not_found() -> NoReturn:
     assert response.status_code == 404
 
 
-def test_list_all_units(dummy_unit) -> NoReturn:
+def test_list_all_units(dummy_unit: Unit) -> NoReturn:
     """
     Tests all unit instance can be retrieved from the database using the '/admin/units/get_all'
     endpoint.
@@ -138,7 +138,7 @@ def test_list_all_units(dummy_unit) -> NoReturn:
     assert response.status_code == 200
 
 
-def test_update_unit(dummy_unit) -> NoReturn:
+def test_update_unit(dummy_unit: Unit) -> NoReturn:
     """
     Tests a unit can be updated using the '/admin/units/update' endpoint
     :param dummy_unit: a unit to be used for the
