@@ -8,8 +8,6 @@ import os
 from sendgrid.helpers.mail import Email, Content, Mail
 
 from models.users import Users
-from resources.forgot_password_email import email_html
-
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
@@ -92,7 +90,9 @@ class ForgotPassword(Resource):
             It is recommended you change your password once logged in.
             \n
             """.format(username=name, password=new_password)
-        html_version = email_html.format(username=name, password=new_password)
+        html_version = flask.render_template(
+            "forgot_password_email.html", username=name,
+            password=new_password)
 
         sg = sendgrid.SendGridAPIClient(
             apikey=os.environ.get("SENDGRID_API_KEY"))
