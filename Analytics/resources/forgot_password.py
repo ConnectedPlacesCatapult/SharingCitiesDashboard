@@ -63,7 +63,11 @@ class ForgotPassword(Resource):
 
     @staticmethod
     def generate_random_password(length: int) -> str:
-        """ Create a randomly generated password """
+        """
+        Create a randomly generated password
+        :param length: the number of characters that the randomly generated 
+        password will contain
+        """
 
         charset = \
             "abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789<" \
@@ -81,12 +85,12 @@ class ForgotPassword(Resource):
         text_version = """\
             Hi {username}
             
-            You requested for your password to be reset. \
-            Your new system generated password is : {password}\
+            You requested for your password to be reset. \n
+            Your new system generated password is : {password}\n
             You can now login to the Sharing Cities Dashboard with this 
-            password\
-            It is recommended you change your password once logged in
-            \
+            password.\n
+            It is recommended you change your password once logged in.
+            \n
             """.format(username=name, password=new_password)
         html_version = email_html.format(username=name, password=new_password)
 
