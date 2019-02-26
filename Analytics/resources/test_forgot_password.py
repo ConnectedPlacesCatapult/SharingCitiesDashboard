@@ -24,7 +24,7 @@ def test_client():
 
 
 @pytest.fixture()
-def dummy_user():
+def dummy_user() -> db.Model:
     """
     Create and save regular user to the database for duration of test
     and  delete it afterwards
@@ -43,7 +43,12 @@ def dummy_user():
         pass
 
 
-def test_forgot_password(test_client, dummy_user):
+def test_forgot_password(test_client, dummy_user: db.Model):
+    """
+    Test whether email is sent successfully and password has changed in
+    the database
+    """
+    
     current_user = Users.find_by_email(dummy_user.email)
     forgotten_password = current_user.password
 
