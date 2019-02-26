@@ -1,6 +1,3 @@
-'''
-Data class to store information about Units of values
-'''
 import logging
 from datetime import datetime
 from typing import NoReturn
@@ -35,7 +32,7 @@ class Unit(db.Model):
     # Temporary commenting
     # attributes = db.relationship('Attributes', backref='unit', lazy=True)
 
-    def __init__(self, _type, description, timestamp=None) -> None:
+    def __init__(self, _type: str, description: str, timestamp: datetime = None) -> None:
         """ Instantiate the Unit database model object"""
         self.symbol = _type
         self.description = description
@@ -65,7 +62,7 @@ class Unit(db.Model):
         except IntegrityError as ie:
             logger.error(ie)
             db.session.rollback()
-            print(self.symbol, 'unit already exists')
+            logger.warning("Unit already exists: {}".format(self.symbol))
 
     def commit(self) -> NoReturn:
         """ Commits session changes to the database"""
@@ -79,7 +76,7 @@ class Unit(db.Model):
         except IntegrityError as ie:
             db.session.rollback()
             logger.error(ie)
-            print(self.symbol, 'unit does not exist')
+            logger.warning("Unit does not exists: {}".format(self.symbol))
 
     @classmethod
     def get(cls) -> [db.Model]:
@@ -87,14 +84,14 @@ class Unit(db.Model):
         return Unit.query.all()
 
     @classmethod
-    def get_with_limit(cls, limit) -> [db.Model]:
+    def get_with_limit(cls, limit: int) -> [db.Model]:
         """ Fetches unit entries from the db with a maximum count of <limit>"""
         return Unit.query.limit(limit)
 
     @classmethod
-    def get_by_id(cls, id) -> db.Model:
+    def get_by_id(cls, unit_id: int) -> db.Model:
         """ Fetches a unit by its id """
-        return Unit.query.filter_by(id=id).first()
+        return Unit.query.filter_by(id=unit_id).first()
 
     @classmethod
     def get_by_symbol(cls, symbol: str) -> db.Model:
