@@ -3,6 +3,10 @@ import pytest
 from app import create_app
 from db import db
 from models.users import Users
+from sqlalchemy.exc import IntegrityError
+
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture()
@@ -39,8 +43,8 @@ def dummy_user() -> db.Model:
         yield user
         db.session.delete(user)
         db.session.commit()
-    except Exception as e:
-        pass
+    except IntegrityError as ie:
+        logger.error("Cannot delete user {} as they do not exist".format(user.email))
 
 
 def test_forgot_password(test_client, dummy_user: db.Model):
@@ -60,5 +64,3 @@ def test_forgot_password(test_client, dummy_user: db.Model):
 
     updated_user = Users.find_by_email(dummy_user.email)
     assert forgotten_password != updated_user.password
-
-
