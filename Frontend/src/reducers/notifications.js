@@ -1,5 +1,6 @@
 import {
   SAVE_LAYOUT_FULFILLED,
+  SAVE_LAYOUT_REJECTED,
   UPDATE_LAYOUT,
   HIDE_NOTIFICATION,
   CREATE_NEW_USER_FULFILLED,
@@ -21,7 +22,18 @@ export default (state=initialState, action={}) => {
         ...state,
         message: 'Layout Saved',
         showAlert: true,
-        variant: 'successNotification'
+        variant: 'successNotification',
+        error: ''
+      }
+    }
+
+    case SAVE_LAYOUT_REJECTED: {
+      return {
+        ...state,
+        message: 'Problem Saving Layout',
+        showAlert: true,
+        variant: 'failureNotification',
+        error: action.payload,
       }
     }
 

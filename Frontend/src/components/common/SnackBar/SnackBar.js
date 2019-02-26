@@ -65,7 +65,7 @@ class SimpleSnackbar extends React.Component {
           ContentProps={{
             'aria-describedby': 'message-id',
           }}>
-          <SnackbarContent message={<span id="message-id">{this.props.notification.message}</span>}
+          <SnackbarContent message={<span id="message-id">{this.props.notification.message}<br/>{this.props.notification.error}</span>}
                            className={classes[this.props.notification.variant]} action={this.renderIcon()}/>
         </Snackbar>
 

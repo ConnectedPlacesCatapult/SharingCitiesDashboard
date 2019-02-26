@@ -188,8 +188,7 @@ export const saveLayout = () => {
     axiosInstance.post('/widgets/save_layouts', newLayoutObject).then((response) => {
 
       dispatch({
-        type: SAVE_LAYOUT_FULFILLED,
-        payload: cleanedLayout,
+        type: SAVE_LAYOUT_FULFILLED
       })
 
       setTimeout(() => {
@@ -198,12 +197,17 @@ export const saveLayout = () => {
         })
       }, 2000)
 
-    .catch((err) => {
+    .catch((error) => {
         dispatch({
           type: SAVE_LAYOUT_REJECTED,
-          payload: err,
+          payload: error.statusText,
         })
       })
+      setTimeout(() => {
+        dispatch({
+          type: HIDE_NOTIFICATION,
+        })
+      }, 5000)
     })
   }
 };
