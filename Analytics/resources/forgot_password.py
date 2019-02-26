@@ -27,7 +27,7 @@ class ForgotPassword(Resource):
     the corresponding response code
 
     NOTE: The Sendgrid API key has to be set in the OS environment variables in
-    order for the forgot password email to be set. Use the commands below
+    order for the forgot password email to be sent. Use the commands below
     : echo "export SENDGRID_API_KEY='YOUR_API_KEY'" > sendgrid.env
     : source ./sendgrid.env
     """
