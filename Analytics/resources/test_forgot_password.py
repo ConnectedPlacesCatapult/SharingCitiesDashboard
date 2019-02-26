@@ -1,5 +1,6 @@
 import pytest
 
+import flask.testing
 from app import create_app
 from db import db
 from models.users import Users
@@ -47,10 +48,15 @@ def dummy_user() -> db.Model:
         logger.error("Cannot delete user {} as they do not exist".format(user.email))
 
 
-def test_forgot_password(test_client, dummy_user: db.Model):
+def test_forgot_password(test_client: flask.testing.FlaskClient, dummy_user:
+db.Model):
     """
     Test whether email is sent successfully and password has changed in
     the database
+    :param test_client: a mock server that can be used to send requests which
+    have been exposed by the Flask application
+    :param dummy_user: A mock user that is persisted in the database 
+    for the duration of the test
     """
     
     current_user = Users.find_by_email(dummy_user.email)
