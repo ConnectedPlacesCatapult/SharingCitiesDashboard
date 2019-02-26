@@ -119,13 +119,8 @@ export const fetchLayout = () => {
       userID: userID
     };
     axiosInstance.post('/widgets/get_layouts', requestData).then((response) => {
-
       const layoutReceived = response.data
-
-      console.log("layoutReceived", layoutReceived)
-
       const layoutFixed = []
-
       for (let i = 0; i < layoutReceived.length; i++) {
         const layoutItem = {
           i: layoutReceived[i].id,
@@ -136,7 +131,6 @@ export const fetchLayout = () => {
         }
         layoutFixed.push(layoutItem)
       }
-
       dispatch({
         type: FETCH_LAYOUT_FULFILLED,
         payload: layoutFixed,
