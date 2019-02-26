@@ -62,12 +62,11 @@ def test_create_widget_endpoint() -> NoReturn:
     200
     """
     global dependencies
-    print(dependencies.user.id)
+    assert dependencies.user.id
     response = dependencies.client.post('/widgets/create_widget', json=dependencies.get_widget_data(),
                                         headers=dependencies.auth_header,
                                         follow_redirects=True)
     assert response.status_code == 200
-    print(response.get_json())
 
 
 def test_list_all_widgets_endpoint() -> NoReturn:
@@ -109,7 +108,7 @@ def test_create_widget_endpoint_no_data() -> NoReturn:
     Tests the '/widgets/create_widget' sends the correct status code 400 when no widget data is sent
     """
     global dependencies
-    print(dependencies.user.id)
+    assert dependencies.user.id
     response = dependencies.client.post('/widgets/create_widget', json={},
                                         headers=dependencies.auth_header,
                                         follow_redirects=True)
