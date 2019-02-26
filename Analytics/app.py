@@ -29,7 +29,11 @@ from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import RequestForData
-
+from resources.units.add_new_unit import AddUnitOfMeasurement
+from resources.units.delete_unit import DeleteUnitOfMeasurement
+from resources.units.get_unit import GetUnitOfMeasure
+from resources.units.get_all_units import GetAllUnitsOfMeasure
+from resources.units.update_unit import UpdateUnitOfMeasure
 
 def create_app(**config_overrides):
     app = Flask(__name__)
@@ -73,7 +77,7 @@ def create_app(**config_overrides):
         :param decrypted_token: Decrypted version of a user's JWT
         :type decrypted_token: string
         :return: Whether the decrypted token is present in revoked tokens table
-        :rtype: boolean
+        :rtype: bool
         """
         jti = decrypted_token['jti']
         return RevokedTokens.is_jti_blacklisted(jti)
@@ -96,7 +100,7 @@ def create_app(**config_overrides):
         :param user: Users model
         :type user: Users instance
         :return: Identifier for a JWT
-        :rtype: string
+        :rtype: str
         """
         return user.email
 
@@ -132,5 +136,12 @@ def create_app(**config_overrides):
     api.add_resource(ChangeUserPassword, '/admin/change_user_password')
     api.add_resource(DeleteUser, '/admin/delete_user')
     api.add_resource(EditUser, '/admin/edit_user')
+
+    api.add_resource(AddUnitOfMeasurement, '/admin/units/add')
+    api.add_resource(DeleteUnitOfMeasurement, '/admin/units/delete')
+    api.add_resource(GetUnitOfMeasure, '/admin/units/get')
+    api.add_resource(GetAllUnitsOfMeasure, '/admin/units/get_all')
+    api.add_resource(UpdateUnitOfMeasure, '/admin/units/update')
+
 
     return app
