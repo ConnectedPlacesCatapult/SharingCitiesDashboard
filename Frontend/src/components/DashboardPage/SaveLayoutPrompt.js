@@ -64,7 +64,7 @@ class SaveLayoutPrompt extends React.Component {
               aria-label="Close"
               color="default"
               className={classes.close}
-              onClick={() => this.props.dismissSaveLayout}
+              onClick={this.props.dismissSaveLayout}
             >
               <CloseIcon/>
             </IconButton>,

@@ -16,7 +16,7 @@ import {
   LOAD_WIDGET_REJECTED,
   TOGGLE_MAP_TOOLTIP_FIELD,
 } from "./../constants";
-import {FETCH_ADMIN_FULFILLED, FETCH_ADMIN_REJECTED, HIDE_NOTIFICATION} from "../constants";
+import {FETCH_ADMIN_FULFILLED, FETCH_ADMIN_REJECTED, HIDE_NOTIFICATION, SAVE_LAYOUT_REJECTED} from "../constants";
 
 /**
  * Simply returns true if a record object contains both "Latitude" and "Longitude" fields
@@ -219,11 +219,16 @@ export const saveWidget = () => {
         })
       }, 2000)
     })
-      .catch((err) => {
+      .catch((error) => {
         dispatch({
           type: SAVE_WIDGET_REJECTED,
-          payload: err,
+          payload: error.statusText,
         })
       })
+      setTimeout(() => {
+      dispatch({
+        type: HIDE_NOTIFICATION,
+      })
+    }, 5000)
   };
 };

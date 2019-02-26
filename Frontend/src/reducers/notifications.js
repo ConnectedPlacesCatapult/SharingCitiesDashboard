@@ -5,7 +5,8 @@ import {
   HIDE_NOTIFICATION,
   CREATE_NEW_USER_FULFILLED,
   DELETE_USER_FULFILLED,
-  SAVE_WIDGET_FULFILLED
+  SAVE_WIDGET_FULFILLED,
+  SAVE_WIDGET_REJECTED
 } from "./../constants";
 
 const initialState = {
@@ -61,6 +62,16 @@ export default (state=initialState, action={}) => {
         message: 'Widget Saved and Added to Dashboard',
         showAlert: true,
         variant: 'successNotification'
+      }
+    }
+
+    case SAVE_WIDGET_REJECTED: {
+      return {
+        ...state,
+        message: 'Problem Saving Widget',
+        showAlert: true,
+        variant: 'failureNotification',
+        error: action.payload
       }
     }
 
