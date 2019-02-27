@@ -44,6 +44,14 @@ class Theme(db.Model):
             db.session.rollback()
             print(self.name, 'theme already exists')
 
+    def delete(self):
+        try:
+            db.session.delete(self)
+            db.session.flush()
+        except IntegrityError as ie:
+            db.session.rollback()
+            print(self.name, 'theme does not exists')
+
     def commit(self):
         db.session.commit()
 
@@ -55,6 +63,11 @@ class Theme(db.Model):
     def get_by_name(cls, name: str) -> db.Model:
         """Fetches a them instance by name from the database"""
         return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def get_by_id(cls, id: str) -> db.Model:
+        """Fetches a them instance by its id from the database"""
+        return cls.query.filter_by(id=id).first()
 
 
 class SubTheme(db.Model):
@@ -93,6 +106,14 @@ class SubTheme(db.Model):
         except IntegrityError as ie:
             db.session.rollback()
             print(self.name, 'sub theme already exists')
+
+    def delete(self):
+        try:
+            db.session.delete(self)
+            db.session.flush()
+        except IntegrityError as ie:
+            db.session.rollback()
+            print(self.name, 'sub theme does not exists')
 
     def commit(self):
         db.session.commit()

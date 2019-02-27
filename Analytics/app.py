@@ -31,6 +31,7 @@ from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import RequestForData
 from resources.themes import AddTheme
+from resources.themes import DeleteTheme
 from resources.themes import RenameTheme
 
 
@@ -140,5 +141,6 @@ def create_app(**config_overrides):
     # Theme Endpoints
     api.add_resource(AddTheme, '/admin/themes/add_theme')
     api.add_resource(RenameTheme, '/admin/themes/rename_theme')
+    api.add_resource(DeleteTheme, '/admin/themes/delete_theme')
 
     return app

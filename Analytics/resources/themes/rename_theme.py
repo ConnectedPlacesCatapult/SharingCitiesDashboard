@@ -46,7 +46,7 @@ class RenameTheme(Resource):
                     }, HTTPStatus.BAD_REQUEST)
 
         # does the theme exist?
-        theme = Theme.get_by_name(args["current_name"])
+        theme = Theme.get_by_name(args["name"]) if "name" in args else Theme.get_by_name(args["id"])
         if not theme:
             # cannot rename a theme that does not exist.
             return {'error': 'Theme does not exists.', 'id': " ", 'name': args["current_name"]}, HTTPStatus.BAD_REQUEST
