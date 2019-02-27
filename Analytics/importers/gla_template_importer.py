@@ -15,7 +15,7 @@ import numpy as np
 
 ### Instantiating the config.yml file and referencing the the relevant api details
 config = get_config()
-config = config[config['environment']]['gla_temaplate_importer']
+config = config[config['environment']]['gla_template_importer']
 
 ### Assigning the api details to variables
 API_NAME = config['API_NAME']
@@ -104,3 +104,4 @@ class GLATemplateImporter(BaseImporter):
 
     def _refresh_token(self, *args):
         print('Token expired Refresh it manually')
+        
