@@ -81,7 +81,7 @@ class ForgotPassword(Resource):
         Send email to a user containing their new system generated password
         """
 
-        text_version = """\
+        text_version = """\n
             Hi {username}
             
             You requested for your password to be reset. \n
