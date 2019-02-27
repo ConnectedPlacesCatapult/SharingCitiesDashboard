@@ -20,7 +20,7 @@ class ForgotPasswordTestCase(unittest.TestCase):
         self.testing_client_context = self.test_app.app_context()
         self.testing_client_context.push()
 
-        self.dummy_user = Users("Keaton", "keaton@dotmodus.com",
+        self.dummy_user = Users("Joey", "joey@FCC.com",
                                 Users.generate_hash( "1234".encode(
                                  "utf8")).decode("utf8"), True, True)
         self.dummy_user.save()
