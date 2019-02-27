@@ -1,10 +1,12 @@
 '''
 Data table to store information about Themes
 '''
-import json
-from db import db
 from datetime import datetime
+
 from sqlalchemy.exc import IntegrityError
+
+from db import db
+
 
 class Theme(db.Model):
     __tablename__ = 'theme'
@@ -48,6 +50,11 @@ class Theme(db.Model):
     @classmethod
     def get_all(self):
         return Theme.query.all()
+
+    @classmethod
+    def get_by_name(cls, name: str) -> db.Model:
+        """Fetches a them instance by name from the database"""
+        return cls.query.filter_by(name=name).first()
 
 
 class SubTheme(db.Model):

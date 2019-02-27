@@ -24,12 +24,13 @@ from resources.admin.get_user import GetUserByEmail
 from resources.admin.user_list import UsersList
 from resources.admin.user_permissions import UserPermissions
 from resources.analytics import Analytics
+from resources.forgot_password import ForgotPassword
 from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import RequestForData
-from resources.forgot_password import ForgotPassword
+from resources.themes import AddTheme
 
 
 def create_app(**config_overrides):
@@ -134,5 +135,8 @@ def create_app(**config_overrides):
     api.add_resource(ChangeUserPassword, '/admin/change_user_password')
     api.add_resource(DeleteUser, '/admin/delete_user')
     api.add_resource(EditUser, '/admin/edit_user')
+
+    # Theme Endpoints
+    api.add_resource(AddTheme, '/admin/themes/add_theme')
 
     return app
