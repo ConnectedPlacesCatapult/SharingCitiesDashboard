@@ -13,6 +13,7 @@ import {
   MuiPickersUtilsProvider,
   DateTimePicker,
 } from 'material-ui-pickers';
+import moment from 'moment';
 import MomentUtils from '@date-io/moment';
 import { Slider } from 'material-ui-slider';
 import { connect } from 'react-redux';
@@ -28,21 +29,24 @@ const styles = (theme) => ({
   },
 });
 
-const getLowestAttributeValue = (data, attr) => {
-  return data.reduce((min, p) => p[attr] < min ? p[attr] : min, data[0][attr])
+const getOldestTimestamp = (data) => {
+  return data
+    .map((attr) => attr["Attribute_Values"].reduce((min, current) => current["Timestamp"] < min ? current["Timestamp"] : min, attr["Attribute_Values"][0]["Timestamp"]))
+    .reduce((min, current) => (current < min) ? current : min, data[0]["Attribute_Values"][0]["Timestamp"]);
 };
 
-const getHighestAttributeValue = (data, attr) => {
-  return data.reduce((max, p) => p[attr] > max ? p[attr] : max, data[0][attr]);
+const getLatestTimestamp = (data) => {
+  return data
+    .map((attr) => attr["Attribute_Values"].reduce((max, current) => current["Timestamp"] > max ? current["Timestamp"] : max, attr["Attribute_Values"][0]["Timestamp"]))
+    .reduce((max, current) => (current > max) ? current : max, data[0]["Attribute_Values"][0]["Timestamp"]);
 };
-
 
 class TimestampFilter extends React.Component {
   constructor(props) {
     super(props);
 
-    const min = getLowestAttributeValue(props.api.data, 'Timestamp');
-    const max = getHighestAttributeValue(props.api.data, 'Timestamp');
+    const min = getOldestTimestamp(props.api.data);
+    const max = getLatestTimestamp(props.api.data);
 
     this.state = {
       rangeMin: min,
@@ -50,7 +54,27 @@ class TimestampFilter extends React.Component {
       from: min,
       to: max,
       now: Date.now(),
-    };
+    }
+  }
+
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    api: PropTypes.object.isRequired,
+  };
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.api.data !== this.props.api.data) {
+      const min = getOldestTimestamp(this.props.api.data);
+      const max = getLatestTimestamp(this.props.api.data);
+
+      this.setState({
+        rangeMin: min,
+        rangeMax: max,
+        from: min,
+        to: max,
+        now: Date.now(),
+      })
+    }
   }
 
   handlePickerChange = (name) => (date) =>  {
@@ -65,24 +89,28 @@ class TimestampFilter extends React.Component {
   };
 
   render() {
-    const { classes, theme } = this.props;
+    const { classes, heading, subheading, theme } = this.props;
+    const { from, to, rangeMin, rangeMax } = this.state;
+
+    /*const t = moment.unix(from);
+    console.log(t);*/
 
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <form className={classes.root}>
-          {this.props.heading &&
+          {heading &&
             <Typography variant="h6" className={classes.heading}>
-              {this.props.heading}
+              {heading}
             </Typography>
           }
-          {this.props.subheading &&
+          {subheading &&
             <Typography variant="body2" color="primary">
-              {this.props.subheading}
+              {subheading}
             </Typography>
           }
           <FormControl className={classes.formControl}>
             <DateTimePicker
-              value={this.state.from}
+              value={from}
               onChange={this.handlePickerChange('from')}
               label="From"
               format="llll"
@@ -100,7 +128,7 @@ class TimestampFilter extends React.Component {
           </FormControl>
           <FormControl className={classes.formControl}>
             <DateTimePicker
-              value={this.state.to}
+              value={to}
               onChange={this.handlePickerChange('to')}
               label="To"
               format="llll"
@@ -116,17 +144,18 @@ class TimestampFilter extends React.Component {
               }}
             />
           </FormControl>
-          <FormControl className={classes.formControl}>
+          {/* ToDo :: get this to parse to state datetimes to timestamp and re-enable it */}
+          {/*<FormControl className={classes.formControl}>
             <FormLabel>Range</FormLabel>
             <Slider
               range={true}
-              min={this.state.rangeMin}
-              max={this.state.rangeMax}
-              value={[this.state.from, this.state.to]}
+              min={rangeMin}
+              max={rangeMax}
+              value={[from, to]}
               color={theme.palette.primary.main}
               onChange={this.handleSliderChange}
             />
-          </FormControl>
+          </FormControl>*/}
         </form>
       </MuiPickersUtilsProvider>
     )
@@ -135,7 +164,6 @@ class TimestampFilter extends React.Component {
 
 const mapStateToProps = (state) => ({
   api: state.api,
-  widget: state.widget,
 });
 
 const mapDispatchToProps = (dispatch) => ({

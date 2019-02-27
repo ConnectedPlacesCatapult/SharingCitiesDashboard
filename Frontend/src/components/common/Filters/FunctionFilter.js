@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   InputLabel,
   FormControl,
@@ -24,6 +25,11 @@ class FunctionFilter extends React.Component {
   state = {
     aggregate: '',
     value: '',
+  };
+
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+
   };
 
   handleChange = (e) => {
@@ -68,10 +74,9 @@ class FunctionFilter extends React.Component {
 
 const mapStateToProps = (state) => ({
   api: state.api,
-  widget: state.widget,
 });
 
 FunctionFilter = withStyles(styles)(FunctionFilter);
-FunctionFilter = connect(mapStateToProps, null)(FunctionFilter);
+FunctionFilter = connect(mapStateToProps, {})(FunctionFilter);
 
 export default FunctionFilter

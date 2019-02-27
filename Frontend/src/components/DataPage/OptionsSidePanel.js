@@ -14,7 +14,7 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import {
   FunctionFilter,
   TimestampFilter,
-  TypeFilter
+  SensorFilter,
 } from './../common/Filters';
 
 const styles = (theme) => ({
@@ -51,17 +51,17 @@ class OptionsSidePanel extends React.Component {
     return (
       <div className={classes.root}>
         <Paper className={classes.paper}>
-          <TypeFilter
-            heading="Filter by value"
-            subheading="Apply value specific filters to this data"
+          <SensorFilter
+            heading="Filter by sensor"
+            subheading="Limit the data for all selected attributes by sensor name"
           />
           <Divider
             className={classes.divider}
             light={true}
           />
           <TimestampFilter
-            heading="DateTime Range"
-            subheading="Specify 'to' and 'from' timestamps"
+            heading="Filter by time"
+            subheading="Specify 'from' and 'to' timestamps"
           />
           <Divider
             className={classes.divider}

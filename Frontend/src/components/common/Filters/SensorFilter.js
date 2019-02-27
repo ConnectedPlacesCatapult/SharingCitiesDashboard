@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
   InputLabel,
@@ -30,10 +30,18 @@ const styles = (theme) => ({
   },
 });
 
-class TypeFilter extends React.Component {
+class SensorFilter extends React.Component {
   state = {
     sensor: '',
     attribute: '',
+  };
+
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    api: PropTypes.object.isRequired,
+    // filters: PropTypes.object.isRequired,
+    // clearFilters: PropTypes.func.isRequired,
+    // toggleFilter: PropTypes.func.isRequired,
   };
 
   handleChange = (e) => {
@@ -48,9 +56,6 @@ class TypeFilter extends React.Component {
     const uniqueSensors = [...new Set(api.data.map(attr => attr['Attribute_Values'].map(val => val['Name'])).flat().sort())];
     const sensorMenuItems = uniqueSensors.map((sensor, i) => <MenuItem key={i} value={sensor}>{sensor}</MenuItem>);
 
-    //const uniqueAttributes = [...new Set(api.data.map((record) => record['Attribute_Name']))].sort();
-    //const attributeMenuItems = uniqueAttributes.map((sensor, i) => <MenuItem key={i} value={sensor}>{sensor}</MenuItem>);
-
     return (
       <form className={classes.root}>
         {this.props.heading &&
@@ -64,12 +69,12 @@ class TypeFilter extends React.Component {
           </Typography>
         }
         <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="sensor-filter">by Sensor</InputLabel>
+          {/*<InputLabel htmlFor="sensor-filter">by Sensor</InputLabel>*/}
           <Select
             value={this.state.sensor}
             onChange={this.handleChange}
             inputProps={{
-              name: 'Name',
+              name: 'sensor',
               id: 'sensor-filter',
             }}
           >
@@ -77,20 +82,6 @@ class TypeFilter extends React.Component {
             {sensorMenuItems}
           </Select>
         </FormControl>
-        {/*<FormControl className={classes.formControl}>
-          <InputLabel htmlFor="attribute-filter">by Attribute</InputLabel>
-          <Select
-            value={this.state.attribute}
-            onChange={this.handleChange}
-            inputProps={{
-              name: 'attribute',
-              id: 'attribute-filter',
-            }}
-          >
-            <MenuItem value=""><em>None</em></MenuItem>
-            {attributeMenuItems}
-          </Select>
-        </FormControl>*/}
       </form>
     )
   }
@@ -106,7 +97,7 @@ const mapDispatchToProps = (dispatch) => ({
   //toggleFilter: (type, field, ...rest) => dispatch(toggleFilter(type, field, ...rest)),
 });
 
-TypeFilter = withStyles(styles)(TypeFilter);
-TypeFilter = connect(mapStateToProps, mapDispatchToProps)(TypeFilter);
+SensorFilter = withStyles(styles)(SensorFilter);
+SensorFilter = connect(mapStateToProps, mapDispatchToProps)(SensorFilter);
 
-export default TypeFilter
+export default SensorFilter

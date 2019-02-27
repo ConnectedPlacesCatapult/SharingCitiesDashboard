@@ -1,9 +1,9 @@
 import FunctionFilter from './FunctionFilter';
-import TypeFilter from './TypeFilter';
+import SensorFilter from './SensorFilter';
 import TimestampFilter from './TimestampFilter';
 
 export {
   FunctionFilter,
+  SensorFilter,
   TimestampFilter,
-  TypeFilter,
 }
