@@ -15,21 +15,18 @@ class DeleteTheme(Resource):
 
     def __init__(self) -> None:
         """
-        renames a existing Theme entry in the database
+        Sets the required arguments to be in the POST request
         """
         self.reqparser = reqparse.RequestParser()
-        self.reqparser.add_argument('name', required=False, store_missing=False,
-                                    type=str, help='Current theme name required',
-                                    location=['form', 'json'])
-        self.reqparser.add_argument('id', required=False, store_missing=False, type=str,
-                                    help='New theme name required', location=['form', 'json'])
+        self.reqparser.add_argument('name', required=False, store_missing=False, type=str, location=['form', 'json'])
+        self.reqparser.add_argument('id', required=False, store_missing=False, type=str, location=['form', 'json'])
 
     @jwt_required
     def post(self) -> ({str: str}, HTTPStatus):
         """
-        delete an existing Theme entry in the database
-        :post_argument  name: the name of the theme to be deleted
-        :post_argument id: id of the theme to be deleted
+        Delete an existing Theme entry in the database.
+        :post_argument  name: the name of the theme to be deleted.
+        :post_argument id: id of the theme to be deleted.
         :post_type  name: str
         :post_type  id: str
         """

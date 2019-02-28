@@ -14,7 +14,7 @@ class RenameTheme(Resource):
 
     def __init__(self) -> None:
         """
-        renames a existing Theme entry in the database
+        Sets the required arguments to be in the POST request
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('current_name', required=True, type=str, help='Current theme name required',

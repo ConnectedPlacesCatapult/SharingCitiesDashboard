@@ -14,7 +14,9 @@ class AddTheme(Resource):
 
     def __init__(self) -> None:
         """
-        Creates a new Theme entry in the database
+        Sets the required arguments to be in the POST request
+        :post_argument  name: the name of the new theme
+        :post_type  name: str
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('name', required=True, type=str, help='Theme name required',

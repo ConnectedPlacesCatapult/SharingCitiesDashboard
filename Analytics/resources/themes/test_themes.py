@@ -78,6 +78,11 @@ class TestAddTheme(TestCase):
         return {'Authorization': 'Bearer {}'.format(response_login_json["access_token"])}
 
     def test_add_theme(self):
+        """
+        Creates a new theme and checks the client response status code for http status 200 (OK)
+        The response JSON data is then checked for the expected message 'New theme created' and
+        Theme name
+        """
         response = self.client.post('/admin/themes/add_theme', json={"name": "_test_add_theme_"},
                                     headers=self.auth_header)
         self.assertEqual(response.status_code, HTTPStatus.OK)
@@ -87,6 +92,11 @@ class TestAddTheme(TestCase):
         self.assertEqual(json_response["name"], "_test_add_theme_")
 
     def test_rename_theme(self):
+        """
+        Renames a theme and checks the client response status code for http status 200 (OK)
+        The response JSON data is then checked for the expected message 'heme renamed' and
+        Theme new name is correct
+        """
         theme = self.create_dummy_theme()
 
         response = self.client.post('/admin/themes/rename_theme', json={"current_name": "_test_add_theme_",
@@ -98,12 +108,15 @@ class TestAddTheme(TestCase):
         self.assertEqual(response["new_name"], "_emeht_dda_tset_")
 
     def test_delete_theme(self):
+        """
+        Deletes a theme and checks the client response status code for http status 204 (NO_CONTENT)
+        """
         theme = self.create_dummy_theme()
         response = self.client.post('/admin/themes/delete_theme', json={"name": theme.name}, headers=self.auth_header)
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
     def tearDown(self):
-
+        """ Handels the cleanup after the tests"""
         for theme_id in self.dummy_ids:
             theme = Theme.get_by_id(theme_id)
             if theme:
