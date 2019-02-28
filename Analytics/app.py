@@ -30,9 +30,15 @@ from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import RequestForData
+from resources.themes import AddSubTheme
 from resources.themes import AddTheme
 from resources.themes import DeleteTheme
+from resources.themes import RenameSubTheme
 from resources.themes import RenameTheme
+from resources.units import AddUnit
+from resources.units import DeleteUnit
+from resources.units import GetUnits
+from resources.units import UpdateUnit
 
 
 def create_app(**config_overrides):
@@ -142,5 +148,15 @@ def create_app(**config_overrides):
     api.add_resource(AddTheme, '/admin/themes/add_theme')
     api.add_resource(RenameTheme, '/admin/themes/rename_theme')
     api.add_resource(DeleteTheme, '/admin/themes/delete_theme')
+
+    # Sub Theme Endpoints
+    api.add_resource(AddSubTheme, '/admin/themes/add_subtheme')
+    api.add_resource(RenameSubTheme, '/admin/themes/rename_subtheme')
+
+    # Unit Endpoint
+    api.add_resource(AddUnit, '/admin/units/add_unit')
+    api.add_resource(GetUnits, '/admin/units/get_units')
+    api.add_resource(DeleteUnit, '/admin/units/delete_unit')
+    api.add_resource(UpdateUnit, '/admin/units/update_unit')
 
     return app

@@ -7,13 +7,13 @@ from flask.ctx import AppContext
 from flask.testing import FlaskClient
 
 from app import create_app
-from models.theme import Theme
+from models.unit import Unit
 from models.users import Users
 
 
 class TestAddTheme(TestCase):
     """
-    Unittest for the creation, renaming and deleting of Themes
+    Unittest for the creation, updating and deleting of Units
     """
 
     def setUp(self):
@@ -26,6 +26,11 @@ class TestAddTheme(TestCase):
         self.auth_header = self.get_auth_header()
         self.dummy_ids = []
 
+        unit = next(iter(Unit.get_by(_type="_NOT_A_UNIT_")), None)
+        if unit:
+            unit.delete()
+            unit.commit()
+
     def create_test_client(self) -> (FlaskClient, AppContext):
         """
         Creates a flask client for testing
@@ -37,19 +42,20 @@ class TestAddTheme(TestCase):
         test_app_context.push()
         return testing_client, test_app_context
 
-    def create_dummy_theme(self) -> Theme:
+    def create_dummy_unit(self) -> Unit:
         """
-        Creates an theme for the tests
-        :return: a Theme instance for tests
+        Creates an Unit for the tests
+        :return: a Unit instance for tests
         """
-        theme = Theme.get_by_name("_test_add_theme_")
-        if not theme:
-            theme = Theme("_test_add_theme_")
-            theme.save()
-            theme.commit()
-            self.dummy_ids.append(theme.id)
-            return theme
-        return theme
+        unit = next(iter(Unit.get_by(_type="_NOT_A_UNIT_")), None)
+
+        if not unit:
+            unit = Unit("_NOT_A_UNIT_", "testunit")
+            unit.save()
+            unit.commit()
+            self.dummy_ids.append(unit.id)
+            return unit
+        return unit
 
     def create_admin_user(self) -> Users:
         """
@@ -77,51 +83,62 @@ class TestAddTheme(TestCase):
         response_login_json = response_login.get_json()
         return {'Authorization': 'Bearer {}'.format(response_login_json["access_token"])}
 
-    def test_add_theme(self):
+    def test_add_Unit(self):
         """
-        Creates a new theme and checks the client response status code for http status 200 (OK)
-        The response JSON data is then checked for the expected message 'New theme created' and
-        Theme name
+        Creates a new Unit and checks the client response status code for http status 200 (OK)
+        The response JSON data is then checked for the expected message 'New unit created',
+        _type and description
         """
-        response = self.client.post('/admin/themes/add_theme', json={"name": "_test_add_theme_"},
+        response = self.client.post('/admin/units/add_unit', json={"_type": "_NOT_A_UNIT_", "description": "testunit"},
                                     headers=self.auth_header)
+
         self.assertEqual(response.status_code, HTTPStatus.OK)
         json_response = response.get_json()
         self.dummy_ids.append(json_response["id"])
-        self.assertEqual(json_response["message"], "New theme created")
-        self.assertEqual(json_response["name"], "_test_add_theme_")
+        self.assertEqual(json_response["message"], "New unit created")
+        self.assertEqual(json_response["_type"], "_NOT_A_UNIT_")
+        self.assertEqual(json_response["description"], "testunit")
 
-    def test_rename_theme(self):
+    def test_update_unit(self):
         """
-        Renames a theme and checks the client response status code for http status 200 (OK)
-        The response JSON data is then checked for the expected message 'heme renamed' and
-        Theme new name is correct
+        Updates a unit and checks the client response status code for http status 200 (OK)
+        The response JSON data is then checked that the id matches the unit updated and that the
+        type and description is correct
         """
-        theme = self.create_dummy_theme()
+        unit = self.create_dummy_unit()
 
-        response = self.client.post('/admin/themes/rename_theme', json={"current_name": "_test_add_theme_",
-                                                                        "new_name": "_emeht_dda_tset_"
-                                                                        }, headers=self.auth_header)
+        response = self.client.post('/admin/units/update_unit', json={"_type": unit._type, "new_type": "<_NOT_A_UNIT_>",
+                                                                      "new_description": "new_description"
+                                                                      }, headers=self.auth_header)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         response = response.get_json()
-        self.assertEqual(response["message"], "Theme renamed")
-        self.assertEqual(response["new_name"], "_emeht_dda_tset_")
+        self.assertEqual(response["id"], unit.id)
+        self.assertEqual(response["Type"], "<_NOT_A_UNIT_>")
+        self.assertEqual(response["Description"], "new_description")
 
-    def test_delete_theme(self):
+    def test_delete_unit_by_id(self):
         """
-        Deletes a theme and checks the client response status code for http status 204 (NO_CONTENT)
+        Deletes a unit by its id and checks the client response status code for http status 204 (NO_CONTENT)
         """
-        theme = self.create_dummy_theme()
-        response = self.client.post('/admin/themes/delete_theme', json={"name": theme.name}, headers=self.auth_header)
+        unit = self.create_dummy_unit()
+        response = self.client.post('/admin/units/delete_unit', json={"id": unit.id}, headers=self.auth_header)
+        self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+
+    def test_delete_unit_by_type(self):
+        """
+        Deletes a unit by its type and checks the client response status code for http status 204 (NO_CONTENT)
+        """
+        unit = self.create_dummy_unit()
+        response = self.client.post('/admin/units/delete_unit', json={"_type": unit._type}, headers=self.auth_header)
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
     def tearDown(self):
         """ Handles the cleanup after the tests"""
-        for theme_id in self.dummy_ids:
-            theme = Theme.get_by_id(theme_id)
-            if theme:
-                theme.delete()
-                theme.commit()
+        for unit_id in self.dummy_ids:
+            unit = Unit.get_by_id(unit_id)
+            if unit:
+                unit.delete()
+                unit.commit()
 
         self.client.post('/logout', headers=self.auth_header)
 

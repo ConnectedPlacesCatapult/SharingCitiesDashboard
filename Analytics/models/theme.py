@@ -125,5 +125,12 @@ class SubTheme(db.Model):
     @classmethod
     def get_by_theme_id(cls, theme_id):
         return SubTheme.query.filter_by(t_id=theme_id).all()
-        
-        
+
+    @classmethod
+    def get_by(cls, **kwargs):
+        return cls.query.filter_by(**kwargs).first()
+
+    @classmethod
+    def get_by_name(cls, name: str) -> db.Model:
+        """Fetches a them instance by name from the database"""
+        return cls.query.filter_by(name=name).first()

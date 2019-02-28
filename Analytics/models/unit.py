@@ -1,9 +1,12 @@
 '''
 Data class to store information about Units of values
 '''
-from db import db
 from datetime import datetime
+
 from sqlalchemy.exc import IntegrityError
+
+from db import db
+
 
 class Unit(db.Model):
     __tablename__ = 'unit'
@@ -33,12 +36,20 @@ class Unit(db.Model):
             'id': self.id,
             'Type': self._type,
             'Description': self.description,
-            'Timestamp': self.timestamp
+            'Timestamp': self.timestamp.__str__()
         }
 
     def save(self):
         try:
             db.session.add(self)
+            db.session.flush()
+        except IntegrityError as ie:
+            db.session.rollback()
+            print(self._type, 'unit already exists')
+
+    def delete(self):
+        try:
+            db.session.delete(self)
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
@@ -54,3 +65,8 @@ class Unit(db.Model):
     @classmethod
     def get_by_id(cls, id):
         return Unit.query.filter_by(id=id).first()
+
+    @classmethod
+    def get_by(cls, **kwargs):
+        """ Fetches a Unit entry from the database"""
+        return Unit.query.filter_by(**kwargs).all()

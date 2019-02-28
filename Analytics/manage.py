@@ -1,4 +1,6 @@
-import os, sys
+import os
+import sys
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from flask_script import Manager, Server
@@ -14,7 +16,8 @@ manager.add_command('db', MigrateCommand)
 manager.add_command('runserver', Server(
     use_debugger=True,
     use_reloader=True,
-    host='0.0.0.0'
+    host='0.0.0.0',
+    port=5000
 ))
 
 manager.add_command('remove', DropDatasource)
