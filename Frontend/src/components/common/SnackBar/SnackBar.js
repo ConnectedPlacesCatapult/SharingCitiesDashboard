@@ -76,6 +76,6 @@ class SimpleSnackbar extends React.Component {
 
 SimpleSnackbar.propTypes = {
   classes: PropTypes.object.isRequired,
-};
+}
 
-export default withStyles(styles)(SimpleSnackbar);
+export default withStyles(styles)(SimpleSnackbar)
