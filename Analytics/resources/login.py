@@ -36,7 +36,7 @@ class Login(Resource):
 		help='This field cannot be blank',
 		required=True)
 	parser.add_argument(
-		'remember', type=inputs.boolean(),
+		'remember', type=inputs.boolean,
 		store_missing=False,
 		required=True)
 
