@@ -75,6 +75,7 @@ def test_create_user(test_client, admin_user):
     db.session.delete(Users.find_by_email("new@gmail.com"))
     db.session.commit()
 
+
 def test_delete_user(test_client, admin_user, dummy_user):
     """ Test for successful deletion of a specified user by an admin and for absence of user in the database  """
     response_login = test_client.post('/login', data=dict(email=admin_user.email, password="wfnbqk"),
@@ -87,6 +88,7 @@ def test_delete_user(test_client, admin_user, dummy_user):
     assert response_delete.status_code == 204
     assert Users.find_by_email(dummy_user.email) == None
 
+
 def test_get_user(test_client, admin_user, dummy_user):
     """ Test that the correct user credentials are returned when passed a valid email """
     response_login = test_client.post('/login', data=dict(email=admin_user.email, password="wfnbqk"),
@@ -98,6 +100,7 @@ def test_get_user(test_client, admin_user, dummy_user):
                                     follow_redirects=True)
     assert response_get.status_code == 200
     assert dummy_user.email == response_get.get_json()["email"]
+
 
 def test_edit_user(test_client, admin_user, dummy_user):
     """ Test that the changes a user makes to their fullname persists to the database """
