@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_claims
 from flask_restful import Resource
 from flask_restful import reqparse
 
+from models.theme import SubTheme
 from models.theme import Theme
 
 
@@ -44,12 +45,13 @@ class DeleteTheme(Resource):
             # cannot delete a theme that does not exist.
             return {'error': 'Theme does not exists.', 'id': " ", 'name': args["name"]}, HTTPStatus.BAD_REQUEST
 
+        sub_themes = SubTheme.get_by_theme_id(theme.id)
+        for sub_theme in sub_themes:
+            sub_theme.delete()
+            sub_theme.commit()
+
         # delete the theme
         theme.delete()
         theme.commit()
 
-        return ({
-                    "message": "Theme deleted",
-                    "id": theme.id,
-                    "name": theme.name
-                }, HTTPStatus.OK)
+        return "", HTTPStatus.NO_CONTENT

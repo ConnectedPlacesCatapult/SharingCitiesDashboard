@@ -46,4 +46,4 @@ class AddTheme(Resource):
         theme.save()
         theme.commit()
 
-        return {"message": "New theme created".format(theme.name), "id": theme.id, "name": theme.name}, HTTPStatus.OK
+        return {"message": "New theme created", "id": theme.id, "name": theme.name}, HTTPStatus.OK
