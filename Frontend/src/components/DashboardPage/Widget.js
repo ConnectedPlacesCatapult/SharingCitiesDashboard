@@ -13,19 +13,37 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import InfoIcon from '@material-ui/icons/Info';
 import OpenWithIcon from '@material-ui/icons/OpenWith';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+import { promptDeleteWidget } from "./../../actions/dashboardActions";
+import {connect} from "react-redux";
 
 const styles = (theme) => ({
   widget: {
     borderRadius: '3px',
-    padding: theme.spacing.unit,
+    // padding: theme.spacing.unit,
     height: '100%',
   },
   widgetHeader: {
+    // padding: theme.spacing.unit,
     overflow: 'hidden',
+    backgroundColor: "#212121"
+  },
+  widgetDeleteConfirmation: {
+    // padding: theme.spacing.unit,
+    overflow: 'hidden',
+    backgroundColor: "#b74218"
+  },
+  widgetTitleContainer: {
+    // backgroundColor: "#fafafa",
+    display: 'block',
+    float: 'left',
   },
   widgetTitle: {
-    flexGrow: 1,
-    float: 'left',
+    color: "white",
+    paddingTop: "5px",
+    paddingLeft: "10px",
+    fontWeight: "600"
   },
   widgetButtons: {
     display: 'block',
@@ -35,6 +53,7 @@ const styles = (theme) => ({
     overflow: 'hidden',
     position: 'relative',
     height: '100%',
+    padding: theme.spacing.unit,
   },
   widgetBodyContent: {
     height: '100%',
@@ -48,14 +67,16 @@ const styles = (theme) => ({
 
 class Widget extends React.Component {
   render() {
-    const { classes, title, isStatic, type, data } = this.props;
+    const { classes, title, isStatic, type, data, i, promptDeleteWidget } = this.props;
 
     return (
       <Paper className={classes.widget}>
         <div className={classes.widgetHeader}>
-          <Typography variant="subtitle1" className={classes.widgetTitle}>
-            {title}
-          </Typography>
+          <div className={classes.widgetTitleContainer}>
+            <Typography variant="subtitle1" className={classes.widgetTitle}>
+              {title}
+            </Typography>
+          </div>
           <div className={classes.widgetButtons}>
             {
               !isStatic
@@ -67,29 +88,30 @@ class Widget extends React.Component {
                 </IconButton>
               : ''
             }
+            {/*<IconButton*/}
+              {/*color="primary"*/}
+              {/*className={classes.smallerButton}*/}
+            {/*>*/}
+              {/*<InfoIcon fontSize="small" />*/}
+            {/*</IconButton>*/}
+            {/*<IconButton*/}
+              {/*color="primary"*/}
+              {/*className={classes.smallerButton}*/}
+            {/*>*/}
+              {/*<AddCircleIcon fontSize="small" />*/}
+            {/*</IconButton>*/}
             <IconButton
+              onClick={() => promptDeleteWidget(i)}
               color="primary"
               className={classes.smallerButton}
             >
-              <InfoIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              color="primary"
-              className={classes.smallerButton}
-            >
-              <AddCircleIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              color="primary"
-              className={classes.smallerButton}
-            >
-              <SettingsIcon fontSize="small" />
+              <DeleteIcon fontSize="small" />
             </IconButton>
           </div>
         </div>
         <div className={classes.widgetBodyWrapper}>
           <div className={classes.widgetBodyContent}>
-            { type === 'plot'
+            { type === "plot"
               ? <PlotWidget spec={this.props.spec} data={data} />
               : <MapWidget tileLayer={this.props.tileLayer} data={data} />
             }
@@ -104,6 +126,15 @@ Widget.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
+const mapStateToProps = (state) => ({
+  dashboard: state.dashboard,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  promptDeleteWidget: (widgetID) => dispatch(promptDeleteWidget(widgetID)),
+});
+
 Widget = withStyles(styles, { withTheme: true })(Widget);
+Widget = connect(mapStateToProps, mapDispatchToProps)(Widget);
 
 export default Widget

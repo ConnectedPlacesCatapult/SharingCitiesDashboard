@@ -1,3 +1,7 @@
+import axios from "axios";
+import { axiosInstance } from '../api/axios'
+
+import _ from 'lodash'
 import {
   PURGE_EDITOR,
   SET_MAP_DATA,
@@ -6,6 +10,9 @@ import {
   SET_PLOT_ENCODING,
   SET_PLOT_PROPERTY,
   SET_WIDGET_PROPERTY,
+  SAVE_WIDGET_FULFILLED,
+  SAVE_WIDGET_REJECTED,
+  HIDE_NOTIFICATION,
   TOGGLE_MAP_TOOLTIP_FIELD,
 } from "./../constants";
 
@@ -187,3 +194,39 @@ export const toggleMapTooltipField = (field, checked) => ({
     checked,
   },
 });
+
+// Save Widget
+export const saveWidget = () => {
+  return (dispatch, getState) => {
+    const currentState = getState();
+
+    const widgetConfig = _.get(currentState, 'widget' )
+
+    const requestData = {
+      data: widgetConfig,
+    }
+
+    axiosInstance.post('widgets/create_widget', requestData).then((response) => {
+      dispatch({
+        type: SAVE_WIDGET_FULFILLED,
+        payload: response.data,
+      })
+      setTimeout(() => {
+        dispatch({
+          type: HIDE_NOTIFICATION,
+        })
+      }, 2000)
+    })
+      .catch((error) => {
+        dispatch({
+          type: SAVE_WIDGET_REJECTED,
+          payload: error.statusText,
+        })
+      })
+      setTimeout(() => {
+      dispatch({
+        type: HIDE_NOTIFICATION,
+      })
+    }, 5000)
+  };
+};

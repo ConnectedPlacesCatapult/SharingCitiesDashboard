@@ -301,15 +301,13 @@ class RequestForData(Resource):
 				else:
 					values = db.session.query(model).all()
 
-
-
 			_common = {
 					'Attribute_Table': attribute.table_name,
 					'Attribute_id': attribute.id,
 					'Attribute_Name': attribute.name,
 					'Attribute_Description': attribute.description,
 					'Attribute_Unit_Description': Unit.get_by_id(attribute.unit_id).description,
-					'Attribute_Unit_Value': Unit.get_by_id(attribute.unit_id)._type,
+					'Attribute_Unit_Value': Unit.get_by_id(attribute.unit_id).symbol,
 					'Total_Records': count
 					}
 			temp = []
