@@ -26,7 +26,7 @@ class DeleteTheme(Resource):
     @jwt_required
     def post(self) -> ({str: str}, HTTPStatus):
         """
-        renames a existing Theme entry in the database
+        delete an existing Theme entry in the database
         :post_argument  name: the name of the theme to be deleted
         :post_argument id: id of the theme to be deleted
         :post_type  name: str
@@ -41,7 +41,7 @@ class DeleteTheme(Resource):
         # does the theme exist?
         theme = Theme.get_by_name(args["name"]) if "name" in args else Theme.get_by_id(args["id"])
         if not theme:
-            # cannot rename a theme that does not exist.
+            # cannot delete a theme that does not exist.
             return {'error': 'Theme does not exists.', 'id': " ", 'name': args["name"]}, HTTPStatus.BAD_REQUEST
 
         # delete the theme
