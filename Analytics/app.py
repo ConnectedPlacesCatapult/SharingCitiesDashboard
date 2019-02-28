@@ -60,8 +60,8 @@ def create_app(**config_overrides):
     # # for how safely store JWTs in cookies
     # app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 
-    app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'  # TODO: change before deployement
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=1)  # TODO: change before deployement
+    app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'  # TODO: change before deployment
+    # app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=1)  # TODO: change before deployment
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
