@@ -83,7 +83,6 @@ class UserList extends React.Component {
               Add User
             </Button>
           </div>
-          <Divider />
           <Table className={classes.table}>
             <TableHead>
               <TableRow>

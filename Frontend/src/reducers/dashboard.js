@@ -3,14 +3,15 @@ import {
   FETCH_LAYOUT_FULFILLED,
   FETCH_LAYOUT_REJECTED,
   SAVE_LAYOUT_FULFILLED,
+  SAVE_LAYOUT_DISMISSED,
   UPDATE_LAYOUT,
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
   FETCH_WIDGETS_REJECTED,
   PROMPT_WIDGET_DELETE,
-  CANCEL_WIDGET_DELETE
+  CANCEL_WIDGET_DELETE,
+  DELETE_WIDGET_FULFILLED
 } from "./../constants";
-import {DELETE_WIDGET_FULFILLED} from "../constants";
 
 const initialState = {
   layout: [],
@@ -64,8 +65,15 @@ export default (state=initialState, action={}) => {
     case SAVE_LAYOUT_FULFILLED: {
       return {
         ...state,
-        layoutChanged: 0,
+        layoutChanged: 1,
         layoutSaved: true
+      }
+    }
+
+    case SAVE_LAYOUT_DISMISSED: {
+      return {
+        ...state,
+        layoutChanged: 1,
       }
     }
 

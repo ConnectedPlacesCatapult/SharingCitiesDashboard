@@ -78,7 +78,6 @@ class LoginForm extends React.Component {
 
   loginFailed = (e) => {
     this.setState({loginFailed: true, loginError: e.response.data.message})
-    console.log('failed set')
     console.log(e.response.data.message)
   };
 

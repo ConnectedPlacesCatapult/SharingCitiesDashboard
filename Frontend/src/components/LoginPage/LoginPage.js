@@ -50,7 +50,6 @@ class LoginPage extends React.Component {
   };
 
   toggleForm = () => {
-    console.log('toggled')
     this.setState({ showLogin: !this.state.showLogin });
   }
 
@@ -78,22 +77,6 @@ class LoginPage extends React.Component {
     )
   }
 }
-
-function toggleForm() {
-  console.log('form toggled')
-}
-//
-// function renderForm(showLogin) {
-//   if (showLogin) {
-//     return (
-//       <LoginForm onToggleForm={this.toggleForm}/>
-//     )
-//   } else {
-//     return (
-//       <RegisterForm/>
-//     )
-//   }
-// }
 
 LoginPage.propTypes = {
   classes: PropTypes.object.isRequired,

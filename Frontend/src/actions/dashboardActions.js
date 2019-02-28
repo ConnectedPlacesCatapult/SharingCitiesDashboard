@@ -9,6 +9,7 @@ import {
   SAVE_LAYOUT,
   SAVE_LAYOUT_FULFILLED,
   SAVE_LAYOUT_REJECTED,
+  SAVE_LAYOUT_DISMISSED,
   UPDATE_LAYOUT,
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
@@ -24,7 +25,8 @@ import {
   FETCH_USERS_FULFILLED,
   FETCH_USERS_REJECTED,
   SAVE_WIDGET_FULFILLED,
-  SAVE_WIDGET_REJECTED
+  SAVE_WIDGET_REJECTED,
+  HIDE_NOTIFICATION
 } from "./../constants";
 
 export const updateLayout = (layout) => ({
@@ -117,13 +119,8 @@ export const fetchLayout = () => {
       userID: userID
     };
     axiosInstance.post('/widgets/get_layouts', requestData).then((response) => {
-
       const layoutReceived = response.data
-
-      console.log("layoutReceived", layoutReceived)
-
       const layoutFixed = []
-
       for (let i = 0; i < layoutReceived.length; i++) {
         const layoutItem = {
           i: layoutReceived[i].id,
@@ -134,7 +131,6 @@ export const fetchLayout = () => {
         }
         layoutFixed.push(layoutItem)
       }
-
       dispatch({
         type: FETCH_LAYOUT_FULFILLED,
         payload: layoutFixed,
@@ -186,16 +182,35 @@ export const saveLayout = () => {
     axiosInstance.post('/widgets/save_layouts', newLayoutObject).then((response) => {
 
       dispatch({
-        type: SAVE_LAYOUT_FULFILLED,
-        payload: cleanedLayout,
+        type: SAVE_LAYOUT_FULFILLED
       })
-    })
-      .catch((err) => {
+
+      setTimeout(() => {
+        dispatch({
+          type: HIDE_NOTIFICATION,
+        })
+      }, 2000)
+
+    .catch((error) => {
         dispatch({
           type: SAVE_LAYOUT_REJECTED,
-          payload: err,
+          payload: error.statusText,
         })
       })
+      setTimeout(() => {
+        dispatch({
+          type: HIDE_NOTIFICATION,
+        })
+      }, 5000)
+    })
+  }
+};
+
+export const dismissSaveLayout = () => {
+  return (dispatch) => {
+    dispatch({
+      type: SAVE_LAYOUT_DISMISSED,
+    });
   };
 };
 

@@ -49,9 +49,6 @@ class GridLayout extends React.Component {
   render() {
     const { classes, dashboard } = this.props;
 
-    console.log("layouts", dashboard.layout.length)
-    console.log("widgets", dashboard.widgets.length)
-
     if (dashboard.layout.length === dashboard.widgets.length) {
 
       const gridItems = dashboard.layout.map((gridItem) => {
