@@ -107,7 +107,7 @@ class Users(db.Model):
         return cls.query.filter_by(email=email).first()
 
     @staticmethod
-    def generate_hash(password: str) -> bytes:
+    def generate_hash(password: bytes) -> bytes:
         """ Generate a secure hash """
         return bcrypt.hashpw(password, bcrypt.gensalt())
 

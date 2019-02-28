@@ -18,4 +18,5 @@ shapely
 bcrypt
 flask-jwt-extended
 pytest
-
+logging
+sendgrid
