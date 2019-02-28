@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import NoReturn
 import json
@@ -12,7 +13,6 @@ logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 class Users(db.Model):
-    
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -33,7 +33,6 @@ class Users(db.Model):
         :param admin:       true if the user is a admin, false if the user is not an admin
         :param activated:   true if the account has been activated and false if it is not activated
         :param timestamp:   time stamp of when the user was created
-
         """
         self.fullname = fullname
         self.email = email
@@ -110,11 +109,9 @@ class Users(db.Model):
     @staticmethod
     def generate_hash(password: bytes) -> bytes:
         """ Generate a secure hash """
-        
         return bcrypt.hashpw(password, bcrypt.gensalt())
 
     @staticmethod
     def verify_hash(password: str, hash: bytes) -> bool:
         """ Verify password matches the hashed password in the database."""
-        
         return bcrypt.checkpw(password, hash)

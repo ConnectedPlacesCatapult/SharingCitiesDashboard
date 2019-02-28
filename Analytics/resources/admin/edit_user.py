@@ -1,5 +1,3 @@
-"""" Edit User API Resource class """
-
 import logging
 from http import HTTPStatus
 
@@ -17,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class EditUser(Resource):
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialises the edit user end point
         """
