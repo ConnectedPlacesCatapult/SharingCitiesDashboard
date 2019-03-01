@@ -1,5 +1,9 @@
 import {
+  DATA_FORMAT_OTHER,
+  DATA_FORMAT_RAW,
+  DATA_FORMAT_WIDE,
   PURGE_EDITOR,
+  SET_DATA_FORMAT,
   SET_MAP_DATA,
   SET_MAP_PROPERTY,
   SET_PLOT_DATA,
@@ -24,6 +28,42 @@ const isMappable = (record={}) => {
   }
 
   return true
+};
+
+export const convertWideToRaw = (wideData) => {
+  return (dispatch, getState) => {
+    const currentState = getState();
+
+    const fields = ['Latitude', 'Longitude', 'Value', 'Timestamp'];
+    const numAttributes = wideData.length ? Object.keys(wideData[0]).length / fields.length : 0;
+    const selectedAttributes = Object.keys(wideData[0]).slice(0, numAttributes).map((key) => key.substring(fields[0].length + 1));
+
+    const formattedData = wideData.map((record) => {
+      return selectedAttributes.map((attr) => {
+        const initialValue = {
+          Attribute_Name: attr,
+          Attribute_id: "fake-data",
+          Name: "fake-data",
+          Sensor_id: "fake-data",
+        };
+
+        return fields.reduce((newRecord, key) => {
+          newRecord = {
+            ...newRecord,
+            [key]: record[`${key},${attr}`] === null ? "null" : record[`${key},${attr}`],
+          };
+
+          return newRecord
+        }, initialValue)
+      })
+    }).flat().sort((a, b) => {
+      if (a['Attribute_Name'] < b['Attribute_Name']) return -1;
+      if (a['Attribute_Name'] > b['Attribute_Name']) return 1;
+      return 0
+    });
+
+    return formattedData;
+  }
 };
 
 /**
@@ -111,11 +151,13 @@ export const initializeEditor = () => {
       },
     });
 
+    // ToDo :: Sort this out using dataFormat and state data
     dispatch({
       type: SET_WIDGET_PROPERTY,
       payload: {
         property: 'isMappable',
-        value: isMappable(data[0]),
+        //value: isMappable(data[0]),
+        value: true,
       },
     });
 
@@ -130,6 +172,14 @@ export const initializeEditor = () => {
     dispatch({
       type: SET_WIDGET_PROPERTY,
       payload: {
+        property: 'rawData',
+        value: data,
+      }
+    });
+
+    dispatch({
+      type: SET_WIDGET_PROPERTY,
+      payload: {
         property: 'type',
         value: defaults.widgetType,
       },
@@ -139,6 +189,11 @@ export const initializeEditor = () => {
 
 export const purgeEditor = () => ({
   type: PURGE_EDITOR,
+});
+
+export const setDataFormat = (format) => ({
+  type: SET_DATA_FORMAT,
+  payload: format,
 });
 
 export const setMapData = (data=[]) => ({

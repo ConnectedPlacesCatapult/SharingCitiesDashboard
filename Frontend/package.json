@@ -47,7 +47,8 @@
     "typeface-roboto": "0.0.54",
     "validator": "^10.8.0",
     "vega-lib": "^4.4.0",
-    "vega-lite": "^3.0.0-rc9"
+    "vega-lite": "^3.0.0-rc9",
+    "vega-tooltip": "^0.16.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

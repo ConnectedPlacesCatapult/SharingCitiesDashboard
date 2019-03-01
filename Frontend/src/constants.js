@@ -1,3 +1,10 @@
+// misc
+export const DATA_FORMAT_RAW = "DATA_FORMAT_RAW";
+export const DATA_FORMAT_WIDE = "DATA_FORMAT_WIDE";
+export const DATA_FORMAT_OTHER = "DATA_FORMAT_OTHER";
+
+export const SET_DATA_FORMAT = "SET_DATA_FORMAT";
+
 // api
 export const FETCH_THEMES = "FETCH_THEMES";
 export const FETCH_THEMES_FULFILLED = "FETCH_THEMES_FULFILLED";

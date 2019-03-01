@@ -1,5 +1,9 @@
 import {
+  DATA_FORMAT_OTHER,
+  DATA_FORMAT_RAW,
+  DATA_FORMAT_WIDE,
   PURGE_EDITOR,
+  SET_DATA_FORMAT,
   SET_MAP_DATA,
   SET_MAP_PROPERTY,
   SET_PLOT_DATA,
@@ -13,6 +17,8 @@ const initialState = {
   isMappable: false,
   name: '',
   type: null,
+  dataFormat: DATA_FORMAT_WIDE,
+  rawData: [],
   plotConfig: {
     spec: {
       "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
@@ -65,8 +71,19 @@ export default (state=initialState, action={}) => {
       return initialState
     }
 
+    case SET_DATA_FORMAT: {
+      // ToDo :: parse the data here??
+
+      return {
+        ...state,
+        dataFormat: action.payload,
+      }
+    }
+
     case SET_MAP_DATA: {
-      const formatted = action.payload.map((feature) => {
+      const flattened = action.payload.map((attr) => attr['Attribute_Values']).flat()
+
+      const formatted = flattened.map((feature) => {
         function getProperties(feature) {
           return Object.keys(feature)
             .filter(key => !['Latitude', 'Longitude'].includes(key))
@@ -109,13 +126,14 @@ export default (state=initialState, action={}) => {
     }
 
     case SET_PLOT_DATA: {
+
       return {
         ...state,
         plotConfig: {
           ...state.plotConfig,
           data: {
             ...state.plotConfig.data,
-            values: action.payload,
+            values: action.payload.map((attr) => attr['Attribute_Values']).flat(),
           },
         },
       }

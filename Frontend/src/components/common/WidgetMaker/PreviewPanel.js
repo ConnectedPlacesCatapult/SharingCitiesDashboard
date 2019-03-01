@@ -1,24 +1,20 @@
 import React from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import {
+  FormControl,
+  Input,
+  InputAdornment,
+  Paper,
+  withStyles,
+} from '@material-ui/core';
+import TitleIcon from '@material-ui/icons/Title';
+import { connect } from 'react-redux';
+import { setWidgetProperty } from '../../../actions/widgetActions';
 
 import MapPreview from './MapPreview';
 import PlotPreview from './PlotPreview';
 import AlertPreview from './AlertPreview';
-
-// material-ui
-import { withStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import TitleIcon from '@material-ui/icons/Title';
-
-// redux
-import { connect } from 'react-redux';
-import { setWidgetProperty } from "../../../actions/widgetActions";
-
-// misc utils
-import classNames from 'classnames';
 
 const styles = (theme) => ({
   root: {
@@ -44,6 +40,12 @@ const styles = (theme) => ({
 });
 
 class PreviewPanel extends React.Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    widget: PropTypes.object.isRequired,
+    setWidgetProperty: PropTypes.func.isRequired,
+  };
+
   setWidgetName = (e) => {
     this.props.setWidgetName(e.target.value)
   };
@@ -81,12 +83,6 @@ class PreviewPanel extends React.Component {
     )
   }
 }
-
-PreviewPanel.propTypes = {
-  classes: PropTypes.object.isRequired,
-  widget: PropTypes.object.isRequired,
-  setWidgetProperty: PropTypes.func.isRequired,
-};
 
 const mapStateToProps = (state) => ({
   widget: state.widget,

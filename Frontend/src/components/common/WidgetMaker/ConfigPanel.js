@@ -1,22 +1,18 @@
 import React from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import {
+  Button,
+  Divider,
+  Paper,
+  Typography,
+  withStyles,
+} from '@material-ui/core';
+import SaveIcon from '@material-ui/icons/Save';
+import { connect } from 'react-redux';
+import { initializeEditor } from './../../../actions/widgetActions';
 
 import TypeSelector from './TypeSelector';
-
-// material-ui
-import { withStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
-import SaveIcon from '@material-ui/icons/Save';
-
-// redux
-import { connect } from 'react-redux';
-import { initializeEditor } from "./../../../actions/widgetActions";
-
-// misc utils
-import classNames from 'classnames';
 
 const styles = (theme) => ({
   root: {
@@ -43,6 +39,11 @@ class ConfigPanel extends React.Component {
     props.initializeEditor();
   }
 
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    initializeEditor: PropTypes.func.isRequired,
+  };
+
   saveWidget = () => {
     console.log("save widget")
   };
@@ -68,20 +69,11 @@ class ConfigPanel extends React.Component {
   }
 }
 
-ConfigPanel.propTypes = {
-  classes: PropTypes.object.isRequired,
-  initializeEditor: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-
-});
-
 const mapDispatchToProps = (dispatch) => ({
   initializeEditor: () => dispatch(initializeEditor()),
 });
 
 ConfigPanel = withStyles(styles)(ConfigPanel);
-ConfigPanel = connect(mapStateToProps, mapDispatchToProps)(ConfigPanel);
+ConfigPanel = connect(null, mapDispatchToProps)(ConfigPanel);
 
 export default ConfigPanel
