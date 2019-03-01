@@ -36,6 +36,8 @@ from resources.themes import GetSubThemes
 from resources.themes import GetThemes
 from resources.themes import RenameSubTheme
 from resources.themes import RenameTheme
+from resources.request_for_data import PredictionStatus
+from resources.forgot_password import ForgotPassword
 from resources.units.add_new_unit import AddUnitOfMeasurement
 from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_all_units import GetAllUnitsOfMeasure
@@ -117,6 +119,7 @@ def create_app(**config_overrides):
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
     api.add_resource(RequestForData, '/data')  # current /data endpoint
+    api.add_resource(PredictionStatus, '/pred_status')
 
     # login Endpoints
     api.add_resource(Register, '/register')
