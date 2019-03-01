@@ -9,7 +9,7 @@ from models.theme import Theme
 
 class AddTheme(Resource):
     """
-    Creates a new Theme entry in the database
+    Create a new Theme entry in the database
     """
 
     def __init__(self) -> None:
