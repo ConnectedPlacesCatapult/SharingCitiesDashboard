@@ -41,6 +41,10 @@ const initialState = {
           "field": "Value",
           "type": "quantitative",
         },
+        "color": {
+          "field": "Attribute_Name",
+          "type": "nominal",
+        },
       },
     },
     data: {
