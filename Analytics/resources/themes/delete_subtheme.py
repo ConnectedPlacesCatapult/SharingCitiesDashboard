@@ -11,7 +11,6 @@ class DeleteSubTheme(Resource):
     """
     delete an existing sub theme entry in the database
     """
-
     def __init__(self) -> None:
         """
         Sets the required arguments to be in the POST request

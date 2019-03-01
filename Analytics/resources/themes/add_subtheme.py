@@ -11,7 +11,6 @@ class AddSubTheme(Resource):
     """
     Creates a new sub theme
     """
-
     def __init__(self) -> None:
         """
         adds a sub theme from the database

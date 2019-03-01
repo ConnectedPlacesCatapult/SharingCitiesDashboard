@@ -9,16 +9,8 @@ from models.theme import SubTheme
 
 class GetSubThemes(Resource):
     """
-    Endpoint used to fetch units from the database table 'unit'
-    Parameters can be passed using a POST request that contains a JSON with the following fields:
-    :param limit: the maximum number of entries to return
-    :param _type: the unit type
-    :param id: the unit identification number
-    :type limit: int
-    :type _type: str
-    :type id: str
+    Fetches all sub theme entries
     """
-
     def __init__(self) -> None:
         """
         Instantiates the endpoint to get a unit from the database table unit.
@@ -32,16 +24,18 @@ class GetSubThemes(Resource):
     @jwt_required
     def get(self) -> ([SubTheme], HTTPStatus):
         """
-        Fetches all theme entries
+        Fetches all sub theme entries
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param limit: the maximum number of entries to return
-        :param _type: the unit type
-        :param id: the unit identification number
+        :param name: sub theme name
+        :param id: the sub theme identification number
+        :param theme_id: Parent theme identification number
         :type limit: int
-        :type _type: str
+        :type name: str
         :type id: str
+        :type theme_id: str
 
-        :return: a list of Unit/s and an HTTPStatus code of 200 on succcess otherwise a list with a single item
+        :return: a list of sub themes/s and an HTTPStatus code of 200 on succcess otherwise a list with a single item
          and a http status code 404 is returned
         """
         # is the user an admin user?
