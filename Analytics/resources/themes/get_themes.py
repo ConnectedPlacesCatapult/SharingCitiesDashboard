@@ -35,6 +35,10 @@ class GetThemes(Resource):
         :return: a list of Unit/s and an HTTPStatus code of 200 on succcess otherwise a list with a single item
          and a http status code 404 is returned
         """
+        # is the user an admin user?
+        if not get_jwt_claims()['admin']:
+            return {"message": "Not Authorized."}, HTTPStatus.UNAUTHORIZED
+
         # Get arguments passed in POST request
         args = self.reqparser.parse_args()
 
