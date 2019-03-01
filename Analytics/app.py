@@ -41,6 +41,7 @@ from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import RequestForData
+from resources.request_for_data import PredictionStatus
 from resources.forgot_password import ForgotPassword
 from resources.units.add_new_unit import AddUnitOfMeasurement
 from resources.units.delete_unit import DeleteUnitOfMeasurement
@@ -122,6 +123,7 @@ def create_app(**config_overrides):
     migrate = Migrate(app, db)
     api.add_resource(Analytics, '/analytics')
     api.add_resource(RequestForData, '/data')  # current /data endpoint
+    api.add_resource(PredictionStatus, '/pred_status')
 
     # login Endpoints
     api.add_resource(Register, '/register')
