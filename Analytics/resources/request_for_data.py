@@ -43,9 +43,14 @@ Note: If no parameters are passed then by default all the themes are returned
 		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&harmonising_method=long // Harmonisies all attributes in the query to match the attribute with the most records. It also reformats the data to be structured as long (row stacked) or wide (column stacked)
 
 """
-
+from datetime import datetime
 
 from flask_restful import Resource, reqparse, inputs
+from sqlalchemy import desc
+import statistics
+import celery
+import logging
+
 from db import db
 from models.theme import Theme
 from models.attributes import Attributes
@@ -57,14 +62,14 @@ from models.location import Location
 from models.unit import Unit
 from resources.predict import predict
 from resources.helper_functions import is_number
-from sqlalchemy import desc
-from datetime import datetime
-import statistics
 from resources.request_grouped import request_grouped_data, request_harmonised_data
 
 
 LIMIT = 30
 OFFSET = 30
+
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 class RequestForData(Resource):
 	parser = reqparse.RequestParser()
@@ -202,9 +207,12 @@ class RequestForData(Resource):
 					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
 												args['fromdate'], args['todate'], operation)
 				if predictions:
-					data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
-														sensor_id = sensorid,
-														n_pred = n_predictions))
+					prediction_task = self.get_predictions.apply_async(args=(
+							data[0]["Attribute_Table"], sensorid,
+							n_predictions))
+
+					data.append({"message": "Forecasting engine making "
+											"predictions", "task_id": str(prediction_task.id)})
 			else:
 				if grouped:
 					if harmonising_method:
@@ -221,9 +229,14 @@ class RequestForData(Resource):
 					if data[0]["Total_Records"] != 0:
 					#### Check for non numeric data
 						if is_number(data[0]["Attribute_Values"][0]["Value"]):
-							data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
-																sensor_id = sensorid,
-																n_pred = n_predictions))
+							prediction_task =  \
+							self.get_predictions.apply_async(args=(
+								data[0]["Attribute_Table"], sensorid,
+								n_predictions))
+
+							data.append(
+								{"message": "Forecasting engine making "
+											"predictions", "task_id": str(prediction_task.id)})
 						else:
 							print("Cannot predict non-numeric data")
 							pass
@@ -346,7 +359,8 @@ class RequestForData(Resource):
 			sensor_id: is string passed as parameter with the URL
 			
 	'''
-	def get_predictions(self, attribute_table, sensor_id, n_pred):
+	@celery.task(bind=True)
+	def get_predictions(self, attribute_table: str, sensor_id: str, n_pred: int) -> dict:
 		db.metadata.clear()
 
 		_data = []
@@ -357,9 +371,8 @@ class RequestForData(Resource):
 
 
 		if db.session.query(model).count() < 100:
-			pred_data =  {
-							"Predictions": "not enough data to make reliable predictions"
-						}
+			pred_data =  {"status": "not enough data to make reliable  "
+								"predictions", "result" : "UNABLE"}
 			return pred_data
 		else:
 		# check for sensor_id
@@ -369,24 +382,24 @@ class RequestForData(Resource):
 							.limit(_limit) \
 							.all()
 				if len(values) < 100:
-					pred_data =  {
-								"Predictions": "not enough data to make reliable predictions"
-								}
+					pred_data = {"status": "not enough data to make reliable"
+										   "predictions", "result": "UNABLE"}
 					return pred_data
 			else:	
 				values = db.session.query(model) \
 							.limit(_limit) \
 							.all()
 				if len(values) < 100:
-					pred_data =  {
-								"Predictions": "not enough data to make reliable predictions"
-								}
+					pred_data =  {"status": "not enough data to make reliable"
+										   "predictions", "result": "UNABLE"}
 					return pred_data
 
 			for val in values:
 				_data.append(float(val.value))
 				_timestamps.append(val.api_timestamp)
-
+			
+			self.update_state(state='PROGRESS', meta={
+				'status': "prediction task is in progress"})
 
 			_pred, _mape, _method = predict(_data, _timestamps, n_pred)
 
@@ -394,13 +407,50 @@ class RequestForData(Resource):
 				_sensorid = sensor_id
 			else:
 				_sensorid = "All sensors"
-
-			pred_data =  {
+				
+			result =  {
 						"Sensor_id": _sensorid,
 						"Forcasting_engine": _method,
 						"Mean_Absolute_Percentage_Error": _mape,
 						"Predictions": _pred
 						}
-
+		pred_data = {"status": "task complete", "result": result}
 		return pred_data
 		
+class PredictionStatus(Resource):
+	"""
+	API Resource class. Check the status of asynchronous prediction tasks
+	"""
+
+	parser = reqparse.RequestParser()
+	parser.add_argument('task_id', type=str, store_missing=False,
+						help='This field cannot be blank', required=True)
+
+	def get(self) -> (str, int):
+		"""
+		GET method endpoint. Use task_id argument and return state
+		and result of the corresponding asynchronous prediction task
+		:param task_id: The task_id returned upon request of the prediction task
+		"""
+
+		args = self.parser.parse_args()
+		task_id = args['task_id']
+		task = RequestForData.get_predictions.AsyncResult(task_id)
+		if task.state == 'PENDING':
+			response = {'state': task.state,
+						'status': 'if PENDING state persists, background task '
+								'may not be executing}'}
+		elif task.state != 'FAILURE':
+			response = {'state': task.state, 'status': task.info.get(
+				'status', '')
+						}
+			if 'result' in task.info:
+				response['result'] = task.info['result']
+		else:
+			logger.error("{} celery task was unable to complete".format(
+				task_id))
+			# something went wrong in the background job
+			response = {'state': task.state, 'status': str(task.info)}
+			return response, 500
+
+		return response, 200
