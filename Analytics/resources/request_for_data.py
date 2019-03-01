@@ -404,3 +404,39 @@ class RequestForData(Resource):
 		pred_data = {"status": "task complete", "result": result}
 		return pred_data
 		
+class PredictionStatus(Resource):
+	"""
+	API Resource class. Check the status of asynchronous prediction tasks
+	"""
+
+	parser = reqparse.RequestParser()
+	parser.add_argument('task_id', type=str, store_missing=False,
+						help='This field cannot be blank', required=True)
+
+	def get(self) -> (str, int):
+		"""
+		GET method endpoint. Use task_id argument and return state
+		and result of the corresponding asynchronous prediction task
+		:param task_id: The task_id returned upon request of the prediction task
+		"""
+
+		args = self.parser.parse_args()
+		task_id = args['task_id']
+		task = RequestForData.get_predictions.AsyncResult(task_id)
+		if task.state == 'PENDING':
+			response = {'state': task.state,
+						'status': 'if PENDING state persists, background task '
+								'may not be executing}'}
+		elif task.state != 'FAILURE':
+			response = {'state': task.state, 'status': task.info.get(
+				'status', '')
+						}
+			if 'result' in task.info:
+				response['result'] = task.info['result']
+		else:
+			logger.error("{} celery task was enable to complete".format(
+				task_id))
+			# something went wrong in the background job
+			response = {'state': task.state, 'status': str(task.info)}
+
+		return response, 200
