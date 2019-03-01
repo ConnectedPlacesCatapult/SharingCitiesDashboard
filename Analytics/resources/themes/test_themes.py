@@ -71,7 +71,7 @@ class TestAddTheme(TestCase):
         # Creates an Authorization header for testing endpoints
         :return: An authorization header
         """
-        response_login = self.client.post('/login', data=dict(email=self.user.email, password="wfnbqk"),
+        response_login = self.client.post('/login', data=dict(email=self.user.email, password="wfnbqk", remember=True),
                                           follow_redirects=True)
         response_login_json = response_login.get_json()
         return {'Authorization': 'Bearer {}'.format(response_login_json["access_token"])}

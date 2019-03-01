@@ -11,6 +11,7 @@ class DeleteSubTheme(Resource):
     """
     delete an existing sub theme entry in the database
     """
+
     def __init__(self) -> None:
         """
         Sets the required arguments to be in the POST request
@@ -37,10 +38,10 @@ class DeleteSubTheme(Resource):
         args = self.reqparser.parse_args()
 
         # does the theme exist?
-        subtheme = SubTheme.get_by_name(args["name"]) if "name" in args else SubTheme.get_by_id(args["id"])
+        subtheme = SubTheme.get_by_name(args["name"]) if "name" in args else SubTheme.get_by(id=args["id"])
         if not subtheme:
             # cannot delete a theme that does not exist.
-            return {'error': 'Sub-theme does not exists.', 'id': " ", 'name': args["name"]}, HTTPStatus.BAD_REQUEST
+            return {'error': 'Sub-theme does not exists.'}, HTTPStatus.BAD_REQUEST
 
         # delete the theme
         subtheme.delete()

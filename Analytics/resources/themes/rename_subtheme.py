@@ -11,6 +11,7 @@ class RenameSubTheme(Resource):
     """
     renames a existing sub theme entry in the database
     """
+
     def __init__(self) -> None:
         """
         Sets the required arguments to be in the POST request
@@ -29,7 +30,7 @@ class RenameSubTheme(Resource):
         :post_argument new_name: the new name for the sub theme
         :post_type  current_name: str
         :post_type  new_name: str
-        :returns: A JSON of the changes made to the subtheme with a http status code of 200, otherwise
+        :returns: A JSON of the changes made to the sub theme with a http status code of 200, otherwise
                   a JSON of the error details and the appropriate http status code
         """
         if not get_jwt_claims()['admin']:
@@ -65,7 +66,7 @@ class RenameSubTheme(Resource):
         subtheme.commit()
 
         return ({
-                    "message": "Theme renamed",
+                    "message": "Subtheme renamed",
                     "id": subtheme.id,
                     "old_name": args["current_name"],
                     "new_name": subtheme.name

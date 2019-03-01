@@ -11,6 +11,7 @@ class AddSubTheme(Resource):
     """
     Creates a new sub theme
     """
+
     def __init__(self) -> None:
         """
         adds a sub theme from the database
@@ -37,9 +38,6 @@ class AddSubTheme(Resource):
                   and the appropriate http status code
         """
         args = self.reqparser.parse_args()
-
-        # remove arguments that are empty string arguments
-        args = {k: v for k, v in args.items() if len(v) > 0}
 
         if "theme" not in args and "theme_id" not in args:
             return {"error": "theme or theme_id required"}, HTTPStatus.BAD_REQUEST

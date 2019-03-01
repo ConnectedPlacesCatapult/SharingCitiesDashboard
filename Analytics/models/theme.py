@@ -11,7 +11,6 @@ logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
-
 class Theme(db.Model):
     """
     Data table to store information about Themes
@@ -24,7 +23,7 @@ class Theme(db.Model):
 
     subtheme = db.relationship('SubTheme', backref='theme', lazy=True)
 
-    def __init__(self, name: str, timestamp: datetime=None):
+    def __init__(self, name: str, timestamp: datetime = None):
         """ Sets the timestamp to the current date and time (UTC +0)"""
         self.name = name
         if timestamp is None:
@@ -60,7 +59,7 @@ class Theme(db.Model):
         """put object in queue for deletion from database"""
         try:
             db.session.delete(self)
-            db.session.flush()
+            # db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
             logger.error(self.name, 'theme does not exists')
@@ -112,7 +111,7 @@ class SubTheme(db.Model):
     def __repr__(self) -> str:
         return 'Sub Theme Name: %s' % self.name
 
-    def json(self)->{str: Union[int, str]}:
+    def json(self) -> {str: Union[int, str]}:
         """
         Creates a JSON representation of the sub-theme instance
         :return: The sub themes id, its parent themes id and the name of the sub theme
@@ -136,7 +135,7 @@ class SubTheme(db.Model):
         """put object in queue to be deleted from database"""
         try:
             db.session.delete(self)
-            db.session.flush()
+            # db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
             logger.error(self.name, 'sub theme does not exists')

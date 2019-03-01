@@ -15,8 +15,6 @@ class AddTheme(Resource):
     def __init__(self) -> None:
         """
         Sets the required arguments to be in the POST request
-        :post_argument  name: the name of the new theme
-        :post_type  name: str
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('name', required=True, type=str, help='Theme name required',
@@ -28,6 +26,8 @@ class AddTheme(Resource):
         Creates a new theme
         :post_argument  name: the name of the new theme
         :post_type  name: str
+        :returns: A JSON with a message, theme id, and new themes name with a http status of 200 (OK) otherwise,
+                  A JSON with an appropriate error message and http status applicable to the error
         """
         if not get_jwt_claims()['admin']:
             return {"error": "administration privileges required"}, HTTPStatus.FORBIDDEN
@@ -41,7 +41,7 @@ class AddTheme(Resource):
 
         # Check theme does not exist (avoid duplicates)
         if Theme.get_by_name(args["name"]):
-            return {'message': 'Theme already exists.', 'id': " ", 'name': args["name"]}, HTTPStatus.BAD_REQUEST
+            return {'error': 'Theme already exists.', 'id': " ", 'name': args["name"]}, HTTPStatus.BAD_REQUEST
 
         # Create the new theme
         theme = Theme(args["name"])

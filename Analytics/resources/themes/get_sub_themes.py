@@ -11,9 +11,10 @@ class GetSubThemes(Resource):
     """
     Fetches all sub theme entries
     """
+
     def __init__(self) -> None:
         """
-        Instantiates the endpoint to get a unit from the database table unit.
+        Sets the required arguments to be in the POST request
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('limit', required=False, store_missing=False, type=int)

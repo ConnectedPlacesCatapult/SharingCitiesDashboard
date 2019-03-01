@@ -45,9 +45,13 @@ from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
+from resources.themes import AddSubTheme
 from resources.themes import AddTheme
+from resources.themes import DeleteSubTheme
 from resources.themes import DeleteTheme
+from resources.themes import GetSubThemes
 from resources.themes import GetThemes
+from resources.themes import RenameSubTheme
 from resources.themes import RenameTheme
 
 def create_app(**config_overrides):
@@ -165,5 +169,11 @@ def create_app(**config_overrides):
     api.add_resource(RenameTheme, '/admin/themes/rename_theme')
     api.add_resource(DeleteTheme, '/admin/themes/delete_theme')
     api.add_resource(GetThemes, '/admin/themes/get_themes')
+
+    # Sub Theme Endpoints
+    api.add_resource(AddSubTheme, '/admin/themes/add_subtheme')
+    api.add_resource(RenameSubTheme, '/admin/themes/rename_subtheme')
+    api.add_resource(DeleteSubTheme, '/admin/themes/delete_subtheme')
+    api.add_resource(GetSubThemes, '/admin/themes/get_subthemes')
 
     return app

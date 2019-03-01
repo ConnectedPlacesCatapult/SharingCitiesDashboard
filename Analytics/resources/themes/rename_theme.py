@@ -24,11 +24,13 @@ class RenameTheme(Resource):
     @jwt_required
     def post(self) -> ({str: str}, HTTPStatus):
         """
-        renames a existing Theme entry in the database
-        :post_argument  current_name: the name of the theme to rename
-        :post_argument new_name: the new name for the theme
+        renames a existing theme entry in the database
+        :post_argument  current_name: the name of the sub theme
+        :post_argument new_name: the new name for the sub theme
         :post_type  current_name: str
         :post_type  new_name: str
+        :returns: A JSON of the changes made to the theme with a http status code of 200, otherwise
+                  a JSON of the error details and the appropriate http status code
         """
         if not get_jwt_claims()['admin']:
             return {"error": "administration privileges required"}, HTTPStatus.FORBIDDEN

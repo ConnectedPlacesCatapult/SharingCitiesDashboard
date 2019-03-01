@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask_jwt_extended import jwt_required, get_jwt_claims
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -11,6 +11,7 @@ class GetThemes(Resource):
     """
     Endpoint used to fetch themes from the database table 'theme'
     """
+
     def __init__(self) -> None:
         """
         Instantiates the endpoint to get a unit from the database table unit.
@@ -23,7 +24,7 @@ class GetThemes(Resource):
     @jwt_required
     def get(self) -> ([Theme], HTTPStatus):
         """
-        Endpoint used to fetch themes from the database table 'theme'
+        Endpoint used to fetch themes from the database
         Parameters can be passed using a POST request that contains a JSON with the following fields:
         :param limit: the maximum number of entries to return
         :param name: themes name
@@ -32,8 +33,8 @@ class GetThemes(Resource):
         :type name: str
         :type id: str
 
-        :return: a list of Unit/s and an HTTPStatus code of 200 on succcess otherwise a list with a single item
-         and a http status code 404 is returned
+        :return: a list of Theme/s and an HTTPStatus code of 200 on success otherwise an JSON with an error message
+                 and appropriate http status
         """
         # Get arguments passed in POST request
         args = self.reqparser.parse_args()
@@ -61,7 +62,7 @@ class GetThemes(Resource):
             try:
                 themes = themes[:int(args["limit"])]
             except ValueError:
-                return {"error": "Limit parsed is not an int"}
+                return {"error": "Limit parsed is not an int"}, HTTPStatus.BAD_REQUEST
 
         # themes were found
         return themes, HTTPStatus.OK
