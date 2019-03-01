@@ -43,10 +43,10 @@ Note: If no parameters are passed then by default all the themes are returned
 		{URL}?attributedata='<name1><name2>&limit=1000&grouped=True&harmonising_method=long // Harmonisies all attributes in the query to match the attribute with the most records. It also reformats the data to be structured as long (row stacked) or wide (column stacked)
 
 """
+from datetime import datetime
 
 from flask_restful import Resource, reqparse, inputs
 from sqlalchemy import desc
-from datetime import datetime
 import statistics
 import celery
 import logging
