@@ -87,6 +87,9 @@ class Theme(db.Model):
 
 
 class SubTheme(db.Model):
+    """
+    Data table to store information about sub themes
+    """
     __tablename__ = 'subtheme'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -97,6 +100,7 @@ class SubTheme(db.Model):
     # attributes = db.relationship('Attributes', backref='subtheme', lazy=True)
 
     def __init__(self, t_id: int, name: str, timestamp: datetime = None):
+        """ Instanciate model and sets timestamp if None to the present utc time"""
         self.t_id = t_id
         self.name = name
 
