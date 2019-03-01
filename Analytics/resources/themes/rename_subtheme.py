@@ -9,12 +9,12 @@ from models.theme import SubTheme
 
 class RenameSubTheme(Resource):
     """
-    renames a existing sub theme entry in the database
+    Rename an existing SubTheme
     """
 
     def __init__(self) -> None:
         """
-        Sets the required arguments to be in the POST request
+        Set required arguments for POST request
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('current_name', required=True, type=str, help='Current theme name required',
@@ -25,11 +25,11 @@ class RenameSubTheme(Resource):
     @jwt_required
     def post(self) -> ({str: str}, HTTPStatus):
         """
-        renames a existing sub theme entry in the database
-        :post_argument  current_name: the name of the sub theme to rename
-        :post_argument new_name: the new name for the sub theme
-        :post_type  current_name: str
-        :post_type  new_name: str
+        Rename an existing SubTheme
+        :param current_name: the name of the sub theme to rename
+        :param new_name: the new name for the sub theme
+        :type  current_name: str
+        :type  new_name: str
         :returns: A JSON of the changes made to the sub theme with a http status code of 200, otherwise
                   a JSON of the error details and the appropriate http status code
         """

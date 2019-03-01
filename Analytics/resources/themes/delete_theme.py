@@ -10,12 +10,12 @@ from models.theme import Theme
 
 class DeleteTheme(Resource):
     """
-    delete an existing Theme entry in the database
+    Delete an existing Theme
     """
 
     def __init__(self) -> None:
         """
-        Sets the required arguments to be in the POST request
+        Set required arguments for POST request
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('name', required=False, store_missing=False, type=str, location=['form', 'json'])
@@ -24,11 +24,11 @@ class DeleteTheme(Resource):
     @jwt_required
     def post(self) -> ({str: str}, HTTPStatus):
         """
-        Delete an existing Theme entry in the database.
-        :post_argument  name: the name of the theme to be deleted.
-        :post_argument id: id of the theme to be deleted.
-        :post_type  name: str
-        :post_type  id: str
+        Delete an existing Theme.
+        :param  name:   name of Theme to delete.
+        :param id:      id of Theme to delete.
+        :type  name:    str
+        :type  id:      str
         :returns: A no content with a http status code of 204, otherwise a JSON of the error details
                   and the appropriate http status code
         """

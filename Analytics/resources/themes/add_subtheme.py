@@ -9,12 +9,12 @@ from models.theme import Theme, SubTheme
 
 class AddSubTheme(Resource):
     """
-    Creates a new sub theme
+    Create new SubTheme
     """
 
     def __init__(self) -> None:
         """
-        adds a sub theme from the database
+        Set required arguments for POST request
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('theme', required=False, store_missing=False, default=None, type=str,
@@ -27,14 +27,14 @@ class AddSubTheme(Resource):
     @jwt_required
     def post(self) -> ({str: str}, HTTPStatus):
         """
-        Adds a new sub theme to the database
-        :post_argument  theme: the name of the parent theme
-        :post_argument theme_id: the the identification number of the parent theme
-        :post_argument  subtheme: the name of the sub theme
-        :post_type  theme: str
-        :post_type  theme_id: int
-        :post_type  subtheme: str
-        :returns: A JSON of the new subtheme with a http status code of 200, otherwise a JSON of the error details
+        Create new SubTheme
+        :param  theme:      the name of the parent theme
+        :param theme_id:    the identification number of the parent theme
+        :param  subtheme:   the name of the sub theme
+        :type  theme:       str
+        :type  theme_id:    int
+        :type  subtheme:    str
+        :returns: A JSON of the new SubTheme with a http status code of 200, otherwise a JSON of the error details
                   and the appropriate http status code
         """
         args = self.reqparser.parse_args()

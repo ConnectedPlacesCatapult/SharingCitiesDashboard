@@ -9,12 +9,12 @@ from models.theme import Theme
 
 class GetThemes(Resource):
     """
-    Endpoint used to fetch themes from the database table 'theme'
+    Fetch Themes
     """
 
     def __init__(self) -> None:
         """
-        Instantiates the endpoint to get a unit from the database table unit.
+        Set required arguments for POST request
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('limit', required=False, store_missing=False, type=int)
@@ -24,14 +24,14 @@ class GetThemes(Resource):
     @jwt_required
     def get(self) -> ([Theme], HTTPStatus):
         """
-        Endpoint used to fetch themes from the database
+        Fetch Themes
         Parameters can be passed using a POST request that contains a JSON with the following fields:
-        :param limit: the maximum number of entries to return
-        :param name: themes name
-        :param id: the themes identification number
-        :type limit: int
-        :type name: str
-        :type id: str
+        :param limit:   the maximum number of entries to return
+        :param name:    themes name
+        :param id:      the themes identification number
+        :type limit:    int
+        :type name:     str
+        :type id:       str
 
         :return: a list of Theme/s and an HTTPStatus code of 200 on success otherwise an JSON with an error message
                  and appropriate http status
@@ -39,7 +39,6 @@ class GetThemes(Resource):
         # Get arguments passed in POST request
         args = self.reqparser.parse_args()
 
-        # pdb.set_trace()
         # fetch themes using arguments passed in post request
         themes = []
         if "id" in args:

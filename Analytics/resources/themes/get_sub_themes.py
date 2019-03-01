@@ -9,12 +9,12 @@ from models.theme import SubTheme
 
 class GetSubThemes(Resource):
     """
-    Fetches all sub theme entries
+    Fetch all SubThemes
     """
 
     def __init__(self) -> None:
         """
-        Sets the required arguments to be in the POST request
+        Set required arguments for POST request
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('limit', required=False, store_missing=False, type=int)
@@ -25,16 +25,16 @@ class GetSubThemes(Resource):
     @jwt_required
     def get(self) -> ([SubTheme], HTTPStatus):
         """
-        Fetches all sub theme entries
+        Fetch all SubThemes
         Parameters can be passed using a POST request that contains a JSON with the following fields:
-        :param limit: the maximum number of entries to return
-        :param name: sub theme name
-        :param id: the sub theme identification number
+        :param limit:    the maximum number of entries to return
+        :param name:     sub theme name
+        :param id:       the sub theme identification number
         :param theme_id: Parent theme identification number
-        :type limit: int
-        :type name: str
-        :type id: str
-        :type theme_id: str
+        :type limit:     int
+        :type name:      str
+        :type id:        str
+        :type theme_id:  str
 
         :return: a list of sub themes/s and an HTTPStatus code of 200 on succcess otherwise a list with a single item
          and a http status code 404 is returned

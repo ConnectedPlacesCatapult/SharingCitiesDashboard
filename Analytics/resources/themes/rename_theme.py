@@ -9,11 +9,11 @@ from models.theme import Theme
 
 class RenameTheme(Resource):
     """
-    renames a existing Theme entry in the database
+    Rename an existing Theme
     """
     def __init__(self) -> None:
         """
-        Sets the required arguments to be in the POST request
+        Set required arguments for POST request
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('current_name', required=True, type=str, help='Current theme name required',
@@ -24,9 +24,9 @@ class RenameTheme(Resource):
     @jwt_required
     def post(self) -> ({str: str}, HTTPStatus):
         """
-        renames a existing theme entry in the database
-        :post_argument  current_name: the name of the sub theme
-        :post_argument new_name: the new name for the sub theme
+        Rename an existing Theme
+        :post_argument  current_name: name of SubTheme
+        :post_argument new_name: new name of SubTheme
         :post_type  current_name: str
         :post_type  new_name: str
         :returns: A JSON of the changes made to the theme with a http status code of 200, otherwise

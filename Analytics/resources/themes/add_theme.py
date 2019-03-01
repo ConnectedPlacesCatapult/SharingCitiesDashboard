@@ -9,12 +9,12 @@ from models.theme import Theme
 
 class AddTheme(Resource):
     """
-    Creates a new Theme entry in the database
+    Create new Theme
     """
 
     def __init__(self) -> None:
         """
-        Sets the required arguments to be in the POST request
+        Set required arguments for POST request
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('name', required=True, type=str, help='Theme name required',
@@ -23,9 +23,9 @@ class AddTheme(Resource):
     @jwt_required
     def post(self) -> ({str: str}, HTTPStatus):
         """
-        Creates a new theme
-        :post_argument  name: the name of the new theme
-        :post_type  name: str
+        Create new Theme
+        :param  name: the name of the new theme
+        :type  name: str
         :returns: A JSON with a message, theme id, and new themes name with a http status of 200 (OK) otherwise,
                   A JSON with an appropriate error message and http status applicable to the error
         """

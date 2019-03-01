@@ -17,7 +17,7 @@ class TestSubTemes(TestCase):
     """
     def setUp(self):
         """
-        Sets up a FlaskClient for testing, creates an admin user and creates the authorization header for requests to
+        Setup a FlaskClient for testing, creates an admin user and creates the authorization header for requests to
         the Flask Client and a dummy theme
         """
         self.client, self.app_context = self.create_test_client()
@@ -35,8 +35,7 @@ class TestSubTemes(TestCase):
 
     def create_test_client(self) -> (FlaskClient, AppContext):
         """
-        Creates a flask client for testing
-        :returns: A flask client and a AppContext
+        Create flask testing client
         """
         test_app = create_app(DATABASE_NAME='test_analysis', TESTING=True)
         testing_client = test_app.test_client()
@@ -46,8 +45,8 @@ class TestSubTemes(TestCase):
 
     def create_dummy_subtheme(self) -> SubTheme:
         """
-        Creates an sub theme for the tests
-        :return: a SubTheme instance for tests
+        Create SubTheme for tests
+        :return: SubTheme for tests
         """
         subtheme = SubTheme.get_by_name('_TEST_SUB_THEME_')
         if not subtheme:
@@ -59,7 +58,7 @@ class TestSubTemes(TestCase):
 
     def create_admin_user(self) -> Users:
         """
-        Creates an admin user for the tests
+        Create Admin user for tests
         :return: an admin user for tests
         """
         password_hash = bcrypt.hashpw("wfnbqk".encode("utf-8"), bcrypt.gensalt())
@@ -75,7 +74,7 @@ class TestSubTemes(TestCase):
 
     def get_auth_header(self) -> {str: str}:
         """
-        # Creates an Authorization header for testing endpoints
+        Create an Authorization header for test
         :return: An authorization header
         """
         response_login = self.client.post('/login', data=dict(email=self.user.email, password="wfnbqk", remember=True),
@@ -85,8 +84,8 @@ class TestSubTemes(TestCase):
 
     def test_add_subtheme(self):
         """
-        Creates a new sub theme and checks the client response status code for http status 200 (OK)
-        The response JSON data is then checked for the expected message 'New theme created' and
+        Create a new SubTheme and check the client response status code for http status 200 (OK)
+        Check JSON response data for the expected message 'New theme created' and
         Theme name
         """
         response = self.client.post('/admin/themes/add_subtheme',
@@ -102,9 +101,9 @@ class TestSubTemes(TestCase):
 
     def test_rename_subtheme(self):
         """
-        Renames a sub theme and checks the client response status code for http status 200 (OK)
-        The response JSON data is then checked for the expected message 'Subtheme renamed' and
-        Subtheme new name is correct
+        Rename a SubTheme and check the clients response status code for http status 200 (OK)
+        Check response data for the expected message 'Subtheme renamed' and the
+        Subtheme name has been changed
         """
         if not self.subtheme:
             self.subtheme = self.create_dummy_subtheme()
@@ -122,7 +121,7 @@ class TestSubTemes(TestCase):
 
     def test_delete_subtheme(self):
         """
-        Deletes a sub theme and checks the client response status code for http status 204 (NO_CONTENT)
+        Delete a SubTheme and check the client response status code for http status 204 (NO_CONTENT)
         """
         if not self.subtheme:
             self.subtheme = self.create_dummy_subtheme()
@@ -131,7 +130,7 @@ class TestSubTemes(TestCase):
 
     def test_delete_subtheme_by_id(self):
         """
-        Deletes a sub theme by id and checks the client response status code for http status 204 (NO_CONTENT)
+        Delete a SubTheme by id and check the client response status code for http status 204 (NO_CONTENT)
         """
         if not self.subtheme:
             self.subtheme = self.create_dummy_subtheme()
@@ -139,7 +138,7 @@ class TestSubTemes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
     def tearDown(self):
-        """ Handles the cleanup after the tests"""
+        """ Handle the cleanup after tests"""
 
 
         self.subtheme = SubTheme.get_by_name("_____________________")

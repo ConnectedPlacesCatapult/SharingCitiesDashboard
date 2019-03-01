@@ -17,8 +17,8 @@ class TestAddTheme(TestCase):
     """
     def setUp(self):
         """
-        Sets up a FlaskClient for testing, creates an admin user and creates the authorization header for requests to
-        the Flask Client
+        Setup FlaskClient for tests, create an admin user and create the authorization header for requests to
+        the FlaskClient
         """
         self.client, self.app_context = self.create_test_client()
         self.user = self.create_admin_user()
@@ -27,8 +27,8 @@ class TestAddTheme(TestCase):
 
     def create_test_client(self) -> (FlaskClient, AppContext):
         """
-        Creates a flask client for testing
-        :returns: A flask client and a AppContext
+        Create a FlaskClient
+        :returns: A FlaskClient and a AppContext
         """
         test_app = create_app(DATABASE_NAME='test_analysis', TESTING=True)
         testing_client = test_app.test_client()
@@ -38,8 +38,8 @@ class TestAddTheme(TestCase):
 
     def create_dummy_theme(self) -> Theme:
         """
-        Creates an theme for the tests
-        :return: a Theme instance for tests
+        Create a Theme
+        :return: a Theme instance
         """
         theme = Theme.get_by_name("_test_add_theme_")
         if not theme:
@@ -52,8 +52,8 @@ class TestAddTheme(TestCase):
 
     def create_admin_user(self) -> Users:
         """
-        Creates an admin user for the tests
-        :return: an admin user for tests
+        Create an Admin user
+        :return: an Admin user
         """
         password_hash = bcrypt.hashpw("wfnbqk".encode("utf-8"), bcrypt.gensalt())
         user = Users.find_by_email("admin@FCC.com")
@@ -68,8 +68,8 @@ class TestAddTheme(TestCase):
 
     def get_auth_header(self) -> {str: str}:
         """
-        # Creates an Authorization header for testing endpoints
-        :return: An authorization header
+        # Create an Authorization header
+        :return: An Authorization header
         """
         response_login = self.client.post('/login', data=dict(email=self.user.email, password="wfnbqk", remember=True),
                                           follow_redirects=True)
@@ -78,8 +78,8 @@ class TestAddTheme(TestCase):
 
     def test_add_theme(self):
         """
-        Creates a new theme and checks the client response status code for http status 200 (OK)
-        The response JSON data is then checked for the expected message 'New theme created' and
+        Create a Theme and check the client response status code for http status 200 (OK)
+        The check JSON response data for the expected message 'New theme created' and
         Theme name
         """
         response = self.client.post('/admin/themes/add_theme', json={"name": "_test_add_theme_"},
@@ -92,9 +92,9 @@ class TestAddTheme(TestCase):
 
     def test_rename_theme(self):
         """
-        Renames a theme and checks the client response status code for http status 200 (OK)
-        The response JSON data is then checked for the expected message 'heme renamed' and
-        Theme new name is correct
+        Rename Theme and check the client response status code for http status 200 (OK)
+        The check JSON response data for the expected message 'Theme renamed' and check
+        Theme name is correct
         """
         theme = self.create_dummy_theme()
 
@@ -108,14 +108,14 @@ class TestAddTheme(TestCase):
 
     def test_delete_theme(self):
         """
-        Deletes a theme and checks the client response status code for http status 204 (NO_CONTENT)
+        Delete Theme and check the client response status code for http status 204 (NO_CONTENT)
         """
         theme = self.create_dummy_theme()
         response = self.client.post('/admin/themes/delete_theme', json={"name": theme.name}, headers=self.auth_header)
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
     def tearDown(self):
-        """ Handles the cleanup after the tests"""
+        """ Handle the cleanup after the tests"""
         for theme_id in self.dummy_ids:
             theme = Theme.get_by_id(theme_id)
             if theme:
