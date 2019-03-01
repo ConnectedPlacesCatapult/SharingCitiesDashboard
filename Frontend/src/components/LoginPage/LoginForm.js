@@ -61,12 +61,12 @@ class LoginForm extends React.Component {
     this.state = {
       email: '',
       password: '',
+      remember: false,
       errors: {},
       isLoading: false,
       loginFailed: false,
       loginError: ''
     };
-
     this.onSubmit = this.onSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
   }
@@ -83,6 +83,11 @@ class LoginForm extends React.Component {
 
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
+  };
+
+  onChangeCheckBox = (e) => {
+    const rememberState = !this.state.remember
+    this.setState({ remember: rememberState });
   };
 
   toggleForm = () => {
@@ -127,7 +132,9 @@ class LoginForm extends React.Component {
               />
             </FormControl>
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={
+                <Checkbox color="primary" checked={this.state.remember} onChange={this.onChangeCheckBox}/>
+              }
               label="Remember me"
             />
             <LoginMessage loginFailed={this.state.loginFailed} loginError={this.state.loginError}/>
