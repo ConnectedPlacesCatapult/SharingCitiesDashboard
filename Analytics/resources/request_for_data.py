@@ -202,9 +202,12 @@ class RequestForData(Resource):
 					data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
 												args['fromdate'], args['todate'], operation)
 				if predictions:
-					data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
-														sensor_id = sensorid,
-														n_pred = n_predictions))
+					prediction_task = self.get_predictions.apply_async(args=(
+							data[0]["Attribute_Table"], sensorid,
+							n_predictions))
+
+					data.append({"message": "Forecasting engine making "
+											"predictions", "task_id": str(prediction_task.id)})
 			else:
 				if grouped:
 					if harmonising_method:
@@ -221,9 +224,14 @@ class RequestForData(Resource):
 					if data[0]["Total_Records"] != 0:
 					#### Check for non numeric data
 						if is_number(data[0]["Attribute_Values"][0]["Value"]):
-							data.append(self.get_predictions(attribute_table = data[0]["Attribute_Table"],
-																sensor_id = sensorid,
-																n_pred = n_predictions))
+							prediction_task =  \
+							self.get_predictions.apply_async(args=(
+								data[0]["Attribute_Table"], sensorid,
+								n_predictions))
+
+							data.append(
+								{"message": "Forecasting engine making "
+											"predictions", "task_id": str(prediction_task.id)})
 						else:
 							print("Cannot predict non-numeric data")
 							pass
