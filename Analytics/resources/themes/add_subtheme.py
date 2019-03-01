@@ -21,13 +21,21 @@ class AddSubTheme(Resource):
                                     help='Theme required', location=['form', 'json'])
         self.reqparser.add_argument('theme_id', required=False, store_missing=False, default=None, type=str,
                                     help='Theme required', location=['form', 'json'])
-        self.reqparser.add_argument('subtheme', required=True, type=str, help='Theme required',
+        self.reqparser.add_argument('subtheme', required=True, type=str, help='Sub theme name required',
                                     location=['form', 'json'])
 
     @jwt_required
     def post(self) -> ({str: str}, HTTPStatus):
         """
         Adds a new sub theme to the database
+        :post_argument  theme: the name of the parent theme
+        :post_argument theme_id: the the identification number of the parent theme
+        :post_argument  subtheme: the name of the sub theme
+        :post_type  theme: str
+        :post_type  theme_id: int
+        :post_type  subtheme: str
+        :returns: A JSON of the new subtheme with a http status code of 200, otherwise a JSON of the error details
+                  and the appropriate http status code
         """
         args = self.reqparser.parse_args()
 

@@ -28,6 +28,8 @@ class DeleteSubTheme(Resource):
         :post_argument id: id of the sub theme to be deleted.
         :post_type  name: str
         :post_type  id: str
+        :returns: A no content with a http status code of 204, otherwise a JSON of the error details
+                  and the appropriate http status code
         """
         if not get_jwt_claims()['admin']:
             return {"error": "administration privileges required"}, HTTPStatus.FORBIDDEN
