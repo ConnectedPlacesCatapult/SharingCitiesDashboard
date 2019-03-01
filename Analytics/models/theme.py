@@ -1,14 +1,21 @@
-'''
-Data table to store information about Themes
-'''
+import json
+import logging
 from datetime import datetime
+from typing import Union
 
 from sqlalchemy.exc import IntegrityError
 
 from db import db
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
+
+
 
 class Theme(db.Model):
+    """
+    Data table to store information about Themes
+    """
     __tablename__ = 'theme'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -28,35 +35,41 @@ class Theme(db.Model):
         return 'Theme name: %s' % self.name
 
     def __str__(self):
-        return self.json()
+        
+        return json.dumps(self.json())
 
-    def json(self):
+    def json(self) -> {str: Union[str, int]}:
+        """Creates a JSON of the theme data"""
         return {
             'id': self.id,
             'Name': self.name
         }
 
     def save(self):
+        """put object in queue to be committed"""
         try:
             db.session.add(self)
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            print(self.name, 'theme already exists')
+            logger.error(self.name, 'theme already exists')
 
     def delete(self):
+        """put object in queue for deletion"""
         try:
             db.session.delete(self)
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            print(self.name, 'theme does not exists')
+            logger.error(self.name, 'theme does not exists')
 
     def commit(self):
+        """apply changes to the database"""
         db.session.commit()
 
     @classmethod
     def get_all(self):
+        """fetches all theme entries from the database and returns them as a list of Theme"""
         return Theme.query.all()
 
     @classmethod
@@ -98,14 +111,14 @@ class SubTheme(db.Model):
             'Theme id': self.t_id,
             'Name': self.name
         }
-    
+
     def save(self):
         try:
             db.session.add(self)
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            print(self.name, 'sub theme already exists')
+            logger.error(self.name, 'sub theme already exists')
 
     def delete(self):
         try:
@@ -113,7 +126,7 @@ class SubTheme(db.Model):
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            print(self.name, 'sub theme does not exists')
+            logger.error(self.name, 'sub theme does not exists')
 
     def commit(self):
         db.session.commit()

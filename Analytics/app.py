@@ -32,7 +32,10 @@ from resources.register import Register
 from resources.request_for_data import RequestForData
 from resources.themes import AddSubTheme
 from resources.themes import AddTheme
+from resources.themes import DeleteSubTheme
 from resources.themes import DeleteTheme
+from resources.themes import GetSubThemes
+from resources.themes import GetThemes
 from resources.themes import RenameSubTheme
 from resources.themes import RenameTheme
 from resources.units import AddUnit
@@ -77,7 +80,7 @@ def create_app(**config_overrides):
     jwt = JWTManager(app)
 
     @jwt.token_in_blacklist_loader
-    def check_if_token_in_blacklist(decrypted_token:dict) -> bool:
+    def check_if_token_in_blacklist(decrypted_token: dict) -> bool:
         """ 
         Query revoked tokens table for presence of decrypted_token argument
         :param decrypted_token: Decrypted version of a user's JWT
@@ -89,7 +92,7 @@ def create_app(**config_overrides):
         return RevokedTokens.is_jti_blacklisted(jti)
 
     @jwt.user_claims_loader
-    def add_claims_to_access_token(user:db.Model) -> dict:
+    def add_claims_to_access_token(user: db.Model) -> dict:
         """ 
         Add admin claim to access token
         :param user: Users model
@@ -100,7 +103,7 @@ def create_app(**config_overrides):
         return {'admin': user.admin}
 
     @jwt.user_identity_loader
-    def user_identity_lookup(user:db.Model) -> str:
+    def user_identity_lookup(user: db.Model) -> str:
         """ 
         Define identity claim within JWT token
         :param user: Users model
@@ -148,10 +151,13 @@ def create_app(**config_overrides):
     api.add_resource(AddTheme, '/admin/themes/add_theme')
     api.add_resource(RenameTheme, '/admin/themes/rename_theme')
     api.add_resource(DeleteTheme, '/admin/themes/delete_theme')
+    api.add_resource(GetThemes, '/admin/themes/get_themes')
 
     # Sub Theme Endpoints
     api.add_resource(AddSubTheme, '/admin/themes/add_subtheme')
     api.add_resource(RenameSubTheme, '/admin/themes/rename_subtheme')
+    api.add_resource(DeleteSubTheme, '/admin/themes/delete_subtheme')
+    api.add_resource(GetSubThemes, '/admin/themes/get_subthemes')
 
     # Unit Endpoint
     api.add_resource(AddUnit, '/admin/units/add_unit')
