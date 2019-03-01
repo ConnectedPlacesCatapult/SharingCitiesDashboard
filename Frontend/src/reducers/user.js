@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 
-import { SET_CURRENT_USER, REQUEST_PASSWORD_FULFILLED, REQUEST_PASSWORD_REJECTED, CLEAR_LOGIN_ERRORS, LOGIN_REJECTED } from './../constants';
+import { SET_CURRENT_USER, REQUEST_PASSWORD_FULFILLED, REQUEST_PASSWORD_REJECTED, CLEAR_LOGIN_ERRORS, LOGIN_REJECTED, REGISTER_FULFILLED, REGISTER_REJECTED} from './../constants';
 
 const initialState = {
   isAuthenticated: false,
@@ -34,6 +34,20 @@ export default (state=initialState, action={}) => {
     }
 
     case REQUEST_PASSWORD_REJECTED: {
+      return {
+        loginMessage: '',
+        loginError: action.payload.response.data.message
+      }
+    }
+
+    case REGISTER_FULFILLED: {
+      return {
+        loginMessage: action.payload.data.message,
+        loginError: ''
+      }
+    }
+
+    case REGISTER_REJECTED: {
       return {
         loginMessage: '',
         loginError: action.payload.response.data.message

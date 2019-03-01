@@ -8,7 +8,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 
-import RegisterMessage from './RegisterMessage'
+import LoginMessage from './LoginMessage'
 
 import { doRegister } from "../../actions/userActions";
 
@@ -37,7 +37,7 @@ class RegisterForm extends React.Component {
     this.state = {
       email: '',
       fullName: '',
-      oldPassword: '',
+      password: '',
       passwordNew: '',
       confirmPasswordNew: '',
       errors: {},
@@ -45,7 +45,6 @@ class RegisterForm extends React.Component {
       registrationFailed: false,
       registrationError: ''
     };
-
     this.onSubmit = this.onSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
   }
@@ -53,7 +52,7 @@ class RegisterForm extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     if (this.state.passwordNew === this.state.confirmPasswordNew) {
-      doRegister(this.state.email, this.state.fullName, this.state.password, this.state.passwordNew)
+      this.props.doRegister(this.state, this.props)
     } else {
       this.setState(
         {registrationError: 'Passwords do not match', registrationFailed: true})
@@ -98,7 +97,7 @@ class RegisterForm extends React.Component {
         <FormControl margin="normal" required fullWidth>
           <InputLabel htmlFor="oldPassword">Old Password</InputLabel>
           <Input
-            name="oldPassword"
+            name="password"
             type="password"
             id="oldPassword"
             autoComplete="off"
@@ -131,7 +130,7 @@ class RegisterForm extends React.Component {
             value={confirmPasswordNew}
           />
         </FormControl>
-        <RegisterMessage registrationFailed={this.state.registrationFailed} registrationError={this.state.registrationError}/>
+        <LoginMessage/>
         <Button
           type="submit"
           fullWidth
@@ -156,7 +155,7 @@ const mapStateToProps = (state) => ({
 });
 
 const madDispatchToProps = (dispatch) => ({
-
+  doRegister: (userCredentials, props) => dispatch(doRegister(userCredentials, props)),
 });
 
 RegisterForm = withStyles(styles)(RegisterForm);

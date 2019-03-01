@@ -1,5 +1,5 @@
 import { axiosInstance } from '../api/axios'
-import {SET_CURRENT_USER, REQUEST_PASSWORD_FULFILLED, REQUEST_PASSWORD_REJECTED, LOGIN_REJECTED, CLEAR_LOGIN_ERRORS} from './../constants';
+import {SET_CURRENT_USER, REQUEST_PASSWORD_FULFILLED, REQUEST_PASSWORD_REJECTED, LOGIN_REJECTED, CLEAR_LOGIN_ERRORS, REGISTER_FULFILLED, REGISTER_REJECTED} from './../constants';
 import {SET_WIDGET_PROPERTY} from "../constants";
 
 export const login = (userCredentials, props) => {
@@ -32,19 +32,28 @@ export const login = (userCredentials, props) => {
   };
 };
 
-export function doRegister(email, fullName, password, passwordNew) {
-  const userInfo = {
-    email: email,
-    fullName: fullName,
-    password: password,
-    password_new: passwordNew
+export function doRegister(userCredentials) {
+  return (dispatch) => {
+    const credentials = {
+      email: userCredentials.email,
+      fullName: userCredentials.fullName,
+      password: userCredentials.password,
+      password_new: userCredentials.passwordNew
+    }
+    const session = axiosInstance.post('/register', credentials).then((response) => {
+      dispatch({
+        type: REGISTER_FULFILLED,
+        payload: response,
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: REGISTER_REJECTED,
+        payload: err,
+      })
+    })
   }
-  const session = axiosInstance.post('/register', userInfo).then((res) => {
-  }).catch(function (e) {
-    console.log('registration failed', e)
-  })
 }
-
 
 export const requestPassword = (email) => {
   return (dispatch) => {
@@ -56,12 +65,12 @@ export const requestPassword = (email) => {
         type: REQUEST_PASSWORD_FULFILLED,
       })
     })
-      .catch((err) => {
-        dispatch({
-          type: REQUEST_PASSWORD_REJECTED,
-          payload: err,
-        })
+    .catch((err) => {
+      dispatch({
+        type: REQUEST_PASSWORD_REJECTED,
+        payload: err,
       })
+    })
   }
 }
 
