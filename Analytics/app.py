@@ -1,5 +1,3 @@
-import datetime
-
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -8,16 +6,6 @@ from flask_restful import Api
 
 from db import db
 from models.revoked_tokens import RevokedTokens
-
-from resources.analytics import Analytics
-from resources.login import Login, SecretResource
-from resources.logout import UserLogoutAccess, UserLogoutRefresh
-from resources.refresh_token import TokenRefresh
-from resources.request_for_data import RequestForData
-from resources.request_for_theme import RequestForTheme
-from resources.request_for_sensor import RequestForSensor
-from resources.request_for_attribute import RequestForAttribute
-from resources.register import Register
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -34,17 +22,12 @@ from resources.admin.get_user import GetUserByEmail
 from resources.admin.user_list import UsersList
 from resources.admin.user_permissions import UserPermissions
 from resources.analytics import Analytics
+from resources.forgot_password import ForgotPassword
 from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import RequestForData
-from resources.forgot_password import ForgotPassword
-from resources.units.add_new_unit import AddUnitOfMeasurement
-from resources.units.delete_unit import DeleteUnitOfMeasurement
-from resources.units.get_unit import GetUnitOfMeasure
-from resources.units.get_all_units import GetAllUnitsOfMeasure
-from resources.units.update_unit import UpdateUnitOfMeasure
 from resources.themes import AddSubTheme
 from resources.themes import AddTheme
 from resources.themes import DeleteSubTheme
@@ -53,6 +36,12 @@ from resources.themes import GetSubThemes
 from resources.themes import GetThemes
 from resources.themes import RenameSubTheme
 from resources.themes import RenameTheme
+from resources.units.add_new_unit import AddUnitOfMeasurement
+from resources.units.delete_unit import DeleteUnitOfMeasurement
+from resources.units.get_all_units import GetAllUnitsOfMeasure
+from resources.units.get_unit import GetUnitOfMeasure
+from resources.units.update_unit import UpdateUnitOfMeasure
+
 
 def create_app(**config_overrides):
     app = Flask(__name__)
@@ -90,7 +79,7 @@ def create_app(**config_overrides):
     jwt = JWTManager(app)
 
     @jwt.token_in_blacklist_loader
-    def check_if_token_in_blacklist(decrypted_token:dict) -> bool:
+    def check_if_token_in_blacklist(decrypted_token: dict) -> bool:
         """ 
         Query revoked tokens table for presence of decrypted_token argument
         :param decrypted_token: Decrypted version of a user's JWT
@@ -102,7 +91,7 @@ def create_app(**config_overrides):
         return RevokedTokens.is_jti_blacklisted(jti)
 
     @jwt.user_claims_loader
-    def add_claims_to_access_token(user:db.Model) -> dict:
+    def add_claims_to_access_token(user: db.Model) -> dict:
         """ 
         Add admin claim to access token
         :param user: Users model
@@ -113,7 +102,7 @@ def create_app(**config_overrides):
         return {'admin': user.admin}
 
     @jwt.user_identity_loader
-    def user_identity_lookup(user:db.Model) -> str:
+    def user_identity_lookup(user: db.Model) -> str:
         """ 
         Define identity claim within JWT token
         :param user: Users model
