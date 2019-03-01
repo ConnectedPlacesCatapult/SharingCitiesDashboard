@@ -346,7 +346,8 @@ class RequestForData(Resource):
 			sensor_id: is string passed as parameter with the URL
 			
 	'''
-	def get_predictions(self, attribute_table, sensor_id, n_pred):
+	@celery.task(bind=True)
+	def get_predictions(self, attribute_table: str, sensor_id: str, n_pred: int) -> dict:
 		db.metadata.clear()
 
 		_data = []
@@ -357,9 +358,8 @@ class RequestForData(Resource):
 
 
 		if db.session.query(model).count() < 100:
-			pred_data =  {
-							"Predictions": "not enough data to make reliable predictions"
-						}
+			pred_data =  {"status": "not enough data to make reliable  "
+								"predictions", "result" : "UNABLE"}
 			return pred_data
 		else:
 		# check for sensor_id
@@ -369,24 +369,24 @@ class RequestForData(Resource):
 							.limit(_limit) \
 							.all()
 				if len(values) < 100:
-					pred_data =  {
-								"Predictions": "not enough data to make reliable predictions"
-								}
+					pred_data = {"status": "not enough data to make reliable"
+										   "predictions", "result": "UNABLE"}
 					return pred_data
 			else:	
 				values = db.session.query(model) \
 							.limit(_limit) \
 							.all()
 				if len(values) < 100:
-					pred_data =  {
-								"Predictions": "not enough data to make reliable predictions"
-								}
+					pred_data =  {"status": "not enough data to make reliable"
+										   "predictions", "result": "UNABLE"}
 					return pred_data
 
 			for val in values:
 				_data.append(float(val.value))
 				_timestamps.append(val.api_timestamp)
-
+			
+			self.update_state(state='PROGRESS', meta={
+				'status': "prediction task is in progress"})
 
 			_pred, _mape, _method = predict(_data, _timestamps, n_pred)
 
@@ -394,13 +394,13 @@ class RequestForData(Resource):
 				_sensorid = sensor_id
 			else:
 				_sensorid = "All sensors"
-
-			pred_data =  {
+				
+			result =  {
 						"Sensor_id": _sensorid,
 						"Forcasting_engine": _method,
 						"Mean_Absolute_Percentage_Error": _mape,
 						"Predictions": _pred
 						}
-
+		pred_data = {"status": "task complete", "result": result}
 		return pred_data
 		
