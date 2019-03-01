@@ -18,6 +18,8 @@ from resources.request_for_theme import RequestForTheme
 from resources.request_for_sensor import RequestForSensor
 from resources.request_for_attribute import RequestForAttribute
 from resources.register import Register
+from resources.Widgets.save_widgets import Widgets
+from resources.Widgets.get_widgets import GetWidgets
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -45,10 +47,6 @@ from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
-from resources.themes import AddTheme
-from resources.themes import DeleteTheme
-from resources.themes import GetThemes
-from resources.themes import RenameTheme
 
 def create_app(**config_overrides):
     app = Flask(__name__)
@@ -153,17 +151,11 @@ def create_app(**config_overrides):
     api.add_resource(DeleteUser, '/admin/delete_user')
     api.add_resource(EditUser, '/admin/edit_user')
 
-    # Unit Endpoints
     api.add_resource(AddUnitOfMeasurement, '/admin/units/add')
     api.add_resource(DeleteUnitOfMeasurement, '/admin/units/delete')
     api.add_resource(GetUnitOfMeasure, '/admin/units/get')
     api.add_resource(GetAllUnitsOfMeasure, '/admin/units/get_all')
     api.add_resource(UpdateUnitOfMeasure, '/admin/units/update')
 
-    # Theme Endpoints
-    api.add_resource(AddTheme, '/admin/themes/add_theme')
-    api.add_resource(RenameTheme, '/admin/themes/rename_theme')
-    api.add_resource(DeleteTheme, '/admin/themes/delete_theme')
-    api.add_resource(GetThemes, '/admin/themes/get_themes')
 
     return app
