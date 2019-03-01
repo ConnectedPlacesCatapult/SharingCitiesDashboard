@@ -5,9 +5,10 @@ from flask_script import Manager, Server
 from flask_migrate import MigrateCommand
 from app import create_app
 from drop_datasource import DropDatasource
-from add_datasource import AddDatasource
+from create_celery import make_celery
 
 application = create_app()
+celery_task = make_celery(application)
 manager = Manager(app=application)
 manager.add_command('db', MigrateCommand)
 
