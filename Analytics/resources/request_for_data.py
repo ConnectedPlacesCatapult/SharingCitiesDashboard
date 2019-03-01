@@ -447,9 +447,10 @@ class PredictionStatus(Resource):
 			if 'result' in task.info:
 				response['result'] = task.info['result']
 		else:
-			logger.error("{} celery task was enable to complete".format(
+			logger.error("{} celery task was unable to complete".format(
 				task_id))
 			# something went wrong in the background job
 			response = {'state': task.state, 'status': str(task.info)}
+			return response, 500
 
 		return response, 200
