@@ -44,8 +44,13 @@ Note: If no parameters are passed then by default all the themes are returned
 
 """
 
-
 from flask_restful import Resource, reqparse, inputs
+from sqlalchemy import desc
+from datetime import datetime
+import statistics
+import celery
+import logging
+
 from db import db
 from models.theme import Theme
 from models.attributes import Attributes
@@ -57,14 +62,14 @@ from models.location import Location
 from models.unit import Unit
 from resources.predict import predict
 from resources.helper_functions import is_number
-from sqlalchemy import desc
-from datetime import datetime
-import statistics
 from resources.request_grouped import request_grouped_data, request_harmonised_data
 
 
 LIMIT = 30
 OFFSET = 30
+
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 class RequestForData(Resource):
 	parser = reqparse.RequestParser()
