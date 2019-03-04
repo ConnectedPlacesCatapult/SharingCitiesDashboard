@@ -20,7 +20,7 @@ class AddSubTheme(Resource):
         self.reqparser.add_argument('theme', required=False, store_missing=False, default=None, type=str,
                                     help='Theme required', location=['form', 'json'])
         self.reqparser.add_argument('theme_id', required=False, store_missing=False, default=None, type=str,
-                                    help='Theme required', location=['form', 'json'])
+                                    help='theme_id required', location=['form', 'json'])
         self.reqparser.add_argument('subtheme', required=True, type=str, help='Sub theme name required',
                                     location=['form', 'json'])
 
@@ -32,7 +32,7 @@ class AddSubTheme(Resource):
         :param theme_id:    the identification number of the parent theme
         :param  subtheme:   the name of the sub theme
         :type  theme:       str
-        :type  theme_id:    int
+        :type  theme_id:    str
         :type  subtheme:    str
         :returns: A JSON of the new SubTheme with a http status code of 200, otherwise a JSON of the error details
                   and the appropriate http status code
