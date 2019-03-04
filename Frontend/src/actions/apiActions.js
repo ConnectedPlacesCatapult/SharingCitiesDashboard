@@ -3,6 +3,9 @@ import {
   FETCH_THEMES,
   FETCH_THEMES_FULFILLED,
   FETCH_THEMES_REJECTED,
+  FETCH_ADMIN,
+  FETCH_ADMIN_FULFILLED,
+  FETCH_ADMIN_REJECTED,
   TOGGLE_THEME_SELECTED,
   FETCH_SUBTHEMES,
   FETCH_SUBTHEMES_FULFILLED,
@@ -30,7 +33,7 @@ export const fetchThemes = () => {
     });
 
     axios({
-      url: config.apiRoot,
+      url: config.apiRoot + 'data',
       method: 'get',
       params: {},
     })
@@ -49,6 +52,7 @@ export const fetchThemes = () => {
   };
 };
 
+// Admin
 export const toggleThemeSelected = (themeId) => ({
   type: TOGGLE_THEME_SELECTED,
   payload: themeId,
@@ -65,7 +69,7 @@ export const fetchSubthemes = (themeId) => {
     });
 
     axios({
-      url: config.apiRoot,
+      url: config.apiRoot + 'data',
       method: 'get',
       params: {
         [QUERY_PARAMS.THEME_ID]: themeId,
@@ -108,7 +112,7 @@ export const fetchAttributes = (themeId, subthemeId) => {
     });
 
     axios({
-      url: config.apiRoot,
+      url: config.apiRoot + 'data',
       method: 'get',
       params: {
         [QUERY_PARAMS.SUBTHEME_ID]: subthemeId,
@@ -153,7 +157,7 @@ export const fetchAttributeData = (attributeName, queryParams = {}) => {
     });
 
     axios({
-      url: config.apiRoot,
+      url: config.apiRoot + 'data',
       method: 'get',
       params: {
         ...queryParams,

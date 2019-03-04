@@ -10,8 +10,8 @@ import {
 } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import { connect } from 'react-redux';
-import { initializeEditor } from './../../../actions/widgetActions';
-
+import { initializeEditor } from "./../../../actions/widgetActions";
+import { saveWidget } from "./../../../actions/widgetActions";
 import TypeSelector from './TypeSelector';
 
 const styles = (theme) => ({
@@ -44,10 +44,6 @@ class ConfigPanel extends React.Component {
     initializeEditor: PropTypes.func.isRequired,
   };
 
-  saveWidget = () => {
-    console.log("save widget")
-  };
-
   render() {
     const { classes } = this.props;
 
@@ -59,7 +55,7 @@ class ConfigPanel extends React.Component {
         <Button
           variant="contained"
           size="small"
-          onClick={this.saveWidget}
+          onClick={this.props.saveWidget}
         >
           Save Widget
           <SaveIcon className={classNames(classes.rightIcon, classes.iconSmall)} />
@@ -71,6 +67,7 @@ class ConfigPanel extends React.Component {
 
 const mapDispatchToProps = (dispatch) => ({
   initializeEditor: () => dispatch(initializeEditor()),
+  saveWidget: () => dispatch(saveWidget()),
 });
 
 ConfigPanel = withStyles(styles)(ConfigPanel);

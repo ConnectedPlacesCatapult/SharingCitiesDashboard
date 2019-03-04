@@ -7,7 +7,6 @@ flask-sqlalchemy
 flask-migrate
 flask-script
 flask-cors
-pandas==0.20.3
 numpy
 geoalchemy2
 scipy
@@ -16,3 +15,8 @@ fbprophet
 holidays==0.9.8
 geojson
 shapely
+bcrypt
+flask-jwt-extended
+pytest
+logging
+sendgrid

@@ -5,6 +5,8 @@ import localStyles from './styles/locale.css';
 // base components
 import DashboardPage from './components/DashboardPage';
 import DataPage from './components/DataPage';
+import LoginPage from './components/LoginPage';
+import AdminPage from './components/AdminPage';
 
 // router
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -12,6 +14,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 // material-ui
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from '@material-ui/core/CssBaseline';
+import SnackBar from "./components/common/SnackBar/SnackBar"
 
 // redux
 import { connect } from 'react-redux';
@@ -24,7 +27,7 @@ require('typeface-roboto');
 
 class App extends React.Component {
   componentDidMount() {
-    const { error, fetched, fetching, fetchConfig } = this.props;
+    const { error, fetched, fetching, fetchConfig, state } = this.props;
 
     if (!error && !fetched && !fetching) {
       fetchConfig();
@@ -32,7 +35,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { config, fetched } = this.props;
+    const { config, fetched, notifications } = this.props;
 
     if (fetched) {
       // load local stylesheet if not null
@@ -46,12 +49,15 @@ class App extends React.Component {
 
       return (
         <MuiThemeProvider theme={localTheme}>
+          <SnackBar notification={notifications}/>
           <div>
           <CssBaseline />
           <BrowserRouter>
             <Switch>
               <Route exact path="/" component={DashboardPage} />
               <Route path="/data" component={DataPage} />
+              <Route path="/admin" component={AdminPage} />
+              <Route path="/login" component={LoginPage} />
             </Switch>
           </BrowserRouter>
           </div>
@@ -68,6 +74,7 @@ const mapStateToProps = (state) => ({
   error: state.config.error,
   fetched: state.config.fetched,
   fetching: state.config.fetching,
+  notifications: state.notifications
 });
 
 const mapDispatchToProps = (dispatch) => ({
