@@ -44,6 +44,7 @@ Note: If no parameters are passed then by default all the themes are returned
 
 """
 from datetime import datetime
+import subprocess
 
 from flask_restful import Resource, reqparse, inputs
 from sqlalchemy import desc
@@ -423,34 +424,48 @@ class PredictionStatus(Resource):
 	"""
 
 	parser = reqparse.RequestParser()
-	parser.add_argument('task_id', type=str, store_missing=False,
-						help='This field cannot be blank', required=True)
+	parser.add_argument('task_id', type=str, store_missing=False)
 
 	def get(self) -> (str, int):
 		"""
-		GET method endpoint. Use task_id argument and return state
-		and result of the corresponding asynchronous prediction task
-		:param task_id: The task_id returned upon request of the prediction task
+		GET method endpoint. If task_id argument is given, return it's state
+		and result of the corresponding asynchronous prediction task. If no 
+		task_id is provided a list of all requested tasks are returned with 
+		their corresponding states
+		:param task_id: The task_id return upon request of the prediction task
 		"""
 
 		args = self.parser.parse_args()
-		task_id = args['task_id']
-		task = RequestForData.get_predictions.AsyncResult(task_id)
-		if task.state == 'PENDING':
-			response = {'state': task.state,
-						'status': 'if PENDING state persists, background task '
-								'may not be executing}'}
-		elif task.state != 'FAILURE':
-			response = {'state': task.state, 'status': task.info.get(
-				'status', '')
-						}
-			if 'result' in task.info:
-				response['result'] = task.info['result']
+		if "task_id" not in args:
+			tasks = subprocess.Popen(["redis-cli", "keys", "*"], stdout=subprocess.PIPE)
+			task_list = str(tasks.communicate()[0].decode("utf8")).split(
+				"\n")
+			# remove celery-task-meta prefix from items in task_list
+			task_list = [item[17: ] for item in task_list if
+						 "celery-task-meta-" in item]
+			task_id_states = [{"task_id": t_id, "state":
+				RequestForData.get_predictions.AsyncResult(
+							t_id).state} for t_id in task_list]
+			response = {"task_states": task_id_states}
+
 		else:
-			logger.error("{} celery task was unable to complete".format(
-				task_id))
-			# something went wrong in the background job
-			response = {'state': task.state, 'status': str(task.info)}
-			return response, 500
+			task_id = args['task_id']
+			task = RequestForData.get_predictions.AsyncResult(task_id)
+			if task.state == 'PENDING':
+				response = {'state': task.state,
+							'status': 'if PENDING state persists, background task '
+									'may not be executing}'}
+			elif task.state != 'FAILURE':
+				response = {'state': task.state, 'status': task.info.get(
+					'status', '')
+							}
+				if 'result' in task.info:
+					response['result'] = task.info['result']
+			else:
+				logger.error("{} celery task was unable to complete".format(
+					task_id))
+				# something went wrong in the background job
+				response = {'state': task.state, 'status': str(task.info)}
+				return response, 500
 
 		return response, 200
