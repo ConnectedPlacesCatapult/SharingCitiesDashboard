@@ -32,7 +32,6 @@ class TestSubTemes(TestCase):
             self.theme = Theme.get_by_name("_test_add_Subtheme_")
         self.subtheme = self.create_dummy_subtheme()
 
-
     def create_test_client(self) -> (FlaskClient, AppContext):
         """
         Create flask testing client
@@ -98,7 +97,6 @@ class TestSubTemes(TestCase):
         self.assertEqual(json_response["theme_id"], self.theme.id)
         self.assertEqual(json_response["subtheme"], "_TEST_SUB_THEME_2")
 
-
     def test_rename_subtheme(self):
         """
         Rename a SubTheme and check the clients response status code for http status 200 (OK)
@@ -116,8 +114,6 @@ class TestSubTemes(TestCase):
         self.assertEqual(response["message"], "Subtheme renamed")
         self.assertEqual(response["old_name"], "_TEST_SUB_THEME_")
         self.assertEqual(response["new_name"], "_____________________")
-
-
 
     def test_delete_subtheme(self):
         """
@@ -139,7 +135,6 @@ class TestSubTemes(TestCase):
 
     def tearDown(self):
         """ Handle the cleanup after tests"""
-
 
         self.subtheme = SubTheme.get_by_name("_____________________")
         if not self.subtheme:
