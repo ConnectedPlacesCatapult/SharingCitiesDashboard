@@ -35,6 +35,7 @@ class TestSubTemes(TestCase):
     def create_test_client(self) -> (FlaskClient, AppContext):
         """
         Create flask testing client
+        :return: FlaskClient for tests and AppContext
         """
         test_app = create_app(DATABASE_NAME='test_analysis', TESTING=True)
         testing_client = test_app.test_client()
