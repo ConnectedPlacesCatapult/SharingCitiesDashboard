@@ -6,11 +6,13 @@ import {
   CREATE_NEW_USER_FULFILLED,
   DELETE_USER_FULFILLED,
   SAVE_WIDGET_FULFILLED,
-  SAVE_WIDGET_REJECTED
+  SAVE_WIDGET_REJECTED,
+  GENERATE_FORECAST_FULFILLED,
+  GENERATE_FORECAST_REJECTED
 } from "./../constants";
 
 const initialState = {
-  message: 'Testing',
+  message: '',
   showAlert: false,
   variant: 'defaultNotification',
 };
@@ -69,6 +71,25 @@ export default (state=initialState, action={}) => {
       return {
         ...state,
         message: 'Problem Saving Widget',
+        showAlert: true,
+        variant: 'failureNotification',
+        error: action.payload
+      }
+    }
+
+    case GENERATE_FORECAST_FULFILLED: {
+      return {
+        ...state,
+        message: 'Data Forecast Initiated',
+        showAlert: true,
+        variant: 'successNotification'
+      }
+    }
+
+    case GENERATE_FORECAST_REJECTED: {
+      return {
+        ...state,
+        message: 'Problem Initiating Data Forecast',
         showAlert: true,
         variant: 'failureNotification',
         error: action.payload

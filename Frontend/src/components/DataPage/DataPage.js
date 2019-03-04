@@ -13,6 +13,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 
 // redux
+import { generateForecast } from "./../../actions/widgetActions";
 import { connect } from 'react-redux';
 
 const styles = (theme) => ({
@@ -63,6 +64,7 @@ class DataPage extends React.Component {
                 <DataTable />
                 <OptionsSidePanel
                   openWidgetMaker={this.openWidgetMaker}
+                  generateForecast={this.props.generateForecast}
                 />
               </div>
             : <NoData />
@@ -90,7 +92,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-
+  generateForecast: () => dispatch(generateForecast()),
 });
 
 DataPage = withStyles(styles)(DataPage);

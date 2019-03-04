@@ -12,9 +12,12 @@ import {
   SET_WIDGET_PROPERTY,
   SAVE_WIDGET_FULFILLED,
   SAVE_WIDGET_REJECTED,
+  GENERATE_FORECAST_FULFILLED,
+  GENERATE_FORECAST_REJECTED,
   HIDE_NOTIFICATION,
   TOGGLE_MAP_TOOLTIP_FIELD,
 } from "./../constants";
+import {FETCH_ATTRIBUTES, FETCH_ATTRIBUTES_FULFILLED, FETCH_ATTRIBUTES_REJECTED, QUERY_PARAMS} from "../constants";
 
 /**
  * Simply returns true if a record object contains both "Latitude" and "Longitude" fields
@@ -229,4 +232,46 @@ export const saveWidget = () => {
       })
     }, 5000)
   };
+};
+
+// Attributes
+export const generateForecast = () => {
+  return (dispatch, getState) => {
+    const currentState = getState();
+
+    const forecastConfig = {
+      limit: 100,
+      attributedata: 'O3',
+      predictions: 'True',
+      n_predictions: 5
+    };
+
+    axiosInstance({
+      url: 'data',
+      method: 'get',
+      params: forecastConfig,
+    })
+      .then((response) => {
+        dispatch({
+          type: GENERATE_FORECAST_FULFILLED,
+          payload: response.data,
+        })
+        setTimeout(() => {
+          dispatch({
+            type: HIDE_NOTIFICATION,
+          })
+        }, 2000)
+      })
+      .catch((err) => {
+        dispatch({
+          type: FETCH_ATTRIBUTES_REJECTED,
+          payload: err.statusText,
+        })
+      })
+    setTimeout(() => {
+      dispatch({
+        type: HIDE_NOTIFICATION,
+      })
+    }, 5000)
+  }
 };

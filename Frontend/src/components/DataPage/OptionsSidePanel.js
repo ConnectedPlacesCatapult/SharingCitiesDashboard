@@ -60,7 +60,7 @@ class OptionsSidePanel extends React.Component {
               <SaveAltIcon className={classes.actionButtonIcon} />
               Export Data
             </Button>
-            <Button variant="contained" color="primary" className={classes.actionButton}>
+            <Button variant="contained" color="primary" className={classes.actionButton} onClick={this.props.generateForecast}>
               <ShowChartIcon className={classes.actionButtonIcon} />
               Forecast Data
             </Button>
