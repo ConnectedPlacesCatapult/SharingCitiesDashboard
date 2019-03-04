@@ -133,12 +133,12 @@ export const fetchAttributes = (themeId, subthemeId) => {
   }
 };
 
-export const toggleAttributeSelected = (themeId, subthemeId, attributeName) => ({
+export const toggleAttributeSelected = (themeId, subthemeId, attributeId) => ({
   type: TOGGLE_ATTRIBUTE_SELECTED,
   payload: {
     themeId,
     subthemeId,
-    attributeName,
+    attributeId,
   },
 });
 

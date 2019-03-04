@@ -2,20 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   AppBar,
-  Tab,
   Tabs,
   withStyles,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
+import TabHeader from './TabHeader';
 import TabContent from './TabContent';
 
 const styles = (theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
-  },
-  label: {
-    fontSize: '0.875rem',
   },
 });
 
@@ -45,7 +42,7 @@ class AttributeTabs extends React.Component {
     const { classes, api } = this.props;
     const { activeTab } = this.state;
 
-    const tabs = api.data.map((attr, i) => <Tab classes={{ label: classes.label }} key={i} label={attr['Attribute_Name']} />);
+    const tabs = api.data.map((attr, i) => <TabHeader key={i} value={i} onChange={this.handleChange} attributeId={attr["Attribute_id"]} attributeName={attr["Attribute_Name"]} />);
     const contents = api.data.map((attr, i) => <TabContent key={i} isActive={activeTab === i} {...attr} />);
 
     return (

@@ -25,6 +25,7 @@ class AttributeListItem extends React.Component {
     classes: PropTypes.object.isRequired,
     themeId: PropTypes.number.isRequired,
     subthemeId: PropTypes.number.isRequired,
+    attributeId: PropTypes.string.isRequired,
     attributeName: PropTypes.string.isRequired,
     isSelected: PropTypes.bool.isRequired,
     toggleAttributeSelected: PropTypes.func.isRequired,
@@ -33,14 +34,14 @@ class AttributeListItem extends React.Component {
   };
 
   handleClick = () => {
-    const { themeId, subthemeId, attributeName, isSelected, toggleAttributeSelected, fetchAttributeData, removeAttributeData } = this.props;
+    const { themeId, subthemeId, attributeId, attributeName, isSelected, toggleAttributeSelected, fetchAttributeData, removeAttributeData } = this.props;
 
     // toggles attribute selected
-    toggleAttributeSelected(themeId, subthemeId, attributeName);
+    toggleAttributeSelected(themeId, subthemeId, attributeId);
 
     // either append or remove attribute data
     if (isSelected) {
-      removeAttributeData(attributeName);
+      removeAttributeData(attributeId);
     } else {
       fetchAttributeData(attributeName, {});
     }
@@ -62,9 +63,9 @@ class AttributeListItem extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  toggleAttributeSelected: (themeId, subthemeId, attributeName) => dispatch(toggleAttributeSelected(themeId, subthemeId, attributeName)),
-  fetchAttributeData: (attributeName, queryParams) => dispatch(fetchAttributeData(attributeName, queryParams)),
-  removeAttributeData: (attributeName) => dispatch(removeAttributeData(attributeName)),
+  toggleAttributeSelected: (themeId, subthemeId, attributeId) => dispatch(toggleAttributeSelected(themeId, subthemeId, attributeId)),
+  fetchAttributeData: (attributeId, queryParams) => dispatch(fetchAttributeData(attributeId, queryParams)),
+  removeAttributeData: (attributeId) => dispatch(removeAttributeData(attributeId)),
 });
 
 AttributeListItem = withStyles(styles)(AttributeListItem);

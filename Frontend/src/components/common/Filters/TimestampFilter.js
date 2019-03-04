@@ -29,12 +29,14 @@ const styles = (theme) => ({
   },
 });
 
+// ToDo :: fix so it doesn't break when attribute values is empty
 const getOldestTimestamp = (data) => {
   return data
     .map((attr) => attr["Attribute_Values"].reduce((min, current) => current["Timestamp"] < min ? current["Timestamp"] : min, attr["Attribute_Values"][0]["Timestamp"]))
     .reduce((min, current) => (current < min) ? current : min, data[0]["Attribute_Values"][0]["Timestamp"]);
 };
 
+// ToDo :: fix so it doesn't break when attribute values is empty
 const getLatestTimestamp = (data) => {
   return data
     .map((attr) => attr["Attribute_Values"].reduce((max, current) => current["Timestamp"] > max ? current["Timestamp"] : max, attr["Attribute_Values"][0]["Timestamp"]))

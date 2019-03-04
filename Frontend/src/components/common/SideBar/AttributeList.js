@@ -26,6 +26,7 @@ class AttributeList extends React.Component {
           key={i}
           themeId={themeId}
           subthemeId={subthemeId}
+          attributeId={attr.id}
           attributeName={attr.name}
           isSelected={attr.isSelected}
         />

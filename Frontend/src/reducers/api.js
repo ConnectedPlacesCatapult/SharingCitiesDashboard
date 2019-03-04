@@ -179,7 +179,7 @@ export default (state=initialState, action={}) => {
       const attributeToToggle = updatedThemes
         .find((theme) => theme.id === action.payload.themeId).subthemes
         .find((subtheme) => subtheme.id === action.payload.subthemeId).attributes
-        .find((attr) => attr.name === action.payload.attributeName);
+        .find((attr) => attr.id === action.payload.attributeId);
       attributeToToggle.isSelected = !attributeToToggle.isSelected;
 
       return {
@@ -219,7 +219,7 @@ export default (state=initialState, action={}) => {
 
     case REMOVE_ATTRIBUTE_DATA: return ({
       ...state,
-      data: [...state.data].filter(attr => attr['Attribute_Name'] !== action.payload),
+      data: [...state.data].filter(attr => attr['Attribute_id'] !== action.payload),
     });
 
   }
