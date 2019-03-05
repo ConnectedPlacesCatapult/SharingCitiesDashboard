@@ -106,6 +106,13 @@ class Users(db.Model):
         """
         return cls.query.filter_by(email=email).first()
 
+    @classmethod
+    def find_by_id(cls, user_id: int) -> db.Model:
+        """
+        Return the user corresponding to the id argument from the Users table
+        """
+        return cls.query.filter_by(id=user_id).first()
+
     @staticmethod
     def generate_hash(password: bytes) -> bytes:
         """ Generate a secure hash """

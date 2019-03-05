@@ -27,6 +27,7 @@ from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.refresh_token import TokenRefresh
 from resources.register import Register
+from resources.request_for_data import PredictionStatus
 from resources.request_for_data import RequestForData
 from resources.themes import AddSubTheme
 from resources.themes import AddTheme
@@ -36,13 +37,15 @@ from resources.themes import GetSubThemes
 from resources.themes import GetThemes
 from resources.themes import RenameSubTheme
 from resources.themes import RenameTheme
-from resources.request_for_data import PredictionStatus
-from resources.forgot_password import ForgotPassword
 from resources.units.add_new_unit import AddUnitOfMeasurement
 from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
+from resources.attributes import AttributeAlias
+from resources.attributes import GetAttributes
+from resources.attributes import DeleteAttributeAlias
+
 
 
 def create_app(**config_overrides):
@@ -167,5 +170,10 @@ def create_app(**config_overrides):
     api.add_resource(RenameSubTheme, '/admin/themes/rename_subtheme')
     api.add_resource(DeleteSubTheme, '/admin/themes/delete_subtheme')
     api.add_resource(GetSubThemes, '/admin/themes/get_subthemes')
+
+    #Attribute Alias Endpoints
+    api.add_resource(AttributeAlias, '/admin/attributes/alias')
+    api.add_resource(GetAttributes, '/admin/attributes/get_attributes')
+    api.add_resource(DeleteAttributeAlias, '/admin/attributes/delete_alias')
 
     return app

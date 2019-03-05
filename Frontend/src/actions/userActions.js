@@ -5,7 +5,8 @@ export const login = (userCredentials, props) => {
   return (dispatch) => {
     const credentials = {
       email: userCredentials.email,
-      password: userCredentials.password
+      password: userCredentials.password,
+      remember: userCredentials.remember
     }
     axiosInstance.post('/login', credentials).then((response) => {
       dispatch({
