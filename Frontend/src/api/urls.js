@@ -1,1 +1,1 @@
-export const LOCAL_URL = 'http://localhost:5000/'
+export const LOCAL_URL = 'http://63.35.93.2:5000/'

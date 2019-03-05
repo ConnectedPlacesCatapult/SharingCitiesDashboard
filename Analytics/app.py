@@ -48,6 +48,8 @@ from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
 
+from flask_restful.utils import cors
+
 def create_app(**config_overrides):
     app = Flask(__name__)
     app.config.from_pyfile('settings.py')
