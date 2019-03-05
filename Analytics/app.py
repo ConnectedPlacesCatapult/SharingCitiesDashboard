@@ -55,6 +55,7 @@ def create_app(**config_overrides):
     app.config.from_pyfile('settings.py')
     app.config.update(config_overrides)
     cors = CORS(app, resources={r"/*": {"origins": "*"}})
+    #response.headers.add('Access-Control-Allow-Origin', '*')
     api = Api(app)
 
     # # Configure application to store JWTs in cookies. Whenever you make
