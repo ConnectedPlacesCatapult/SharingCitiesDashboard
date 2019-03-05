@@ -58,6 +58,7 @@ export const fetchWidgets = () => {
     axiosInstance.post('/widgets/load_widgets', requestData).then((response) => {
       const widgetsAsJSON = []
       const widgetArrayAsString = response.data
+      console.log("widgets", widgetArrayAsString)
 
       for (let i = 0; i < widgetArrayAsString.length; i++) {
         const widgetData = JSON.parse(widgetArrayAsString[i].data.replace(/'/g, '"').replace(/False/g, '"false"').replace(/True/g, '"true"').toString())
@@ -120,6 +121,7 @@ export const fetchLayout = () => {
     };
     axiosInstance.post('/widgets/get_layouts', requestData).then((response) => {
       const layoutReceived = response.data
+      console.log("layout", layoutReceived)
       const layoutFixed = []
       for (let i = 0; i < layoutReceived.length; i++) {
         const layoutItem = {
