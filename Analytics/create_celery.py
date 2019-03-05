@@ -21,6 +21,7 @@ def make_celery(app: flask.app.Flask) -> Celery:
 
     celery = Celery(app.import_name)
     celery.config_from_object(celeryconfig)
+    celery.conf.update(app.config)
     logger.info("Celery configurations: BROKER_URL= {} RESULT_BANKEND = {} "
                 "".format(celeryconfig.BROKER_URL,
                           celeryconfig.CELERY_RESULT_BACKEND))
