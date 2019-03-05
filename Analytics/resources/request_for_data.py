@@ -440,13 +440,16 @@ class PredictionStatus(Resource):
 			tasks = subprocess.Popen(["redis-cli", "keys", "*"], stdout=subprocess.PIPE)
 			task_list = str(tasks.communicate()[0].decode("utf8")).split(
 				"\n")
-			# remove celery-task-meta prefix from items in task_list
-			task_list = [item[17: ] for item in task_list if
-						 "celery-task-meta-" in item]
-			task_id_states = [{"task_id": t_id, "state":
-				RequestForData.get_predictions.AsyncResult(
-							t_id).state} for t_id in task_list]
-			response = {"task_states": task_id_states}
+			if len(task_list) > 0:
+				# remove celery-task-meta prefix from items in task_list
+				task_list = [item[17: ] for item in task_list if
+							 "celery-task-meta-" in item]
+				task_id_states = [{"task_id": t_id, "state":
+					RequestForData.get_predictions.AsyncResult(
+								t_id).state} for t_id in task_list]
+				response = {"task_states": task_id_states}
+			else:
+				response = {"task_states": []}
 
 		else:
 			task_id = args['task_id']
