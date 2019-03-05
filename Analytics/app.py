@@ -8,7 +8,8 @@ from flask_restful import Api
 
 from db import db
 from models.revoked_tokens import RevokedTokens
-
+from models.prediction_results import PredictionResults
+from models.user_predictions import UserPredictions
 from resources.analytics import Analytics
 from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
