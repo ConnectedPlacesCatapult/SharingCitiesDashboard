@@ -36,7 +36,7 @@ class AddTheme(Resource):
         args = self.reqparser.parse_args()
 
         # Check the theme name is not empty, abort if it is empty
-        if args["name"] == "":
+        if not args["name"]:
             return {'error': 'Theme cannot be empty', 'name': "''"}, HTTPStatus.BAD_REQUEST
 
         # Check theme does not exist (avoid duplicates)
