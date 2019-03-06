@@ -556,4 +556,3 @@ class PredictionStatus(Resource):
                 return response, 500
 
         return response, 200
-
