@@ -171,7 +171,7 @@ def create_app(**config_overrides):
     api.add_resource(DeleteSubTheme, '/admin/themes/delete_subtheme')
     api.add_resource(GetSubThemes, '/admin/themes/get_subthemes')
 
-    #Attribute Alias Endpoints
+    # Attribute Alias Endpoints
     api.add_resource(AttributeAlias, '/admin/attributes/alias')
     api.add_resource(GetAttributes, '/admin/attributes/get_attributes')
     api.add_resource(DeleteAttributeAlias, '/admin/attributes/delete_alias')
