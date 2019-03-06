@@ -22,7 +22,7 @@ class UserPredictions(db.Model):
     timestamp = db.Column(db.DateTime)
 
     def __init__(self, user_id: int, pred_result_id: int, timestamp: datetime =
-                 None):
+                 datetime.utcnow()):
         """
         Initialise the User Predictions object instance
         :param user_id: users id in the users table
