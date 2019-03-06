@@ -44,9 +44,11 @@ Note: If no parameters are passed then by default all the themes are returned
 
 """
 from datetime import datetime
+import subprocess
 
 from flask_restful import Resource, reqparse, inputs
-from sqlalchemy import desc
+from celery.utils.log import get_task_logger
+import sqlalchemy
 import statistics
 import celery
 import logging
@@ -60,6 +62,8 @@ from models.sensor_attribute import SensorAttribute
 from models.sensor import Sensor
 from models.location import Location
 from models.unit import Unit
+from models.prediction_results import PredictionResults
+from models.user_predictions import UserPredictions
 from resources.predict import predict
 from resources.helper_functions import is_number
 from resources.request_grouped import request_grouped_data, request_harmonised_data
@@ -70,6 +74,8 @@ OFFSET = 30
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
+
+celery_logger = get_task_logger(__name__)
 
 class RequestForData(Resource):
 	parser = reqparse.RequestParser()
@@ -103,10 +109,12 @@ class RequestForData(Resource):
 	parser.add_argument('sensorid', type=str)
 	parser.add_argument('n_predictions', type=int, store_missing = False)
 	parser.add_argument('predictions', type=inputs.boolean, store_missing = False)
+	parser.add_argument('user_id',type=int,store_missing=False)
 
 	def get(self):
 		args = self.parser.parse_args()
 		theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, sensorid, n_predictions, predictions, grouped, harmonising_method, per_sensor, freq, method = None, None, None, None, None, None, [], None, 100, None, None, None, None, '1H', 'mean'
+		user_id = None
 
 		if 'theme' in args:
 			theme = args['theme']
@@ -173,6 +181,9 @@ class RequestForData(Resource):
 		if 'sensorid' in args:
 			sensorid = args['sensorid']
 
+		if 'user_id' in args:
+			user_id = args['user_id']
+
 		if theme is None and subtheme is None \
 			and len(attributes) == 0 and attribute_data is None \
 			and sensor is None and sensor_name is None and sensor_attribute is None:
@@ -209,10 +220,11 @@ class RequestForData(Resource):
 				if predictions:
 					prediction_task = self.get_predictions.apply_async(args=(
 							data[0]["Attribute_Table"], sensorid,
-							n_predictions))
+							n_predictions, user_id))
 
 					data.append({"message": "Forecasting engine making "
-											"predictions", "task_id": str(prediction_task.id)})
+											"predictions",
+								"task_id": str(prediction_task.id)})
 			else:
 				if grouped:
 					if harmonising_method:
@@ -232,14 +244,15 @@ class RequestForData(Resource):
 							prediction_task =  \
 							self.get_predictions.apply_async(args=(
 								data[0]["Attribute_Table"], sensorid,
-								n_predictions))
+								n_predictions, user_id))
 
 							data.append(
 								{"message": "Forecasting engine making "
-											"predictions", "task_id": str(prediction_task.id)})
+											"predictions",
+								"task_id": str(prediction_task.id)})
 						else:
-							print("Cannot predict non-numeric data")
-							pass
+							data.append({"message":"Cannot predict "
+												   "non-numeric data"})
 					else:
 						pass
 			return data, 200
@@ -307,7 +320,8 @@ class RequestForData(Resource):
 				if operation is None:
 
 					### refactored the query to fetch the latest values by default
-					values = db.session.query(model).order_by(desc(model.api_timestamp)).limit(limit).all() # \
+					values = db.session.query(model).order_by(sqlalchemy.desc(
+						model.api_timestamp)).limit(limit).all() # \
 					# values = db.session.query(model).limit(limit) \
 					# 				.offset(abs(count - offset)).all()
 
@@ -353,6 +367,7 @@ class RequestForData(Resource):
 
 		return data
 
+
 	'''
 		@Params
 			attribute_table: is string passed as parameter with the URL
@@ -360,7 +375,22 @@ class RequestForData(Resource):
 			
 	'''
 	@celery.task(bind=True)
-	def get_predictions(self, attribute_table: str, sensor_id: str, n_pred: int) -> dict:
+	def get_predictions(self, attribute_table: str, sensor_id: str, n_pred:
+	int , u_id: int) -> dict:
+		"""
+		Generate time series predictions or retrieve a time series 
+		from database if the corresponding predictions have been cached.
+		
+		:param attribute_table: the name of the table that will be used 
+		during the prediction process
+		:param sensor_id: the id of the sensor on which predictions will be 
+		made. Set to "All sensors" if predictions are to be made using all 
+		the sensors from the attribute_table
+		:param n_pred: the number of predictions to be made
+		:param u_id: the users id found in the Users table
+		:return: a dictionary containing the predicted values with their 
+		corresponding time stamps 
+		"""
 		db.metadata.clear()
 
 		_data = []
@@ -369,10 +399,15 @@ class RequestForData(Resource):
 
 		model = ModelClass(attribute_table.lower())
 
-
 		if db.session.query(model).count() < 100:
-			pred_data =  {"status": "not enough data to make reliable  "
+			pred_data ={"status": "not enough data to make reliable  "
 								"predictions", "result" : "UNABLE"}
+			celery_logger.error("{} for args attr_table={}, sensor_id={}, "
+								"n_pred={} ".format(pred_data["status"],
+													attribute_table,
+													sensor_id, n_pred))
+			self.update_state(state='FAILURE', meta={
+				'status': "prediction task is in progress"})
 			return pred_data
 		else:
 		# check for sensor_id
@@ -382,40 +417,91 @@ class RequestForData(Resource):
 							.limit(_limit) \
 							.all()
 				if len(values) < 100:
-					pred_data = {"status": "not enough data to make reliable"
-										   "predictions", "result": "UNABLE"}
+					pred_data = {"status": "not enough sensor data to make "
+										   "reliable predictions",
+								 "result":"UNABLE"}
+					celery_logger.error(
+						"{} for args attr_table={}, sensor_id={}, "
+						"n_pred={} ".format(pred_data["status"],
+											attribute_table,
+											sensor_id, n_pred))
+					self.update_state(state='FAILURE', meta={
+						'status': "prediction task is in progress"})
 					return pred_data
 			else:	
 				values = db.session.query(model) \
 							.limit(_limit) \
 							.all()
 				if len(values) < 100:
-					pred_data =  {"status": "not enough data to make reliable"
-										   "predictions", "result": "UNABLE"}
+					pred_data = {"status": "not enough data to make reliable"
+											"predictions", "result": "UNABLE"}
+					celery_logger.error(
+						"{} for args attr_table={}, sensor_id={}, "
+						"n_pred={} ".format(pred_data["status"],
+											attribute_table, sensor_id,
+											n_pred))
+					self.update_state(state='FAILURE', meta={
+						'status': "prediction task is in progress"})
 					return pred_data
+
+			self.update_state(state='PROGRESS', meta={
+				'status': "prediction task is in progress"})
 
 			for val in values:
 				_data.append(float(val.value))
 				_timestamps.append(val.api_timestamp)
 			
-			self.update_state(state='PROGRESS', meta={
-				'status': "prediction task is in progress"})
+			predict_from_db = PredictionResults.find_by_prediction_args(
+				attribute_table, sensor_id, n_pred)
 
-			_pred, _mape, _method = predict(_data, _timestamps, n_pred)
+			if predict_from_db: # use a cached result
+				if u_id:
+					if not UserPredictions.entry_exists(u_id,
+														predict_from_db.id):
 
-			if sensor_id:
-				_sensorid = sensor_id
+						user_prediction_entry = UserPredictions(u_id,
+																predict_from_db.id)
+						user_prediction_entry.save()
+						user_prediction_entry.commit()
+
+				result = {
+					"Sensor_id": predict_from_db.sensor_id,
+					"Forcasting_engine": predict_from_db.forcasting_engine,
+					"Mean_Absolute_Percentage_Error":
+						predict_from_db.mean_absolute_percentage_error,
+					"Predictions": predict_from_db.result
+				}
+
 			else:
-				_sensorid = "All sensors"
-				
-			result =  {
-						"Sensor_id": _sensorid,
-						"Forcasting_engine": _method,
-						"Mean_Absolute_Percentage_Error": _mape,
-						"Predictions": _pred
-						}
+				_pred, _mape, _method = predict(_data, _timestamps, n_pred)
+
+				if sensor_id:
+					_sensorid = sensor_id
+				else:
+					_sensorid = "All sensors"
+
+				prediction_result = PredictionResults(_method, _mape,
+													  attribute_table,
+													  _sensorid, n_pred, _pred)
+				prediction_result.save()
+				prediction_result.commit()
+
+				if u_id is not None:
+					user_prediction_entry = UserPredictions(u_id,
+															prediction_result.id)
+					user_prediction_entry.save()
+					user_prediction_entry.commit()
+
+				result = {
+							"Sensor_id": _sensorid,
+							"Forcasting_engine": _method,
+							"Mean_Absolute_Percentage_Error": _mape,
+							"Predictions": _pred
+							}
+
 		pred_data = {"status": "task complete", "result": result}
 		return pred_data
+
 		
 class PredictionStatus(Resource):
 	"""
@@ -423,34 +509,51 @@ class PredictionStatus(Resource):
 	"""
 
 	parser = reqparse.RequestParser()
-	parser.add_argument('task_id', type=str, store_missing=False,
-						help='This field cannot be blank', required=True)
+	parser.add_argument('task_id', type=str, store_missing=False)
 
 	def get(self) -> (str, int):
 		"""
 		GET method endpoint. Use task_id argument and return state
-		and result of the corresponding asynchronous prediction task
+		and result of the corresponding asynchronous prediction task. If no
+		task_id is provided, the state of all executed tasks are returned
 		:param task_id: The task_id returned upon request of the prediction task
 		"""
 
 		args = self.parser.parse_args()
-		task_id = args['task_id']
-		task = RequestForData.get_predictions.AsyncResult(task_id)
-		if task.state == 'PENDING':
-			response = {'state': task.state,
-						'status': 'if PENDING state persists, background task '
-								'may not be executing}'}
-		elif task.state != 'FAILURE':
-			response = {'state': task.state, 'status': task.info.get(
-				'status', '')
-						}
-			if 'result' in task.info:
-				response['result'] = task.info['result']
+		if "task_id" not in args:
+			tasks = subprocess.Popen(["redis-cli", "keys", "*"],
+									stdout=subprocess.PIPE)
+			task_list = str(tasks.communicate()[0].decode("utf8")).split(
+				"\n")
+
+			if len(task_list) > 0:
+				# remove celery-task-meta prefix from items in task_list
+				task_list = [item[17:] for item in task_list if
+							 "celery-task-meta-" in item]
+				task_id_states = [{"task_id": t_id, "state":
+					RequestForData.get_predictions.AsyncResult(
+						t_id).state} for t_id in task_list]
+				response = {"task_states": task_id_states}
+			else:
+				response = {"task_states": []}
 		else:
-			logger.error("{} celery task was unable to complete".format(
-				task_id))
-			# something went wrong in the background job
-			response = {'state': task.state, 'status': str(task.info)}
-			return response, 500
+			task_id = args['task_id']
+			task = RequestForData.get_predictions.AsyncResult(task_id)
+			if task.state == 'PENDING':
+				response = {'state': task.state,
+							'status': 'if PENDING state persists, background task '
+									'may not be executing}'}
+			elif task.state != 'FAILURE':
+				response = {'state': task.state, 'status': task.info.get(
+					'status', '')
+							}
+				if 'result' in task.info:
+					response['result'] = task.info['result']
+			else:
+				logger.error("{} celery task was unable to complete because "
+							"of error: {}".format(task_id, str(task.info)))
+				response = {'state': task.state, 'status': str(task.info)}
+				return response, 500
 
 		return response, 200
+
