@@ -29,7 +29,7 @@ class PredictionResults(db.Model):
 
     def __init__(self, eng: str, mape: float, attribute_table: str,
                  sensor_id: str,  num_predictions: int, result: JSON,
-                 timestamp: datetime = None):
+                 timestamp: datetime = datetime.utcnow()):
         """
         Initialise the RequestPrediction object instance
         :param eng: the name of the forecasting engine used for predictions
