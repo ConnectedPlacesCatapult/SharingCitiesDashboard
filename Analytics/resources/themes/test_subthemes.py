@@ -99,6 +99,7 @@ class TestSubTemes(TestCase):
         self.assertEqual(json_response["theme_id"], self.theme.id)
         self.assertEqual(json_response["subtheme"], "_TEST_SUB_THEME_2")
 
+
     def test_rename_subtheme_theme_id(self):
         """
         Rename a SubTheme by theme_id and check the clients response status code for http status 200 (OK)
@@ -118,6 +119,7 @@ class TestSubTemes(TestCase):
         self.assertEqual(response["message"], "Subtheme renamed")
         self.assertEqual(response["old_name"], current_name)
         self.assertEqual(response["new_name"], "_____________________")
+
 
     def test_rename_subtheme_id(self):
         """
