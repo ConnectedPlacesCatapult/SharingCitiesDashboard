@@ -111,14 +111,14 @@ class TestSubTemes(TestCase):
         current_name = self.subtheme.name
         response = self.client.post('/admin/themes/rename_subtheme', json={"theme_id": self.subtheme.t_id,
                                                                            "current_name": current_name,
-                                                                           "new_name": "_____________________"
+                                                                           "new_name": "new_name_not_1"
                                                                            }, headers=self.auth_header)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         response = response.get_json()
         self.assertEqual(response["id"], self.subtheme.id)
         self.assertEqual(response["message"], "Subtheme renamed")
         self.assertEqual(response["old_name"], current_name)
-        self.assertEqual(response["new_name"], "_____________________")
+        self.assertEqual(response["new_name"], "new_name_not_1")
 
 
     def test_rename_subtheme_id(self):
@@ -132,14 +132,14 @@ class TestSubTemes(TestCase):
         current_name = self.subtheme.name
         response = self.client.post('/admin/themes/rename_subtheme', json={"id": self.subtheme.id,
                                                                            "current_name": current_name,
-                                                                           "new_name": "_____________________"
+                                                                           "new_name": "new_name_not_1"
                                                                            }, headers=self.auth_header)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         response = response.get_json()
         self.assertEqual(response["id"], self.subtheme.id)
         self.assertEqual(response["message"], "Subtheme renamed")
         self.assertEqual(response["old_name"], current_name)
-        self.assertEqual(response["new_name"], "_____________________")
+        self.assertEqual(response["new_name"], "new_name_not_1")
 
     def test_rename_non_existant_subtheme(self):
         """
@@ -147,7 +147,7 @@ class TestSubTemes(TestCase):
         """
         response = self.client.post('/admin/themes/rename_subtheme', json={"theme_id": -1,
                                                                            "current_name": "a3d4f5g6h7j8k0",
-                                                                           "new_name": "_____________________"
+                                                                           "new_name": "new_name_not_1"
                                                                            }, headers=self.auth_header)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
@@ -186,7 +186,7 @@ class TestSubTemes(TestCase):
     def tearDown(self):
         """ Handle the cleanup after tests"""
 
-        self.subtheme = SubTheme.get_by_name("_____________________")
+        self.subtheme = SubTheme.get_by_name("new_name_not_1")
         if not self.subtheme:
             self.subtheme = SubTheme.get_by_name("_TEST_SUB_THEME_")
 
