@@ -94,6 +94,6 @@ class AttributeAlias(Resource):
 
         alias = AttrAlias.get_by(user_id=args["user_id"], attribute_id=args["attribute_id"])
         if not alias:
-            attribute
+            return attribute.json(), HTTPStatus.OK
 
         return alias.json(), HTTPStatus.OK
