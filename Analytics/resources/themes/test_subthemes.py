@@ -15,6 +15,7 @@ class TestSubTemes(TestCase):
     """
     Unittest for the creation, renaming and deleting of Themes
     """
+
     def setUp(self):
         """
         Setup a FlaskClient for testing, creates an admin user and creates the authorization header for requests to
@@ -32,10 +33,10 @@ class TestSubTemes(TestCase):
             self.theme = Theme.get_by_name("_test_add_Subtheme_")
         self.subtheme = self.create_dummy_subtheme()
 
-
     def create_test_client(self) -> (FlaskClient, AppContext):
         """
         Create flask testing client
+        :return: FlaskClient for tests and AppContext
         """
         test_app = create_app(DATABASE_NAME='test_analysis', TESTING=True)
         testing_client = test_app.test_client()
@@ -98,35 +99,66 @@ class TestSubTemes(TestCase):
         self.assertEqual(json_response["theme_id"], self.theme.id)
         self.assertEqual(json_response["subtheme"], "_TEST_SUB_THEME_2")
 
-
-    def test_rename_subtheme(self):
+    def test_rename_subtheme_theme_id(self):
         """
-        Rename a SubTheme and check the clients response status code for http status 200 (OK)
+        Rename a SubTheme by theme_id and check the clients response status code for http status 200 (OK)
         Check response data for the expected message 'Subtheme renamed' and the
         Subtheme name has been changed
         """
         if not self.subtheme:
             self.subtheme = self.create_dummy_subtheme()
-        response = self.client.post('/admin/themes/rename_subtheme', json={ "current_name": self.subtheme.name,
-                                                                            "new_name": "_____________________"
-                                                                            }, headers=self.auth_header)
+        current_name = self.subtheme.name
+        response = self.client.post('/admin/themes/rename_subtheme', json={"theme_id": self.subtheme.t_id,
+                                                                           "current_name": current_name,
+                                                                           "new_name": "_____________________"
+                                                                           }, headers=self.auth_header)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         response = response.get_json()
         self.assertEqual(response["id"], self.subtheme.id)
         self.assertEqual(response["message"], "Subtheme renamed")
-        self.assertEqual(response["old_name"], "_TEST_SUB_THEME_")
+        self.assertEqual(response["old_name"], current_name)
         self.assertEqual(response["new_name"], "_____________________")
 
-
-
-    def test_delete_subtheme(self):
+    def test_rename_subtheme_id(self):
         """
-        Delete a SubTheme and check the client response status code for http status 204 (NO_CONTENT)
+        Rename a SubTheme by id and check the clients response status code for http status 200 (OK)
+        Check response data for the expected message 'Subtheme renamed' and the
+        Subtheme name has been changed
         """
         if not self.subtheme:
             self.subtheme = self.create_dummy_subtheme()
-        response = self.client.post('/admin/themes/delete_subtheme', json={"name": self.subtheme.name}, headers=self.auth_header)
-        self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+        current_name = self.subtheme.name
+        response = self.client.post('/admin/themes/rename_subtheme', json={"id": self.subtheme.id,
+                                                                           "current_name": current_name,
+                                                                           "new_name": "_____________________"
+                                                                           }, headers=self.auth_header)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        response = response.get_json()
+        self.assertEqual(response["id"], self.subtheme.id)
+        self.assertEqual(response["message"], "Subtheme renamed")
+        self.assertEqual(response["old_name"], current_name)
+        self.assertEqual(response["new_name"], "_____________________")
+
+    def test_rename_non_existant_subtheme(self):
+        """
+        Rename a SubTheme that does not exist and check the clients response status code for http status 404 (OK)
+        """
+        response = self.client.post('/admin/themes/rename_subtheme', json={"theme_id": -1,
+                                                                           "current_name": "a3d4f5g6h7j8k0",
+                                                                           "new_name": "_____________________"
+                                                                           }, headers=self.auth_header)
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
+    def test_delete_non_exsitant_subtheme(self):
+        """
+        Delete a SubTheme that does not exist and check the client response status code for http status 404
+        """
+        if not self.subtheme:
+            self.subtheme = self.create_dummy_subtheme()
+        response = self.client.post('/admin/themes/delete_subtheme',
+                                    json={"name": "weA_gfj24fhurtyui", "theme_id": -1},
+                                    headers=self.auth_header)
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_delete_subtheme_by_id(self):
         """
@@ -134,12 +166,23 @@ class TestSubTemes(TestCase):
         """
         if not self.subtheme:
             self.subtheme = self.create_dummy_subtheme()
-        response = self.client.post('/admin/themes/delete_subtheme', json={"id": self.subtheme.id}, headers=self.auth_header)
+        response = self.client.post('/admin/themes/delete_subtheme', json={"id": self.subtheme.id},
+                                    headers=self.auth_header)
+        self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+
+    def test_delete_subtheme_by_theme_id_and_name(self):
+        """
+        Delete a SubTheme by theme_id and name: check the client response status code for http status 204 (NO_CONTENT)
+        """
+        if not self.subtheme:
+            self.subtheme = self.create_dummy_subtheme()
+        response = self.client.post('/admin/themes/delete_subtheme',
+                                    json={"theme_id": self.subtheme.t_id, "name": self.subtheme.name},
+                                    headers=self.auth_header)
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
     def tearDown(self):
         """ Handle the cleanup after tests"""
-
 
         self.subtheme = SubTheme.get_by_name("_____________________")
         if not self.subtheme:
