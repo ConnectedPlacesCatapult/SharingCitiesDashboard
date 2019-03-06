@@ -48,8 +48,6 @@ class PredictionResults(db.Model):
         self.sensor_id = sensor_id
         self.num_predictions = num_predictions
         self.result = result
-        if timestamp is None:
-            timestamp = datetime.utcnow()
         self.timestamp = timestamp
 
     def __str__(self) -> str:
