@@ -39,7 +39,7 @@ class RenameTheme(Resource):
         args = self.reqparser.parse_args()
 
         # Check the current theme name and the new theme name  is not empty, abort if it is empty
-        if args["current_name"] == "" or args["new_name"] == "":
+        if not args["current_name"] or not args["new_name"]:
             return ({
                         'error': 'Theme name cannot be empty',
                         'name': args["current_name"],
