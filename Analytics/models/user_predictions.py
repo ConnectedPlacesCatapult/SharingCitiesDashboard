@@ -33,8 +33,6 @@ class UserPredictions(db.Model):
         """
         self.user_id = user_id
         self.pred_result_id = pred_result_id
-        if timestamp is None:
-            timestamp = datetime.utcnow()
         self.timestamp = timestamp
 
     def __str__(self) -> str:
