@@ -508,7 +508,7 @@ class RequestForData(Resource):
                             "Predictions": _pred
                             }
 
-        pred_data = {"status": "task complete", "qresult": result}
+        pred_data = {"status": "task complete", "result": result}
         return pred_data
 
         
