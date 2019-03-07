@@ -9,18 +9,27 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from '@material-ui/core/Typography';
 import Button from "@material-ui/core/Button";
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Grow from '@material-ui/core/Grow';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Paper from '@material-ui/core/Paper';
+import Popper from '@material-ui/core/Popper';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import Modal from '@material-ui/core/Modal';
-import { Login as LoginIcon } from 'mdi-material-ui'
+import { Logout as LogoutIcon } from 'mdi-material-ui'
+import AccountIcon from '@material-ui/icons/AccountCircle';
 
 // router
 import {NavLink, withRouter} from "react-router-dom";
 
-import { doLogout } from "../../actions/userActions";
+import { doLogout, getUser } from "../../actions/userActions";
 
 // redux
 import { connect } from 'react-redux';
+import {fetchConfig} from "../../actions/configActions";
 
 // ToDo :: add this to config and define a default logo (somewhere)
 const bgImage = require('./../../images/Lisbon-logo-med.png');
@@ -55,14 +64,16 @@ const styles = (theme) => ({
   radioButton: {
     marginRight: theme.spacing.unit,
   },
-  loginButton: {
+  userButton: {
     paddingTop: '20px',
     paddingBottom: '20px',
-    //backgroundColor: '#e3f6f4',
-    textTransform: "none",
     fontWeight: "bold",
   },
-  loginIcon: {
+  loadingButton: {
+    paddingTop: '0px',
+    paddingBottom: '0px',
+  },
+  menuIcon: {
     marginRight: theme.spacing.unit,
   },
   paper: {
@@ -75,11 +86,24 @@ const styles = (theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing.unit * 4,
   },
+  progress: {
+    margin: theme.spacing.unit * 2,
+  },
 });
 
 class Header extends React.Component {
   state = {
     loginModalOpen: false,
+    open: false,
+  };
+
+  componentDidMount() {
+    const { getUser } = this.props;
+    getUser();
+  }
+
+  handleClick = event => {
+    this.setState({ headerListEl: event.currentTarget });
   };
 
   handleModalOpen = () => {
@@ -95,8 +119,44 @@ class Header extends React.Component {
     this.setState({ loginModalOpen: false });
   };
 
+
+  handleToggle = () => {
+    this.setState(state => ({ open: !state.open }));
+  };
+
+  handleClose = event => {
+    if (this.headerList.contains(event.target)) {
+      return;
+    }
+    this.setState({ open: false });
+  };
+
+  userMenu() {
+      const {classes, user} = this.props;
+      if (user.email) {
+          return (
+              <Button
+                  buttonRef={node => {
+                      this.headerList = node;
+                  }}
+                  aria-owns={open ? 'menu-list-grow' : undefined}
+                  aria-haspopup="true"
+                  onClick={this.handleToggle}
+                  className={classes.userButton}
+              >
+                  {user.fullname ? user.fullname : user.email}
+              </Button>
+          )
+      } else {
+        return (
+          <CircularProgress size={20} className={classes.progress} />
+        )
+      }
+  }
+
   render() {
     const { classes, location, config } = this.props;
+    const { open } = this.state;
 
     const pageLinks = config.routes.map((route, i) => (
       <NavLink
@@ -127,9 +187,25 @@ class Header extends React.Component {
           <div>
             {pageLinks}
           </div>
-          <Button className={classes.loginButton} onClick={this.logOut}>
-            <LoginIcon className={classes.loginIcon} />
-          </Button>
+            {this.userMenu()}
+          <Popper open={open} anchorEl={this.headerList} transition disablePortal>
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                id="menu-list-grow"
+                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+              >
+                <Paper>
+                  <ClickAwayListener onClickAway={this.handleClose}>
+                    <MenuList>
+                      <MenuItem disabled onClick={this.handleClose}><AccountIcon className={classes.menuIcon} />Profile</MenuItem>
+                      <MenuItem onClick={this.logOut}><LogoutIcon className={classes.menuIcon} />Logout</MenuItem>
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+          </Popper>
           <Modal
             open={this.state.loginModalOpen}
             onClose={this.handleModalClose}
@@ -149,10 +225,11 @@ Header.propTypes = {
 
 const mapStateToProps = (state) => ({
   config: state.config.config,
+  user: state.user.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-
+  getUser: () => dispatch(getUser()),
 });
 
 Header = withStyles(styles)(Header);
