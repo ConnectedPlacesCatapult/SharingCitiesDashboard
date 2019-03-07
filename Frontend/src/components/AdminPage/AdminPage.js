@@ -7,8 +7,12 @@ import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
 import Modal from "@material-ui/core/Modal";
 import UserList from "./UserList"
+import ImportersList from "./ImportersList"
 import AddUser from "../common/AddUser/AddUser"
 import DeleteUserDialog from "../common/DeleteUserDialog/DeleteUserDialog"
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -18,6 +22,18 @@ import { connect } from 'react-redux';
 import { promptDeleteUser } from "../../actions/adminActions";
 import { deleteUser } from "../../actions/adminActions";
 import { cancelDeleteUser } from "../../actions/adminActions";
+
+function TabContainer(props) {
+  return (
+    <Typography component="div">
+      {props.children}
+    </Typography>
+  );
+}
+
+TabContainer.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 const styles = (theme) => ({
   root: {
@@ -39,6 +55,7 @@ class AdminPage extends React.Component {
 
   state = {
     addUserModalOpen: false,
+    value: 0,
   };
 
   openAddUser = () => {
@@ -49,15 +66,30 @@ class AdminPage extends React.Component {
     this.setState({ addUserModalOpen: false })
   };
 
+  handleChange = (event, value) => {
+    this.setState({ value });
+  };
+
   render() {
     const { classes, location, admin } = this.props;
+    const { value } = this.state;
 
     return (
       <div className={classes.root}>
         <Header location={location} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <UserList openAddUser={this.openAddUser}/>
+
+          <AppBar position="static">
+            <Tabs value={value} onChange={this.handleChange}>
+              <Tab label="Users" />
+              <Tab label="Importers" />
+            </Tabs>
+          </AppBar>
+
+          {value === 0 && <TabContainer><UserList openAddUser={this.openAddUser}/></TabContainer>}
+          {value === 1 && <TabContainer><ImportersList openAddUser={this.openAddUser}/></TabContainer>}
+
           <Dialog
             open={admin.deleteUserDialogOpen}
             onClose={this.props.cancelDeleteUser}
