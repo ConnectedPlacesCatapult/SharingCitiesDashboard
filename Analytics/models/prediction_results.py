@@ -5,14 +5,16 @@ import json
 
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import asc
 import logging
 
 from db import db
+from models.user_predictions import UserPredictions
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
-CACHE_SIZE = 20
+CACHE_SIZE = 5
 
 
 class PredictionResults(db.Model):
@@ -25,11 +27,13 @@ class PredictionResults(db.Model):
     sensor_id = db.Column(db.String(150), nullable=False)
     num_predictions = db.Column(db.Integer, nullable=False)
     result = db.Column(JSON, nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False)
+    created_timestamp = db.Column(db.DateTime, nullable=False)
+    updated_timestamp = db.Column(db.DateTime, nullable=False)
 
     def __init__(self, eng: str, mape: float, attribute_table: str,
                  sensor_id: str,  num_predictions: int, result: JSON,
-                 timestamp: datetime = datetime.utcnow()):
+                 created_timestamp: datetime = datetime.now(),
+                 updated_timestamp: datetime = datetime.now()):
         """
         Initialise the RequestPrediction object instance
         :param eng: the name of the forecasting engine used for predictions
@@ -40,7 +44,7 @@ class PredictionResults(db.Model):
         calculations
         :param num_predictions: the number of predictions that were calculated
         :param result: the prediction list returned from get_predictions
-        :param timestamp: time stamp of when the result was stored
+        :param current_timestamp: time stamp of when the result was created
         """
         self.forcasting_engine = eng
         self.mean_absolute_percentage_error = mape
@@ -48,7 +52,8 @@ class PredictionResults(db.Model):
         self.sensor_id = sensor_id
         self.num_predictions = num_predictions
         self.result = result
-        self.timestamp = timestamp
+        self.created_timestamp = created_timestamp
+        self.updated_timestamp = updated_timestamp
 
     def __str__(self) -> str:
         """
@@ -112,3 +117,21 @@ class PredictionResults(db.Model):
             PredictionResults.attribute_table == attr_table_name,
             PredictionResults.sensor_id == sensor_id,
             PredictionResults.num_predictions == num_pred).first()
+
+    @classmethod
+    def enforce_lru_replacement_policy(cls) -> db.Model:
+        """ Remove the least recently used prediction if the table is full """
+
+        number_of_predictions = cls.query.count()
+        if number_of_predictions > CACHE_SIZE:
+            least_recently_used = cls.query.order_by(asc(
+                cls.updated_timestamp)).first()
+
+            users_with_lru_entry = UserPredictions.find_by_pred_id(
+                least_recently_used.id)
+            for user in users_with_lru_entry:
+                db.session.delete(user)
+                db.session.commit()
+
+            db.session.delete(least_recently_used)
+            db.session.commit()
