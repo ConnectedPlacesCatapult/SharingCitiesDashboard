@@ -22,7 +22,7 @@ class UserPredictions(db.Model):
     timestamp = db.Column(db.DateTime)
 
     def __init__(self, user_id: int, pred_result_id: int, timestamp: datetime =
-                 datetime.utcnow()):
+                 datetime.now()):
         """
         Initialise the User Predictions object instance
         :param user_id: users id in the users table
@@ -90,6 +90,13 @@ class UserPredictions(db.Model):
         Return the Prediction Result ids that matches the user_id argument
         """
         return cls.query.filter_by(user_id=user_id).all()
+
+    @classmethod
+    def find_by_pred_id(cls, pred_id: int) -> db.Model:
+        """
+        Return the entries which match the user_id argument
+        """
+        return cls.query.filter_by(pred_result_id=pred_id).all()
 
     @classmethod
     def entry_exists(cls, user_id: int, pred_id) -> db.Model:
