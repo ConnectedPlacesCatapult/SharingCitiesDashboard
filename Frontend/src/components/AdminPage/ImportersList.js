@@ -62,21 +62,21 @@ const styles = (theme) => ({
   },
 });
 
-class UserList extends React.Component {
+class ImportersList extends React.Component {
   constructor(props) {
     super(props);
     this.props.fetchUsers();
   }
 
   render() {
-    const { classes, admin, user, promptDeleteUser } = this.props;
+    const { classes, admin, promptDeleteUser } = this.props;
 
     return (
       <div className={classes.root}>
         <Paper className={classes.paper}>
           <div className={classes.tableTitleBar}>
             <Typography variant="h5" color="primary" className={classes.tableTitle}>
-              Users
+              Importers
             </Typography>
             <Button variant="contained" color="primary" className={classes.tableTitleActionButton} onClick={this.props.openAddUser}>
               <PlusIcon className={classes.actionButtonIcon}/>
@@ -105,9 +105,9 @@ class UserList extends React.Component {
                   <TableCell align="right">{row.admin ? 'Yes' : 'No'}</TableCell>
                   <TableCell align="right">{row.activated ? 'Yes' : 'No'}</TableCell>
                   <TableCell align="right" style={{textAlign: 'right'}}>
-                    { row.id !== user.user.id ? <IconButton onClick={() => promptDeleteUser(row)}>
+                    <IconButton onClick={() => promptDeleteUser(row)}>
                       <DeleteIcon color="primary" />
-                    </IconButton> : null }
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -119,14 +119,13 @@ class UserList extends React.Component {
   }
 }
 
-UserList.propTypes = {
+ImportersList.propTypes = {
   classes: PropTypes.object.isRequired,
   admin: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   admin: state.admin,
-  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -134,7 +133,7 @@ const mapDispatchToProps = (dispatch) => ({
   promptDeleteUser: (userID) => dispatch(promptDeleteUser(userID)),
 });
 
-UserList = withStyles(styles)(UserList);
-UserList = connect(mapStateToProps, mapDispatchToProps)(UserList);
+ImportersList = withStyles(styles)(ImportersList);
+ImportersList = connect(mapStateToProps, mapDispatchToProps)(ImportersList);
 
-export default UserList
+export default ImportersList
