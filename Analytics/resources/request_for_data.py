@@ -455,12 +455,16 @@ class RequestForData(Resource):
                 attribute_table, sensor_id, n_pred)
 
             if predict_from_db: # use a cached result
+                predict_from_db.updated_timestamp = datetime.now()
+                predict_from_db.save()
+                predict_from_db.commit()
                 if u_id:
                     if not UserPredictions.entry_exists(u_id,
                                                         predict_from_db.id):
 
                         user_prediction_entry = UserPredictions(u_id,
-                                                                predict_from_db.id)
+                                                                predict_from_db.id,
+                                                                datetime.now())
                         user_prediction_entry.save()
                         user_prediction_entry.commit()
 
@@ -482,15 +486,20 @@ class RequestForData(Resource):
 
                 prediction_result = PredictionResults(_method, _mape,
                                                       attribute_table,
-                                                      _sensorid, n_pred, _pred)
+                                                      _sensorid, n_pred,
+                                                      _pred, datetime.now(),
+                                                      datetime.now())
                 prediction_result.save()
                 prediction_result.commit()
 
                 if u_id is not None:
                     user_prediction_entry = UserPredictions(u_id,
-                                                            prediction_result.id)
+                                                            prediction_result.id,
+                                                            datetime.now())
                     user_prediction_entry.save()
                     user_prediction_entry.commit()
+
+                PredictionResults.enforce_lru_replacement_policy()
 
                 result = {
                             "Sensor_id": _sensorid,
@@ -499,7 +508,7 @@ class RequestForData(Resource):
                             "Predictions": _pred
                             }
 
-        pred_data = {"status": "task complete", "result": result}
+        pred_data = {"status": "task complete", "qresult": result}
         return pred_data
 
         
