@@ -17,15 +17,13 @@ class RenameSubTheme(Resource):
         Set required arguments for POST request
         """
         self.reqparser = reqparse.RequestParser()
-        self.reqparser.add_argument('current_name', required=True, type=str, help='Current theme name required',
+        self.reqparser.add_argument('current_name', required=True, type=str, help='Current subtheme name required',
                                     location=['form', 'json'])
-        self.reqparser.add_argument('new_name', required=True, type=str, help='New theme name required',
+        self.reqparser.add_argument('new_name', required=True, type=str, help='New subtheme name required',
                                     location=['form', 'json'])
         self.reqparser.add_argument('theme_id', required=False, store_missing=False, type=str,
-                                    help='New theme name required',
                                     location=['form', 'json'])
-        self.reqparser.add_argument('id', required=False, store_missing=False, type=str, help='New theme name required',
-                                    location=['form', 'json'])
+        self.reqparser.add_argument('id', required=False, store_missing=False, location=['form', 'json'])
 
     @jwt_required
     def post(self) -> ({str: str}, HTTPStatus):
