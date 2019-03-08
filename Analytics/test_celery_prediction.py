@@ -93,13 +93,3 @@ class CelryTestCase(unittest.TestCase):
 
         self.assertEqual(response_poll_json["state"], "SUCCESS")
         self.assertIsNotNone(response_poll_json["result"]["Prediction_id"])
-
-
-
-
-
-
-
-
-
-
