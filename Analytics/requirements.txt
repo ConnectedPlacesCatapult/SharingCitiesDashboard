@@ -20,3 +20,4 @@ flask-jwt-extended
 pytest
 logging
 sendgrid
+gunicorn
