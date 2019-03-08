@@ -5,16 +5,15 @@ import json
 
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import asc
+from sqlalchemy import desc
+import flask_sqlalchemy
 import logging
 
 from db import db
-from models.user_predictions import UserPredictions
+from resources.predict import predict
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
-
-CACHE_SIZE = 5
 
 
 class PredictionResults(db.Model):
@@ -44,7 +43,8 @@ class PredictionResults(db.Model):
         calculations
         :param num_predictions: the number of predictions that were calculated
         :param result: the prediction list returned from get_predictions
-        :param current_timestamp: time stamp of when the result was created
+        :param created_timestamp: time stamp of when the result was created
+        :param updated_timestamp: time stamp of when the result was last used
         """
         self.forcasting_engine = eng
         self.mean_absolute_percentage_error = mape
@@ -101,6 +101,20 @@ class PredictionResults(db.Model):
             db.session.rollback()
             logger.error(str(self.id) + ' prediction request does not exists')
 
+    def is_stale(self, model: flask_sqlalchemy.model) -> bool:
+        """
+        Determine if new data has been imported into the table which was used
+        to create the prediction result
+        :param model: the model class corresponding to the table which was
+        used to generate predictions
+        """
+
+        recent_import_entry = db.session.query(model).order_by(desc(
+            model.timestamp)).first()
+        recent_import_timestamp = recent_import_entry.timestamp
+
+        return recent_import_timestamp > self.created_timestamp
+
     @staticmethod
     def commit():
         """ Commit updated items to the database """
@@ -109,29 +123,56 @@ class PredictionResults(db.Model):
     @classmethod
     def find_by_prediction_args(cls, attr_table_name: str, sensor_id: str,
                                 num_pred: int) -> db.Model:
-        """ Return a stored result that matches the prediction arguments """
+        """
+        Return a stored result that matches the prediction arguments
+        :param attr_table_name: name of table which was used during prediction
+        :param sensor_id: id of the sensor that was used to during prediction
+        :param num_pred: number of predictions included in the result
+        :return: most recent prediction result entry
+        """
 
         if sensor_id is None:
             sensor_id = "All sensors"
         return cls.query.filter(
             PredictionResults.attribute_table == attr_table_name,
             PredictionResults.sensor_id == sensor_id,
-            PredictionResults.num_predictions == num_pred).first()
+            PredictionResults.num_predictions == num_pred).order_by(desc(
+                cls.created_timestamp)).first()
 
     @classmethod
-    def enforce_lru_replacement_policy(cls) -> db.Model:
-        """ Remove the least recently used prediction if the table is full """
+    def generate_predictions_results(cls, attr_table, sensor_id, num_pred,
+                                     data, timestamps) -> dict:
+        """
+        Generate time series predictions and store them in the prediction
+        results table
+        :param attr_table: name of table from which data will be taken for
+        prediction
+        :param sensor_id: id of the sensor(s) which will be used during
+        prediction
+        :param num_pred: number of predictions to generate
+        :param data: the values extracted from attr_table
+        :param timestamps: timestamps of the values extracted from attr_table
+        :return a dictionary containing prediction metadata and the
+        corresponding prediction results:
+        """
+        _pred, _mape, _method = predict(data, timestamps, num_pred)
 
-        number_of_predictions = cls.query.count()
-        if number_of_predictions > CACHE_SIZE:
-            least_recently_used = cls.query.order_by(asc(
-                cls.updated_timestamp)).first()
+        if sensor_id:
+            _sensor_id = sensor_id
+        else:
+            _sensor_id = "All sensors"
 
-            users_with_lru_entry = UserPredictions.find_by_pred_id(
-                least_recently_used.id)
-            for user in users_with_lru_entry:
-                db.session.delete(user)
-                db.session.commit()
+        prediction_result = PredictionResults(_method, _mape, attr_table,
+                                              _sensor_id, num_pred,
+                                              _pred, datetime.now(),
+                                              datetime.now())
+        prediction_result.save()
+        prediction_result.commit()
 
-            db.session.delete(least_recently_used)
-            db.session.commit()
+        return {
+            "Sensor_id": _sensor_id,
+            "Forcasting_engine": _method,
+            "Mean_Absolute_Percentage_Error": _mape,
+            "Prediction_id": prediction_result.id,
+            "Predictions": _pred
+        }
