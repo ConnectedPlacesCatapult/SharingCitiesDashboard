@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
@@ -37,6 +38,9 @@ class AddSubTheme(Resource):
         :returns: A JSON of the new SubTheme with a http status code of 200, otherwise a JSON of the error details
                   and the appropriate http status code
         """
+        if not get_jwt_claims()['admin']:
+            return {"error": "administration privileges required"}, HTTPStatus.FORBIDDEN
+
         args = self.reqparser.parse_args()
 
         if "theme" not in args and "theme_id" not in args:
