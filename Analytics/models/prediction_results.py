@@ -140,8 +140,8 @@ class PredictionResults(db.Model):
                 cls.created_timestamp)).first()
 
     @classmethod
-    def generate_predictions_results(cls, attr_table, sensor_id, num_pred,
-                                     data, timestamps) -> dict:
+    def generate_predictions_results(cls, attr_table: str, sensor_id: str,  
+                                     num_pred: int, data: list, timestamps: list) -> dict:
         """
         Generate time series predictions and store them in the prediction
         results table
