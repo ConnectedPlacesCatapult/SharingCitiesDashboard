@@ -107,6 +107,8 @@ class PredictionResults(db.Model):
         to create the prediction result
         :param model: the model class corresponding to the table which was
         used to generate predictions
+        :return: whether the prediction was created before the import of more 
+        recent data
         """
 
         recent_import_entry = db.session.query(model).order_by(desc(
