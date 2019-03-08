@@ -89,6 +89,7 @@ class UserPredictions(db.Model):
         """
         Return the Prediction Result ids that matches the user_id argument
         :param user_id: id of user
+        :return: the user predictions entry/entries that match the user_id argument
         """
         return cls.query.filter_by(user_id=user_id).all()
 
@@ -97,6 +98,7 @@ class UserPredictions(db.Model):
         """
         Return the entries which match the user_id argument
         :param pred_id: id of prediction result
+        :return: the user predictions entry/entries that match the pred_id argument
         """
         return cls.query.filter_by(pred_result_id=pred_id).all()
 
@@ -107,6 +109,8 @@ class UserPredictions(db.Model):
         pred_result_id arguments
         :param user_id: id of user requesting the prediction
         :param pred_id: id of prediction result
+        :return: the user predictions entry which matched the pred_id and user_id
+        argument
         """
         return cls.query.filter_by(user_id=user_id,
                                    pred_result_id=pred_id).first()
