@@ -85,5 +85,3 @@ def predict(values, timestamp, n_pred):
 	except Exception as e:
 		#### TODO log the error
 			return None, None, None
-
-
