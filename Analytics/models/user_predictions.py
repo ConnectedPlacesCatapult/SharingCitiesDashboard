@@ -88,6 +88,7 @@ class UserPredictions(db.Model):
     def find_by_user_id(cls, user_id: int) -> db.Model:
         """
         Return the Prediction Result ids that matches the user_id argument
+        :param user_id: id of user
         """
         return cls.query.filter_by(user_id=user_id).all()
 
@@ -95,15 +96,33 @@ class UserPredictions(db.Model):
     def find_by_pred_id(cls, pred_id: int) -> db.Model:
         """
         Return the entries which match the user_id argument
+        :param pred_id: id of prediction result
         """
         return cls.query.filter_by(pred_result_id=pred_id).all()
 
     @classmethod
-    def entry_exists(cls, user_id: int, pred_id) -> db.Model:
+    def get_entry(cls, user_id: int, pred_id) -> db.Model:
         """
         Return the prediction result ids that matches the user_id and
         pred_result_id arguments
+        :param user_id: id of user requesting the prediction
+        :param pred_id: id of prediction result
         """
         return cls.query.filter_by(user_id=user_id,
                                    pred_result_id=pred_id).first()
+
+    @classmethod
+    def add_entry(cls, user_id, prediction_result_id):
+        """
+        Add an entry into the user predictions table if it does not exists
+        :param user_id: id of user requesting the prediction
+        :param prediction_result_id: id of prediction result
+        """
+        if user_id:
+            if not cls.get_entry(user_id, prediction_result_id):
+                user_prediction_entry = UserPredictions(user_id,
+                                                        prediction_result_id,
+                                                        datetime.now())
+                user_prediction_entry.save()
+                user_prediction_entry.commit()
 
