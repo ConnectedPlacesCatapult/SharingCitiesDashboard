@@ -3,44 +3,19 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
-import Typography from "@material-ui/core/Typography";
-import Paper from '@material-ui/core/Paper';
 import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
 
-import RegisterMessage from './RegisterMessage'
+import LoginMessage from './LoginMessage'
 
 import { doRegister } from "../../actions/userActions";
 
 // redux
 import { connect } from 'react-redux';
 
-const bgImage = require('./../../images/Lisbon-logo-med.png');
-
 const styles = (theme) => ({
-  layout: {
-    width: 'auto',
-    display: 'block', // Fix IE 11 issue.
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
-      width: 400,
-      marginLeft: 'auto',
-      marginRight: 'auto',
-    },
-  },
-  paper: {
-    marginTop: theme.spacing.unit * 8,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
-    //backgroundColor: theme.palette.primary.light,
-  },
   avatar: {
     margin: theme.spacing.unit,
     //backgroundColor: theme.palette.secondary.main,
@@ -51,6 +26,7 @@ const styles = (theme) => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 3,
+    marginBottom: theme.spacing.unit * 2,
   },
 });
 
@@ -61,7 +37,7 @@ class RegisterForm extends React.Component {
     this.state = {
       email: '',
       fullName: '',
-      oldPassword: '',
+      password: '',
       passwordNew: '',
       confirmPasswordNew: '',
       errors: {},
@@ -69,7 +45,6 @@ class RegisterForm extends React.Component {
       registrationFailed: false,
       registrationError: ''
     };
-
     this.onSubmit = this.onSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
   }
@@ -77,7 +52,7 @@ class RegisterForm extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     if (this.state.passwordNew === this.state.confirmPasswordNew) {
-      doRegister(this.state.email, this.state.fullName, this.state.password, this.state.passwordNew)
+      this.props.doRegister(this.state, this.props)
     } else {
       this.setState(
         {registrationError: 'Passwords do not match', registrationFailed: true})
@@ -88,105 +63,85 @@ class RegisterForm extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  toggleForm = () => {
-    this.props.onToggleForm();
-  }
-
   render() {
     const { email, password, passwordNew, confirmPasswordNew, fullName, errors, isLoading } = this.state;
     const { classes } = this.props;
 
     return (
-      <main className={classes.layout}>
-        <Paper className={classes.paper}>
-          <img className={classes.logoImage} src={bgImage} width="220px" height="auto" style={{marginBottom: 20}}/>
-          <Typography variant="h5">
-            Register
-          </Typography>
-          <form className={classes.form} onSubmit={this.onSubmit}>
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="email">Email Address</InputLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                autoFocus
-                error={errors.email}
-                onChange={this.onChange}
-                value={email}
-              />
-            </FormControl>
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="fullName">Full Name</InputLabel>
-              <Input
-                id="fullName"
-                name="fullName"
-                type="string"
-                autoComplete="fullName"
-                error={errors.fullName}
-                onChange={this.onChange}
-                value={fullName}
-              />
-            </FormControl>
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="password">Old Password</InputLabel>
-              <Input
-                name="password"
-                type="password"
-                id="password"
-                autoComplete="off"
-                error={errors.password}
-                onChange={this.onChange}
-                value={password}
-              />
-            </FormControl>
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="passwordNew">New Password</InputLabel>
-              <Input
-                name="passwordNew"
-                type="password"
-                id="passwordNew"
-                autoComplete="off"
-                error={errors.passwordNew}
-                onChange={this.onChange}
-                value={passwordNew}
-              />
-            </FormControl>
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="confirmPasswordNew">Confirm New Password</InputLabel>
-              <Input
-                name="confirmPasswordNew"
-                type="password"
-                id="confirmPasswordNew"
-                autoComplete="off"
-                error={errors.confirmPasswordNew}
-                onChange={this.onChange}
-                value={confirmPasswordNew}
-              />
-            </FormControl>
-            <RegisterMessage registrationFailed={this.state.registrationFailed} registrationError={this.state.registrationError}/>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              disabled={isLoading}
-            >
-              Submit
-            </Button>
-            <Button
-              fullWidth
-              variant="text"
-              color="primary"
-              className={classes.submit}
-              onClick={this.toggleForm}>
-              Back to Login
-            </Button>
-          </form>
-        </Paper>
-      </main>
+      <form className={classes.form} onSubmit={this.onSubmit}>
+        <FormControl margin="normal" required fullWidth>
+          <InputLabel htmlFor="email">Email Address</InputLabel>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            autoFocus
+            error={errors.email}
+            onChange={this.onChange}
+            value={email}
+          />
+        </FormControl>
+        <FormControl margin="normal" required fullWidth>
+          <InputLabel htmlFor="fullName">Full Name</InputLabel>
+          <Input
+            id="fullName"
+            name="fullName"
+            type="string"
+            autoComplete="fullName"
+            error={errors.fullName}
+            onChange={this.onChange}
+            value={fullName}
+          />
+        </FormControl>
+        <FormControl margin="normal" required fullWidth>
+          <InputLabel htmlFor="oldPassword">Old Password</InputLabel>
+          <Input
+            name="password"
+            type="password"
+            id="oldPassword"
+            autoComplete="off"
+            error={errors.password}
+            onChange={this.onChange}
+            value={password}
+          />
+        </FormControl>
+        <FormControl margin="normal" required fullWidth>
+          <InputLabel htmlFor="passwordNew">New Password</InputLabel>
+          <Input
+            name="passwordNew"
+            type="password"
+            id="passwordNew"
+            autoComplete="off"
+            error={errors.passwordNew}
+            onChange={this.onChange}
+            value={passwordNew}
+          />
+        </FormControl>
+        <FormControl margin="normal" required fullWidth>
+          <InputLabel htmlFor="confirmPasswordNew">Confirm New Password</InputLabel>
+          <Input
+            name="confirmPasswordNew"
+            type="password"
+            id="confirmPasswordNew"
+            autoComplete="off"
+            error={errors.confirmPasswordNew}
+            onChange={this.onChange}
+            value={confirmPasswordNew}
+          />
+        </FormControl>
+        <LoginMessage/>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+          disabled={isLoading}
+        >
+          Submit
+        </Button>
+      </form>
     )
   }
 }
@@ -200,7 +155,7 @@ const mapStateToProps = (state) => ({
 });
 
 const madDispatchToProps = (dispatch) => ({
-
+  doRegister: (userCredentials, props) => dispatch(doRegister(userCredentials, props)),
 });
 
 RegisterForm = withStyles(styles)(RegisterForm);

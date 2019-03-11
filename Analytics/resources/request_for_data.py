@@ -64,7 +64,6 @@ from models.location import Location
 from models.unit import Unit
 from models.prediction_results import PredictionResults
 from models.user_predictions import UserPredictions
-from resources.predict import predict
 from resources.helper_functions import is_number
 from resources.request_grouped import request_grouped_data, request_harmonised_data
 
@@ -318,7 +317,7 @@ class RequestForData(Resource):
                             .all()
             else:
                 if operation is None:
-
+                    db.metadata.clear()
                     ### refactored the query to fetch the latest values by default
                     values = db.session.query(model).order_by(sqlalchemy.desc(
                         model.api_timestamp)).limit(limit).all() # \
@@ -450,54 +449,49 @@ class RequestForData(Resource):
             for val in values:
                 _data.append(float(val.value))
                 _timestamps.append(val.api_timestamp)
-            
+
             predict_from_db = PredictionResults.find_by_prediction_args(
                 attribute_table, sensor_id, n_pred)
 
-            if predict_from_db: # use a cached result
-                if u_id:
-                    if not UserPredictions.entry_exists(u_id,
-                                                        predict_from_db.id):
+            if predict_from_db:
+                existing_user_result = UserPredictions.get_entry(u_id,
+                                                           predict_from_db.id)
 
-                        user_prediction_entry = UserPredictions(u_id,
-                                                                predict_from_db.id)
-                        user_prediction_entry.save()
-                        user_prediction_entry.commit()
+                if existing_user_result and predict_from_db.is_stale(model):
+                    existing_user_result.delete()
+                    existing_user_result.commit()
 
-                result = {
-                    "Sensor_id": predict_from_db.sensor_id,
-                    "Forcasting_engine": predict_from_db.forcasting_engine,
-                    "Mean_Absolute_Percentage_Error":
-                        predict_from_db.mean_absolute_percentage_error,
-                    "Predictions": predict_from_db.result
-                }
+                    if not UserPredictions.find_by_pred_id(predict_from_db.id):
+                        predict_from_db.delete()
+                        predict_from_db.commit()
+
+                    result = PredictionResults.generate_predictions_results(
+                        attribute_table, sensor_id, n_pred, _data, _timestamps)
+                    UserPredictions.add_entry(u_id, result["Prediction_id"])
+
+
+                else:
+                    # use a cached result
+                    predict_from_db.updated_timestamp = datetime.now()
+                    predict_from_db.save()
+                    predict_from_db.commit()
+                    UserPredictions.add_entry(u_id, predict_from_db.id)
+
+                    result = {
+                        "Sensor_id": predict_from_db.sensor_id,
+                        "Forcasting_engine": predict_from_db.forcasting_engine,
+                        "Mean_Absolute_Percentage_Error":
+                            predict_from_db.mean_absolute_percentage_error,
+                        "Prediction_id": predict_from_db.id,
+                        "Predictions": predict_from_db.result
+                    }
 
             else:
-                _pred, _mape, _method = predict(_data, _timestamps, n_pred)
 
-                if sensor_id:
-                    _sensorid = sensor_id
-                else:
-                    _sensorid = "All sensors"
+                result = PredictionResults.generate_predictions_results(
+                    attribute_table, sensor_id, n_pred, _data, _timestamps)
 
-                prediction_result = PredictionResults(_method, _mape,
-                                                      attribute_table,
-                                                      _sensorid, n_pred, _pred)
-                prediction_result.save()
-                prediction_result.commit()
-
-                if u_id is not None:
-                    user_prediction_entry = UserPredictions(u_id,
-                                                            prediction_result.id)
-                    user_prediction_entry.save()
-                    user_prediction_entry.commit()
-
-                result = {
-                            "Sensor_id": _sensorid,
-                            "Forcasting_engine": _method,
-                            "Mean_Absolute_Percentage_Error": _mape,
-                            "Predictions": _pred
-                            }
+                UserPredictions.add_entry(u_id, result["Prediction_id"])
 
         pred_data = {"status": "task complete", "result": result}
         return pred_data

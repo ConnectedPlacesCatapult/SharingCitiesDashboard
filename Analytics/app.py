@@ -36,6 +36,10 @@ from resources.admin.get_user import GetUserByEmail
 from resources.admin.user_list import UsersList
 from resources.admin.user_permissions import UserPermissions
 from resources.analytics import Analytics
+from resources.attributes import AttributeAlias
+from resources.attributes import DeleteAttributeAlias
+from resources.attributes import GetAttributes
+from resources.attributes import UpdateAttributeSubTheme
 from resources.forgot_password import ForgotPassword
 from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
@@ -56,10 +60,6 @@ from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
-from resources.attributes import AttributeAlias
-from resources.attributes import GetAttributes
-from resources.attributes import DeleteAttributeAlias
-
 
 
 def create_app(**config_overrides):
@@ -185,9 +185,10 @@ def create_app(**config_overrides):
     api.add_resource(DeleteSubTheme, '/admin/themes/delete_subtheme')
     api.add_resource(GetSubThemes, '/admin/themes/get_subthemes')
 
-    #Attribute Alias Endpoints
+    # Attribute Alias Endpoints
     api.add_resource(AttributeAlias, '/admin/attributes/alias')
     api.add_resource(GetAttributes, '/admin/attributes/get_attributes')
     api.add_resource(DeleteAttributeAlias, '/admin/attributes/delete_alias')
+    api.add_resource(UpdateAttributeSubTheme, '/admin/attributes/add_to_subtheme')
 
     return app

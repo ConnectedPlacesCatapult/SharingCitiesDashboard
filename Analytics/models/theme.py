@@ -93,7 +93,7 @@ class SubTheme(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     t_id = db.Column(db.Integer, db.ForeignKey('theme.id'), nullable=False)
-    name = db.Column(db.String(255), unique=True, nullable=False)
+    name = db.Column(db.String(255), unique=False, nullable=False)
     timestamp = db.Column(db.DateTime)
 
     # attributes = db.relationship('Attributes', backref='subtheme', lazy=True)
