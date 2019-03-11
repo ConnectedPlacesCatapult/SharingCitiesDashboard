@@ -105,6 +105,10 @@ class UserList extends React.Component {
                   <TableCell align="right">{row.admin ? 'Yes' : 'No'}</TableCell>
                   <TableCell align="right">{row.activated ? 'Yes' : 'No'}</TableCell>
                   <TableCell align="right" style={{textAlign: 'right'}}>
+                    <Typography variant="h4" color="primary" className={classes.tableTitle}>
+                      { user.user.id }
+                      { row.id }
+                    </Typography>
                     { row.id !== user.user.id ? <IconButton onClick={() => promptDeleteUser(row)}>
                       <DeleteIcon color="primary" />
                     </IconButton> : null }
