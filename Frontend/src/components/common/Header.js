@@ -45,6 +45,9 @@ const styles = (theme) => ({
     position: 'absolute',
     left: '10px',
   },
+  logoImageModal: {
+    margin: 'auto'
+  },
   toolbar: theme.mixins.toolbar,
   toolbarTitle: {
     flexGrow: 1,
@@ -69,6 +72,10 @@ const styles = (theme) => ({
     paddingBottom: '20px',
     fontWeight: "bold",
   },
+  loginPrompt: {
+    marginBottom: theme.spacing.unit,
+    color: theme.palette.primary.light
+  },
   loadingButton: {
     paddingTop: '0px',
     paddingBottom: '0px',
@@ -88,6 +95,9 @@ const styles = (theme) => ({
   },
   progress: {
     margin: theme.spacing.unit * 2,
+  },
+  centerAlign: {
+    textAlign: 'center',
   },
 });
 
@@ -119,7 +129,6 @@ class Header extends React.Component {
     this.setState({ loginModalOpen: false });
   };
 
-
   handleToggle = () => {
     this.setState(state => ({ open: !state.open }));
   };
@@ -133,7 +142,7 @@ class Header extends React.Component {
 
   userMenu() {
       const {classes, user} = this.props;
-      if (user.email) {
+      if (user && user.email) {
           return (
               <Button
                   buttonRef={node => {
@@ -154,8 +163,31 @@ class Header extends React.Component {
       }
   }
 
+  showModal() {
+    const {classes, user} = this.props;
+    if (!user) {
+      return (
+        <Modal
+          open={true}>
+          <Paper className={classes.paper}>
+            <div className={classes.centerAlign}>
+              <img className={classes.logoImageModal} src={bgImage} width="220px" height="auto" style={{marginBottom: 20}}/>
+              <Typography variant="h6" className={classes.loginPrompt} >
+                Your session has expired
+              </Typography>
+              <Typography variant="h6">
+                Please sign in again
+              </Typography>
+            </div>
+            <LoginForm />
+          </Paper>
+        </Modal>
+      )
+    }
+  }
+
   render() {
-    const { classes, location, config } = this.props;
+    const { classes, location, config, user } = this.props;
     const { open } = this.state;
 
     const pageLinks = config.routes.map((route, i) => (
@@ -206,12 +238,7 @@ class Header extends React.Component {
               </Grow>
             )}
           </Popper>
-          <Modal
-            open={this.state.loginModalOpen}
-            onClose={this.handleModalClose}
-          >
-            <LoginForm />
-          </Modal>
+          {this.showModal()}
         </Toolbar>
       </AppBar>
     )
