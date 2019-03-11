@@ -1,6 +1,5 @@
 import { axiosInstance } from '../api/axios'
-import {SET_CURRENT_USER, REQUEST_PASSWORD_FULFILLED, REQUEST_PASSWORD_REJECTED, LOGIN_REJECTED, CLEAR_LOGIN_ERRORS, REGISTER_FULFILLED, REGISTER_REJECTED} from './../constants';
-import {SET_WIDGET_PROPERTY} from "../constants";
+import {SET_CURRENT_USER, SET_CURRENT_USER_REJECTED, REQUEST_PASSWORD_FULFILLED, REQUEST_PASSWORD_REJECTED, LOGIN_REJECTED, CLEAR_LOGIN_ERRORS, REGISTER_FULFILLED, REGISTER_REJECTED} from './../constants';
 
 export const login = (userCredentials, props) => {
   return (dispatch) => {
@@ -17,9 +16,13 @@ export const login = (userCredentials, props) => {
       const token = response.data.access_token
       const userName = response.data.fullname
       const userID = response.data.id
+      const userEmail = credentials.email
       localStorage.setItem('token', token)
       localStorage.setItem('userName', userName)
       localStorage.setItem('userID', userID)
+      localStorage.setItem('userEmail', userEmail)
+      // Redirects to data first to force DOM refresh
+      props.history.push('/data')
       props.history.push('/')
     })
     .catch((err) => {
@@ -29,6 +32,32 @@ export const login = (userCredentials, props) => {
         payload: err,
       })
     })
+  };
+};
+
+export const getUser = () => {
+  return (dispatch) => {
+    if (localStorage.getItem('userEmail')) {
+      const user = {
+        email: localStorage.getItem('userEmail')
+      }
+      axiosInstance.post('/admin/get_user_by_email', user).then((response) => {
+        dispatch({
+          type: SET_CURRENT_USER,
+          payload: response.data,
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: SET_CURRENT_USER_REJECTED,
+          payload: err,
+        })
+      })
+    } else {
+      dispatch({
+        type: SET_CURRENT_USER_REJECTED,
+      })
+    }
   };
 };
 
