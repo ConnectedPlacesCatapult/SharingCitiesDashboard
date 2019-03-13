@@ -1,33 +1,28 @@
-import os
-import sys
+import json
+import uuid
+from datetime import datetime
 from http import HTTPStatus
-from typing import Any, TypeVar
+from typing import Any
 
 import pandas as pd
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import requests
+import sqlalchemy
+from geoalchemy2.elements import WKTElement
+from sqlalchemy.exc import IntegrityError
 
 from db import db
-from models.api import API
-from models import location
-from models.unit import Unit
-from models.theme import Theme, SubTheme
-from models.sensor import Sensor
-from models.attributes import Attributes
-from models.sensor_attribute import SensorAttribute
-import json, requests
 from importers.json_reader import JsonReader
-import uuid
-from geoalchemy2.elements import WKTElement
+from models import location
+from models.api import API
 from models.attribute_data import ModelClass
-from datetime import datetime
-from sqlalchemy.exc import IntegrityError
+from models.attributes import Attributes
+from models.sensor import Sensor
+from models.sensor_attribute import SensorAttribute
+from models.theme import Theme, SubTheme
+from models.unit import Unit
 from utility import convert_unix_to_timestamp, convert_to_date
-import sqlalchemy
-from .state_decorator import ImporterStatus
 from .config_decorator import GetConfig
-
-DateFrame = TypeVar('pd.DataFrame')
+from .state_decorator import ImporterStatus
 
 
 @GetConfig("BaseImporter", "config.yml")
@@ -178,8 +173,8 @@ class BaseImporter(object):
         latitude, longitude = None, None
 
         if location_tag is not None:
-                latitude = dataframe[location_tag.lat].tolist()
-                longitude = dataframe[location_tag.lon].tolist()
+            latitude = dataframe[location_tag.lat].tolist()
+            longitude = dataframe[location_tag.lon].tolist()
 
         # Save location and sensor
         sensor_objects = self.save_sensors(dataframe[sensor_tag].tolist(), latitude, longitude, api_id,
@@ -503,30 +498,28 @@ class BaseImporter(object):
                 print(attr.table_name.replace('-', '_'), 'already exists')
 
     def insert_data(self, attr_objects: [db.Model], sensor_objects: [db.Model], dataframe: pd.DataFrame,
-                    sensor_tag, sensor_prefix, api_timestamp_tag, attr_value_tag=None,
-                    attribute_tag=None, unit_value_tag=None):
+                    sensor_tag: str, sensor_prefix: str, api_timestamp_tag: str, attr_value_tag: str = None,
+                    attribute_tag: str = None, unit_value_tag: str = None) -> None:
         """
         Insert Data in to tables
         :param attr_objects: List of attributes
         :type attr_objects: [db.Model]
         :param sensor_objects: list of sensors
         :type sensor_objects:[db.Model]
-        :param dataframe:
-        :type dataframe:
-        :param sensor_tag:
-        :type sensor_tag:
-        :param sensor_prefix:
-        :type sensor_prefix:
-        :param api_timestamp_tag:
-        :type api_timestamp_tag:
-        :param attr_value_tag:
-        :type attr_value_tag:
-        :param attribute_tag:
-        :type attribute_tag:
-        :param unit_value_tag:
-        :type unit_value_tag:
-        :return:
-        :rtype:
+        :param dataframe: Pandas DataFrame
+        :type dataframe: pd.DataFrame
+        :param sensor_tag: sensor tag
+        :type sensor_tag: str
+        :param sensor_prefix: sensor name prefix
+        :type sensor_prefix: str
+        :param api_timestamp_tag: timestamp tag
+        :type api_timestamp_tag: str
+        :param attr_value_tag: Attribute value tag
+        :type attr_value_tag: str
+        :param attribute_tag: Attribute tag
+        :type attribute_tag: str
+        :param unit_value_tag: Unit Value tag
+        :type unit_value_tag: str
         """
         db.metadata.clear()
         sensors = dataframe[sensor_tag].tolist()
