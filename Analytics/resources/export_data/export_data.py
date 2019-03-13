@@ -19,12 +19,12 @@ from models.sensor_attribute import SensorAttribute
 
 class ExportData(Resource):
     """
-
+    Export data to file endpoint
     """
 
     def __init__(self) -> None:
         """
-
+        Set up reqparser
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('file_name', required=True, type=str, help='filename required', location='json')
@@ -35,9 +35,17 @@ class ExportData(Resource):
     @jwt_required
     def post(self):
         """
-
-        :return:
-        :rtype:
+        Export data to file endpoint
+        :param file_name: Name of the file to export data yo
+        :type file_name: str
+        :param table_name: Table name to retrieved data
+        :type table_name: str
+        :param format: Format of the exported file
+        :type format: str
+        :param limit: Maximum number of entries to retrieve for export
+        :type limit: int
+        :return: On success, a file containing the requested data otherwise an error message and the appropriate HTTP
+                 response
         """
 
         args = self.reqparser.parse_args()
@@ -46,15 +54,22 @@ class ExportData(Resource):
 
         data_frame = self.fetch_table_entries_by_name(args['table_name'], args['limit'])
 
-        # if not data_frame:
-        #     return {"msg": "No Data found", "table_name": args['table_name']}, HTTPStatus.NOT_FOUND
-
         if self.create_file(data_frame, args["file_name"], args["format"]):
             return self.return_file(args["file_name"], args["format"])
 
         return {"error": "Failed to Convert Data to File"}, HTTPStatus.BAD_REQUEST
 
-    def create_file(self, data_frame, file_name, extension):
+    def create_file(self, data_frame: pd.DataFrame, file_name: str, extension: str) -> bool:
+        """
+        Create File for export
+        :param data_frame: Pandas DataFrame to export to file
+        :type data_frame: pd.DataFrame
+        :param file_name: Name of the file to export to
+        :type file_name: str
+        :param extension: File's extension
+        :type extension: str
+        :return: True on success, False on failure
+        """
         if extension.lower() == 'json':
             return self.write_to_json(data_frame, file_name, extension)
         elif extension.lower() == 'geojson':
@@ -62,19 +77,17 @@ class ExportData(Resource):
 
         return self.write_to_csv(data_frame, file_name, extension)
 
-    def query_database(self, prepared_statement: str):
+    def query_database(self, prepared_statement: str) -> [str]:
         """
         Query Database with prepared statements
-        :param prepared_statement:
-        :type prepared_statement:
-        :return:
-        :rtype:
+        :param prepared_statement: Prepared sql statement
+        :type prepared_statement: str
+        :return: SQL query results
         """
         try:
             results = db.engine.execute(prepared_statement)
             return results
         except Exception as e:
-            print(e)
             return None
 
     def get_column_names(self, table_name: str) -> [str]:
@@ -96,7 +109,6 @@ class ExportData(Resource):
         :param limit: Limit the number of entries
         :type limit: int
         :return: A Query result set
-        :rtype:
         """
         column_names = self.get_column_names(table_name)
         query_entries = "SELECT * FROM {} LIMIT {};".format(table_name, limit)
@@ -115,17 +127,16 @@ class ExportData(Resource):
                                                                                                               axis=1)
         return data_frame
 
-    def write_to_csv(self, data_frame: pd.DataFrame, file_name: str, extension: str):
+    def write_to_csv(self, data_frame: pd.DataFrame, file_name: str, extension: str) -> bool:
         """
         Write data to csv file for export
-        :param data_frame:
-        :type data_frame:
-        :param file_name:
-        :type file_name:
-        :param extension:
-        :type extension:
-        :return:
-        :rtype:
+        :param data_frame: Pandas DataFrame of data
+        :type data_frame:   pd.DataFrame
+        :param file_name: Name of the file to save csv to
+        :type file_name: str
+        :param extension: File extension
+        :type extension: str
+        :return: If exporting data to file is successful True is returned, otherwise False
         """
         directory = os.path.dirname(os.path.realpath(__file__)) + "/"
         try:
@@ -137,10 +148,9 @@ class ExportData(Resource):
     def get_sensor(self, sensor_id: str) -> {str: Any}:
         """
         Get Sensor entry from database
-        :param sensor_id:
-        :type sensor_id:
-        :return:
-        :rtype:
+        :param sensor_id: Sensors identification number
+        :type sensor_id: str
+        :return: A dictionary of the Sensor entries with the column name as keys and the value as values
         """
         sensor_entry = {}
 
@@ -160,12 +170,12 @@ class ExportData(Resource):
             return sensor_entry
         return {'id': sensor_id, 'name': "", 'latitude': np.nan, 'longitude': np.nan, 'a_id': None}
 
-    def get_location(self, location_id: id):
+    def get_location(self, location_id: int) -> db.Model:
         """
         Get Sensor location data from database
-        :param location_id:
-        :type location_id:
-        :return:
+        :param location_id: Location identification number
+        :type location_id: int
+        :return: Location db entry
         :rtype:
         """
         location = Location.get_by_id(location_id)
@@ -174,15 +184,14 @@ class ExportData(Resource):
 
         return None
 
-    def frame_data(self, column_names, entries):
+    def frame_data(self, column_names: [str], entries: [Any]) -> pd.DataFrame:
         """
         Create Pandas DataFrame
-        :param column_names:
-        :type column_names:
-        :param entries:
-        :type entries:
-        :return:
-        :rtype:
+        :param column_names: List of column names
+        :type column_names: [str]
+        :param entries: List of values
+        :type entries: [Any]
+        :return: Pandas DataFrame
         """
         if not column_names or not entries:
             return None
@@ -212,15 +221,15 @@ class ExportData(Resource):
             print(e)
             return False
 
-    def write_geojson(self, data_frame: pd.DataFrame, file_name: str, extension: str):
+    def write_geojson(self, data_frame: pd.DataFrame, file_name: str, extension: str) -> bool:
         """
         Write Pandas DataFrame to File in GEOJSON format
-        :param data_frame:
-        :type data_frame:
-        :param file_name:
-        :type file_name:
-        :param extension:
-        :type extension:
+        :param data_frame: Panads DataFrame to export
+        :type data_frame: pd.DataFrame
+        :param file_name: File name
+        :type file_name: str
+        :param extension: File extension
+        :type extension: str
         """
         try:
             directory = os.path.dirname(os.path.realpath(__file__)) + "/"
