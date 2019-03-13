@@ -27,48 +27,45 @@ import json
 import pandas as pd
 import requests
 
-from .state_decorator import ImporterStatus, Status
-
 
 class JsonReader(object):
-    importer_status = ImporterStatus.get_importer_status()
-
     def __init__(self, url=None, object_seperator: str = None):
-        self.importer_status.status = Status(__name__, action="__init__", url=url, object_seperator=object_seperator)
         self.url = url
         self.object_seperator = object_seperator
         self.list_of_objects = []
         self.json_objects = JsonObjects()
 
     def fetch_data(self):
-        self.importer_status.status = Status(__name__, action="fetch_data", state="Request Data", url=self.url)
-        try:
-            data = requests.get(self.url)
-        except Exception as e:
-            self.importer_status.status = Status(__name__, action="Exception", url=self.url, exception=e.__str__())
-            return
-        self.importer_status.status = Status(__name__, action="fetch_data", state="Response Recieved", url=self.url,
-                                             status_code=data.status_code)
+        data = requests.get(self.url)
+        _json = json.loads(data.text)
+        # with open('fetch_data.json', "w+") as active_file:
+        #     active_file.write(self.url)
+        #     active_file.write("\n" * 50)
+        #     active_file.write(data.text)
+        #     active_file.write("\n" * 50)
 
-        try:
-            self.importer_status.status = Status(__name__, action="fetch_data", state="Parsing Response Data to JSON",
-                                                 url=self.url)
-            _json = json.loads(data.text)
-        except Exception as e:
-            self.importer_status.status = Status(__name__, action="Exception", state="Exception Parsing Data to JSON",
-                                                 url=self.url, exception=e)
-            return
-
-        self.importer_status.status = Status(__name__, action="fetch_data", state="Response Data Parsed", url=self.url)
         return _json
 
     def create_objects(self, data, curr_key: str = None, ignore_tags: list = [],
                        ignore_values: list = [], ignore_tag_values: dict = {},
                        ignore_object_tags: list = []):
-
-        self.importer_status.status = Status(__name__, action="create_objects", state='Busy')
-
+        """
+        Converts json files into dataframes, which can then be treated as tables using pandas library
+        :param data:    response data from get request to node
+        :type data:        Union[dict,list]
+        :param curr_key:    the current key
+        :type curr_key:     str
+        :param ignore_tags: Tags to ignore eg.. "@SpeciesCode"
+        :type ignore_tags:  [str]
+        :param ignore_values:  values to ignore
+        :type ignore_values:  [str]
+        :param ignore_tag_values: Tag value to ignore  eg.   {"@SpeciesCode": "NO2"}
+        :type ignore_tag_values:    {str: str}
+        :param ignore_object_tags: Object tags to ignore
+        :type ignore_object_tags: [objects]
+        """
         if isinstance(data, dict):
+            # { self.create_objects(data[key], key, ignore_tags, ignore_values, ignore_tag_values) for key in data if key not in ignore_object_tags }
             for key in data:
                 if key in ignore_object_tags:
                     continue
@@ -93,12 +90,7 @@ class JsonReader(object):
             else:
                 self.json_objects.object_dict[curr_key] = [data]
 
-        self.importer_status.status = Status(__name__, action="create_objects", state='Done')
-
     def create_dataframe(self):
-        self.importer_status.status = Status(__name__, action="create_dataframe", state='Busy')
-        # print("dataframe: list of objects")
-        # print(self.list_of_objects)
         if len(self.list_of_objects) == 0:
             self.list_of_objects.append(self.json_objects)
         data_frame = []
@@ -111,13 +103,11 @@ class JsonReader(object):
             _df = pd.DataFrame.from_dict(value.object_dict, orient='index')
             data_frame.append(_df)
 
-        df = pd.concat(data_frame, axis=1, sort=False)
-        self.importer_status.status = Status(__name__, action="create_dataframe", state='Done')
+        df = pd.concat(data_frame, axis=1, sort=True)
         return df.T
 
     def print_to_csv(self, dataframe, filepath):
         dataframe.to_csv(filepath, index=False)
-
 
 class JsonObjects(object):
     def __init__(self):
@@ -129,3 +119,4 @@ class JsonObjects(object):
 
     def __str__(self):
         return str(self.object_dict)
+

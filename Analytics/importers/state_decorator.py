@@ -206,3 +206,34 @@ class Status:
         :return: a General Status
         """
         return Status(name, function=function, state=state)
+
+    @classmethod
+    def success(cls, importer_name):
+        """
+        {
+            "importer" : "<importer_name>",
+            "state" : "FAILED OR SUCCESS"
+            "failure" : [
+                "reason" : ""
+                "stack_trace" : ""
+            ]
+        }
+        :return:
+        :rtype:
+        """
+        return Status(importer_name, state=state)
+
+    @classmethod
+    def failure(cls, importer_name: str, reason: str, stack_trace: str) -> State:
+        """
+
+        :param importer_name:
+        :type importer_name:
+        :param reason:
+        :type reason:
+        :param stack_trace:
+        :type stack_trace:
+        :return:
+        :rtype:
+        """
+        return Status(importer_name, reason=reason, stack_trace=stack_trace)

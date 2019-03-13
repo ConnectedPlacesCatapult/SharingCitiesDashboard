@@ -7,6 +7,7 @@ structure of the api, like sensor, attributes, data tables and values
 
 import os
 import sys
+import traceback
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -24,25 +25,23 @@ class TfL_BikePoints(BaseImporter):
 
     def __init__(self):
         self.config = self.get_config('environment', 'tfl_bike_points')
-        self.importer_status.status = Status(__name__, action="__init__")
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataSource",
-                                             headers=headers)
-        super()._create_datasource(headers)
-        self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataFrame",
-                                             ignore_objects_tags=['$type'], object_separator='id')
-        self.df = self.create_dataframe(ignore_object_tags=['$type'], object_separator='id')
+        try:
+            super()._create_datasource(headers)
+            self.df = self.create_dataframe(ignore_object_tags=['$type'], object_separator='id')
 
-        self.df.dropna(inplace=True)
+            self.df.dropna(inplace=True)
 
-        self.df = self.df[self.df.key == 'NbEmptyDocks']
-        self.df['modified'] = self.df.modified.apply(lambda x: pd.to_datetime(x))
-        self.df['modified'] = self.df['modified'].astype(np.int64)
+            self.df = self.df[self.df.key == 'NbEmptyDocks']
+            self.df['modified'] = self.df.modified.apply(lambda x: pd.to_datetime(x))
+            self.df['modified'] = self.df['modified'].astype(np.int64)
 
-        self.create_datasource_with_values(dataframe=self.df, sensor_tag='id', attribute_tag='key',
-                                           value_tag='value', latitude_tag='lat', longitude_tag='lon',
-                                           description_tag='sourceSystemKey', api_timestamp_tag='modified')
-        self.importer_status.status = Status(__name__, action="_create_datasource", state="Done")
+            self.create_datasource_with_values(dataframe=self.df, sensor_tag='id', attribute_tag='key',
+                                               value_tag='value', latitude_tag='lat', longitude_tag='lon',
+                                               description_tag='sourceSystemKey', api_timestamp_tag='modified')
+            self.importer_status.status = Status.success(__class__.__name__)
+        except Exception as e:
+            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
