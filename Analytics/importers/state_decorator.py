@@ -208,32 +208,25 @@ class Status:
         return Status(name, function=function, state=state)
 
     @classmethod
-    def success(cls, importer_name):
+    def success(cls, importer_name) -> State:
         """
-        {
-            "importer" : "<importer_name>",
-            "state" : "FAILED OR SUCCESS"
-            "failure" : [
-                "reason" : ""
-                "stack_trace" : ""
-            ]
-        }
-        :return:
-        :rtype:
+        Create Success Status
+        :param importer_name: Name of calling class
+        :type importer_name: str
+        :return: Success Status
         """
-        return Status(importer_name, state=state)
+        return Status(importer_name, state="success")
 
     @classmethod
     def failure(cls, importer_name: str, reason: str, stack_trace: str) -> State:
         """
-
-        :param importer_name:
-        :type importer_name:
-        :param reason:
-        :type reason:
-        :param stack_trace:
-        :type stack_trace:
-        :return:
-        :rtype:
+        Create Failure Status
+        :param importer_name: Name of importer class
+        :type importer_name: str
+        :param reason: Reason for failure
+        :type reason: str
+        :param stack_trace: stack trace when error occurred
+        :type stack_trace: str
+        :return: failure Status
         """
         return Status(importer_name, reason=reason, stack_trace=stack_trace)
