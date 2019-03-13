@@ -42,7 +42,6 @@ class AddDatasource(Command):
         """
         Get Importer Config
         :return: Importer Configurations
-        :rtype:
         """
         config = None
         try:
