@@ -1,23 +1,4 @@
-'''
-Air Quality Importer
 
-It inherits from the base class and passes the required parameters to the base class constructor
-
-The class uses 
-	http://api.erg.kcl.ac.uk/AirQuality/Annual/MonitoringObjective/GroupName=London/Year=2010/Json
-	to fetch the Sensor names which are SiteCodes from the API.
-	It then gets the latest data after every hour and saves it in database
-	@SiteCode: The sensor name
-	@Latitude: The latitude tag for location
-	@Longitude: The Longitude tag for location
-
-	Using the list of @SiteCode it calls the 
-		http://api.erg.kcl.ac.uk/AirQuality/Data/Site/SiteCode=%s/StartDate=%s/EndDate=%s/Json
-	and adds current date and next date. Once it has all the data for all the Sites, it makes a dataframe
-	and calls create_datasource_with_values method of base class to save Sensor, attributes and data to the 
-	database.
-	Refresh Time is 1 Hour but can also be changed to 24 hour as then we get all the data in one go.
-'''
 
 import os
 import sys
@@ -36,9 +17,32 @@ from .config_decorator import GetConfig
 
 @GetConfig("KCLAirQuality", 'config.yml')
 class KCLAirQuality(BaseImporter):
+    """
+    Air Quality Importer
+
+    It inherits from the base class and passes the required parameters to the base class constructor
+
+    The class uses
+        http://api.erg.kcl.ac.uk/AirQuality/Annual/MonitoringObjective/GroupName=London/Year=2010/Json
+        to fetch the Sensor names which are SiteCodes from the API.
+        It then gets the latest data after every hour and saves it in database
+        @SiteCode: The sensor name
+        @Latitude: The latitude tag for location
+        @Longitude: The Longitude tag for location
+
+        Using the list of @SiteCode it calls the
+            http://api.erg.kcl.ac.uk/AirQuality/Data/Site/SiteCode=%s/StartDate=%s/EndDate=%s/Json
+        and adds current date and next date. Once it has all the data for all the Sites, it makes a dataframe
+        and calls create_datasource_with_values method of base class to save Sensor, attributes and data to the
+        database.
+        Refresh Time is 1 Hour but can also be changed to 24 hour as then we get all the data in one go.
+    """
     importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self):
+        """
+        Get configurations, Instantiate BaseImporter, Set ImporterStatus to __init__
+        """
         self.config = self.get_config('environment', 'air_quality')
 
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
@@ -49,7 +53,12 @@ class KCLAirQuality(BaseImporter):
                                              api_class=self.API_CLASS,
                                              token_expiry=self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers=None):
+    def _create_datasource(self, headers: str = None) -> None:
+        """
+        Create DataSource
+        :param headers: Resquest Headers
+        :type headers: str
+        """
         # Get SiteCodes and Location
         url = 'http://api.erg.kcl.ac.uk/AirQuality/Annual/MonitoringObjective/GroupName=London/Year=2010/Json'
         self.importer_status.status = Status(__name__, action="_create_datasource", state="Request SiteCodes", url=url,
@@ -89,7 +98,7 @@ class KCLAirQuality(BaseImporter):
         for code in _codes[:3]:
             self.importer_status.status = Status(__name__, action="_create_datasource", state="Request Daily Data")
             self.url = self.BASE_URL % (code, _today, _tomorrow)
-            # super()._create_datasource(headers)
+
             data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
             self.importer_status.status = Status(__name__, action="_create_datasource", state="Response Received",
                                                  status_code=data.status_code)
