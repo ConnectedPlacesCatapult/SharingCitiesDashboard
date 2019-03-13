@@ -41,10 +41,9 @@ class Scheduler(object):
         _api = self.session.execute('select * from api')
         apis = []
         for api in _api.fetchall():
-            api_instance = API(name=api[1], url=api[2], api_key=api[3],
-                    api_class=api[4],
-                    refresh_time=api[5], token_expiry=api[6],
-                    timestamp=api[7])
+            api_instance = API(name=api[1], url=api[2], api_key=api[3], 
+                               api_class=api[4], refresh_time=api[5],  
+                               token_expiry=api[6], timestamp=api[7])
             apis.append(api_instance)
         return apis
 
