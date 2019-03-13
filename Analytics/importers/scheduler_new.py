@@ -82,7 +82,7 @@ class Scheduler(object):
                                    seconds=api.refresh_time,
                                    start_date=datetime.now()+timedelta(seconds=5),
                                    end_date=datetime.now()+timedelta(hours=23),
-                                   args=[api.api_class,api.name]
+                                   args=[api.api_class,api.name])
 
     def run(self):
         """ Schedule main_task to execute once a day """
