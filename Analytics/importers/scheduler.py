@@ -14,19 +14,21 @@ process as a service)**
 The process can be run from terminal python scheduler.py
 '''
 
-import os, sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-import multiprocessing, importlib
+import importlib
+import multiprocessing
 from multiprocessing import Process
 from time import sleep
+
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker, scoped_session
+
 import settings
 
 
 class Scheduler(object):
+
     def __init__(self):
+
         self.engine = sqlalchemy.create_engine(settings.DB_URI)
         _session = scoped_session(sessionmaker(bind=self.engine))
         self.session = _session
@@ -59,6 +61,7 @@ class Scheduler(object):
             sleep(86400)
         
     def crawl_datasource(self, class_name, time_interval, api_name):
+
         while True:
             p = Process(target=self.fetch_data, args=(class_name, api_name))
             p.start()
@@ -70,6 +73,7 @@ class Scheduler(object):
         import sys, os
         from pathlib import Path
         import time
+
         _time = time.strftime('%Y-%m-%d')
         log_file = str(Path.home()) + '/sharingcities_logs/' + api_name + '/' + class_name + '_' + _time + '.log'
         os.makedirs(os.path.dirname(log_file), exist_ok=True)

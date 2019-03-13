@@ -1,33 +1,37 @@
-import os, sys
+import os
+import sys
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from importers.base import BaseImporter, Location, get_config
+from importers.base import BaseImporter
 from importers.json_reader import JsonReader
 import requests
 from requests.auth import HTTPBasicAuth
-from models.api import API
 import json
 import pandas as pd
+from .state_decorator import ImporterStatus, Status
+from .config_decorator import GetConfig
 
-config = get_config()
-config = config[config['environment']]['lisbon']
 
-API_NAME = config['API_NAME']
-BASE_URL = config['BASE_URL']
-REFRESH_TIME = config['REFRESH_TIME']
-API_KEY = config['API_KEY']
-TOKEN_EXPIRY = config['TOKEN_EXPIRY']
-API_CLASS = config['API_CLASS']
-USER_NAME = config['USER_NAME']
-USER_PASSCODE = config['USER_PASSCODE']
-
+@GetConfig("LisbonAPI")
 class LisbonAPI(BaseImporter):
+    importer_status = ImporterStatus.get_importer_status()
+
     def __init__(self):
-        super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, API_CLASS, TOKEN_EXPIRY)
+        self.importer_status.status = Status(__name__, action="__init__")
+        self.config = self.get_config('environment', 'lisbon')
+        self.USER_NAME = self.config['USER_NAME']
+        self.USER_PASSCODE = self.config['USER_PASSCODE']
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+                         self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        _headers = {'Authorization' : 'Bearer %s' % self._refresh_token()}
+        _headers = {'Authorization': 'Bearer %s' % self._refresh_token()}
+        self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataSource",
+                                             headers=_headers)
         super()._create_datasource(_headers)
+        self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataFrame",
+                                             object_separator='timeToLive')
         self.df = self.create_dataframe(object_separator='timeToLive')
         self.df = self.df[self.df['streamName'] == 'GiraStation']
         data = self.df['data'].tolist()
@@ -48,13 +52,18 @@ class LisbonAPI(BaseImporter):
         else:
             print(concat_df)
             self.create_datasource(dataframe=concat_df, sensor_tag='', attribute_tag=[],
-                                unit_value=[], bespoke_unit_tag=[], description=[], 
-                                bespoke_sub_theme=[], location_tag=loc,
-                                api_timestamp_tag='run_time_stamp')
+                                   unit_value=[], bespoke_unit_tag=[], description=[],
+                                   bespoke_sub_theme=[], location_tag='loc',
+                                   api_timestamp_tag='run_time_stamp')
 
+        self.importer_status.status = Status(__name__, action="_create_datasource", state="Done")
 
     def _refresh_token(self, *args):
-        headers = {"grant_type" : "client_credentials"}
+
+        headers = {"grant_type": "client_credentials"}
         token_url = 'https://iot.alticelabs.com/api/devices/token'
-        token = requests.post(token_url, headers=headers, auth=HTTPBasicAuth(USER_NAME, USER_PASSCODE))
-        return(str(token.text))
+        self.importer_status.status = Status(__name__, action="_refresh_token", state="Refresh Token",
+                                             token_url=token_url, headers=headers)
+        token = requests.post(token_url, headers=headers, auth=HTTPBasicAuth(self.USER_NAME, self.USER_PASSCODE))
+        self.importer_status.status = Status(__name__, action="_refresh_token", state="Done", token=token)
+        return (str(token.text))
