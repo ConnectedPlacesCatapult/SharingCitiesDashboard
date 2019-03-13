@@ -24,7 +24,7 @@ from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 from utility import convert_unix_to_timestamp, convert_to_date
 import sqlalchemy
-from .state_decorator import Status, ImporterStatus
+from .state_decorator import ImporterStatus
 from .config_decorator import GetConfig
 
 DateFrame = TypeVar('pd.DataFrame')
@@ -502,15 +502,15 @@ class BaseImporter(object):
             else:
                 print(attr.table_name.replace('-', '_'), 'already exists')
 
-    def insert_data(self, attr_objects, sensor_objects: dict, dataframe,
+    def insert_data(self, attr_objects: [db.Model], sensor_objects: [db.Model], dataframe: pd.DataFrame,
                     sensor_tag, sensor_prefix, api_timestamp_tag, attr_value_tag=None,
                     attribute_tag=None, unit_value_tag=None):
         """
         Insert Data in to tables
-        :param attr_objects:
-        :type attr_objects:
-        :param sensor_objects:
-        :type sensor_objects:
+        :param attr_objects: List of attributes
+        :type attr_objects: [db.Model]
+        :param sensor_objects: list of sensors
+        :type sensor_objects:[db.Model]
         :param dataframe:
         :type dataframe:
         :param sensor_tag:
@@ -528,7 +528,6 @@ class BaseImporter(object):
         :return:
         :rtype:
         """
-        self.importer_status.status = Status(__name__, action="insert_data", status="Insert Data")
         db.metadata.clear()
         sensors = dataframe[sensor_tag].tolist()
         value_exists = set()
