@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import time
 import importlib
 import logging
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -12,6 +11,7 @@ from apscheduler.executors.pool import ProcessPoolExecutor, ThreadPoolExecutor
 
 import settings
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 logging.basicConfig(level='INFO', filename='importers.log', filemode='a')
 logger = logging.getLogger(__name__)
 
@@ -23,8 +23,7 @@ class Scheduler(object):
         """ Create SQLAlchemy session and launch APScheduler """
 
         self.engine = sqlalchemy.create_engine(settings.DB_URI)
-        _session = scoped_session(sessionmaker(bind=self.engine))
-        self.session = _session
+        self.session = scoped_session(sessionmaker(bind=self.engine))
 
         executor = {
             'default': ThreadPoolExecutor(10),
@@ -55,12 +54,12 @@ class Scheduler(object):
         :param class_name: name of the class that implements the
         corresponding importer
         :param api_name: identifying name stored in the database for the
-        respective importer
+                         respective importer
         """
 
         from app import create_app
         from db import db
-        a = create_app()
+        application = create_app()
         _module, _class = class_name.rsplit('.', 1)
         data_class = getattr(importlib.import_module(_module), _class)
         _d_class = data_class()
@@ -68,7 +67,7 @@ class Scheduler(object):
                                                              time.strftime(
                                                                  '%Y-%m-%d%H:%M:%S')))
         _d_class._create_datasource()
-        del a
+        del application
         del db
 
     def main_task(self):
@@ -82,10 +81,9 @@ class Scheduler(object):
             self.scheduler.add_job(self.fetch_data, 'interval',
                                    name='{}'.format(api.name),
                                    seconds=api.refresh_time,
-                                   start_date=datetime.now()+timedelta(
-                                       seconds=5), end_date=datetime.now() +
-                                    timedelta(hours=23), args=[api.api_class,
-                                                          api.name])
+                                   start_date=datetime.now()+timedelta(seconds=5),
+                                   end_date=datetime.now()+timedelta(hours=23),
+                                   args=[api.api_class,api.name]
 
     def run(self):
         """ Schedule main_task to execute once a day """
@@ -114,7 +112,7 @@ class API(object):
         :param api_key: key which authorises access to the API endpoint
         :param api_class: name of the class which implements the importer
         :param refresh_time: number of seconds to wait until running the
-        importer again
+                             importer again
         :param token_expiry: date and time when the api_key will expire
         :param timestamp: date and time when the API details were stored
         """
@@ -130,4 +128,3 @@ class API(object):
 if __name__ == '__main__':
     scheduler = Scheduler()
     scheduler.run()
-
