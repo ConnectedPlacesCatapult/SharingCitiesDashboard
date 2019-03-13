@@ -1,27 +1,9 @@
-'''
-Base Importer
-All the importers needs to be extended from this class
-The class provides methods to save API, Sensor, Attributes, Location and Data Tables
-All the methods provided here can be overridden or can be extended by calling the super method 
-from base class and then extending it in Child class
-All new common functionality can be added to this base class, which then automatically be inherited 
-by all the child classes.
-
-Params:
-    api_name: The name of the API, it needs to be unique, else database waring would be received
-    url: The url which needs to be pinged to get the data, periodically
-    refresh_time: After how many seconds the API needs to be pinged
-    api_key: Key to access the API (if any)
-    api_class: The full path of the class from package to class name like importers.air_quality.KCLAirQuality
-    token_expiry: Time in which token will get expired, so that new token can be renewed again
-                **(This functionality is not implemented yet and needs to implemented in database and Scheduler)**
-
-'''
-
 import os
 import sys
 from http import HTTPStatus
 from typing import Any, TypeVar
+
+import pandas as pd
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -44,35 +26,36 @@ from utility import convert_unix_to_timestamp, convert_to_date
 import sqlalchemy
 from .state_decorator import Status, ImporterStatus
 from .config_decorator import GetConfig
-from collections.abc import Iterable
 
 DateFrame = TypeVar('pd.DataFrame')
 
 
 @GetConfig("BaseImporter", "config.yml")
 class BaseImporter(object):
-    """
-    Importers base class
-    """
     importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self, api_name, url, refresh_time, api_key, api_class, token_expiry):
         """
-        Instanciate Base importer
-        :param api_name: api name
+        Base Importer
+        All the importers needs to be extended from this class
+        The class provides methods to save API, Sensor, Attributes, Location and Data Tables
+        All the methods provided here can be overridden or can be extended by calling the super method
+        from base class and then extending it in Child class
+        All new common functionality can be added to this base class, which then automatically be inherited
+        by all the child classes.
+        :param api_name: The name of the API, it needs to be unique, else database waring would be received
         :type api_name: str
-        :param url: Url for data requests
+        :param url: he url which needs to be pinged to get the data, periodically
         :type url: str
-        :param refresh_time: Time to delay between requests
+        :param refresh_time: After how many seconds the API needs to be pinged
         :type refresh_time: int
-        :param api_key: Api key for api endpoint
+        :param api_key: Key to access the API (if any)
         :type api_key: str
-        :param api_class: Class to instanciate for importer
+        :param api_class: The full path of the class from package to class name like importers.air_quality.KCLAirQuality
         :type api_class: class
-        :param token_expiry: Token expiry timestamp
+        :param token_expiry: Time in which token will get expired, so that new token can be renewed again
         :type token_expiry: datetime
         """
-        self.importer_status.status = Status.init_state(__name__, 'BaseImporter')
         self.api_name = api_name
         self.url = url
         self.refresh_time = refresh_time
@@ -88,29 +71,19 @@ class BaseImporter(object):
         :type headers: str
         :return: None
         """
-        self.importer_status.status = Status.create_datasource(__name__, "load_dataset")
-        response = self.load_dataset(headers)
-        if isinstance(response, Iterable):
-            _, status_code = response
-            self.importer_status.status = Status.resquest(__name__, '_create_datasource', state='received',
-                                                          status_code=status_code)
-        else:
-            self.importer_status.status = Status.resquest(__name__, '_create_datasource', state="Failure",
-                                                          status_code=HTTPStatus.EXPECTATION_FAILED.value)
-            return
+        _, status_code = self.load_dataset(headers)
 
         if status_code != 200:
             self._refresh_token()
             return
 
-    def _refresh_token(self, *args):
+    def _refresh_token(self, *args: [Any]):
         """
         Refresh token must be overriden by sub class
         :param args: Additional arguments
         :type args: Any
-        :raises: NotImplementedError when not overriden by classs
+        :raises: NotImplementedError when not overriden by class
         """
-        self.importer_status.status = Status(__name__, action='_refresh_token', state='Not Implemented')
         raise NotImplementedError
 
     def load_dataset(self, headers: str) -> (Any, HTTPStatus):
@@ -120,143 +93,94 @@ class BaseImporter(object):
         :type headers: str
         :return: Data set and an HTTP status code
         """
-        try:
-            self.importer_status.status = Status(__name__, action='load_dataset', state='Request Data',
-                                                 url=self.url.replace(' ', '').replace('\n', '') + self.api_key,
-                                                 headers=headers)
-            data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
-        except Exception as e:
-            self.importer_status.status = Status(__name__, action="Exception Requesting Data", exception=e.__str__())
-            return
+        data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
 
-        self.importer_status.status = Status(__name__, action="load_dataset", state='Response Received',
-                                             status_code=data.status_code)
-        self.importer_status.status = Status(__name__, action="load_dataset", state='Parse data to JSON')
-        try:
-            self.dataset = json.loads(data.text)
-        except Exception as e:
-            self.importer_status.status = Status(__name__, action="Exception", exception=e.__str__())
-            return
-
-        self.importer_status.status = Status(__name__, action="load_dataset", state='Done')
+        self.dataset = json.loads(data.text)
         return self.dataset, data.status_code
 
-    def create_dataframe(self, object_separator: str = None, ignore_tags: list = [], ignore_values: list = [],
-                         ignore_tag_values: dict = {}, ignore_object_tags: list = []) -> DateFrame:
+    def create_dataframe(self, object_separator: str = None, ignore_tags: [str] = [], ignore_values: [Any] = [],
+                         ignore_tag_values: {str: Any} = {}, ignore_object_tags: [str] = []) -> pd.DataFrame:
         """
         Create Pandas DataFrame
         :param object_separator: Token to tokenize entries
         :type object_separator: str
         :param ignore_tags: tags to be ignored
-        :type ignore_tags: str
+        :type ignore_tags: [str]
         :param ignore_values: Values to ignore
-        :type ignore_values: Any
+        :type ignore_values: [str]
         :param ignore_tag_values: Values of tags to be ignored
-        :type ignore_tag_values: Any
+        :type ignore_tag_values: [Any]
         :param ignore_object_tags: Object tags to be ignored
-        :type ignore_object_tags: str
+        :type ignore_object_tags: [str]
         :return: Pandas Data Frame
         """
-        self.importer_status.status = Status(__name__, action="create_dataframe", status="Parse Data to JSON")
         jr = JsonReader(object_seperator=object_separator)
-        self.importer_status.status = Status(__name__, action="create_dataframe", status="Create Objects")
 
-        # if not self.dataset:
-        #     self.importer_status.status = Status(__name__, action="create_dataframe",
-        #                                          status="object has no attribute 'dataset'", )
-        #     return
-        try:
-            jr.create_objects(self.dataset, ignore_tags=ignore_tags, ignore_values=ignore_values,
-                              ignore_tag_values=ignore_tag_values, ignore_object_tags=ignore_object_tags)
-            self.importer_status.status = Status(__name__, action="create_dataframe", status="Create DataFrame")
-            df = jr.create_dataframe()
-            self.importer_status.status = Status(__name__, action="create_dataframe", status="Doner")
-        except Exception as e:
-            self.importer_status.status = Status(__name__, action="Exception", exception=e.__str__())
-            return None
+        jr.create_objects(self.dataset, ignore_tags=ignore_tags, ignore_values=ignore_values,
+                          ignore_tag_values=ignore_tag_values, ignore_object_tags=ignore_object_tags)
+        df = jr.create_dataframe()
+
         return df
 
-    '''
-    The methods setup the database for the new Importer/API
-    @Params
-    sensor_tag: Takes a column name from the dataframe whose value would act as sensor
-    attribute_tag: Takes a list of column names from the DataFrame
-    unit_value: Takes a list of column names from DataFrame which would act as unit value 
-                for an attribute and they need to be passed in the same order as attribute
-                e.g
-                passing an attribute list as ['no2', 'rainfall'] which are 2 separate cols in dataframe
-                and if their unit values are contained in two separate cols in dataframe like 
-                ['no2_unit', 'rainfall_unit'], then these two unit col names should come in the same 
-                order, if only one col name is provided for 2 attributes then that one unit value col 
-                would be assigned both attributes.
-                If you want to assign the unit value to one col e.g for 2 attributes 
-                ['no2', 'rainfall'], you have only one unit value col ['no2_unit'] and dont want 
-                it to get assigned to rainfall attribute then pass the unit_value as 
-                ['no2_unit', None]
-    besopke_unit_tag: Accepts a list and follows the same principle as unit_value, unit tag is usually something like 
-                a unit that a value is expressed in like kg but this has to exists in our database.
-
-    location_tag: Takes an object of Location class which in turn contains the name of the latitude and longitude cols.
-    sensor_prefix: Takes a string, which would be prefixed to all the sensor tags
-    '''
-
-    def create_datasource(self, dataframe, sensor_tag: str, attribute_tag: list,
-                          unit_value: list, description: list, bespoke_unit_tag: list,
-                          bespoke_sub_theme: list, location_tag: location.Location,
-                          data_tag: list = [], sensor_prefix: str = None, api_timestamp_tag: str = None,
-                          check_sensor_exists_by_name: bool = False,
+    def create_datasource(self, dataframe: pd.DataFrame, sensor_tag: str, attribute_tag: [str],
+                          unit_value: [str], description: [str], bespoke_unit_tag: [str],
+                          bespoke_sub_theme: [str], location_tag: location.Location, sensor_prefix: str = None,
+                          api_timestamp_tag: str = None, check_sensor_exists_by_name: bool = False,
                           check_sensor_exists_by_name_loc: bool = False,
-                          check_sensor_exists_by_name_api: bool = False, is_dependent: bool = False):
+                          check_sensor_exists_by_name_api: bool = False, is_dependent: bool = False) -> None:
         """
-        Create Data Source
+        Setup the database for the new Importer/API
         :param dataframe: pandas dataframe
         :type dataframe: DataFrame
-        :param sensor_tag:
-        :type sensor_tag:
-        :param attribute_tag:
-        :type attribute_tag:
-        :param unit_value:
-        :type unit_value:
-        :param description:
-        :type description:
-        :param bespoke_unit_tag:
-        :type bespoke_unit_tag:
-        :param bespoke_sub_theme:
-        :type bespoke_sub_theme:
-        :param location_tag:
-        :type location_tag:
-        :param data_tag:
-        :type data_tag:
-        :param sensor_prefix:
-        :type sensor_prefix:
+        :param sensor_tag: Takes a column name from the DataFrame whose value would act as sensor
+        :type sensor_tag: str
+        :param attribute_tag: Takes a list of column names from the DataFrame
+        :type attribute_tag: [str]
+        :param unit_value:  Takes a list of column names from DataFrame which would act as unit value
+                            for an attribute and they need to be passed in the same order as attribute
+                            e.g
+                            passing an attribute list as ['no2', 'rainfall'] which are 2 separate cols in dataframe
+                            and if their unit values are contained in two separate cols in dataframe like
+                            ['no2_unit', 'rainfall_unit'], then these two unit col names should come in the same
+                            order, if only one col name is provided for 2 attributes then that one unit value col
+                            would be assigned both attributes.
+                            If you want to assign the unit value to one col e.g for 2 attributes
+                            ['no2', 'rainfall'], you have only one unit value col ['no2_unit'] and dont want
+                            it to get assigned to rainfall attribute then pass the unit_value as
+                            ['no2_unit', None]
+        :type unit_value: [str]
+        :param description: description
+        :type description: str
+        :param bespoke_unit_tag: Accepts a list and follows the same principle as unit_value, unit tag is usually
+                                 something like a unit that a value is expressed in like kg but this has to exists in
+                                 our database.
+        :type bespoke_unit_tag:[str]
+        :param bespoke_sub_theme: Subtheme
+        :type bespoke_sub_theme: [str]
+        :param location_tag: Takes an object of Location class which in turn contains the name of the latitude and
+                             longitude cols.
+        :type location_tag: db.Model
+        :param sensor_prefix: Prefix for all the sensor tags
+        :type sensor_prefix: str
         :param api_timestamp_tag:
         :type api_timestamp_tag:
-        :param check_sensor_exists_by_name:
-        :type check_sensor_exists_by_name:
-        :param check_sensor_exists_by_name_loc:
-        :type check_sensor_exists_by_name_loc:
-        :param check_sensor_exists_by_name_api:
-        :type check_sensor_exists_by_name_api:
-        :param is_dependent:
-        :type is_dependent:
-        :return:
-        :rtype:
+        :param check_sensor_exists_by_name: Check if sensor exists
+        :type check_sensor_exists_by_name:bool
+        :param check_sensor_exists_by_name_loc: check if location and name exsist
+        :type check_sensor_exists_by_name_loc: bool
+        :param check_sensor_exists_by_name_api: check api exists by name
+        :type check_sensor_exists_by_name_api: bool
+        :param is_dependent: Is independant
+        :type is_dependent: bool
         """
-        self.importer_status.status = Status(__name__, action="create_datasource", status="Stage API Commit")
         api_id = self.stage_api_commit()
-        self.importer_status.status = Status(__name__, action="create_datasource", status="Staged API Commit")
         # Location tag
         latitude, longitude = None, None
 
-        try:
-            if location_tag is not None:
+        if location_tag is not None:
                 latitude = dataframe[location_tag.lat].tolist()
                 longitude = dataframe[location_tag.lon].tolist()
-        except Exception as e:
-            self.importer_status.status = Status(__name__, action="Exception", exception=e.__str__())
-            return None
 
-        self.importer_status.status = Status(__name__, action="create_datasource", status="Save location and sensor")
         # Save location and sensor
         sensor_objects = self.save_sensors(dataframe[sensor_tag].tolist(), latitude, longitude, api_id,
                                            sensor_prefix,
@@ -265,76 +189,69 @@ class BaseImporter(object):
                                            check_sensor_exists_by_name_api=check_sensor_exists_by_name_api,
                                            is_dependent=is_dependent)
 
-        self.importer_status.status = Status(__name__, action="create_datasource", status="Save Attributes")
         # Save Attributes
         attr_objects = self.save_attributes(attribute_tag, unit_value, description,
                                             bespoke_unit_tag, bespoke_sub_theme)
 
-        self.importer_status.status = Status(__name__, action="create_datasource",
-                                             status="Save attribute and sensor relation")
         # Save attribute and sensor relation
         self.save_attr_sensor(attr_objects, sensor_objects.values())
-        self.importer_status.status = Status(__name__, action="create_datasource", status="Create dB Tables")
         self.create_tables(attr_objects)
-        self.importer_status.status = Status(__name__, action="create_datasource", status="Insert Data")
         self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, sensor_prefix, api_timestamp_tag)
 
     '''
-    This follows the same logic as the method above, the only difference it that it considers
-    values of the tags as sensors, attributes and data values instead of the tags themselves
-    e.g
-        A      B      C
-        BG1    NO2    22
-        BG2    SO2    23
-
-    Consider this short data table in method above the column heading are the Attributes and their data are 
-    their values
-    So the values get saved like Attribute 'B' and Value 'NO2'
-
-    In this method the values of the column are Attributes and Column C contain values of Column B
-    So the values get saved like Attribute 'NO2' and Value '22'
-
-    That is why it has an additional value tag
+    
     '''
 
-    def create_datasource_with_values(self, dataframe, sensor_tag, attribute_tag, value_tag,
-                                      latitude_tag, longitude_tag, description_tag,
-                                      api_timestamp_tag=None,
-                                      unit_tag=None, unit_value_tag=None,
-                                      unit_id=1, unit_value=1, sub_theme=1):
+    def create_datasource_with_values(self, dataframe: pd.DataFrame, sensor_tag: str, attribute_tag: str,
+                                      value_tag: str,
+                                      latitude_tag: str, longitude_tag: str, description_tag: str,
+                                      api_timestamp_tag: str = None,
+                                      unit_tag: str = None, unit_value_tag: str = None,
+                                      unit_id: int = 1, unit_value: int = 1, sub_theme: int = 1) -> None:
         """
-        Create Data Source with values
-        :param dataframe:
-        :type dataframe:
-        :param sensor_tag:
-        :type sensor_tag:
+        This follows the same logic as the method above, the only difference it that it considers
+        values of the tags as sensors, attributes and data values instead of the tags themselves
+        e.g
+            A      B      C
+            BG1    NO2    22
+            BG2    SO2    23
+
+        Consider this short data table in method above the column heading are the Attributes and their data are
+        their values
+        So the values get saved like Attribute 'B' and Value 'NO2'
+
+        In this method the values of the column are Attributes and Column C contain values of Column B
+        So the values get saved like Attribute 'NO2' and Value '22'
+
+        That is why it has an additional value tag
+
+        :param dataframe: Pandas Dataframe to save
+        :type dataframe: pd.DataFrame
+        :param sensor_tag: sensor tag
+        :type sensor_tag: str
         :param attribute_tag:
-        :type attribute_tag:
-        :param value_tag:
-        :type value_tag:
-        :param latitude_tag:
-        :type latitude_tag:
-        :param longitude_tag:
-        :type longitude_tag:
-        :param description_tag:
-        :type description_tag:
-        :param api_timestamp_tag:
-        :type api_timestamp_tag:
-        :param unit_tag:
-        :type unit_tag:
-        :param unit_value_tag:
-        :type unit_value_tag:
-        :param unit_id:
-        :type unit_id:
-        :param unit_value:
-        :type unit_value:
-        :param sub_theme:
-        :type sub_theme:
-        :return:
-        :rtype:
+        :type attribute_tag: str
+        :param value_tag: value tag
+        :type value_tag: str
+        :param latitude_tag: latitude tag
+        :type latitude_tag: str
+        :param longitude_tag: longitude tag
+        :type longitude_tag: str
+        :param description_tag: description tag
+        :type description_tag: str
+        :param api_timestamp_tag: timestamp tag
+        :type api_timestamp_tag: str
+        :param unit_tag: unit tag
+        :type unit_tag: str
+        :param unit_value_tag: Unit value tag
+        :type unit_value_tag: str
+        :param unit_id: Unit Id
+        :type unit_id: int
+        :param unit_value: unit value
+        :type unit_value: int
+        :param sub_theme: SubTheme Id
+        :type sub_theme: int
         """
-        self.importer_status.status = Status(__name__, action="create_datasource_with_values",
-                                             status="Stage API commit")
 
         api_id = self.stage_api_commit()
         _unit = None
@@ -356,51 +273,39 @@ class BaseImporter(object):
         else:
             _unit_value = dataframe[unit_value_tag].tolist()
 
-        self.importer_status.status = Status(__name__, action="create_datasource_with_values",
-                                             status="Save Sensors")
         sensor_objects = self.save_sensors(sensors, latitude, longitude, api_id, None,
                                            check_sensor_exists_by_name=False,
                                            check_sensor_exists_by_name_loc=False,
                                            check_sensor_exists_by_name_api=False)
 
-        self.importer_status.status = Status(__name__, action="create_datasource_with_values",
-                                             status="Save Attributes")
         attr_objects = self.save_attributes(attributes,
                                             _unit_value if isinstance(_unit_value, list) else [_unit_value],
                                             description,
                                             _unit if isinstance(_unit, list) else [_unit],
                                             [sub_theme])
-        self.importer_status.status = Status(__name__, action="create_datasource_with_values",
-                                             status="Save Attribute to Sensors Relations")
         self.save_attr_sensor(attr_objects, sensor_objects.values())
-        self.importer_status.status = Status(__name__, action="create_datasource_with_values",
-                                             status="Create dB tables")
         self.create_tables(attr_objects)
-        self.importer_status.status = Status(__name__, action="create_datasource_with_values",
-                                             status="Insert Data")
         self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, '',
                          api_timestamp_tag, value_tag, attribute_tag, unit_value_tag)
-        self.importer_status.status = Status(__name__, action="create_datasource_with_values", status="Done")
 
-    def save_sensors(self, sensors: list, latitude: list, longitude: list, api_id, sensor_prefix, **kwargs) -> dict:
+    def save_sensors(self, sensors: list, latitude: list, longitude: list, api_id, sensor_prefix, **kwargs) -> [
+        db.Model]:
         """
         Save Sensor Values
-        :param sensors:
-        :type sensors:
-        :param latitude:
-        :type latitude:
-        :param longitude:
-        :type longitude:
-        :param api_id:
-        :type api_id:
-        :param sensor_prefix:
-        :type sensor_prefix:
-        :param kwargs:
-        :type kwargs:
-        :return:
-        :rtype:
+        :param sensors: Sensors
+        :type sensors: [str]
+        :param latitude: list of latitudes for sensors
+        :type latitude: [str]
+        :param longitude: list of longitudes for sensors
+        :type longitude:[str]
+        :param api_id: api id
+        :type api_id: str
+        :param sensor_prefix: sensors prefix
+        :type sensor_prefix: str
+        :param kwargs: keyword arguments
+        :type kwargs: {str, Any}
+        :return: returns a list of sensors
         """
-        self.importer_status.status = Status(__name__, action="save_sensors", status="Save Sensors")
         sensor_objects = {}
         sensor_exists = set()
 
@@ -451,10 +356,9 @@ class BaseImporter(object):
             sensor_objects[sensor.name] = sensor
 
         # db.session.flush()
-        self.importer_status.status = Status(__name__, action="save_sensors", status="Done")
         return sensor_objects
 
-    def save_location(self, latitude: float, longitude: float):
+    def save_location(self, latitude: float, longitude: float) -> db.Model:
         """
         Save location data
         :param latitude: GPS Latitude
@@ -463,33 +367,29 @@ class BaseImporter(object):
         :type longitude: str
         :return: The location
         """
-        self.importer_status.status = Status(__name__, action="save_location", status="Save Location")
         loc = location.Location.get_by_lat_lon(latitude, longitude)
         if not loc:
             loc = location.Location(latitude, longitude, WKTElement('POINT(%f %f)' % (latitude, longitude), 4326))
             loc.save()
 
-        self.importer_status.status = Status(__name__, action="save_location", status="Done")
         return loc
 
     def save_attributes(self, attribute_tag: list, unit_value: list, description: list,
-                        bespoke_unit_tag: list, bespoke_sub_theme: list) -> list:
+                        bespoke_unit_tag: list, bespoke_sub_theme: list) -> [db.Model]:
         """
         Save attributes
-        :param attribute_tag:
-        :type attribute_tag:
-        :param unit_value:
-        :type unit_value:
-        :param description:
-        :type description:
-        :param bespoke_unit_tag:
-        :type bespoke_unit_tag:
-        :param bespoke_sub_theme:
-        :type bespoke_sub_theme:
-        :return:
-        :rtype:
+        :param attribute_tag: Attribute tags
+        :type attribute_tag: [str]
+        :param unit_value: Unit values
+        :type unit_value: [str]
+        :param description: Attribute descriptions
+        :type description: [str]
+        :param bespoke_unit_tag: unit
+        :type bespoke_unit_tag: [str]
+        :param bespoke_sub_theme: Parent subtheme name
+        :type bespoke_sub_theme: [str]
+        :return: A list of Attributes
         """
-        self.importer_status.status = Status(__name__, action="save_attributes", status="Save Attributes")
         attr_objects = []
         attr_exists = set()
         for i in range(len(attribute_tag)):
@@ -528,82 +428,64 @@ class BaseImporter(object):
             a = self.stage_attributes(attribute_tag[i], uv, but, bst, des)
             attr_objects.append(a)
             attr_exists.add(_hash)
-        self.importer_status.status = Status(__name__, action="save_attributes", status="Done")
         # db.session.flush()
         return attr_objects
 
     def stage_attributes(self, attribute: str, unit_value: str,
                          bespoke_unit_tag: int, bespoke_sub_theme: int,
-                         description: str):
+                         description: str) -> db.Model:
         """
-
-        :param attribute:
-        :type attribute:
-        :param unit_value:
-        :type unit_value:
-        :param bespoke_unit_tag:
-        :type bespoke_unit_tag:
-        :param bespoke_sub_theme:
-        :type bespoke_sub_theme:
-        :param description:
-        :type description:
-        :return:
-        :rtype:
+        Stage Attributes
+        :param attribute: Attribute
+        :type attribute: str
+        :param unit_value: Unit Value
+        :type unit_value: str
+        :param bespoke_unit_tag: Unit Id
+        :type bespoke_unit_tag: int
+        :param bespoke_sub_theme: SubTheme Id
+        :type bespoke_sub_theme: int
+        :param description: Attributes Description
+        :type description: str
+        :return: Attribute instance
         """
         _a = Attributes._get_by_name_unit_unitvalue(attribute, bespoke_unit_tag, unit_value)
         if _a:
-            self.importer_status.status = Status(__name__, action="stage_attributes", status=(
-                attribute, 'attribute with Unit ID:', str(bespoke_unit_tag), 'and Unit Value:', unit_value,
-                'already exists'))
-            # print(attribute, 'attribute with Unit ID:', str(bespoke_unit_tag), 'and Unit Value:', unit_value,
-            #       'already exists')
+            print(attribute, 'attribute with Unit ID:', str(bespoke_unit_tag), 'and Unit Value:', unit_value,
+                  'already exists')
             return _a
-        self.importer_status.status = Status(__name__, action="stage_attributes", status="Create Attribute")
         a = Attributes(id=str(uuid.uuid4()), name=attribute,
                        table_name=(attribute + '_' + str(uuid.uuid4()).replace('-', '_')),
                        sub_theme=bespoke_sub_theme, unit=bespoke_unit_tag,
                        unit_value=str(unit_value), description=description)
         a = a.save()
-        self.importer_status.status = Status(__name__, action="stage_attributes", status="Saved")
         return a
 
-    def save_attr_sensor(self, attrs, sensors):
+    def save_attr_sensor(self, attrs, sensors) -> None:
+        """
+        Save Attributes and Sensors
+        :param attrs: Attributes
+        :type attrs: [db.Model]
+        :param sensors: Seansors
+        :type sensors: [db.Model]
         """
 
-        :param attrs:
-        :type attrs:
-        :param sensors:
-        :type sensors:
-        :return:
-        :rtype:
-        """
-        self.importer_status.status = Status(__name__, action="save_attr_sensor",
-                                             status="Save Sensor Attribute relationship")
         for sensor in sensors:
             for attr in attrs:
                 _sa = SensorAttribute._get_by_sid_aid(sensor.id, attr.id)
                 if _sa:
-                    self.importer_status.status = Status(__name__, action="save_attr_sensor",
-                                                         status=('Sensor ID: %s, Attribute Id: %s already exists' % (
-                                                             _sa.s_id, _sa.a_id)))
-                    # print('Sensor ID: %s, Attribute Id: %s already exists' % (_sa.s_id, _sa.a_id))
+                    print('Sensor ID: %s, Attribute Id: %s already exists' % (_sa.s_id, _sa.a_id))
                     continue
 
                 sa = SensorAttribute(sensor.id, attr.id)
                 sa.save()
-                self.importer_status.status = Status(__name__, action="save_attr_sensor",
-                                                     status="Saved")
-        # db.session.flush()
 
-    def create_tables(self, attributes):
+    def create_tables(self, attributes: [db.Model]) -> None:
         """
+        Create Data Base Tables
+        :param attributes: Attributes
+        :type attributes: [db.Model]
 
-        :param attributes:
-        :type attributes:
-        :return:
-        :rtype:
         """
-        self.importer_status.status = Status(__name__, action="create_tables", status="Creating Tables")
         table_query = db.session.execute("select * from pg_catalog.pg_tables")
         table_tuples = table_query.fetchall()
         tables = set()
@@ -616,19 +498,15 @@ class BaseImporter(object):
                     'CREATE TABLE %s (s_id TEXT NOT NULL, value TEXT NOT NULL, api_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL, timestamp TIMESTAMP WITHOUT TIME ZONE, PRIMARY KEY(s_id, value, api_timestamp))' % (
                         attr.table_name))
                 print('Created Table', attr.table_name.lower())
-                self.importer_status.status = Status(__name__, action="create_tables", status="Created Table",
-                                                     table_name=attr.table_name.lower())
 
             else:
                 print(attr.table_name.replace('-', '_'), 'already exists')
-                self.importer_status.status = Status(__name__, action="create_tables", status="Table already exists",
-                                                     table_name=attr.table_name.replace('-', '_'))
 
     def insert_data(self, attr_objects, sensor_objects: dict, dataframe,
                     sensor_tag, sensor_prefix, api_timestamp_tag, attr_value_tag=None,
                     attribute_tag=None, unit_value_tag=None):
         """
-
+        Insert Data in to tables
         :param attr_objects:
         :type attr_objects:
         :param sensor_objects:
@@ -712,10 +590,7 @@ class BaseImporter(object):
                         db.session.commit()
                 except IntegrityError as e:
                     db.session.rollback()
-                    self.importer_status.status = Status(__name__, action="Exception", status="Session rollback",
-                                                         exception=e.__str__(),
-                                                         data=('Sensor id: %s with value %s at time %s already exists'
-                                                               % (sensor_id, values[i], a_date)))
+
                     # To improve logging uncomment the line below
                     # print('Sensor id: %s with value %s at time %s already exists' % (sensor_id, values[i], a_date))
 
@@ -724,24 +599,21 @@ class BaseImporter(object):
             db.session.add_all(models)
 
         try:
-            self.importer_status.status = Status(__name__, action="insert_data", status="Commiting session to db")
             db.session.commit()
             for _class in _classes:
                 sqlalchemy.orm.instrumentation.unregister_class(_class)
                 del _class._decl_class_registry[_class.__name__]
         except IntegrityError as e:
             db.session.rollback()
-            self.importer_status.status = Status(__name__, action="Exception", status="Session rollback",
-                                                 exception=e.__str__())
+
             print('Unable to save certain values as they already are in the system, check logs')
 
-    def _hash_it(self, *args):
+    def _hash_it(self, *args: [Any]) -> int:
         """
-
-        :param args:
-        :type args:
-        :return:
-        :rtype:
+        Create hash of variable arguments list
+        :param args: variable arguments
+        :type args: Any
+        :return: Hash of the variable arguments
         """
         to_hash = ''
         for a in args:
@@ -749,13 +621,12 @@ class BaseImporter(object):
 
         return abs(hash(to_hash)) % (10 ** 8)
 
-    def stage_api_commit(self):
+    def stage_api_commit(self) -> int:
+        """
+        Stage API commit to database
+        :return: Api identification number
         """
 
-        :return:
-        :rtype:
-        """
-        self.importer_status.status = Status.general(__name__, 'stage_api_commit', 'commit api')
         api = API(name=self.api_name,
                   url=self.url, refresh_time=self.refresh_time,
                   token_expiry=self.token_expiry,
@@ -763,35 +634,32 @@ class BaseImporter(object):
         _api = api.save()
         return _api.id
 
-    def create_unit(self, _type, description):
+    def create_unit(self, _type, description) -> db.Model:
         """
         Create Unit
-        :param _type:
-        :type _type:
-        :param description:
-        :type description:
-        :return:
-        :rtype:
+        :param _type: Unit type
+        :type _type: str
+        :param description: Description of unit
+        :type description: str
+        :return: Unit
+
         """
-        self.importer_status.status = Status(__name__, action="create_unit", status="Create Unit", type=_type,
-                                             description=description)
         unit = Unit(_type=_type, description=description)
         unit.save()
         return unit
 
-    def create_theme(self, name):
+    def create_theme(self, name) -> db.Model:
         """
         Create Theme
         :param name: Name of theme
         :type name: str
         :return: Theme
         """
-        self.importer_status.status = Status(__name__, action="create_theme", status="Create Theme", name=name)
         theme = Theme(name=name)
         theme.save()
         return theme
 
-    def create_subtheme(self, theme_id, name):
+    def create_subtheme(self, theme_id, name) -> db.Model:
         """
         Create new SubTheme
         :param theme_id: Theme id
@@ -800,8 +668,6 @@ class BaseImporter(object):
         :type name: str
         :return: Subtheme
         """
-        self.importer_status.status = Status(__name__, action="create_subtheme", status="Create SubTheme",
-                                             theme_id=theme_id, name=name)
         sub_theme = SubTheme(t_id=theme_id, name=name)
         sub_theme.save()
         return sub_theme
@@ -810,11 +676,14 @@ class BaseImporter(object):
         """
         Commit change to database
         """
-        self.importer_status.status = Status(__name__, action="commit", status="Commit to dB")
         db.session.commit()
 
 
 class Location(object):
+    """
+    Location Object
+    """
+
     def __init__(self, lat, lon):
         self.lat = lat
         self.lon = lon
