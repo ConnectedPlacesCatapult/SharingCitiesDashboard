@@ -1,32 +1,41 @@
 import json
-import os
-import sys
 import traceback
+from typing import Any
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from importers.base import BaseImporter
-from importers.json_reader import JsonReader
+import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
 
-import pandas as pd
-from .state_decorator import ImporterStatus, Status
+from importers.base import BaseImporter
+from importers.json_reader import JsonReader
 from .config_decorator import GetConfig
+from .state_decorator import ImporterStatus, Status
 
 
 @GetConfig("LisbonAPI")
 class LisbonAPI(BaseImporter):
+    """
+    LisbonAPI Importer
+    """
     importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self):
+        """
+        Get Importer configurations
+        Instantiate BaseImporter
+        """
         self.config = self.get_config('environment', 'lisbon')
         self.USER_NAME = self.config['USER_NAME']
         self.USER_PASSCODE = self.config['USER_PASSCODE']
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers=None):
+    def _create_datasource(self, headers: str = None) -> None:
+        """
+        Create DataSource
+        :param headers: Request headers
+        :type headers: str
+        """
         try:
             _headers = {'Authorization': 'Bearer %s' % self._refresh_token()}
 
@@ -59,8 +68,14 @@ class LisbonAPI(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args):
+    def _refresh_token(self, *args: [Any]) -> str:
+        """
+        Refresh API Token
+        :param args: variable argument list
+        :type args: Any
+        :return: new token
+        """
         headers = {"grant_type": "client_credentials"}
         token_url = 'https://iot.alticelabs.com/api/devices/token'
         token = requests.post(token_url, headers=headers, auth=HTTPBasicAuth(self.USER_NAME, self.USER_PASSCODE))
-        return (str(token.text))
+        return str(token.text)

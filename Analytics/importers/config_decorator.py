@@ -1,5 +1,6 @@
 import os
 import traceback
+from typing import Callable
 
 import yaml
 
@@ -8,7 +9,7 @@ from .state_decorator import ImporterStatus, Status
 
 class GetConfig(object):
     """
-    GetConfig decorator Adds a get_config method to a class
+    GetConfig decorator
     """
 
     def __init__(self, cls_name: str, config_filename: str = 'config.yml'):
@@ -23,10 +24,10 @@ class GetConfig(object):
         self.cls_name = cls_name
         self.config = None
 
-    def __call__(self, cls: object):
+    def __call__(self, cls: object) -> Callable:
         class Wrapped(cls):
             """
-            Create wrapper to decorate target Class with Config methods
+            Create wrapper to decorate target Class with get_config method
             :param cls: Class to be wrapped
             :type cls: Class
             """

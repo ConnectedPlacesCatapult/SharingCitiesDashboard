@@ -1,34 +1,39 @@
-'''
-TFL Bike points importer
-
-The importer gets extended from BaseImporter and doesn't have any bespoke code apart from defining the 
-structure of the api, like sensor, attributes, data tables and values
-'''
-
-import os
-import sys
 import traceback
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import numpy as np
+import pandas as pd
 
 from importers.base import BaseImporter
-import pandas as pd
-import numpy as np
-
-from .state_decorator import ImporterStatus, Status
 from .config_decorator import GetConfig
+from .state_decorator import ImporterStatus, Status
 
 
 @GetConfig("TfL_BikePoints")
 class TfL_BikePoints(BaseImporter):
+    """
+    TFL Bike points importer
+
+    The importer gets extended from BaseImporter and doesn't have any bespoke code apart from defining the
+    structure of the api, like sensor, attributes, data tables and values
+    """
     importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self):
+        """
+        Get Import Config
+        Instantiate BaseImporter
+        """
         self.config = self.get_config('environment', 'tfl_bike_points')
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers=None):
+    def _create_datasource(self, headers: str = None) -> None:
+        """
+        Create DataSource
+        :param headers: Request Headers
+        :type headers: str
+
+        """
         try:
             super()._create_datasource(headers)
             self.df = self.create_dataframe(ignore_object_tags=['$type'], object_separator='id')
