@@ -15,19 +15,12 @@ import importlib
 import yaml
 from flask_script import Command, Option
 
-from importers.state_decorator import ImporterStatus
-
 
 class AddDatasource(Command):
-    importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self, add_datasource=None, get_datasources=False):
         self.add_datasource = add_datasource
         self.get_datasources = get_datasources
-
-    @importer_status.changed.register
-    def status_has_changed(self, status, *args, **kwargs):
-        print(status)
 
     def get_options(self):
         return [
