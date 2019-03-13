@@ -38,34 +38,12 @@ class JsonReader(object):
     def fetch_data(self):
         data = requests.get(self.url)
         _json = json.loads(data.text)
-        # with open('fetch_data.json', "w+") as active_file:
-        #     active_file.write(self.url)
-        #     active_file.write("\n" * 50)
-        #     active_file.write(data.text)
-        #     active_file.write("\n" * 50)
-
         return _json
 
     def create_objects(self, data, curr_key: str = None, ignore_tags: list = [],
                        ignore_values: list = [], ignore_tag_values: dict = {},
                        ignore_object_tags: list = []):
-        """
-        Converts json files into dataframes, which can then be treated as tables using pandas library
-        :param data:    response data from get request to node
-        :type data:        Union[dict,list]
-        :param curr_key:    the current key
-        :type curr_key:     str
-        :param ignore_tags: Tags to ignore eg.. "@SpeciesCode"
-        :type ignore_tags:  [str]
-        :param ignore_values:  values to ignore
-        :type ignore_values:  [str]
-        :param ignore_tag_values: Tag value to ignore  eg.   {"@SpeciesCode": "NO2"}
-        :type ignore_tag_values:    {str: str}
-        :param ignore_object_tags: Object tags to ignore
-        :type ignore_object_tags: [objects]
-        """
         if isinstance(data, dict):
-            # { self.create_objects(data[key], key, ignore_tags, ignore_values, ignore_tag_values) for key in data if key not in ignore_object_tags }
             for key in data:
                 if key in ignore_object_tags:
                     continue
@@ -103,7 +81,7 @@ class JsonReader(object):
             _df = pd.DataFrame.from_dict(value.object_dict, orient='index')
             data_frame.append(_df)
 
-        df = pd.concat(data_frame, axis=1, sort=True)
+        df = pd.concat(data_frame, axis=1)
         return df.T
 
     def print_to_csv(self, dataframe, filepath):

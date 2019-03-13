@@ -9,7 +9,6 @@ The name of the importer can be found:
 	python manage.py add -gd True
 '''
 
-# from importers.base import get_config
 import importlib
 
 import yaml
