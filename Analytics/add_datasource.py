@@ -38,7 +38,7 @@ class AddDatasource(Command):
             Option('--add_datasource', '-ad', dest='add_datasource', default=self.add_datasource),
         ]
 
-    def get_config(self) -> [str[str]]:
+    def get_config(self) -> {str: {str}}:
         """
         Get Importer Config
         :return: Importer Configurations
