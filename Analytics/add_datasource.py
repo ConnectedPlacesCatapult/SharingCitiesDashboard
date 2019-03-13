@@ -1,33 +1,49 @@
-'''
-Helper Class
-
-This class can be used to add any importer to the database and retrieve information about them
-The importers can be added:
-	python manage.py add -ad <Name-Of-The-Importer>
-
-The name of the importer can be found:
-	python manage.py add -gd True
-'''
-
 import importlib
+from typing import Callable
 
 import yaml
 from flask_script import Command, Option
 
 
 class AddDatasource(Command):
+    """
+    Helper Class
 
-    def __init__(self, add_datasource=None, get_datasources=False):
+    This class can be used to add any importer to the database and retrieve information about them
+    The importers can be added:
+        python manage.py add -ad <Name-Of-The-Importer>
+
+    The name of the importer can be found:
+        python manage.py add -gd True
+    """
+
+    def __init__(self, add_datasource: Callable = None, get_datasources: bool = False):
+        """
+        Get or Add a DataSource
+        :param add_datasource: Importer Callable
+        :type add_datasource: Callable
+        :param get_datasources: If True A list of importers are returned
+        :type get_datasources: Bool
+        """
         self.add_datasource = add_datasource
         self.get_datasources = get_datasources
 
-    def get_options(self):
+    def get_options(self) -> [Option]:
+        """
+        Get command line arguments
+        :return: A list of Options
+        """
         return [
             Option('--get_datasources', '-gd', dest='get_datasources', default=self.get_datasources),
             Option('--add_datasource', '-ad', dest='add_datasource', default=self.add_datasource),
         ]
 
-    def get_config(self):
+    def get_config(self) -> [str[str]]:
+        """
+        Get Importer Config
+        :return: Importer Configurations
+        :rtype:
+        """
         config = None
         try:
             with open("importers/config.yml", 'r') as ymlfile:
@@ -38,7 +54,15 @@ class AddDatasource(Command):
 
         return config
 
-    def run(self, get_datasources, add_datasource):
+    def run(self, get_datasources: bool, add_datasource: str) -> object:
+        """
+        Execute Commands
+        :param get_datasources: If True a list of DataSource Importers are returned
+        :type get_datasources: bool
+        :param add_datasource: Callable Str Name
+        :type add_datasource: str
+        :return: A DataSource Object
+        """
         config = self.get_config()
         config = config[config['environment']]
         _importers = {}
