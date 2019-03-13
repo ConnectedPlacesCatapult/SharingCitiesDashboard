@@ -130,331 +130,443 @@ Description:
       }
 '''
 
-import os, sys
+import os
+import sys
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from importers.base import BaseImporter, Location, get_config
+from importers.base import BaseImporter, Location
 from models.sensor import Sensor
 from models import location
-from db import db
+from .state_decorator import ImporterStatus, Status
+from .config_decorator import GetConfig
 
-config = get_config()
-config = config[config['environment']]['greenwich_meta']
 
-API_NAME = config['API_NAME']
-BASE_URL = config['BASE_URL']
-REFRESH_TIME = config['REFRESH_TIME']
-API_KEY = config['API_KEY']
-TOKEN_EXPIRY = config['TOKEN_EXPIRY']
-REFRESH_URL = config['REFRESH_URL']
-API_CLASS = config['API_CLASS']
-
+@GetConfig("GreenwichMeta")
 class GreenwichMeta(BaseImporter):
+    importer_status = ImporterStatus.get_importer_status()
+
     def __init__(self):
-        super().__init__(API_NAME, BASE_URL, REFRESH_TIME, API_KEY, API_CLASS, TOKEN_EXPIRY)
+        self.importer_status.status = Status(__name__, action="__init__")
+        self.config = self.get_config('environment', 'greenwich_meta')
+        if not self.config:
+            self.importer_status.status = Status(__name__, action="GreenwichMeta", state="Failed to load config")
+            return
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+                         self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource(headers)
-        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+        self.importer_status.status = Status(__name__, action="_create_datasource", state='Create DataSource')
+        try:
+            super()._create_datasource(headers)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state='Create DataFrame')
+            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
-        loc = Location('latitude', 'longitude')
-        self.create_datasource(dataframe= self.df, sensor_tag='lotcode', attribute_tag=['baycount', 'baytype'], 
-                                unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[], 
-                                location_tag=loc, sensor_prefix='smart_parking_', api_timestamp_tag='run_time_stamp',
-                                is_dependent=True)
+            if self.df.empty:
+                self.importer_status.status = Status(__name__, action="_create_datasource",
+                                                     state="Failed to create DataFrame")
+                return None
+
+            loc = Location('latitude', 'longitude')
+            self.create_datasource(dataframe=self.df, sensor_tag='lotcode', attribute_tag=['baycount', 'baytype'],
+                                   unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[],
+                                   location_tag=loc, sensor_prefix='smart_parking_', api_timestamp_tag='run_time_stamp',
+                                   is_dependent=True)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state='Done')
+
+        except Exception as e:
+            self.importer_status.status = Status(__name__, action="Exception",
+                                                 state="Failed to _create_datasource", exception=e.__str__())
 
     def _refresh_token(self, *args):
         print('Token expired Refresh it manually')
 
 
-config = get_config()
-config = config[config['environment']]['greenwich_occ']
-
-API_NAME_OCC = config['API_NAME']
-BASE_URL_OCC = config['BASE_URL']
-API_CLASS_OCC = config['API_CLASS']
-
+@GetConfig("GreenwichOCC")
 class GreenwichOCC(BaseImporter):
+    importer_status = ImporterStatus.get_importer_status()
+
     def __init__(self):
-        super().__init__(API_NAME_OCC, BASE_URL_OCC, REFRESH_TIME, API_KEY, API_CLASS_OCC, TOKEN_EXPIRY)
+        self.importer_status.status = Status(__name__, action="__init__")
+        self.config = self.get_config('environment', 'greenwich_occ')
+        if not self.config:
+            self.importer_status.status = Status(__name__, action="GreenwichOCC", state="Failed to load config")
+            return
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+                         self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource(headers)
-        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+        self.importer_status.status = Status(__name__, action="_create_datasource", state='Create DataSource')
+        try:
+            super()._create_datasource(headers)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state='Create DataFrame')
+            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
-        names = self.df['lotcode'].tolist()
-        name_set = set()
-        location_sensor = {}
-        sensor_location = {}
-        latitude = []
-        longitude = []
+            if self.df.empty:
+                self.importer_status.status = Status(__name__, action="_create_datasource",
+                                                     state="Failed to create DataFrame")
+                return None
 
-        for s in names:
-            name_set.add('smart_parking_' + str(s))
+            try:
+                names = self.df['lotcode'].tolist()
+            except KeyError as ke:
+                self.importer_status.status = Status(__name__, action="Exception", state='KeyError',
+                                                     exception=ke.__str__())
+            name_set = set()
+            location_sensor = {}
+            sensor_location = {}
+            latitude = []
+            longitude = []
 
-        sensors = Sensor.get_by_name_in(name_set)
-        loc_ids = []
-        for s in sensors:
-            loc_ids.append(s.l_id)
-            location_sensor[s.l_id] = s
-        locations = location.Location.get_by_id_in(loc_ids)
+            for s in names:
+                name_set.add('smart_parking_' + str(s))
 
-        for loc in locations:
-            if loc.id in location_sensor:
-                _sensor = location_sensor[loc.id]
-                sensor_location[_sensor.name] = loc
-       
-        for s in names:
-            _s = 'smart_parking_' + str(s)
-            if _s in sensor_location:
-                latitude.append(sensor_location[_s].lat)
-                longitude.append(sensor_location[_s].lon)
+            sensors = Sensor.get_by_name_in(name_set)
+            loc_ids = []
+            for s in sensors:
+                loc_ids.append(s.l_id)
+                location_sensor[s.l_id] = s
+            locations = location.Location.get_by_id_in(loc_ids)
 
-        self.df['latitude'] = latitude
-        self.df['longitude'] = longitude
-        loc = Location('latitude', 'longitude')
-        self.create_datasource(dataframe= self.df, sensor_tag='lotcode', attribute_tag=['free', 'isoffline', 'occupied'], 
-                                unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[], location_tag=loc,
-                                sensor_prefix='smart_parking_', api_timestamp_tag='run_time_stamp', is_dependent=True)
+            for loc in locations:
+                if loc.id in location_sensor:
+                    _sensor = location_sensor[loc.id]
+                    sensor_location[_sensor.name] = loc
+
+            for s in names:
+                _s = 'smart_parking_' + str(s)
+                if _s in sensor_location:
+                    latitude.append(sensor_location[_s].lat)
+                    longitude.append(sensor_location[_s].lon)
+
+            self.df['latitude'] = latitude
+            self.df['longitude'] = longitude
+            loc = Location('latitude', 'longitude')
+
+            self.create_datasource(dataframe=self.df, sensor_tag='lotcode',
+                                   attribute_tag=['free', 'isoffline', 'occupied'],
+                                   unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[],
+                                   location_tag=loc,
+                                   sensor_prefix='smart_parking_', api_timestamp_tag='run_time_stamp',
+                                   is_dependent=True)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state='Done')
+
+        except Exception as e:
+            self.importer_status.status = Status(__name__, action="Exception",
+                                                 state="Failed to _create_datasource", exception=e.__str__())
 
     def _refresh_token(self, *args):
+        self.importer_status.status = Status(__name__, action="_refresh_token", state='Refresh Token')
         print('Token expired Refresh it manually')
 
 
-
-config = get_config()
-config = config[config['environment']]['greenwich_meta_2']
-
-API_NAME_2 = config['API_NAME']
-BASE_URL_2 = config['BASE_URL']
-API_CLASS_2 = config['API_CLASS']
-
+@GetConfig("GreenwichMeta_2")
 class GreenwichMeta_2(BaseImporter):
+    importer_status = ImporterStatus.get_importer_status()
+
     def __init__(self):
-        super().__init__(API_NAME_2, BASE_URL_2, REFRESH_TIME, API_KEY, API_CLASS_2, TOKEN_EXPIRY)
+        self.importer_status.status = Status(__name__, action="__init__")
+        self.config = self.get_config('environment', 'greenwich_meta_2')
+        if not self.config:
+            self.importer_status.status = Status(__name__, action="__init__", state="Failed to load config")
+            return
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+                         self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource(headers)
-        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+        self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataSource")
+        try:
+            super()._create_datasource(headers)
 
-        ### Renaming the columns so that they are not confused with GreenwichMeta
-        self.df.rename(index=str, columns={'baycount': 'baycount_2',
-                       'baytype': 'baytype_2'}, 
-                      inplace=True)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataSource")
 
-        loc = Location('latitude', 'longitude')
-        self.create_datasource(dataframe= self.df, sensor_tag='lotcode', attribute_tag=['baycount_2', 'baytype_2'], 
-                                unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[], 
-                                location_tag=loc, sensor_prefix='smart_parking_2_', api_timestamp_tag='run_time_stamp',
-                                is_dependent=True)
+            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+
+            ### Renaming the columns so that they are not confused with GreenwichMeta
+            self.df.rename(index=str, columns={'baycount': 'baycount_2',
+                                               'baytype': 'baytype_2'},
+                           inplace=True)
+
+            loc = Location('latitude', 'longitude')
+            self.create_datasource(dataframe=self.df, sensor_tag='lotcode', attribute_tag=['baycount_2', 'baytype_2'],
+                                   unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[],
+                                   location_tag=loc, sensor_prefix='smart_parking_2_',
+                                   api_timestamp_tag='run_time_stamp',
+                                   is_dependent=True)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state="Done")
+
+        except Exception as e:
+            self.importer_status.status = Status(__name__, action="Exception",
+                                                 state="Failed to _create_datasource", exception=e.__str__())
 
     def _refresh_token(self, *args):
+        self.importer_status.status = Status(__name__, action="_refresh_token", state="Refresh Token")
         print('Token expired Refresh it manually')
+        self.importer_status.status = Status(__name__, action="_refresh_token", state="Done")
 
 
-config = get_config()
-config = config[config['environment']]['greenwich_occ_2']
-
-API_NAME_OCC_2 = config['API_NAME']
-BASE_URL_OCC_2 = config['BASE_URL']
-API_CLASS_OCC_2 = config['API_CLASS']
-
+@GetConfig("GreenwichOCC_2")
 class GreenwichOCC_2(BaseImporter):
+    importer_status = ImporterStatus.get_importer_status()
+
     def __init__(self):
-        super().__init__(API_NAME_OCC_2, BASE_URL_OCC_2, REFRESH_TIME, API_KEY, API_CLASS_OCC_2, TOKEN_EXPIRY)
+        self.config = self.get_config('environment', 'greenwich_occ_2')
+        self.importer_status.status = Status(__name__, action="__init__")
+        if not self.config:
+            self.importer_status.status = Status(__name__, action="GreenwichOCC_2", state="Failed to load config")
+            return
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+                         self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource(headers)
-        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+        self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataSource")
+        try:
+            super()._create_datasource(headers)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataFrame")
+            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
-        names = self.df['lotcode'].tolist()
-        name_set = set()
-        location_sensor = {}
-        sensor_location = {}
-        latitude = []
-        longitude = []
+            names = self.df['lotcode'].tolist()
+            name_set = set()
+            location_sensor = {}
+            sensor_location = {}
+            latitude = []
+            longitude = []
 
-        for s in names:
-            name_set.add('smart_parking_2_' + str(s))
+            for s in names:
+                name_set.add('smart_parking_2_' + str(s))
 
-        sensors = Sensor.get_by_name_in(name_set)
-        loc_ids = []
-        for s in sensors:
-            loc_ids.append(s.l_id)
-            location_sensor[s.l_id] = s
-        locations = location.Location.get_by_id_in(loc_ids)
+            sensors = Sensor.get_by_name_in(name_set)
+            loc_ids = []
+            for s in sensors:
+                loc_ids.append(s.l_id)
+                location_sensor[s.l_id] = s
+            locations = location.Location.get_by_id_in(loc_ids)
 
-        for loc in locations:
-            if loc.id in location_sensor:
-                _sensor = location_sensor[loc.id]
-                sensor_location[_sensor.name] = loc
-       
-        for s in names:
-            _s = 'smart_parking_2_' + str(s)
-            if _s in sensor_location:
-                latitude.append(sensor_location[_s].lat)
-                longitude.append(sensor_location[_s].lon)
+            for loc in locations:
+                if loc.id in location_sensor:
+                    _sensor = location_sensor[loc.id]
+                    sensor_location[_sensor.name] = loc
 
-        self.df['latitude'] = latitude
-        self.df['longitude'] = longitude
+            for s in names:
+                _s = 'smart_parking_2_' + str(s)
+                if _s in sensor_location:
+                    latitude.append(sensor_location[_s].lat)
+                    longitude.append(sensor_location[_s].lon)
 
-        ### Renaming the columns so that they are not confused with GreenwichOCC
-        self.df.rename(index=str, columns={'free': 'free_2',
-                       'isoffline': 'isoffline_2',
-                       'occupied' : 'occupied_2'}, 
-                      inplace=True)
+            self.df['latitude'] = latitude
+            self.df['longitude'] = longitude
 
-        loc = Location('latitude', 'longitude')
-        self.create_datasource(dataframe= self.df, sensor_tag='lotcode', attribute_tag=['free_2', 'isoffline_2', 'occupied_2'], 
-                                unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[], location_tag=loc,
-                                sensor_prefix='smart_parking_2_', api_timestamp_tag='run_time_stamp', is_dependent=True)
+            ### Renaming the columns so that they are not confused with GreenwichOCC
+            self.df.rename(index=str, columns={'free': 'free_2',
+                                               'isoffline': 'isoffline_2',
+                                               'occupied': 'occupied_2'},
+                           inplace=True)
+
+            loc = Location('latitude', 'longitude')
+            self.create_datasource(dataframe=self.df, sensor_tag='lotcode',
+                                   attribute_tag=['free_2', 'isoffline_2', 'occupied_2'],
+                                   unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[],
+                                   location_tag=loc,
+                                   sensor_prefix='smart_parking_2_', api_timestamp_tag='run_time_stamp',
+                                   is_dependent=True)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state="Done")
+
+        except Exception as e:
+            self.importer_status.status = Status(__name__, action="Exception",
+                                                 state="Failed to _create_datasource", exception=e.__str__())
 
     def _refresh_token(self, *args):
+        self.importer_status.status = Status(__name__, action="_refresh_token", state="Refresh Token")
         print('Token expired Refresh it manually')
+        self.importer_status.status = Status(__name__, action="_refresh_token", state="Done")
 
 
-config = get_config()
-config_kiwi = config[config['environment']]['greenwich_kiwi']
-
-API_NAME_KIWI = config_kiwi['API_NAME']
-BASE_URL_KIWI = config_kiwi['BASE_URL']
-API_CLASS_KIWI = config_kiwi['API_CLASS']
-REFRESH_TIME_KIWI = config_kiwi['REFRESH_TIME']
-TOKEN_EXPIRY_KIWI = config_kiwi['TOKEN_EXPIRY']
-
+@GetConfig("GreenwichKiwiPump")
 class GreenwichKiwiPump(BaseImporter):
+    importer_status = ImporterStatus.get_importer_status()
+
     def __init__(self):
-        super().__init__(API_NAME_KIWI, BASE_URL_KIWI, REFRESH_TIME_KIWI, API_KEY, API_CLASS_KIWI, TOKEN_EXPIRY_KIWI)
+        self.importer_status.status = Status(__name__, action="__init__")
+        self.config = self.get_config('environment', 'greenwich_kiwi')
+        if not self.config:
+            self.importer_status.status = Status(__name__, action="GreenwichKiwiPump", state="Failed to load config")
+            return
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+                         self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource(headers)
-        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+        self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataSource")
+        try:
+            super()._create_datasource(headers)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataFrame")
+            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
-        ### Hardcoding the location 
-        self.df['latitude'] =  51.485034
-        self.df['longitude'] = -0.001097 
-        self.df['attribute'] = 'ernest_dense_pumps'
-        self.df['description'] = 'Ernest Dense Boiler room pumps'
-        
-        ### Faking a sensor id since the api returns data only from one sensor
-        ### Need to modify it when the api starts sourcing data from more sensors
-        self.df['tag'] = 0
-        
-        self.create_datasource_with_values(dataframe=self.df, sensor_tag='tag', attribute_tag='attribute', 
-                                            value_tag='value_kw', latitude_tag='latitude', longitude_tag='longitude',
-                                            description_tag='description', api_timestamp_tag='time_',
-                                          unit_id = 4, sub_theme = 3)
+            if self.df.empty:
+                self.importer_status.status = Status(__name__, action="_create_datasource",
+                                                     state="Failed to create DataFrame")
+                return None
+
+            ### Hardcoding the location
+            self.df['latitude'] = 51.485034
+            self.df['longitude'] = -0.001097
+            self.df['attribute'] = 'ernest_dense_pumps'
+            self.df['description'] = 'Ernest Dense Boiler room pumps'
+
+            ### Faking a sensor id since the api returns data only from one sensor
+            ### Need to modify it when the api starts sourcing data from more sensors
+            self.df['tag'] = 0
+
+            self.create_datasource_with_values(dataframe=self.df, sensor_tag='tag', attribute_tag='attribute',
+                                               value_tag='value_kw', latitude_tag='latitude', longitude_tag='longitude',
+                                               description_tag='description', api_timestamp_tag='time_',
+                                               unit_id=4, sub_theme=3)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state="Done")
+
+        except Exception as e:
+            self.importer_status.status = Status(__name__, action="Exception",
+                                                 state="Failed to _create_datasource", exception=e.__str__())
 
     def _refresh_token(self, *args):
         print('Token expired Refresh it manually')
 
-config = get_config()
-config_kiwi_house = config[config['environment']]['greenwich_kiwi_house']
 
-API_NAME_KIWI_HOUSE = config_kiwi_house['API_NAME']
-BASE_URL_KIWI_HOUSE = config_kiwi_house['BASE_URL']
-API_CLASS_KIWI_HOUSE = config_kiwi_house['API_CLASS']
-REFRESH_TIME_KIWI_HOUSE = config_kiwi_house['REFRESH_TIME']
-TOKEN_EXPIRY_KIWI_HOUSE = config_kiwi_house['TOKEN_EXPIRY']
-
+@GetConfig("GreenwichWholeHouse")
 class GreenwichWholeHouse(BaseImporter):
+    importer_status = ImporterStatus.get_importer_status()
+
     def __init__(self):
-        super().__init__(API_NAME_KIWI_HOUSE, BASE_URL_KIWI_HOUSE, REFRESH_TIME_KIWI_HOUSE, API_KEY, API_CLASS_KIWI_HOUSE, TOKEN_EXPIRY_KIWI_HOUSE)
+        self.config = self.get_config('environment', 'greenwich_kiwi_house')
+        if not self.config:
+            self.importer_status.status = Status(__name__, action="GreenwichKiwiPump", state="Failed to load config")
+            return
+        self.importer_status.status = Status(__name__, action="__init__")
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+                         self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource(headers)
-        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+        self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataSource")
+        try:
+            super()._create_datasource(headers)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataField")
+            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
-        ### Hardcoding the location 
-        self.df['latitude'] = 51.484216
-        self.df['longitude'] = 0.002162
-        self.df['description'] = 'residential house energy consumption'
-        
-        ### Faking a sensor id since the api returns data only from one sensor
-        ### Need to modify it when the api starts sourcing data from more sensors
-        self.df['tag'] = 0
+            if self.df.empty:
+                self.importer_status.status = Status(__name__, action="_create_datasource",
+                                                     state="Failed to create DataFrame")
+                return None
 
-        #### the attribute names are too big for name+hashing as table names.
-        self.df.rename(index=str, columns={'power_wm_sid_761573_wholehouse': 'power_sid_761573',
-                       'light_avg_lux_sid_400191_e_room': 'avg_lux_sid_400191',
-                       'temp_avg_degc_sid_400191_e_room' : 'temp_sid_400191'}, 
-                      inplace=True)
-        
-        loc = Location('latitude', 'longitude')
-        
-        self.create_datasource(dataframe=self.df, sensor_tag='tag', attribute_tag=['power_sid_761573',
-                                                                                  'avg_lux_sid_400191',
-                                                                                  'temp_sid_400191'], 
-                                            unit_value=[4,5,6],bespoke_sub_theme=[3,3,1], 
-                               bespoke_unit_tag=[4,5,6],
-                               location_tag=loc,
-                               description=['description','description','description'],
-                               api_timestamp_tag='time',
-                               sensor_prefix='',
-                               is_dependent=True)
+            ### Hardcoding the location
+            self.df['latitude'] = 51.484216
+            self.df['longitude'] = 0.002162
+            self.df['description'] = 'residential house energy consumption'
+
+            ### Faking a sensor id since the api returns data only from one sensor
+            ### Need to modify it when the api starts sourcing data from more sensors
+            self.df['tag'] = 0
+
+            #### the attribute names are too big for name+hashing as table names.
+            self.df.rename(index=str, columns={'power_wm_sid_761573_wholehouse': 'power_sid_761573',
+                                               'light_avg_lux_sid_400191_e_room': 'avg_lux_sid_400191',
+                                               'temp_avg_degc_sid_400191_e_room': 'temp_sid_400191'},
+                           inplace=True)
+
+            loc = Location('latitude', 'longitude')
+
+            self.create_datasource(dataframe=self.df, sensor_tag='tag', attribute_tag=['power_sid_761573',
+                                                                                       'avg_lux_sid_400191',
+                                                                                       'temp_sid_400191'],
+                                   unit_value=[4, 5, 6], bespoke_sub_theme=[3, 3, 1],
+                                   bespoke_unit_tag=[4, 5, 6],
+                                   location_tag=loc,
+                                   description=['description', 'description', 'description'],
+                                   api_timestamp_tag='time',
+                                   sensor_prefix='',
+                                   is_dependent=True)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state="Done")
+
+        except Exception as e:
+            self.importer_status.status = Status(__name__, action="Exception",
+                                                 state="Failed to _create_datasource", exception=e.__str__())
 
     def _refresh_token(self, *args):
+        self.importer_status.status = Status(__name__, action="_refresh_token", state="Refresh Token")
         print('Token expired Refresh it manually')
+        self.importer_status.status = Status(__name__, action="_refresh_token", state="Done")
 
-config = get_config()
-config_siemens= config[config['environment']]['greenwich_siemens']
 
-API_NAME_SIEMENS = config_siemens['API_NAME']
-BASE_URL_SIEMENS = config_siemens['BASE_URL']
-API_CLASS_SIEMENS = config_siemens['API_CLASS']
-REFRESH_TIME_SIEMENS = config_siemens['REFRESH_TIME']
-TOKEN_EXPIRY_SIEMENS = config_siemens['TOKEN_EXPIRY']
-
+@GetConfig("GreenwichSiemens")
 class GreenwichSiemens(BaseImporter):
+    importer_status = ImporterStatus.get_importer_status()
+
     def __init__(self):
-        super().__init__(API_NAME_SIEMENS, BASE_URL_SIEMENS, REFRESH_TIME_SIEMENS, API_KEY, API_CLASS_SIEMENS, TOKEN_EXPIRY_SIEMENS)
+        self.importer_status.status = Status(__name__, action="__init__")
+        self.config = self.get_config('environment', 'greenwich_siemens')
+        if not self.config:
+            self.importer_status.status = Status(__name__, action="GreenwichSiemens", state="Failed to load config")
+            return
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+                         self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers=None):
-        super()._create_datasource(headers)
-        self.df  = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+        self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataSource")
+        try:
+            super()._create_datasource(headers)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state="Create DataFrame")
+            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
-        ### Hardcoding the location. As there is no information on the location of the sensor
-        ### the centroid coordinates of Greenwich is used
-        self.df['latitude'] = 51.482877
-        self.df['longitude'] = -0.007516
-        self.df['description'] = 'siemens energy'
-        
-        ### Faking a sensor id since the api returns data only from one sensor
-        ### Need to modify it when the api starts sourcing data from more sensors
-        self.df['tag'] = 0
+            if self.df.empty:
+                self.importer_status.status = Status(__name__, action="_create_datasource",
+                                                     state="Failed to create DataFrame")
+                return None
 
-        ### As of current behaviour _create_datasource method fails if the dataframe passed contains null values
-        ### eg:  displayFieldName   date_time   b1_heat_value   b1_flow_value  
-        ###      0  1521480600000   20  null
-        ### The only way to import would be to drop the nulls but this will drop the row all together.
-        ### We could choose a default value for nulls like -999 but there must be a more flexible way.
-        ### For now (illustrative purposes) we just drop
-        self.df.dropna(inplace=True)
+            ### Hardcoding the location. As there is no information on the location of the sensor
+            ### the centroid coordinates of Greenwich is used
+            self.df['latitude'] = 51.482877
+            self.df['longitude'] = -0.007516
+            self.df['description'] = 'siemens energy'
 
+            ### Faking a sensor id since the api returns data only from one sensor
+            ### Need to modify it when the api starts sourcing data from more sensors
+            self.df['tag'] = 0
 
+            ### As of current behaviour _create_datasource method fails if the dataframe passed contains null values
+            ### eg:  displayFieldName   date_time   b1_heat_value   b1_flow_value
+            ###      0  1521480600000   20  null
+            ### The only way to import would be to drop the nulls but this will drop the row all together.
+            ### We could choose a default value for nulls like -999 but there must be a more flexible way.
+            ### For now (illustrative purposes) we just drop
+            self.df.dropna(inplace=True)
 
+            loc = Location('latitude', 'longitude')
 
-        loc = Location('latitude', 'longitude')
-        
-        self.create_datasource(dataframe=self.df, sensor_tag='tag', attribute_tag=['b1_heat_value',
-                                                                                  'b1_flow_value',
-                                                                                  'b1_temp_out_value',
-                                                                                  'b1_temp_back_value',
-                                                                                  'b2_heat_value',
-                                                                                  'b2_flow_value',
-                                                                                  'b2_temp_out_value',
-                                                                                  'b2_temp_back_value',
-                                                                                  'b3_heat_value',
-                                                                                  'b3_flow_value',
-                                                                                  'b3_temp_out_value',
-                                                                                  'b3_temp_back_value'], 
-                                            unit_value=[],bespoke_sub_theme=[], 
-                               bespoke_unit_tag=[],
-                               location_tag=loc,
-                               description=[],
-                               api_timestamp_tag='run_time_stamp',
-                               sensor_prefix='',
-                               is_dependent=True)
+            self.create_datasource(dataframe=self.df, sensor_tag='tag', attribute_tag=['b1_heat_value',
+                                                                                       'b1_flow_value',
+                                                                                       'b1_temp_out_value',
+                                                                                       'b1_temp_back_value',
+                                                                                       'b2_heat_value',
+                                                                                       'b2_flow_value',
+                                                                                       'b2_temp_out_value',
+                                                                                       'b2_temp_back_value',
+                                                                                       'b3_heat_value',
+                                                                                       'b3_flow_value',
+                                                                                       'b3_temp_out_value',
+                                                                                       'b3_temp_back_value'],
+                                   unit_value=[], bespoke_sub_theme=[],
+                                   bespoke_unit_tag=[],
+                                   location_tag=loc,
+                                   description=[],
+                                   api_timestamp_tag='run_time_stamp',
+                                   sensor_prefix='',
+                                   is_dependent=True)
+            self.importer_status.status = Status(__name__, action="_create_datasource", state="Done")
+
+        except Exception as e:
+            self.importer_status.status = Status(__name__, action="Exception",
+                                                 state="Failed to _create_datasource", exception=e.__str__())
 
     def _refresh_token(self, *args):
+        self.importer_status.status = Status(__name__, action="_refresh_token", state="Refresh Token")
         print('Token expired Refresh it manually')
+        self.importer_status.status = Status(__name__, action="_refresh_token", state="Done")

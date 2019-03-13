@@ -9,39 +9,56 @@ The name of the importer can be found:
 	python manage.py add -gd True
 '''
 
-from flask_script import Command, Option
-from importers.base import get_config
+# from importers.base import get_config
 import importlib
+
+import yaml
+from flask_script import Command, Option
+
+from importers.state_decorator import ImporterStatus
 
 
 class AddDatasource(Command):
-	def __init__(self, add_datasource=None, get_datasources=False):
-		self.add_datasource = add_datasource
-		self.get_datasources = get_datasources
+    importer_status = ImporterStatus.get_importer_status()
 
-	def get_options(self):
-		return [
-			Option('--get_datasources', '-gd', dest='get_datasources', default=self.get_datasources),
-			Option('--add_datasource', '-ad', dest='add_datasource', default=self.add_datasource),
-		]
+    def __init__(self, add_datasource=None, get_datasources=False):
+        self.add_datasource = add_datasource
+        self.get_datasources = get_datasources
 
-	def run(self, get_datasources, add_datasource):
-		config = get_config()
-		config = config[config['environment']]
-		_importers = {}
-		for c in config:
-			_importers[config[c]['API_NAME']] = config[c]['API_CLASS']
-			if get_datasources and config[c]['API_CLASS'] is not None:
-				print(config[c]['API_NAME'])
+    @importer_status.changed.register
+    def status_has_changed(self, status, *args, **kwargs):
+        print(status)
 
-		if get_datasources:
-			return
+    def get_options(self):
+        return [
+            Option('--get_datasources', '-gd', dest='get_datasources', default=self.get_datasources),
+            Option('--add_datasource', '-ad', dest='add_datasource', default=self.add_datasource),
+        ]
 
-		_p, _c = _importers[add_datasource].rsplit('.', 1)
-		_class = getattr(importlib.import_module(_p), _c)
-		_object = _class()
-		_object._create_datasource()
+    def get_config(self):
+        config = None
+        try:
+            with open("importers/config.yml", 'r') as ymlfile:
+                config = yaml.load(ymlfile)
+        except FileNotFoundError as e:
+            print("Ensure that you have provided a config.yml file")
+            raise FileNotFoundError
 
+        return config
 
+    def run(self, get_datasources, add_datasource):
+        config = self.get_config()
+        config = config[config['environment']]
+        _importers = {}
+        for c in config:
+            _importers[config[c]['API_NAME']] = config[c]['API_CLASS']
+            if get_datasources and config[c]['API_CLASS'] is not None:
+                print(config[c]['API_NAME'])
 
+        if get_datasources:
+            return
 
+        _p, _c = _importers[add_datasource].rsplit('.', 1)
+        _class = getattr(importlib.import_module(_p), _c)
+        _object = _class()
+        _object._create_datasource()
