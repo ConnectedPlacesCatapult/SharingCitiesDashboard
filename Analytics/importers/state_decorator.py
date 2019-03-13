@@ -229,4 +229,4 @@ class Status:
         :type stack_trace: str
         :return: failure Status
         """
-        return Status(importer_name, reason=reason, stack_trace=stack_trace)
+        return Status(importer_name, state="failure", reason=reason, stack_trace=stack_trace)
