@@ -38,8 +38,8 @@ class JsonReader(object):
         _json = json.loads(data.text)
         return _json
 
-    def create_objects(self, data, curr_key: str = None, ignore_tags: list = [],
-                        ignore_values: list = [], ignore_tag_values: dict = {},
+    def create_objects(self, data, curr_key: str = None, ignore_tags: list = [], 
+                        ignore_values: list = [], ignore_tag_values: dict = {}, 
                         ignore_object_tags: list = []):
         if isinstance(data, dict):
             for key in data:
@@ -73,17 +73,17 @@ class JsonReader(object):
             for key in records.object_dict:
                 if len(records.object_dict[key]) < records.max_count and len(records.object_dict[key]) < 2:
                     records.object_dict[key] = records.object_dict[key] * records.max_count
-
+            
         for value in self.list_of_objects:
             _df = pd.DataFrame.from_dict(value.object_dict, orient='index')
             data_frame.append(_df)
-
+        
         df = pd.concat(data_frame, axis=1)
         return df.T
 
     def print_to_csv(self, dataframe, filepath):
         dataframe.to_csv(filepath, index=False)
-
+                    
 class JsonObjects(object):
     def __init__(self):
         self.object_dict = {}
