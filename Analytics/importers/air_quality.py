@@ -65,8 +65,14 @@ class KCLAirQuality(BaseImporter):
                                                  '@SpeciesCode', '@SpeciesDescription', '@Year',
                                                  '@ObjectiveName', '@Value', '@Achieved'])
             _code_df = j_reader.create_dataframe()
-            _codes = _code_df['@SiteCode'].tolist()
-            zipped_codes = zip(_codes, _code_df['@Latitude'].tolist(),
+            # _codes = _code_df['@SiteCode'].tolist()
+            # _lat = _code_df['@Latitude'].tolist()
+            # _lon = _code_df['@Longitude'].tolist()
+            # _codes_location = {}
+            # for i in range(len(_codes)):
+            #     _codes_location[_codes[i]] = [_lat[i], _lon[i]]
+
+            zipped_codes = zip(_code_df['@SiteCode'].tolist(), _code_df['@Latitude'].tolist(),
                                _code_df['@Longitude'].tolist())
             _codes_location = {site_code: [lat, lon] for site_code, lat, lon in list(zipped_codes)}
 
@@ -75,7 +81,7 @@ class KCLAirQuality(BaseImporter):
             _today = _date.strftime('%d.%m.%Y')
             _tomorrow = (_date + timedelta(days=1)).strftime('%d.%m.%Y')
             self.df = None
-            for code in _codes[:3]:
+            for code in _codes_location.keys()[:3]:
                 self.url = self.BASE_URL % (code, _today, _tomorrow)
 
                 data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
