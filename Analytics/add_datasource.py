@@ -1,5 +1,9 @@
 import importlib
+import logging
 from typing import Callable
+
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 import yaml
 from flask_script import Command, Option
@@ -21,9 +25,7 @@ class AddDatasource(Command):
         """
         Get or Add a DataSource
         :param add_datasource: Importer Callable
-        :type add_datasource: Callable
         :param get_datasources: If True A list of importers are returned
-        :type get_datasources: Bool
         """
         self.add_datasource = add_datasource
         self.get_datasources = get_datasources
@@ -45,10 +47,10 @@ class AddDatasource(Command):
         """
         config = None
         try:
-            with open("importers/config.yml", 'r') as ymlfile:
+            with open("importers/config.yml") as ymlfile:
                 config = yaml.load(ymlfile)
         except FileNotFoundError as e:
-            print("Ensure that you have provided a config.yml file")
+            logger.critical("No Importer Config File Found", file="importers/config.yml")
             raise FileNotFoundError
 
         return config
@@ -57,9 +59,7 @@ class AddDatasource(Command):
         """
         Execute Commands
         :param get_datasources: If True a list of DataSource Importers are returned
-        :type get_datasources: bool
         :param add_datasource: Callable Str Name
-        :type add_datasource: str
         :return: A DataSource Object
         """
         config = self.get_config()
@@ -68,6 +68,7 @@ class AddDatasource(Command):
         for c in config:
             _importers[config[c]['API_NAME']] = config[c]['API_CLASS']
             if get_datasources and config[c]['API_CLASS'] is not None:
+                # Cannot remove this as the user will not receive any DataSources back as it is a command line util
                 print(config[c]['API_NAME'])
 
         if get_datasources:

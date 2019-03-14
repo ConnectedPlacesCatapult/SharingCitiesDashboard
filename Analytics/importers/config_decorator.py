@@ -12,13 +12,11 @@ class GetConfig(object):
     GetConfig decorator
     """
 
-    def __init__(self, cls_name: str, config_filename: str = 'config.yml'):
+    def __init__(self, cls_name: str, config_filename: str = 'config.yml') -> None:
         """
         Initiate Decorators Scope
         :param cls_name: Calling Class __name__
-        :type cls_name: str
         :param config_filename: Config filename
-        :type config_filename: str
         """
         self.config_file = config_filename
         self.cls_name = cls_name
@@ -29,7 +27,6 @@ class GetConfig(object):
             """
             Create wrapper to decorate target Class with get_config method
             :param cls: Class to be wrapped
-            :type cls: Class
             """
 
             setattr(self, 'API_NAME', None)
@@ -45,7 +42,6 @@ class GetConfig(object):
                 """
                 Get configutrations from config file
                 :param args: Lookup keys for yaml config file
-                :type args: str
                 :return: Configurations if successful otherwise None
                 """
 

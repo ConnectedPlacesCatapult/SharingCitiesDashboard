@@ -1,4 +1,5 @@
 import json
+import logging
 import traceback
 from typing import Any
 
@@ -10,6 +11,9 @@ from importers.base import BaseImporter
 from importers.json_reader import JsonReader
 from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
+
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 
 @GetConfig("LisbonAPI")
@@ -34,7 +38,6 @@ class LisbonAPI(BaseImporter):
         """
         Create DataSource
         :param headers: Request headers
-        :type headers: str
         """
         try:
             _headers = {'Authorization': 'Bearer %s' % self._refresh_token()}
@@ -57,9 +60,9 @@ class LisbonAPI(BaseImporter):
             concat_df = pd.concat([self.df, temp_df], axis=0)
             if concat_df.empty:
                 concat_df.to_csv('/Users/hemanshu/Desktop/lisbon_test.csv')
-                print('Nothing to save as dataframe is empty')
+                logger.error('Nothing to save as dataframe is empty')
             else:
-                print(concat_df)
+                logger.info(concat_df)
                 self.create_datasource(dataframe=concat_df, sensor_tag='', attribute_tag=[],
                                        unit_value=[], bespoke_unit_tag=[], description=[],
                                        bespoke_sub_theme=[], location_tag='loc',
@@ -72,7 +75,6 @@ class LisbonAPI(BaseImporter):
         """
         Refresh API Token
         :param args: variable argument list
-        :type args: Any
         :return: new token
         """
         headers = {"grant_type": "client_credentials"}

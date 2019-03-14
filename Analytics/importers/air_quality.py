@@ -1,19 +1,15 @@
+import json
+import time
+import traceback
+from datetime import datetime, timedelta
 
-
-import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import numpy as np
+import requests
 
 from importers.base import BaseImporter
-from datetime import datetime, timedelta
-import numpy as np
 from importers.json_reader import JsonReader
-import time
-import requests, json
-from .state_decorator import Status, ImporterStatus
 from .config_decorator import GetConfig
-import traceback
+from .state_decorator import Status, ImporterStatus
 
 
 @GetConfig("KCLAirQuality", 'config.yml')
@@ -52,8 +48,7 @@ class KCLAirQuality(BaseImporter):
     def _create_datasource(self, headers: str = None) -> None:
         """
         Create DataSource
-        :param headers: Resquest Headers
-        :type headers: str
+        :param headers: Request Headers
         """
         try:
             # Get SiteCodes and Location

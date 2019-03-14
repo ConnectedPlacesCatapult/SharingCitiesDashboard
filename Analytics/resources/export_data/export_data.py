@@ -37,13 +37,9 @@ class ExportData(Resource):
         """
         Export data to file endpoint
         :param file_name: Name of the file to export data yo
-        :type file_name: str
         :param table_name: Table name to retrieved data
-        :type table_name: str
         :param format: Format of the exported file
-        :type format: str
         :param limit: Maximum number of entries to retrieve for export
-        :type limit: int
         :return: On success, a file containing the requested data otherwise an error message and the appropriate HTTP
                  response
         """
@@ -63,11 +59,8 @@ class ExportData(Resource):
         """
         Create File for export
         :param data_frame: Pandas DataFrame to export to file
-        :type data_frame: pd.DataFrame
         :param file_name: Name of the file to export to
-        :type file_name: str
         :param extension: File's extension
-        :type extension: str
         :return: True on success, False on failure
         """
         if extension.lower() == 'json':
@@ -81,7 +74,6 @@ class ExportData(Resource):
         """
         Query Database with prepared statements
         :param prepared_statement: Prepared sql statement
-        :type prepared_statement: str
         :return: SQL query results
         """
         try:
@@ -94,7 +86,6 @@ class ExportData(Resource):
         """
         Get column names from database table
         :param table_name: Name of database table
-        :type table_name: str
         :return: A list of column names
         """
         query_schema = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'{}';".format(table_name)
@@ -105,9 +96,7 @@ class ExportData(Resource):
         """
         Fetch entries from database table
         :param table_name: Name of database table
-        :type table_name: str
         :param limit: Limit the number of entries
-        :type limit: int
         :return: A Query result set
         """
         column_names = self.get_column_names(table_name)
@@ -118,11 +107,8 @@ class ExportData(Resource):
             return None
 
         data_frame = self.frame_data(column_names, entries)
-
         sensors = [self.get_sensor(sensor_id) for sensor_id in data_frame['s_id']]
-
         sensor_data_frame = pd.DataFrame.from_dict(sensors)
-
         data_frame = pd.merge(sensor_data_frame, data_frame, left_on='id', right_on='s_id', how='inner').drop('id',
                                                                                                               axis=1)
         return data_frame
@@ -131,11 +117,8 @@ class ExportData(Resource):
         """
         Write data to csv file for export
         :param data_frame: Pandas DataFrame of data
-        :type data_frame:   pd.DataFrame
         :param file_name: Name of the file to save csv to
-        :type file_name: str
         :param extension: File extension
-        :type extension: str
         :return: If exporting data to file is successful True is returned, otherwise False
         """
         directory = os.path.dirname(os.path.realpath(__file__)) + "/"
@@ -149,7 +132,6 @@ class ExportData(Resource):
         """
         Get Sensor entry from database
         :param sensor_id: Sensors identification number
-        :type sensor_id: str
         :return: A dictionary of the Sensor entries with the column name as keys and the value as values
         """
         sensor_entry = {}
@@ -174,7 +156,6 @@ class ExportData(Resource):
         """
         Get Sensor location data from database
         :param location_id: Location identification number
-        :type location_id: int
         :return: Location db entry
         :rtype:
         """
@@ -188,9 +169,7 @@ class ExportData(Resource):
         """
         Create Pandas DataFrame
         :param column_names: List of column names
-        :type column_names: [str]
         :param entries: List of values
-        :type entries: [Any]
         :return: Pandas DataFrame
         """
         if not column_names or not entries:
@@ -203,11 +182,8 @@ class ExportData(Resource):
         """
         Write Pandas DataFrame to File in JSON format
         :param data_frame:
-        :type data_frame:
         :param file_name:
-        :type file_name:
         :param extension:
-        :type extension:
         :return:
         :rtype:
         """
@@ -225,11 +201,8 @@ class ExportData(Resource):
         """
         Write Pandas DataFrame to File in GEOJSON format
         :param data_frame: Panads DataFrame to export
-        :type data_frame: pd.DataFrame
         :param file_name: File name
-        :type file_name: str
         :param extension: File extension
-        :type extension: str
         """
         try:
             directory = os.path.dirname(os.path.realpath(__file__)) + "/"
@@ -257,9 +230,7 @@ class ExportData(Resource):
         """
         Return File in Response
         :param file_name: Name of file to return
-        :type file_name: str
         :param extension: The File extension
-        :type extension: str
         :return: Response with correct headers to download file
         :rtype: flask.wrappers.Response
         """

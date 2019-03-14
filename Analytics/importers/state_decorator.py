@@ -19,11 +19,8 @@ class Event(object):
         """
         Execute Registered Callables
         :param status: The Status of the Event
-        :type status: Any
         :param args: Additional Arguments
-        :type args: Any
         :param kwargs: Additional Keyword Arguments
-        :type kwargs: {str: Any}
         """
         for callback in self.callbacks:
             callback(status, *args, **kwargs)
@@ -32,7 +29,6 @@ class Event(object):
         """
         Register Callable
         :param callback: Function to be called when Event is triggered
-        :type callback: Callable
         :return: The Callable
         """
         self.callbacks.append(callback)
@@ -59,7 +55,6 @@ class ImporterStatus(object):
         """
         Instantiate ImporterStatus Singleton Instance raise Exception if called directly
         :param status: Status of importer
-        :type status: Any
         """
         if ImporterStatus.__instance is not None:
             raise Exception("ImporterStatus instance exists! \n Use  ImporterStatus.get_importer_status(status)")
@@ -81,11 +76,8 @@ class ImporterStatus(object):
         """
         Set status and notify Event to execute callbacks
         :param value: New value of status
-        :type value: Any
         :param args: Additional Arguments
-        :type args: Any
         :param kwargs: Additional Keyword Arguments
-        :type kwargs: {str: Any}
         """
         self._status = value
         self.changed.notify(self, value, *args, **kwargs)
@@ -100,9 +92,7 @@ class Status:
         """
         Instantiate a Status object for ImporterStatus
         :param name: Callers Name
-        :type name: str
         :param kwargs: Additional Key Arguments
-        :type kwargs: {str: Any}
         """
         self.name = name
         for attr, value in kwargs.items():
@@ -130,11 +120,8 @@ class Status:
         """
         Create an Exception Status
         :param name: __name__ of scope
-        :type name: str
         :param function: name of function the Status was changed in
-        :type function: str
         :param exception: Caught Exception message
-        :type exception: str
         :return: Exception Status
         """
         return Status(name, function=function, exception=exception)
@@ -144,13 +131,9 @@ class Status:
         """
         Create a Request Status
         :param name: __name__ of scope
-        :type name: str
         :param function: name of function the Status was changed in
-        :type function: str
         :param state: The state of the request
-        :type state: str
         :param status_code: HTTP status code response
-        :type status_code: int
         :return: Request Status
         """
         return Status(name, function=function, state=state, status_code=status_code, **kwargs)
@@ -160,11 +143,8 @@ class Status:
         """
         Create a JSON Parser Status
         :param name: __name__ of scope
-        :type name: str
         :param function: name of function the Status was changed in
-        :type function: str
         :param state: state of the JSON parser
-        :type state: str
         :return: JSON Parser Status
         """
         return Status(name, function=function, state=state)
@@ -174,9 +154,7 @@ class Status:
         """
         Create __init__ Status
         :param name: __name__ of scope
-        :type name: str
         :param importer: Importers name
-        :type importer: str
         :return: Init Status
         """
         return Status(name, importer=importer)
@@ -186,9 +164,7 @@ class Status:
         """
         Create a Create_DataSource Status
         :param name: __name__ of scope
-        :type name: str
         :param state: the current state of the create_data source method
-        :type state: str
         :return: a Create_DataSource Status
         """
         return Status(name, state=state)
@@ -198,21 +174,17 @@ class Status:
         """
         Create a General Status
         :param name: __name__ of scope
-        :type name: str
         :param function: name of function the Status was changed in
-        :type function: str
         :param state: the current state of the create_data source method
-        :type state: str
         :return: a General Status
         """
         return Status(name, function=function, state=state)
 
     @classmethod
-    def success(cls, importer_name) -> State:
+    def success(cls, importer_name: str) -> State:
         """
         Create Success Status
         :param importer_name: Name of calling class
-        :type importer_name: str
         :return: Success Status
         """
         return Status(importer_name, state="success")
@@ -222,11 +194,8 @@ class Status:
         """
         Create Failure Status
         :param importer_name: Name of importer class
-        :type importer_name: str
         :param reason: Reason for failure
-        :type reason: str
         :param stack_trace: stack trace when error occurred
-        :type stack_trace: str
         :return: failure Status
         """
         return Status(importer_name, state="failure", reason=reason, stack_trace=stack_trace)

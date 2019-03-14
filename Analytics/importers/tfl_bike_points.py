@@ -12,13 +12,12 @@ from .state_decorator import ImporterStatus, Status
 class TfL_BikePoints(BaseImporter):
     """
     TFL Bike points importer
-
     The importer gets extended from BaseImporter and doesn't have any bespoke code apart from defining the
     structure of the api, like sensor, attributes, data tables and values
     """
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Import Config
         Instantiate BaseImporter
@@ -31,8 +30,6 @@ class TfL_BikePoints(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
-
         """
         try:
             super()._create_datasource(headers)

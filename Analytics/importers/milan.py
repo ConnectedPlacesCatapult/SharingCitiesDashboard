@@ -1,4 +1,5 @@
 import json
+import logging
 import traceback
 from datetime import datetime, timedelta
 from typing import Any
@@ -12,6 +13,8 @@ from models.sensor import Sensor
 from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 @GetConfig("MilanAPI")
 class MilanAPI(BaseImporter):
@@ -36,7 +39,6 @@ class MilanAPI(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             super()._create_datasource(headers)
@@ -66,10 +68,9 @@ class MilanAPI(BaseImporter):
         """
         Print Token Expired
         :param args: variable arguments list
-        :type args: [Any]
 
         """
-        print('Token Expired')
+        logger.info('Token Expired')
 
 
 @GetConfig("Milan_API_sensori_meteo_meta")
@@ -96,7 +97,6 @@ class Milan_API_sensori_meteo_meta(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             if not headers:
@@ -119,10 +119,9 @@ class Milan_API_sensori_meteo_meta(BaseImporter):
         """
         Print Token Expired
         :param args: variable arguments list
-        :type args: [Any]
 
         """
-        print('Token Expired')
+        logger.info('Token Expired')
 
 
 @GetConfig("Milan_API_sensori_meteo")
@@ -151,7 +150,6 @@ class Milan_API_sensori_meteo(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             if not headers:
@@ -202,10 +200,9 @@ class Milan_API_sensori_meteo(BaseImporter):
         """
         Print Token Expired
         :param args: variable arguments list
-        :type args: [Any]
 
         """
-        print('Token Expired')
+        logger.info('Token Expired')
 
 
 @GetConfig("Milan_API_sc_parking_kiunsys_meta")
@@ -232,7 +229,6 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             if not headers:
@@ -262,9 +258,8 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
         """
         Print Token Expired
         :param args: variable arguments list
-        :type args: [Any]
         """
-        print('Token Expired')
+        logger.info('Token Expired')
 
 
 @GetConfig("Milan_API_sc_parking_kiunsys")
@@ -292,7 +287,6 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             if not headers:
@@ -327,9 +321,8 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
         """
         Print Token Expired
         :param args: variable arguments list
-        :type args: [Any]
         """
-        print('Token Expired')
+        logger.info('Token Expired')
 
 
 @GetConfig("Milan_API_sc_emobility_refeel")
@@ -359,7 +352,6 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             if not headers:
@@ -404,7 +396,6 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
         """
         Print Token Expired
         :param args: variable arguments list
-        :type args: [Any]
 
         """
-        print('Token Expired')
+        logger.info('Token Expired')

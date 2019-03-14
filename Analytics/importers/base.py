@@ -1,8 +1,9 @@
 import json
+import logging
 import uuid
 from datetime import datetime
 from http import HTTPStatus
-from typing import Any
+from typing import Any, Callable
 
 import pandas as pd
 import requests
@@ -24,12 +25,16 @@ from utility import convert_unix_to_timestamp, convert_to_date
 from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 @GetConfig("BaseImporter", "config.yml")
 class BaseImporter(object):
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self, api_name, url, refresh_time, api_key, api_class, token_expiry):
+    def __init__(self, api_name: str, url: str, refresh_time: int, api_key: str, api_class: Callable,
+                 token_expiry: datetime) -> None:
         """
         Base Importer
         All the importers needs to be extended from this class
@@ -39,17 +44,11 @@ class BaseImporter(object):
         All new common functionality can be added to this base class, which then automatically be inherited
         by all the child classes.
         :param api_name: The name of the API, it needs to be unique, else database waring would be received
-        :type api_name: str
         :param url: he url which needs to be pinged to get the data, periodically
-        :type url: str
         :param refresh_time: After how many seconds the API needs to be pinged
-        :type refresh_time: int
         :param api_key: Key to access the API (if any)
-        :type api_key: str
         :param api_class: The full path of the class from package to class name like importers.air_quality.KCLAirQuality
-        :type api_class: class
         :param token_expiry: Time in which token will get expired, so that new token can be renewed again
-        :type token_expiry: datetime
         """
         self.api_name = api_name
         self.url = url
@@ -63,7 +62,6 @@ class BaseImporter(object):
         """
         Create DataSource
         :param headers: Request headers
-        :type headers: str
         :return: None
         """
         _, status_code = self.load_dataset(headers)
@@ -76,7 +74,6 @@ class BaseImporter(object):
         """
         Refresh token must be overriden by sub class
         :param args: Additional arguments
-        :type args: Any
         :raises: NotImplementedError when not overriden by class
         """
         raise NotImplementedError
@@ -85,7 +82,6 @@ class BaseImporter(object):
         """
         Load Data set
         :param headers: Request headers
-        :type headers: str
         :return: Data set and an HTTP status code
         """
         data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
@@ -98,15 +94,10 @@ class BaseImporter(object):
         """
         Create Pandas DataFrame
         :param object_separator: Token to tokenize entries
-        :type object_separator: str
         :param ignore_tags: tags to be ignored
-        :type ignore_tags: [str]
         :param ignore_values: Values to ignore
-        :type ignore_values: [str]
         :param ignore_tag_values: Values of tags to be ignored
-        :type ignore_tag_values: [Any]
         :param ignore_object_tags: Object tags to be ignored
-        :type ignore_object_tags: [str]
         :return: Pandas Data Frame
         """
         jr = JsonReader(object_seperator=object_separator)
@@ -126,11 +117,8 @@ class BaseImporter(object):
         """
         Setup the database for the new Importer/API
         :param dataframe: pandas dataframe
-        :type dataframe: DataFrame
         :param sensor_tag: Takes a column name from the DataFrame whose value would act as sensor
-        :type sensor_tag: str
         :param attribute_tag: Takes a list of column names from the DataFrame
-        :type attribute_tag: [str]
         :param unit_value:  Takes a list of column names from DataFrame which would act as unit value
                             for an attribute and they need to be passed in the same order as attribute
                             e.g
@@ -143,30 +131,19 @@ class BaseImporter(object):
                             ['no2', 'rainfall'], you have only one unit value col ['no2_unit'] and dont want
                             it to get assigned to rainfall attribute then pass the unit_value as
                             ['no2_unit', None]
-        :type unit_value: [str]
         :param description: description
-        :type description: str
         :param bespoke_unit_tag: Accepts a list and follows the same principle as unit_value, unit tag is usually
                                  something like a unit that a value is expressed in like kg but this has to exists in
                                  our database.
-        :type bespoke_unit_tag:[str]
         :param bespoke_sub_theme: Subtheme
-        :type bespoke_sub_theme: [str]
         :param location_tag: Takes an object of Location class which in turn contains the name of the latitude and
                              longitude cols.
-        :type location_tag: db.Model
         :param sensor_prefix: Prefix for all the sensor tags
-        :type sensor_prefix: str
         :param api_timestamp_tag:
-        :type api_timestamp_tag:
         :param check_sensor_exists_by_name: Check if sensor exists
-        :type check_sensor_exists_by_name:bool
         :param check_sensor_exists_by_name_loc: check if location and name exsist
-        :type check_sensor_exists_by_name_loc: bool
         :param check_sensor_exists_by_name_api: check api exists by name
-        :type check_sensor_exists_by_name_api: bool
         :param is_dependent: Is independant
-        :type is_dependent: bool
         """
         api_id = self.stage_api_commit()
         # Location tag
@@ -221,31 +198,18 @@ class BaseImporter(object):
         That is why it has an additional value tag
 
         :param dataframe: Pandas Dataframe to save
-        :type dataframe: pd.DataFrame
         :param sensor_tag: sensor tag
-        :type sensor_tag: str
         :param attribute_tag:
-        :type attribute_tag: str
         :param value_tag: value tag
-        :type value_tag: str
         :param latitude_tag: latitude tag
-        :type latitude_tag: str
         :param longitude_tag: longitude tag
-        :type longitude_tag: str
         :param description_tag: description tag
-        :type description_tag: str
         :param api_timestamp_tag: timestamp tag
-        :type api_timestamp_tag: str
         :param unit_tag: unit tag
-        :type unit_tag: str
         :param unit_value_tag: Unit value tag
-        :type unit_value_tag: str
         :param unit_id: Unit Id
-        :type unit_id: int
         :param unit_value: unit value
-        :type unit_value: int
         :param sub_theme: SubTheme Id
-        :type sub_theme: int
         """
 
         api_id = self.stage_api_commit()
@@ -288,17 +252,11 @@ class BaseImporter(object):
         """
         Save Sensor Values
         :param sensors: Sensors
-        :type sensors: [str]
         :param latitude: list of latitudes for sensors
-        :type latitude: [str]
         :param longitude: list of longitudes for sensors
-        :type longitude:[str]
         :param api_id: api id
-        :type api_id: str
         :param sensor_prefix: sensors prefix
-        :type sensor_prefix: str
         :param kwargs: keyword arguments
-        :type kwargs: {str, Any}
         :return: returns a list of sensors
         """
         sensor_objects = {}
@@ -340,8 +298,8 @@ class BaseImporter(object):
                     if _sensor:
                         sensor_objects[_sensor.name] = _sensor
                         sensor_exists.add(_hash)
-                        print(s_name, 'sensor already exists with API ID:', str(api_id), 'and Location ID:',
-                              str(loc.id))
+                        logger.info(s_name, 'sensor already exists with API ID:', str(api_id), 'and Location ID:',
+                                    str(loc.id))
                         continue
 
             sensor = Sensor(str(uuid.uuid4()), api_id, loc.id, s_name)
@@ -357,9 +315,7 @@ class BaseImporter(object):
         """
         Save location data
         :param latitude: GPS Latitude
-        :type latitude: str
         :param longitude: Gps Longitude
-        :type longitude: str
         :return: The location
         """
         loc = location.Location.get_by_lat_lon(latitude, longitude)
@@ -374,15 +330,10 @@ class BaseImporter(object):
         """
         Save attributes
         :param attribute_tag: Attribute tags
-        :type attribute_tag: [str]
         :param unit_value: Unit values
-        :type unit_value: [str]
         :param description: Attribute descriptions
-        :type description: [str]
         :param bespoke_unit_tag: unit
-        :type bespoke_unit_tag: [str]
         :param bespoke_sub_theme: Parent subtheme name
-        :type bespoke_sub_theme: [str]
         :return: A list of Attributes
         """
         attr_objects = []
@@ -432,21 +383,17 @@ class BaseImporter(object):
         """
         Stage Attributes
         :param attribute: Attribute
-        :type attribute: str
         :param unit_value: Unit Value
-        :type unit_value: str
         :param bespoke_unit_tag: Unit Id
-        :type bespoke_unit_tag: int
         :param bespoke_sub_theme: SubTheme Id
-        :type bespoke_sub_theme: int
         :param description: Attributes Description
-        :type description: str
         :return: Attribute instance
         """
         _a = Attributes._get_by_name_unit_unitvalue(attribute, bespoke_unit_tag, unit_value)
         if _a:
-            print(attribute, 'attribute with Unit ID:', str(bespoke_unit_tag), 'and Unit Value:', unit_value,
-                  'already exists')
+            logger.info('{} attribute with Unit ID: {} and Unit Value: {} already exists'.format(attribute,
+                                                                                                 str(bespoke_unit_tag),
+                                                                                                 unit_value))
             return _a
         a = Attributes(id=str(uuid.uuid4()), name=attribute,
                        table_name=(attribute + '_' + str(uuid.uuid4()).replace('-', '_')),
@@ -459,16 +406,14 @@ class BaseImporter(object):
         """
         Save Attributes and Sensors
         :param attrs: Attributes
-        :type attrs: [db.Model]
         :param sensors: Seansors
-        :type sensors: [db.Model]
         """
 
         for sensor in sensors:
             for attr in attrs:
                 _sa = SensorAttribute._get_by_sid_aid(sensor.id, attr.id)
                 if _sa:
-                    print('Sensor ID: %s, Attribute Id: %s already exists' % (_sa.s_id, _sa.a_id))
+                    logger.info('Sensor ID: %s, Attribute Id: %s already exists' % (_sa.s_id, _sa.a_id))
                     continue
 
                 sa = SensorAttribute(sensor.id, attr.id)
@@ -478,8 +423,6 @@ class BaseImporter(object):
         """
         Create Data Base Tables
         :param attributes: Attributes
-        :type attributes: [db.Model]
-
         """
         table_query = db.session.execute("select * from pg_catalog.pg_tables")
         table_tuples = table_query.fetchall()
@@ -492,10 +435,10 @@ class BaseImporter(object):
                 db.session.execute(
                     'CREATE TABLE %s (s_id TEXT NOT NULL, value TEXT NOT NULL, api_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL, timestamp TIMESTAMP WITHOUT TIME ZONE, PRIMARY KEY(s_id, value, api_timestamp))' % (
                         attr.table_name))
-                print('Created Table', attr.table_name.lower())
+                logger.info('Created Table', attr.table_name.lower())
 
             else:
-                print(attr.table_name.replace('-', '_'), 'already exists')
+                logger.info('{} already exists'.format(attr.table_name.replace('-', '_')))
 
     def insert_data(self, attr_objects: [db.Model], sensor_objects: [db.Model], dataframe: pd.DataFrame,
                     sensor_tag: str, sensor_prefix: str, api_timestamp_tag: str, attr_value_tag: str = None,
@@ -503,23 +446,14 @@ class BaseImporter(object):
         """
         Insert Data in to tables
         :param attr_objects: List of attributes
-        :type attr_objects: [db.Model]
         :param sensor_objects: list of sensors
-        :type sensor_objects:[db.Model]
         :param dataframe: Pandas DataFrame
-        :type dataframe: pd.DataFrame
         :param sensor_tag: sensor tag
-        :type sensor_tag: str
         :param sensor_prefix: sensor name prefix
-        :type sensor_prefix: str
         :param api_timestamp_tag: timestamp tag
-        :type api_timestamp_tag: str
         :param attr_value_tag: Attribute value tag
-        :type attr_value_tag: str
         :param attribute_tag: Attribute tag
-        :type attribute_tag: str
         :param unit_value_tag: Unit Value tag
-        :type unit_value_tag: str
         """
         db.metadata.clear()
         sensors = dataframe[sensor_tag].tolist()
@@ -582,9 +516,8 @@ class BaseImporter(object):
                         db.session.commit()
                 except IntegrityError as e:
                     db.session.rollback()
-
-                    # To improve logging uncomment the line below
-                    # print('Sensor id: %s with value %s at time %s already exists' % (sensor_id, values[i], a_date))
+                    logger.info(
+                        'Sensor id: %s with value %s at time %s already exists' % (sensor_id, values[i], a_date))
 
                 value_exists.add(_hash)
 
@@ -597,14 +530,12 @@ class BaseImporter(object):
                 del _class._decl_class_registry[_class.__name__]
         except IntegrityError as e:
             db.session.rollback()
-
-            print('Unable to save certain values as they already are in the system, check logs')
+            logger.info('Unable to save certain values as they already are in the system, check logs')
 
     def _hash_it(self, *args: [Any]) -> int:
         """
         Create hash of variable arguments list
         :param args: variable arguments
-        :type args: Any
         :return: Hash of the variable arguments
         """
         to_hash = ''
@@ -630,9 +561,7 @@ class BaseImporter(object):
         """
         Create Unit
         :param _type: Unit type
-        :type _type: str
         :param description: Description of unit
-        :type description: str
         :return: Unit
 
         """
@@ -644,20 +573,17 @@ class BaseImporter(object):
         """
         Create Theme
         :param name: Name of theme
-        :type name: str
         :return: Theme
         """
         theme = Theme(name=name)
         theme.save()
         return theme
 
-    def create_subtheme(self, theme_id, name) -> db.Model:
+    def create_subtheme(self, theme_id: str, name: str) -> db.Model:
         """
         Create new SubTheme
         :param theme_id: Theme id
-        :type theme_id: int
         :param name: SubTheme name
-        :type name: str
         :return: Subtheme
         """
         sub_theme = SubTheme(t_id=theme_id, name=name)

@@ -1,3 +1,4 @@
+import logging
 import traceback
 from typing import Any
 
@@ -6,6 +7,9 @@ from models import location
 from models.sensor import Sensor
 from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
+
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 
 @GetConfig("GreenwichMeta")
@@ -157,7 +161,6 @@ class GreenwichMeta(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             super()._create_datasource(headers)
@@ -179,9 +182,8 @@ class GreenwichMeta(BaseImporter):
         """
         Refresh Tokken
         :param args: variable argument list
-        :type args: [Any]
         """
-        print('Token expired Refresh it manually')
+        logger.info('Token expired Refresh it manually')
 
 
 @GetConfig("GreenwichOCC")
@@ -192,7 +194,6 @@ class GreenwichOCC(BaseImporter):
         """
         Get Importer Config
         Instantiate BAseImporter
-
         """
         self.config = self.get_config('environment', 'greenwich_occ')
         if not self.config:
@@ -204,7 +205,6 @@ class GreenwichOCC(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             super()._create_datasource(headers)
@@ -259,9 +259,8 @@ class GreenwichOCC(BaseImporter):
         """
         Refresh Tokken
         :param args: variable argument list
-        :type args: [Any]
         """
-        print('Token expired Refresh it manually')
+        logger.info('Token expired Refresh it manually')
 
 
 @GetConfig("GreenwichMeta_2")
@@ -283,7 +282,6 @@ class GreenwichMeta_2(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             super()._create_datasource(headers)
@@ -311,9 +309,8 @@ class GreenwichMeta_2(BaseImporter):
         """
         Refresh Tokken
         :param args: variable argument list
-        :type args: [Any]
         """
-        print('Token expired Refresh it manually')
+        logger.info('Token expired Refresh it manually')
 
 
 @GetConfig("GreenwichOCC_2")
@@ -324,7 +321,6 @@ class GreenwichOCC_2(BaseImporter):
         """
         Get Importer Config
         Instantiate BAseImporter
-
         """
         self.config = self.get_config('environment', 'greenwich_occ_2')
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
@@ -334,7 +330,6 @@ class GreenwichOCC_2(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             super()._create_datasource(headers)
@@ -396,9 +391,8 @@ class GreenwichOCC_2(BaseImporter):
         """
         Refresh Tokken
         :param args: variable argument list
-        :type args: [Any]
         """
-        print('Token expired Refresh it manually')
+        logger.info('Token expired Refresh it manually')
 
 
 @GetConfig("GreenwichKiwiPump")
@@ -419,7 +413,6 @@ class GreenwichKiwiPump(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             super()._create_datasource(headers)
@@ -451,9 +444,8 @@ class GreenwichKiwiPump(BaseImporter):
         """
         Refresh Tokken
         :param args: variable argument list
-        :type args: [Any]
         """
-        print('Token expired Refresh it manually')
+        logger.info('Token expired Refresh it manually')
 
 
 @GetConfig("GreenwichWholeHouse")
@@ -476,7 +468,6 @@ class GreenwichWholeHouse(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             super()._create_datasource(headers)
@@ -521,9 +512,8 @@ class GreenwichWholeHouse(BaseImporter):
         """
         Refresh Tokken
         :param args: variable argument list
-        :type args: [Any]
         """
-        print('Token expired Refresh it manually')
+        logger.info('Token expired Refresh it manually')
 
 
 @GetConfig("GreenwichSiemens")
@@ -546,7 +536,6 @@ class GreenwichSiemens(BaseImporter):
         """
         Create DataSource
         :param headers: Request Headers
-        :type headers: str
         """
         try:
             super()._create_datasource(headers)
@@ -602,6 +591,5 @@ class GreenwichSiemens(BaseImporter):
         """
         Refresh Tokken
         :param args: variable argument list
-        :type args: [Any]
         """
-        print('Token expired Refresh it manually')
+        logger.info('Token expired Refresh it manually')
