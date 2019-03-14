@@ -40,8 +40,14 @@ class Scheduler(object):
         self.scheduler.start()
 
     @status_tracker.changed.register
-    def status_has_changed(self, status, *args, **kwargs):
-        print(status)
+    def status_has_changed(self, status: ImporterStatuses):
+        """
+        Receive the status of an importer and persist it to the Importer
+        Status table
+        :param status: Status object identifying the
+        :return:
+        """
+        logger.info(status)
         importer_status = ImporterStatuses.find_by_name(status.name)
         if importer_status:
             if status.state == "success":
@@ -60,7 +66,7 @@ class Scheduler(object):
         :return: a list containing the details of APIs
         """
 
-        _api = self.session.execute('select * from api where id > 35441')
+        _api = self.session.execute('select * from api')
         apis = []
         for api in _api.fetchall():
             api_instance = API(id=api[0],name=api[1], url=api[2],
@@ -78,17 +84,13 @@ class Scheduler(object):
         :param api_name: identifying name stored in the database for the
                          respective importer
         """
-        try:
-            _module, _class = class_name.rsplit('.', 1)
-            data_class = getattr(importlib.import_module(_module), _class)
-            _d_class = data_class()
-            logger.info('Starting Importer for {} at:{} '.format(_class,
-                                                                 time.strftime(
-                                                                     '%Y-%m-%d%H:%M:%S')))
-            _d_class._create_datasource()
-        except AttributeError:
-            print("Attribute Error " + class_name)
-
+        _module, _class = class_name.rsplit('.', 1)
+        data_class = getattr(importlib.import_module(_module), _class)
+        _d_class = data_class()
+        logger.info('Starting Importer for {} at:{} '.format(_class,
+                                                             time.strftime(
+                                                                 '%Y-%m-%d%H:%M:%S')))
+        _d_class._create_datasource()
 
     def main_task(self):
         """
@@ -103,7 +105,7 @@ class Scheduler(object):
                                    seconds=api.refresh_time,
                                    start_date=datetime.now()+timedelta(seconds=5),
                                    end_date=datetime.now()+timedelta(hours=23),
-                                   args=[api.api_class,api.name])
+                                   args=[api.api_class, api.name])
 
     def run(self):
         """ Schedule main_task to execute once a day """
@@ -112,8 +114,8 @@ class Scheduler(object):
         for api in apis:
             if not ImporterStatuses.find_by_api_id(api.id):
                 class_name = api.api_class.split('.')[2]
-                new_entry = ImporterStatuses(api.id,class_name, 'pending',
-                                             '', '',datetime.now())
+                new_entry = ImporterStatuses(api.id, class_name, 'pending',
+                                             '', '', datetime.now())
                 new_entry.save()
                 new_entry.commit()
 
