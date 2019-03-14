@@ -21,7 +21,7 @@ class ForgotPasswordTestCase(unittest.TestCase):
         self.testing_client_context.push()
 
         self.dummy_user = Users("Joey", "joey@FCC.com",
-                                Users.generate_hash( "1234".encode(
+                                Users.generate_hash("1234".encode(
                                  "utf8")).decode("utf8"), True, True)
         self.dummy_user.save()
         self.dummy_user.commit()

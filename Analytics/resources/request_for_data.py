@@ -76,6 +76,7 @@ logger = logging.getLogger(__name__)
 
 celery_logger = get_task_logger(__name__)
 
+
 class RequestForData(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('theme', type=str, store_missing=False)
@@ -108,7 +109,7 @@ class RequestForData(Resource):
     parser.add_argument('sensorid', type=str)
     parser.add_argument('n_predictions', type=int, store_missing = False)
     parser.add_argument('predictions', type=inputs.boolean, store_missing = False)
-    parser.add_argument('user_id',type=int,store_missing=False)
+    parser.add_argument('user_id', type=int, store_missing=False)
 
     def get(self):
         args = self.parser.parse_args()
@@ -171,7 +172,7 @@ class RequestForData(Resource):
 
         if 'predictions' in args:
             predictions = args['predictions']
-            if predictions >=100:
+            if predictions >= 100:
                 predictions = 100
 
         if 'n_predictions' in args:
@@ -206,9 +207,11 @@ class RequestForData(Resource):
                 and 'todate' in args and args['todate'] is not None):
                 if grouped:
                     if harmonising_method:
-                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
-                                                args['fromdate'], args['todate'], operation)
-                        data = request_harmonised_data(data, harmonising_method=harmonising_method)
+                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET,
+                                                       args['fromdate'], args['todate'],
+                                                       operation)
+                        data = request_harmonised_data(data,
+                                                       harmonising_method=harmonising_method)
                     else:
                         data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
                                                 args['fromdate'], args['todate'], operation)
