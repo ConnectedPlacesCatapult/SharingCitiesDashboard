@@ -51,7 +51,8 @@ class ImporterStatuses(db.Model):
             'import_class_name' : self.import_class_name,
             'state': self.state,
             'reason': self.reason,
-            'trace': self.trace
+            'trace': self.trace,
+            'timestamp' : str(self.timestamp)
         }
 
     def save(self):
@@ -80,6 +81,11 @@ class ImporterStatuses(db.Model):
                                         'exists')
 
     @staticmethod
+    def get_all() -> db.Model:
+        """Fetch all Importer Status fields """
+        return ImporterStatuses.query.all()
+
+    @staticmethod
     def commit():
         """ Commit updated items to the database """
         db.session.commit()
@@ -101,3 +107,12 @@ class ImporterStatuses(db.Model):
         :return: the Importer Status entry that match the api_id argument
         """
         return ImporterStatuses.query.filter_by(import_class_name=name).first()
+
+    @staticmethod
+    def remove_all() -> db.Model:
+        """Fetch all Importer Status fields """
+
+        status_entries = ImporterStatuses.query.all()
+        for entry in status_entries:
+            entry.delete()
+            entry.commit()
