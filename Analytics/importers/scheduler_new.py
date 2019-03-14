@@ -10,7 +10,12 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.executors.pool import ProcessPoolExecutor, ThreadPoolExecutor
 
 import settings
+from importers.state_decorator import ImporterStatus
+from models.importer_status import ImporterStatuses
+from app import create_app
+from db import db
 
+application = create_app()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 logging.basicConfig(level='INFO', filename='importers.log', filemode='a')
 logger = logging.getLogger(__name__)
@@ -18,6 +23,8 @@ logger = logging.getLogger(__name__)
 
 class Scheduler(object):
     """ Schedule the execution importer tasks """
+
+    status_tracker = ImporterStatus.get_importer_status()
 
     def __init__(self):
         """ Create SQLAlchemy session and launch APScheduler """
@@ -32,18 +39,34 @@ class Scheduler(object):
         self.scheduler = BackgroundScheduler(executors=executor)
         self.scheduler.start()
 
+    @status_tracker.changed.register
+    def status_has_changed(self, status, *args, **kwargs):
+        print(status)
+        importer_status = ImporterStatuses.find_by_name(status.name)
+        if importer_status:
+            if status.state == "success":
+                importer_status.state = "success"
+            else:
+                importer_status.state = "failure"
+                importer_status.reason = status.reason
+                importer_status.trace = status.stack_trace
+
+            importer_status.timestamp = datetime.now()
+            importer_status.commit()
+
     def get_apis(self) -> list:
         """
         Retrieve API details stored in the database
         :return: a list containing the details of APIs
         """
 
-        _api = self.session.execute('select * from api')
+        _api = self.session.execute('select * from api where id > 35441')
         apis = []
         for api in _api.fetchall():
-            api_instance = API(name=api[1], url=api[2], api_key=api[3], 
-                               api_class=api[4], refresh_time=api[5],  
-                               token_expiry=api[6], timestamp=api[7])
+            api_instance = API(id=api[0],name=api[1], url=api[2],
+                               api_key=api[3], api_class=api[4],
+                               refresh_time=api[5], token_expiry=api[6],
+                               timestamp=api[7])
             apis.append(api_instance)
         return apis
 
@@ -55,19 +78,17 @@ class Scheduler(object):
         :param api_name: identifying name stored in the database for the
                          respective importer
         """
+        try:
+            _module, _class = class_name.rsplit('.', 1)
+            data_class = getattr(importlib.import_module(_module), _class)
+            _d_class = data_class()
+            logger.info('Starting Importer for {} at:{} '.format(_class,
+                                                                 time.strftime(
+                                                                     '%Y-%m-%d%H:%M:%S')))
+            _d_class._create_datasource()
+        except AttributeError:
+            print("Attribute Error " + class_name)
 
-        from app import create_app
-        from db import db
-        application = create_app()
-        _module, _class = class_name.rsplit('.', 1)
-        data_class = getattr(importlib.import_module(_module), _class)
-        _d_class = data_class()
-        logger.info('Starting Importer for {} at:{} '.format(_class,
-                                                             time.strftime(
-                                                                 '%Y-%m-%d%H:%M:%S')))
-        _d_class._create_datasource()
-        del application
-        del db
 
     def main_task(self):
         """
@@ -87,6 +108,15 @@ class Scheduler(object):
     def run(self):
         """ Schedule main_task to execute once a day """
 
+        apis = self.get_apis()
+        for api in apis:
+            if not ImporterStatuses.find_by_api_id(api.id):
+                class_name = api.api_class.split('.')[2]
+                new_entry = ImporterStatuses(api.id,class_name, 'pending',
+                                             '', '',datetime.now())
+                new_entry.save()
+                new_entry.commit()
+
         self.scheduler.add_job(self.main_task, 'interval',
                                start_date=datetime.now() + timedelta(
                                    seconds=5), days=1,
@@ -102,10 +132,12 @@ class Scheduler(object):
 
 
 class API(object):
-    def __init__(self, name: str, url: str, api_key: str, api_class: str,
-                 refresh_time: str, token_expiry: datetime, timestamp: datetime):
+    def __init__(self, id: int, name: str, url: str, api_key: str,
+                 api_class:str, refresh_time: str, token_expiry: datetime,
+                 timestamp: datetime):
         """
         Store fields of api table in a class
+        :param id: unique identifier of importer
         :param name: name of the importer
         :param url: API endpoint for accessing data to import
         :param api_key: key which authorises access to the API endpoint
@@ -115,6 +147,7 @@ class API(object):
         :param token_expiry: date and time when the api_key will expire
         :param timestamp: date and time when the API details were stored
         """
+        self.id = id
         self.name = name
         self.url = url
         self.api_key = api_key
