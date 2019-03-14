@@ -38,16 +38,12 @@ def test_attribute_params(test_client, attribute_param_value):
 	response_fcc_enpoint = test_client.get(
 		'/data?{}={}'.format(
 			param,
-			attribute_param_value
-		)
-	)
+			attribute_param_value))
 	response_dotmodus_enpoint = test_client.get(
 		'/data/{}?{}={}'.format(
 			data,
 			param,
-			attribute_param_value
-		)
-	)
+			attribute_param_value))
 	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
 	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
 
@@ -70,16 +66,12 @@ def test_attributedata_params(test_client, attributedata_param_value):
 	response_fcc_enpoint = test_client.get(
 		'/data?{}={}'.format(
 			param,
-			attributedata_param_value
-		)
-	)
+			attributedata_param_value))
 	response_dotmodus_enpoint = test_client.get(
 		'/data/{}?{}={}'.format(
 			data,
 			param,
-			attributedata_param_value
-		)
-	)
+			attributedata_param_value))
 	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
 	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
 
@@ -105,18 +97,14 @@ def test_attributedata_limit_and_offset_params(test_client, attributedata, limit
 			param,
 			attributedata,
 			limit,
-			offset
-		)
-	)
+			offset))
 	response_dotmodus_enpoint = test_client.get(
 		'/data/{}?{}={}&limit={}&offset={}'.format(
 			data,
 			param,
 			attributedata,
 			limit,
-			offset
-		)
-	)
+			offset))
 	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
 	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
 
@@ -141,17 +129,13 @@ def test_attributedata_operation_params(test_client, attributedata,operation):
 		'/data?{}={}&operation={}'.format(
 			param,
 			attributedata,
-			operation
-		)
-	)
+			operation))
 	response_dotmodus_enpoint = test_client.get(
 		'/data/{}?{}={}&operation={}'.format(
 			data,
 			param,
 			attributedata,
-			operation
-		)
-	)
+			operation))
 	assert response_dotmodus_enpoint.data == response_fcc_enpoint.data
 	assert response_dotmodus_enpoint.status_code == response_fcc_enpoint.status_code
 
@@ -173,21 +157,16 @@ def test_attributedata_grouped_params(test_client, attributedata,grouped):
 	data = "attribute"
 	param = "attributedata"
 
-	response_fcc_endpoint = test_client.get(
-		'/data?{}={}&grouped={}'.format(
-			param,
-			attributedata,
-			grouped
-		)
-	)
+	response_fcc_endpoint = test_client.get('/data?{}={}&grouped={}'.format(
+		param,
+		attributedata,
+		grouped))
 	response_dotmodus_endpoint = test_client.get(
 		'/data/{}?{}={}&grouped={}'.format(
 			data,
 			param,
 			attributedata,
-			grouped
-		)
-	)
+			grouped))
 	assert response_dotmodus_endpoint.data == response_fcc_endpoint.data
 	assert response_dotmodus_endpoint.status_code == response_fcc_endpoint.status_code
 
@@ -214,16 +193,12 @@ def test_attributedata_harmonising_method_params(
 		'/data?{}={}&grouped=true&harmonising_method={}'.format(
 			param,
 			attributedata,
-			harmonising_method
-		)
-	)
+			harmonising_method))
 	response_dotmodus_endpoint = test_client.get(
 		'/data/{}?{}={}&grouped=true&harmonising_method={}'.format(
 			data,
 			param,
 			attributedata,
-			harmonising_method
-		)
-	)
+			harmonising_method))
 	assert response_dotmodus_endpoint.data == response_fcc_enpoint.data
 	assert response_dotmodus_endpoint.status_code == response_fcc_enpoint.status_code
