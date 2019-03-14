@@ -207,9 +207,11 @@ class RequestForData(Resource):
                 and 'todate' in args and args['todate'] is not None):
                 if grouped:
                     if harmonising_method:
-                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
-                                                        args['fromdate'], args['todate'], operation)
-                        data = request_harmonised_data(data, harmonising_method=harmonising_method)
+                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET,
+                                                       args['fromdate'], args['todate'],
+                                                       operation)
+                        data = request_harmonised_data(data,
+                                                       harmonising_method=harmonising_method)
                     else:
                         data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
                                                 args['fromdate'], args['todate'], operation)
