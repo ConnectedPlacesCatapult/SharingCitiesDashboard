@@ -309,7 +309,6 @@ class BaseImporter(object):
             sensor = sensor.save()
             sensor_objects[sensor.name] = sensor
 
-        # db.session.flush()
         return sensor_objects
 
     def save_location(self, latitude: float, longitude: float) -> db.Model:
@@ -375,7 +374,6 @@ class BaseImporter(object):
             a = self.stage_attributes(attribute_tag[i], uv, but, bst, des)
             attr_objects.append(a)
             attr_exists.add(_hash)
-        # db.session.flush()
         return attr_objects
 
     def stage_attributes(self, attribute: str, unit_value: str,
