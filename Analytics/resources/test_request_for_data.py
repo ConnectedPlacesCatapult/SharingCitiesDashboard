@@ -1,10 +1,9 @@
-# import pytest
+
 import unittest
+
 from app import create_app
 from models.theme import Theme, SubTheme
 from models.attributes import Attributes
-from resources.request_for_data import RequestForData
-from db import db
 
 
 class RequestForDataTestCase(unittest.TestCase):
