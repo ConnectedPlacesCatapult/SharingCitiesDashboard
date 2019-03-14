@@ -2,6 +2,7 @@ import json
 import time
 import traceback
 from datetime import datetime, timedelta
+from typing import Union
 
 import numpy as np
 import requests
@@ -45,7 +46,7 @@ class KCLAirQuality(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -64,19 +65,23 @@ class KCLAirQuality(BaseImporter):
                                                  '@SpeciesCode', '@SpeciesDescription', '@Year',
                                                  '@ObjectiveName', '@Value', '@Achieved'])
             _code_df = j_reader.create_dataframe()
-            _codes = _code_df['@SiteCode'].tolist()
-            _lat = _code_df['@Latitude'].tolist()
-            _lon = _code_df['@Longitude'].tolist()
-            _codes_location = {}
-            for i in range(len(_codes)):
-                _codes_location[_codes[i]] = [_lat[i], _lon[i]]
+            # _codes = _code_df['@SiteCode'].tolist()
+            # _lat = _code_df['@Latitude'].tolist()
+            # _lon = _code_df['@Longitude'].tolist()
+            # _codes_location = {}
+            # for i in range(len(_codes)):
+            #     _codes_location[_codes[i]] = [_lat[i], _lon[i]]
+
+            zipped_codes = zip(_code_df['@SiteCode'].tolist(), _code_df['@Latitude'].tolist(),
+                               _code_df['@Longitude'].tolist())
+            _codes_location = {site_code: [lat, lon] for site_code, lat, lon in list(zipped_codes)}
 
             # Fetching day data
             _date = datetime.utcnow()
             _today = _date.strftime('%d.%m.%Y')
             _tomorrow = (_date + timedelta(days=1)).strftime('%d.%m.%Y')
             self.df = None
-            for code in _codes[:3]:
+            for code in _codes_location.keys()[:3]:
                 self.url = self.BASE_URL % (code, _today, _tomorrow)
 
                 data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
@@ -90,7 +95,7 @@ class KCLAirQuality(BaseImporter):
                     if d is None or d is '' or d is np.nan:
                         _new_dates.append(np.nan)
                         continue
-                        # time.mktime(datetime.datetime.strptime(s, "%d/%m/%Y").timetuple())
+
                     s = time.mktime(datetime.strptime(str(d), '%Y-%m-%d %H:%M:%S').timetuple())
                     _new_dates.append(str(s))
                 rows = len(_df.index)

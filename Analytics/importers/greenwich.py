@@ -1,6 +1,6 @@
 import logging
 import traceback
-from typing import Any
+from typing import Union
 
 from importers.base import BaseImporter, Location
 from models import location
@@ -157,7 +157,7 @@ class GreenwichMeta(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -178,7 +178,7 @@ class GreenwichMeta(BaseImporter):
 
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Refresh Tokken
         :param args: variable argument list
@@ -201,7 +201,7 @@ class GreenwichOCC(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -218,8 +218,8 @@ class GreenwichOCC(BaseImporter):
             latitude = []
             longitude = []
 
-            for s in names:
-                name_set.add('smart_parking_' + str(s))
+            for site_name in names:
+                name_set.add('smart_parking_' + str(site_name))
 
             sensors = Sensor.get_by_name_in(name_set)
             loc_ids = []
@@ -255,7 +255,7 @@ class GreenwichOCC(BaseImporter):
 
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Refresh Tokken
         :param args: variable argument list
@@ -278,7 +278,7 @@ class GreenwichMeta_2(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -305,7 +305,7 @@ class GreenwichMeta_2(BaseImporter):
 
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Refresh Tokken
         :param args: variable argument list
@@ -326,7 +326,7 @@ class GreenwichOCC_2(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -387,7 +387,7 @@ class GreenwichOCC_2(BaseImporter):
 
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Refresh Tokken
         :param args: variable argument list
@@ -409,7 +409,7 @@ class GreenwichKiwiPump(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -440,7 +440,7 @@ class GreenwichKiwiPump(BaseImporter):
 
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Refresh Tokken
         :param args: variable argument list
@@ -464,7 +464,7 @@ class GreenwichWholeHouse(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -508,7 +508,7 @@ class GreenwichWholeHouse(BaseImporter):
 
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Refresh Tokken
         :param args: variable argument list
@@ -532,7 +532,7 @@ class GreenwichSiemens(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -587,7 +587,7 @@ class GreenwichSiemens(BaseImporter):
 
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Refresh Tokken
         :param args: variable argument list

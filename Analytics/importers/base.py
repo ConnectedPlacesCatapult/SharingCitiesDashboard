@@ -3,7 +3,7 @@ import logging
 import uuid
 from datetime import datetime
 from http import HTTPStatus
-from typing import Any, Callable
+from typing import Any, Callable, Union
 
 import pandas as pd
 import requests
@@ -70,7 +70,7 @@ class BaseImporter(object):
             self._refresh_token()
             return
 
-    def _refresh_token(self, *args: [Any]):
+    def _refresh_token(self):
         """
         Refresh token must be overriden by sub class
         :param args: Additional arguments
@@ -89,7 +89,8 @@ class BaseImporter(object):
         self.dataset = json.loads(data.text)
         return self.dataset, data.status_code
 
-    def create_dataframe(self, object_separator: str = None, ignore_tags: [str] = [], ignore_values: [Any] = [],
+    def create_dataframe(self, object_separator: Union[str, None] = None, ignore_tags: [str] = [],
+                         ignore_values: [Any] = [],
                          ignore_tag_values: {str: Any} = {}, ignore_object_tags: [str] = []) -> pd.DataFrame:
         """
         Create Pandas DataFrame
@@ -110,8 +111,9 @@ class BaseImporter(object):
 
     def create_datasource(self, dataframe: pd.DataFrame, sensor_tag: str, attribute_tag: [str],
                           unit_value: [str], description: [str], bespoke_unit_tag: [str],
-                          bespoke_sub_theme: [str], location_tag: location.Location, sensor_prefix: str = None,
-                          api_timestamp_tag: str = None, check_sensor_exists_by_name: bool = False,
+                          bespoke_sub_theme: [str], location_tag: location.Location,
+                          sensor_prefix: Union[str, None] = None,
+                          api_timestamp_tag: Union[str, None] = None, check_sensor_exists_by_name: bool = False,
                           check_sensor_exists_by_name_loc: bool = False,
                           check_sensor_exists_by_name_api: bool = False, is_dependent: bool = False) -> None:
         """
@@ -177,25 +179,24 @@ class BaseImporter(object):
     def create_datasource_with_values(self, dataframe: pd.DataFrame, sensor_tag: str, attribute_tag: str,
                                       value_tag: str,
                                       latitude_tag: str, longitude_tag: str, description_tag: str,
-                                      api_timestamp_tag: str = None,
-                                      unit_tag: str = None, unit_value_tag: str = None,
+                                      api_timestamp_tag: Union[str, None] = None,
+                                      unit_tag: Union[str, None] = None, unit_value_tag: Union[str, None] = None,
                                       unit_id: int = 1, unit_value: int = 1, sub_theme: int = 1) -> None:
         """
-        This follows the same logic as the method above, the only difference it that it considers
-        values of the tags as sensors, attributes and data values instead of the tags themselves
-        e.g
-            A      B      C
-            BG1    NO2    22
-            BG2    SO2    23
+        Setup the database for the new Importer/API and commit Values.
+        Consider values of the tags as sensors, attributes and data values instead of the tags themselves
 
-        Consider this short data table in method above the column heading are the Attributes and their data are
-        their values
-        So the values get saved like Attribute 'B' and Value 'NO2'
+        ========================
+        |   A   |   B    |  C  |
+        |----------------------|
+        |   BG1 |   NO2  |  22 |
+        |   BG2 |   SO2  |  23 |
+        ========================
 
-        In this method the values of the column are Attributes and Column C contain values of Column B
-        So the values get saved like Attribute 'NO2' and Value '22'
+        Column A: Site Code
+        Column B: Attributes
+        Column C: Values
 
-        That is why it has an additional value tag
 
         :param dataframe: Pandas Dataframe to save
         :param sensor_tag: sensor tag
@@ -247,8 +248,8 @@ class BaseImporter(object):
         self.insert_data(attr_objects, sensor_objects, dataframe, sensor_tag, '',
                          api_timestamp_tag, value_tag, attribute_tag, unit_value_tag)
 
-    def save_sensors(self, sensors: list, latitude: list, longitude: list, api_id, sensor_prefix, **kwargs) -> [
-        db.Model]:
+    def save_sensors(self, sensors: list, latitude: list, longitude: list, api_id: int, sensor_prefix: str,
+                     **kwargs: {str: Any}) -> [db.Model]:
         """
         Save Sensor Values
         :param sensors: Sensors
@@ -441,8 +442,9 @@ class BaseImporter(object):
                 logger.info('{} already exists'.format(attr.table_name.replace('-', '_')))
 
     def insert_data(self, attr_objects: [db.Model], sensor_objects: [db.Model], dataframe: pd.DataFrame,
-                    sensor_tag: str, sensor_prefix: str, api_timestamp_tag: str, attr_value_tag: str = None,
-                    attribute_tag: str = None, unit_value_tag: str = None) -> None:
+                    sensor_tag: str, sensor_prefix: str, api_timestamp_tag: str,
+                    attr_value_tag: Union[str, None] = None,
+                    attribute_tag: Union[str, None] = None, unit_value_tag: Union[str, None] = None) -> None:
         """
         Insert Data in to tables
         :param attr_objects: List of attributes
@@ -557,7 +559,7 @@ class BaseImporter(object):
         _api = api.save()
         return _api.id
 
-    def create_unit(self, _type, description) -> db.Model:
+    def create_unit(self, _type: str, description: str) -> db.Model:
         """
         Create Unit
         :param _type: Unit type
@@ -569,7 +571,7 @@ class BaseImporter(object):
         unit.save()
         return unit
 
-    def create_theme(self, name) -> db.Model:
+    def create_theme(self, name: str) -> db.Model:
         """
         Create Theme
         :param name: Name of theme
@@ -602,6 +604,6 @@ class Location(object):
     Location Object
     """
 
-    def __init__(self, lat, lon):
+    def __init__(self, lat: str, lon: str):
         self.lat = lat
         self.lon = lon
