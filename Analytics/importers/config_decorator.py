@@ -28,7 +28,6 @@ class GetConfig(object):
             Create wrapper to decorate target Class with get_config method
             :param cls: Class to be wrapped
             """
-
             setattr(self, 'API_NAME', None)
             setattr(self, 'BASE_URL', None)
             setattr(self, 'REFRESH_TIME', None)
@@ -44,7 +43,6 @@ class GetConfig(object):
                 :param args: Lookup keys for yaml config file
                 :return: Configurations if successful otherwise None
                 """
-
                 importer_status = ImporterStatus.get_importer_status()
 
                 self.config = None
@@ -56,8 +54,10 @@ class GetConfig(object):
                     with open(self.config_file, 'r') as ymlfile:
                         self.config = yaml.load(ymlfile)
                 except FileNotFoundError as e:
-                    importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
-                    exit()
+                    importer_status.status = Status.failure(
+                        self.__class__.__name__, e.__str__(),
+                        traceback.format_exc())
+                    return
 
                 if len(args) == 2:
                     try:
@@ -70,7 +70,9 @@ class GetConfig(object):
                         self.API_CLASS = self.config['API_CLASS']
                         return self.config
                     except Exception as e:
-                        importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
+                        importer_status.status = Status.failure(
+                            cls.__class__.__name__, e.__str__(),
+                            traceback.format_exc())
                         return None
                 else:
                     self.API_NAME = None
