@@ -38,6 +38,7 @@ from resources.themes import AddSubTheme
 from resources.themes import AddTheme
 from resources.themes import DeleteSubTheme
 from resources.themes import DeleteTheme
+from resources.themes import GETThemeTree
 from resources.themes import GetSubThemes
 from resources.themes import GetThemes
 from resources.themes import RenameSubTheme
@@ -165,6 +166,7 @@ def create_app(**config_overrides):
     api.add_resource(RenameTheme, '/admin/themes/rename_theme')
     api.add_resource(DeleteTheme, '/admin/themes/delete_theme')
     api.add_resource(GetThemes, '/admin/themes/get_themes')
+    api.add_resource(GETThemeTree, '/admin/themes/get_tree')
 
     # Sub Theme Endpoints
     api.add_resource(AddSubTheme, '/admin/themes/add_subtheme')
