@@ -6,20 +6,6 @@ from flask_restful import Api
 
 from db import db
 from models.revoked_tokens import RevokedTokens
-from models.prediction_results import PredictionResults
-from models.user_predictions import UserPredictions
-from resources.analytics import Analytics
-from resources.login import Login, SecretResource
-from resources.logout import UserLogoutAccess, UserLogoutRefresh
-from resources.refresh_token import TokenRefresh
-from resources.request_for_data import RequestForData
-from resources.request_for_theme import RequestForTheme
-from resources.request_for_sensor import RequestForSensor
-from resources.request_for_attribute import RequestForAttribute
-from resources.register import Register
-from resources.Widgets.save_widgets import Widgets
-from resources.Widgets.get_widgets import GetWidgets
-
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -40,6 +26,7 @@ from resources.attributes import AttributeAlias
 from resources.attributes import DeleteAttributeAlias
 from resources.attributes import GetAttributes
 from resources.attributes import UpdateAttributeSubTheme
+from resources.export_data import ExportData
 from resources.forgot_password import ForgotPassword
 from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
@@ -190,5 +177,7 @@ def create_app(**config_overrides):
     api.add_resource(GetAttributes, '/admin/attributes/get_attributes')
     api.add_resource(DeleteAttributeAlias, '/admin/attributes/delete_alias')
     api.add_resource(UpdateAttributeSubTheme, '/admin/attributes/add_to_subtheme')
+
+    api.add_resource(ExportData, '/export_data')
 
     return app
