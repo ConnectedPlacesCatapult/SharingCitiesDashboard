@@ -65,12 +65,6 @@ class KCLAirQuality(BaseImporter):
                                                  '@SpeciesCode', '@SpeciesDescription', '@Year',
                                                  '@ObjectiveName', '@Value', '@Achieved'])
             _code_df = j_reader.create_dataframe()
-            # _codes = _code_df['@SiteCode'].tolist()
-            # _lat = _code_df['@Latitude'].tolist()
-            # _lon = _code_df['@Longitude'].tolist()
-            # _codes_location = {}
-            # for i in range(len(_codes)):
-            #     _codes_location[_codes[i]] = [_lat[i], _lon[i]]
             _codes = _code_df['@SiteCode'].tolist()
             zipped_codes = zip(_codes, _code_df['@Latitude'].tolist(),
                                _code_df['@Longitude'].tolist())
