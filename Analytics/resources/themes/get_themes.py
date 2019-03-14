@@ -55,7 +55,7 @@ class GetThemes(Resource):
         # were any themes found in the database?
         if len(themes) < 1:
             # no themes were found
-            return {"error": "No themes found"}, HTTPStatus.NOT_FOUND
+            return [], HTTPStatus.OK
 
         if "limit" in args:
             try:

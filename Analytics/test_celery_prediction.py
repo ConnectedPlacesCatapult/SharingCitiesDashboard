@@ -2,9 +2,10 @@ import unittest
 
 from app import create_app
 from models.users import Users
+from models.user_predictions import UserPredictions
 
 
-class ForgotPasswordTestCase(unittest.TestCase):
+class CelryTestCase(unittest.TestCase):
     """
     Test whether user can request and receive a prediction task asynchronously
     """
@@ -17,10 +18,19 @@ class ForgotPasswordTestCase(unittest.TestCase):
         self.testing_client_context = self.test_app.app_context()
         self.testing_client_context.push()
 
+        self.dummy_user = Users("Joey", "joey@FCC.com",
+                                Users.generate_hash("1234".encode(
+                                    "utf8")).decode("utf8"), True, True)
+        self.dummy_user.save()
+        self.dummy_user.commit()
+
     def tearDown(self):
         """ Remove testing client context """
 
         self.testing_client_context.pop()
+
+        self.dummy_user.delete()
+        self.dummy_user.commit()
 
     def test_async_prediction(self):
         """
@@ -58,3 +68,28 @@ class ForgotPasswordTestCase(unittest.TestCase):
 
         self.assertEqual(response_poll_json["state"], "SUCCESS")
 
+    def test_adding_prediction_per_user(self):
+        """
+        Test whether a prediction result is associated with a user in the
+        userpredictions table
+        """
+
+        response = self.testing_client.get(
+            '/data?limit=3&attributedata=NO2&predictions=True'
+            '&n_predictions=3')
+        self.assertIn(b"Forecasting engine making predictions", response.data)
+        self.assertIn(b"task_id", response.data)
+        response_json = response.get_json()
+        task_id = response_json[1]["task_id"]
+
+        response_poll = self.testing_client.get("/pred_status?task_id={}"
+                                                .format(task_id))
+
+        response_poll_json = response_poll.get_json()
+        while response_poll_json["state"] in ["PENDING", "PROGRESS"]:
+            response_poll = self.testing_client.get("/pred_status?task_id={}"
+                                                    .format(task_id))
+            response_poll_json = response_poll.get_json()
+
+        self.assertEqual(response_poll_json["state"], "SUCCESS")
+        self.assertIsNotNone(response_poll_json["result"]["Prediction_id"])

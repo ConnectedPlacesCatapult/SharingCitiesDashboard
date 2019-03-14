@@ -1,5 +1,5 @@
 import { axiosInstance } from '../api/axios'
-import { SET_CURRENT_USER } from './../constants';
+import {SET_CURRENT_USER, SET_CURRENT_USER_REJECTED, REQUEST_PASSWORD_FULFILLED, REQUEST_PASSWORD_REJECTED, LOGIN_REJECTED, CLEAR_LOGIN_ERRORS, REGISTER_FULFILLED, REGISTER_REJECTED} from './../constants';
 
 export const login = (userCredentials, props) => {
   return (dispatch) => {
@@ -21,39 +21,94 @@ export const login = (userCredentials, props) => {
       localStorage.setItem('userName', userName)
       localStorage.setItem('userID', userID)
       localStorage.setItem('userEmail', userEmail)
+      // Redirects to data first to force DOM refresh
+      props.history.push('/data')
       props.history.push('/')
     })
     .catch((err) => {
       console.log('login failed', err)
+      dispatch({
+        type: LOGIN_REJECTED,
+        payload: err,
+      })
     })
   };
 };
 
 export const getUser = () => {
   return (dispatch) => {
-    const user = {
-      email: localStorage.getItem('userEmail')
-    }
-    axiosInstance.post('/admin/get_user_by_email', user).then((response) => {
-      dispatch({
-        type: SET_CURRENT_USER,
-        payload: response.data,
+    if (localStorage.getItem('userEmail')) {
+      const user = {
+        email: localStorage.getItem('userEmail')
+      }
+      axiosInstance.post('/admin/get_user_by_email', user).then((response) => {
+        dispatch({
+          type: SET_CURRENT_USER,
+          payload: response.data,
+        })
       })
-    })
+      .catch((err) => {
+        dispatch({
+          type: SET_CURRENT_USER_REJECTED,
+          payload: err,
+        })
+      })
+    } else {
+      dispatch({
+        type: SET_CURRENT_USER_REJECTED,
+      })
+    }
   };
 };
 
-export function doRegister(email, fullName, password, passwordNew) {
-  const userInfo = {
-    email: email,
-    fullName: fullName,
-    password: password,
-    password_new: passwordNew
+export function doRegister(userCredentials) {
+  return (dispatch) => {
+    const credentials = {
+      email: userCredentials.email,
+      fullName: userCredentials.fullName,
+      password: userCredentials.password,
+      password_new: userCredentials.passwordNew
+    }
+    const session = axiosInstance.post('/register', credentials).then((response) => {
+      dispatch({
+        type: REGISTER_FULFILLED,
+        payload: response,
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: REGISTER_REJECTED,
+        payload: err,
+      })
+    })
   }
-  const session = axiosInstance.post('/register', userInfo).then((res) => {
-  }).catch(function (e) {
-    console.log('registration failed', e)
-  })
+}
+
+export const requestPassword = (email) => {
+  return (dispatch) => {
+    const userInfo = {
+      email: email,
+    }
+    const session = axiosInstance.post('/forgot_password', userInfo).then((response) => {
+      dispatch({
+        type: REQUEST_PASSWORD_FULFILLED,
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: REQUEST_PASSWORD_REJECTED,
+        payload: err,
+      })
+    })
+  }
+}
+
+export const clearLoginErrors = () => {
+  return (dispatch) => {
+    dispatch({
+      type: CLEAR_LOGIN_ERRORS,
+    })
+  }
 }
 
 export function doLogout(props) {

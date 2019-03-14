@@ -60,8 +60,8 @@ test:
                 &returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false
                 &returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=
                 &returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=pjson&token=
-        REFRESH_TIME:
-        API_KEY:
+        REFRESH_TIME: 360000
+        API_KEY: ""
         TOKEN_EXPIRY:
         REFRESH_URL:
         API_CLASS: "importers.greenwich.GreenwichOCC"
@@ -100,6 +100,48 @@ test:
         API_KEY: ""
         TOKEN_EXPIRY:
         REFRESH_URL:
-        API_CLASS: "importers.milan.MilanAPI" 
+        API_CLASS: "importers.milan.MilanAPI"
+    greenwich_kiwi:
+        API_NAME: "Greenwich_ErnestDence_pump"
+        BASE_URL:
+        REFRESH_TIME: 3600
+        API_KEY: ""
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+        API_CLASS: "importers.greenwich.GreenwichKiwiPump"
+    greenwich_siemens:
+        API_NAME: "Greenwich_Siemens"
+        BASE_URL:
+        REFRESH_TIME: 3600
+        API_KEY: ""
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+        API_CLASS: "importers.greenwich.GreenwichSiemens"
+    greenwich_meta_2:
+        API_NAME: "Greenwich_SmartParking_Meta_2"
+        BASE_URL:
+        REFRESH_TIME: 3600
+        API_KEY: ""
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+        API_CLASS: "importers.greenwich.GreenwichMeta_2x"
+    greenwich_occ_2:
+        API_NAME: "Greenwich_SmartParking_OCC_2"
+        BASE_URL:
+        REFRESH_TIME: 3600
+        API_KEY: ""
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+        API_CLASS: "importers.greenwich.GreenwichOCC_2"
+    greenwich_kiwi_house:
+        API_NAME: "Greenwich_wholehouse"
+        BASE_URL:
+        REFRESH_TIME: 3600
+        API_KEY: ""
+        TOKEN_EXPIRY:
+        REFRESH_URL:
+        API_CLASS: "importers.greenwich.GreenwichWholeHouse"
+
+
 
   
