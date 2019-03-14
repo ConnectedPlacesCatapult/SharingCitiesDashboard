@@ -1,38 +1,45 @@
-'''
-Milan Importer
-The class inherits from BaseImporter and doesn't contain any bespoke code 
-apart from converting the data from json to tabular format but using BaseImporter methods
-
-The api doesn't have any credentials and doesn't have any key or token expiry
-'''
-
-import os
-import sys
+import json
+import logging
 import traceback
+from datetime import datetime, timedelta
+from typing import Any
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import numpy as np
+import pandas as pd
 
 from importers.base import BaseImporter, Location
-from models.sensor import Sensor
 from models import location
-from datetime import datetime, timedelta
-import json
-import pandas as pd
-import numpy as np
-from .state_decorator import ImporterStatus, Status
+from models.sensor import Sensor
 from .config_decorator import GetConfig
+from .state_decorator import ImporterStatus, Status
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 @GetConfig("MilanAPI")
 class MilanAPI(BaseImporter):
+    """
+    Milan Importer
+    The class inherits from BaseImporter and doesn't contain any bespoke code
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
+    """
     importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self):
+        """
+        Get Import configurations
+        Instantiate BaseImporter
+        """
         self.config = self.get_config('environment', 'milan')
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers=None):
+    def _create_datasource(self, headers: str = None) -> None:
+        """
+        Create DataSource
+        :param headers: Request Headers
+        """
         try:
             super()._create_datasource(headers)
             columns = ['device_title', 'device_eui', 'device_description',
@@ -57,21 +64,40 @@ class MilanAPI(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args):
-        print('Token Expired')
+    def _refresh_token(self, *args: [Any]) -> None:
+        """
+        Print Token Expired
+        :param args: variable arguments list
+
+        """
+        logger.info('Token Expired')
 
 
 @GetConfig("Milan_API_sensori_meteo_meta")
 class Milan_API_sensori_meteo_meta(BaseImporter):
+    """
+    Milan Importer
+    The class inherits from BaseImporter and doesn't contain any bespoke code
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
+    """
     importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self):
+        """
+        Get Import configurations
+        Instantiate BaseImporter
+        """
         self.config = self.get_config('environment', 'milan_sensori_meteo_meta')
         self.HEADERS_SMM = self.config['HEADERS']
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers=None):
+    def _create_datasource(self, headers: str = None) -> None:
+        """
+        Create DataSource
+        :param headers: Request Headers
+        """
         try:
             if not headers:
                 headers = json.loads(self.HEADERS_SMM.replace("'", '"'))
@@ -89,15 +115,30 @@ class Milan_API_sensori_meteo_meta(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args):
-        print('Token Expired')
+    def _refresh_token(self, *args: [Any]) -> None:
+        """
+        Print Token Expired
+        :param args: variable arguments list
+
+        """
+        logger.info('Token Expired')
 
 
 @GetConfig("Milan_API_sensori_meteo")
 class Milan_API_sensori_meteo(BaseImporter):
+    """
+    Milan Importer
+    The class inherits from BaseImporter and doesn't contain any bespoke code
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
+    """
     importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self):
+        """
+        Get Import configurations
+        Instantiate BaseImporter
+        """
         self.config.get_config('environment', 'milan_sensori_meteo')
         self.BASE_URL += 'data_inizio={0}%2000%3A00%3A01&data_fine={1}%2000%3A00%3A01'.format(
             (datetime.now() - timedelta(1)).strftime('%Y-%m-%d'), datetime.now().strftime('%Y-%m-%d'))
@@ -105,7 +146,11 @@ class Milan_API_sensori_meteo(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers=None):
+    def _create_datasource(self, headers: str = None) -> None:
+        """
+        Create DataSource
+        :param headers: Request Headers
+        """
         try:
             if not headers:
                 headers = json.loads(self.HEADERS_SM.replace("'", '"'))
@@ -151,21 +196,40 @@ class Milan_API_sensori_meteo(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args):
-        print('Token Expired')
+    def _refresh_token(self, *args: [Any]) -> None:
+        """
+        Print Token Expired
+        :param args: variable arguments list
+
+        """
+        logger.info('Token Expired')
 
 
 @GetConfig("Milan_API_sc_parking_kiunsys_meta")
 class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
+    """
+    Milan Importer
+    The class inherits from BaseImporter and doesn't contain any bespoke code
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
+    """
     importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self):
+        """
+        Get Import configurations
+        Instantiate BaseImporter
+        """
         self.config = self.get_config('environment', 'milan_sc_parking_kiunsys_meta')
         self.HEADERS_KM = self.config['HEADERS']
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers=None):
+    def _create_datasource(self, headers: str = None) -> None:
+        """
+        Create DataSource
+        :param headers: Request Headers
+        """
         try:
             if not headers:
                 json.loads(self.HEADERS_KM.replace("'", '"'))
@@ -190,22 +254,40 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args):
-        print('Token Expired')
+    def _refresh_token(self, *args: [Any]) -> None:
+        """
+        Print Token Expired
+        :param args: variable arguments list
+        """
+        logger.info('Token Expired')
 
 
 @GetConfig("Milan_API_sc_parking_kiunsys")
 class Milan_API_sc_parking_kiunsys(BaseImporter):
+    """
+    Milan Importer
+    The class inherits from BaseImporter and doesn't contain any bespoke code
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
+    """
     importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self):
+        """
+        Get Import configurations
+        Instantiate BaseImporter
+        """
         self.config = self.get_config('environment', 'milan_sc_parking_kiunsys')
         self.BASE_URL += 'datetime={0}'.format(datetime.now().strftime('%Y%m%d%H%m%S'))
         self.HEADERS = self.config['HEADERS']
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers=None):
+    def _create_datasource(self, headers: str = None) -> None:
+        """
+        Create DataSource
+        :param headers: Request Headers
+        """
         try:
             if not headers:
                 headers = json.loads(self.HEADERS.replace("'", '"'))
@@ -235,15 +317,29 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args):
-        print('Token Expired')
+    def _refresh_token(self, *args: [Any]) -> None:
+        """
+        Print Token Expired
+        :param args: variable arguments list
+        """
+        logger.info('Token Expired')
 
 
 @GetConfig("Milan_API_sc_emobility_refeel")
 class Milan_API_sc_emobility_refeel(BaseImporter):
+    """
+    Milan Importer
+    The class inherits from BaseImporter and doesn't contain any bespoke code
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
+    """
     importer_status = ImporterStatus.get_importer_status()
 
     def __init__(self):
+        """
+        Get Import configurations
+        Instantiate BaseImporter
+        """
         self.config = self.get_config('environment', 'milan_sc_emobility_refeel')
         self.BASE_URL += + 'fromTime={0}&toTime={1}'.format(
             (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%m:%SZ'),
@@ -252,7 +348,11 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers=None):
+    def _create_datasource(self, headers: str = None) -> None:
+        """
+        Create DataSource
+        :param headers: Request Headers
+        """
         try:
             if not headers:
                 headers = json.loads(self.HEADERS.replace("'", '"'))
@@ -281,14 +381,21 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
 
             self.create_datasource(dataframe=df, sensor_tag='plate',
                                    attribute_tag=['rentalState', 'duration'],
-                                   unit_value=[7, 8], bespoke_unit_tag=[], description=[
-                    'Information on activities relted to two e-car used by the inhabitants of a condominium located in viale Bacchiglione'],
+                                   unit_value=[7, 8], bespoke_unit_tag=[], description=['Information on activities '
+                                                                                        'relted to two e-car used by '
+                                                                                        'the inhabitants of a '
+                                                                                        'condominium located in viale '
+                                                                                        'Bacchiglione'],
                                    bespoke_sub_theme=[2, 2], location_tag=loc, sensor_prefix='',
                                    api_timestamp_tag='api_timestamp_tag')
             self.importer_status.status = Status.success(__class__.__name__)
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args):
+    def _refresh_token(self, *args: [Any]) -> None:
+        """
+        Print Token Expired
+        :param args: variable arguments list
 
-        print('Token Expired')
+        """
+        logger.info('Token Expired')

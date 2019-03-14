@@ -82,15 +82,7 @@ def create_app(**config_overrides):
     db.init_app(app)
     db.app = app
 
-
     jwt = JWTManager(app)
-
-    # importer_status = ImporterStatus(Status("app.py",'main','',2400))
-
-    # @importer_status.changed.register
-    # def monkey(status):
-    #     print("monkey")
-
 
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token: dict) -> bool:

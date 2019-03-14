@@ -1,58 +1,74 @@
-'''
-Helper Class
-
-This class can be used to add any importer to the database and retrieve information about them
-The importers can be added:
-	python manage.py add -ad <Name-Of-The-Importer>
-
-The name of the importer can be found:
-	python manage.py add -gd True
-'''
-
-# from importers.base import get_config
 import importlib
+import logging
+from typing import Callable
+
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 import yaml
 from flask_script import Command, Option
 
-from importers.state_decorator import ImporterStatus
-
 
 class AddDatasource(Command):
-    importer_status = ImporterStatus.get_importer_status()
+    """
+    Helper Class
 
-    def __init__(self, add_datasource=None, get_datasources=False):
+    This class can be used to add any importer to the database and retrieve information about them
+    The importers can be added:
+        python manage.py add -ad <Name-Of-The-Importer>
+
+    The name of the importer can be found:
+        python manage.py add -gd True
+    """
+
+    def __init__(self, add_datasource: Callable = None, get_datasources: bool = False):
+        """
+        Get or Add a DataSource
+        :param add_datasource: Importer Callable
+        :param get_datasources: If True A list of importers are returned
+        """
         self.add_datasource = add_datasource
         self.get_datasources = get_datasources
 
-    @importer_status.changed.register
-    def status_has_changed(self, status, *args, **kwargs):
-        print(status)
-
-    def get_options(self):
+    def get_options(self) -> [Option]:
+        """
+        Get command line arguments
+        :return: A list of Options
+        """
         return [
             Option('--get_datasources', '-gd', dest='get_datasources', default=self.get_datasources),
             Option('--add_datasource', '-ad', dest='add_datasource', default=self.add_datasource),
         ]
 
-    def get_config(self):
+    def get_config(self) -> {str: {str}}:
+        """
+        Get Importer Config
+        :return: Importer Configurations
+        """
         config = None
         try:
-            with open("importers/config.yml", 'r') as ymlfile:
+            with open("importers/config.yml") as ymlfile:
                 config = yaml.load(ymlfile)
         except FileNotFoundError as e:
-            print("Ensure that you have provided a config.yml file")
+            logger.critical("No Importer Config File Found", file="importers/config.yml")
             raise FileNotFoundError
 
         return config
 
-    def run(self, get_datasources, add_datasource):
+    def run(self, get_datasources: bool, add_datasource: str) -> object:
+        """
+        Execute Commands
+        :param get_datasources: If True a list of DataSource Importers are returned
+        :param add_datasource: Callable Str Name
+        :return: A DataSource Object
+        """
         config = self.get_config()
         config = config[config['environment']]
         _importers = {}
         for c in config:
             _importers[config[c]['API_NAME']] = config[c]['API_CLASS']
             if get_datasources and config[c]['API_CLASS'] is not None:
+                # Cannot remove this as the user will not receive any DataSources back as it is a command line util
                 print(config[c]['API_NAME'])
 
         if get_datasources:
