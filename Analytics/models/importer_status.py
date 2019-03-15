@@ -109,10 +109,11 @@ class ImporterStatuses(db.Model):
         return ImporterStatuses.query.filter_by(import_class_name=name).first()
 
     @staticmethod
-    def remove_all() -> db.Model:
-        """Fetch all Importer Status fields """
+    def remove_where(time_limit: datetime) -> db.Model:
+        """ Delete all entries entered after time_limit argument """
 
-        status_entries = ImporterStatuses.query.all()
-        for entry in status_entries:
-            entry.delete()
-            entry.commit()
+        new_statuses = ImporterStatuses.query.filter(
+            ImporterStatuses.timestamp >= time_limit)
+        for status in new_statuses:
+            status.delete()
+            status.commit()
