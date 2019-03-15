@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse, inputs
 from flask_jwt_extended import jwt_required, get_jwt_claims
+
 from db import db
 from models.importer_status import ImporterStatuses
 
@@ -12,7 +13,12 @@ class ImportStatus(Resource):
 
     @jwt_required
     def get(self) -> (str, int):
-
+        """
+        GET request endpoint. Retrieve all entries in the importer status
+        table.
+        :return: a dictionary containing importer status entries if
+        successful or a dictionary containing an error message if unsuccessful
+        """
         if get_jwt_claims()["admin"]:
             statuses = ImporterStatuses.get_all()
             if statuses:
