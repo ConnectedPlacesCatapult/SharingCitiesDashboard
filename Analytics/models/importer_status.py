@@ -80,40 +80,40 @@ class ImporterStatuses(db.Model):
             logger.error(str(self.id) + ' importer status entry does not '
                                         'exists')
 
-    @staticmethod
-    def get_all() -> db.Model:
+    @classmethod
+    def get_all(cls) -> db.Model:
         """Fetch all Importer Status fields """
-        return ImporterStatuses.query.all()
+        return cls.query.all()
 
     @staticmethod
     def commit():
         """ Commit updated items to the database """
         db.session.commit()
 
-    @staticmethod
-    def find_by_api_id(api_id: int) -> db.Model:
+    @classmethod
+    def find_by_api_id(cls, api_id: int) -> db.Model:
         """
         Return the Importer Status entry that matches the api_id argument
         :param api_id: id of importer which is contained in the api table
         :return: the Importer Status entry that match the api_id argument
         """
-        return ImporterStatuses.query.filter_by(api_id=api_id).first()
+        return cls.query.filter_by(api_id=api_id).first()
 
-    @staticmethod
-    def find_by_name(name: str) -> db.Model:
+    @classmethod
+    def find_by_name(cls, name: str) -> db.Model:
         """
         Return the Importer Status entry that matches the api_id argument
         :param name: name of importer which is contained in the api table
         :return: the Importer Status entry that match the api_id argument
         """
-        return ImporterStatuses.query.filter_by(import_class_name=name).first()
+        return cls.query.filter_by(import_class_name=name).first()
 
-    @staticmethod
-    def remove_where(time_limit: datetime) -> db.Model:
+    @classmethod
+    def remove_where(cls, time_limit: datetime) -> db.Model:
         """ Delete all entries entered after time_limit argument """
 
-        new_statuses = ImporterStatuses.query.filter(
-            ImporterStatuses.timestamp >= time_limit)
+        new_statuses = cls.query.filter(
+            cls.timestamp >= time_limit)
         for status in new_statuses:
             status.delete()
             status.commit()
