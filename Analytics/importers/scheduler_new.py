@@ -99,13 +99,14 @@ class Scheduler(object):
         apis = Scheduler.get_apis()
         for api in apis:
             sched.add_job(Scheduler.fetch_data, 'interval',
-                                   name='{}'.format(api.name),
-                                   seconds=api.refresh_time,
-                                   start_date=datetime.now()+timedelta(seconds=5),
-                                   end_date=datetime.now()+timedelta(hours=23),
-                                   args=[api.api_class, api.name],
-                                   replace_existing=True, id='{}'.format(api.api_class),
-                                   jobstore='sqlalchemy')
+                          name='{}'.format(api.name),
+                          seconds=api.refresh_time,
+                          start_date=datetime.now()+timedelta(seconds=5),
+                          end_date=datetime.now()+timedelta(hours=23),
+                          args=[api.api_class, api.name],
+                          replace_existing=True, id='{}'.format(api.api_class),
+                          jobstore='sqlalchemy')
+
     @staticmethod
     def run():
         """ Schedule main_task to execute once a day """
@@ -120,11 +121,9 @@ class Scheduler(object):
                 new_entry.commit()
 
         sched.add_job(Scheduler.main_task, 'interval',
-                               start_date=datetime.now() + timedelta(
-                                   seconds=5), days=1,
-                               name='Primary_Scheduler',
-                          replace_existing=True, id='Primary_Scheduler',
-                          jobstore='sqlalchemy')
+                      start_date=datetime.now() + timedelta(seconds=5),
+                      days=1, name='Primary_Scheduler',replace_existing=True,
+                      id='Primary_Scheduler', jobstore='sqlalchemy')
 
         try:
             # This is here to simulate application activity (which keeps
