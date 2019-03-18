@@ -63,7 +63,7 @@ class AttrAlias(db.Model):
         self.user_id = user_id
 
     @property
-    def serializable(self) -> {str: Union[str, int]}:
+    def serializable(self) -> dict:
         """
         Create Serializable data of Model, Remove Duplicate Data to reduce ThemeTree size
         :return: JSON Serializable data for theme tree
@@ -79,7 +79,7 @@ class AttrAlias(db.Model):
             'Description': self.description
         }
 
-    def json(self) -> {str: Union[int, str]}:
+    def json(self) -> dict:
         """
         Get JSON of AttrAlias model. JSON returned matches Attribute JSON format to make the alias
         loosely coupled on the front end

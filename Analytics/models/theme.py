@@ -40,7 +40,7 @@ class Theme(db.Model):
         return json.dumps(self.json())
 
     @property
-    def serializable(self) -> {str: Union[str, int]}:
+    def serializable(self) -> dict:
         """
         Create Serializable data of Model, Remove Duplicate Data to reduce ThemeTree size
         :return: JSON Serializable data for theme tree
@@ -50,7 +50,7 @@ class Theme(db.Model):
             "Name": self.name
         }
 
-    def json(self) -> {str: Union[str, int]}:
+    def json(self) -> dict:
         """Creates a JSON of the theme data"""
         return {
             'id': self.id,
@@ -127,14 +127,14 @@ class SubTheme(db.Model):
         return 'Sub Theme Name: %s' % self.name
 
     @property
-    def serializable(self) -> {str: Union[str, int]}:
+    def serializable(self) -> dict:
         """
         Create Serializable data of Model, Remove Duplicate Data to reduce ThemeTree size
         :return: JSON Serializable data for theme tree
         """
         return self.json()
 
-    def json(self) -> {str: Union[int, str]}:
+    def json(self) -> dict:
         """
         Create a JSON representation of the SubTheme
         :return: The SubTheme id, The parent Theme id and the SubTheme name
@@ -178,7 +178,7 @@ class SubTheme(db.Model):
         return SubTheme.query.filter_by(t_id=theme_id).all()
 
     @classmethod
-    def get_by(cls, **kwargs: {str: Union[str, int, bool, object]}) -> db.Model:
+    def get_by(cls, **kwargs: dict) -> db.Model:
         """ Fetch all SubThemes by passed filter keyword arguments"""
         return cls.query.filter_by(**kwargs).first()
 

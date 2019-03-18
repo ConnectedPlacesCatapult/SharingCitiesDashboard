@@ -59,7 +59,7 @@ class Attributes(db.Model):
         return 'Name: %s, Table Name: %s' % (self.name, self.table_name)
 
     @property
-    def serializable(self) -> {str: Union[str, int]}:
+    def serializable(self) -> dict:
         """
         Create Serializable data of Model, Remove Duplicate Data to reduce ThemeTree size
         :return: JSON Serializable data for theme tree
@@ -73,7 +73,7 @@ class Attributes(db.Model):
             'Description': self.description
         }
 
-    def json(self) -> {str: Union[int, str, datetime]}:
+    def json(self) -> dict:
         """
         Create JSON format of Attributes data
         :return:    JSON of Attributes data

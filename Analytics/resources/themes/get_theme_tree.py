@@ -25,7 +25,7 @@ class GetThemeTree(Resource):
         self.reqparser.add_argument('theme_id', required=False, store_missing=False, type=int)
 
     @jwt_required
-    def get(self) -> ({str: Any}, HTTPStatus):
+    def get(self) -> (dict, HTTPStatus):
         """
         Fetch Theme Tree
         :return: A Theme Tree JSON and an HTTP status code 200 (Ok) on success, otherwise an error message and the
@@ -42,7 +42,7 @@ class GetThemeTree(Resource):
 
         return response, 200
 
-    def create_theme_tree(self, theme_id: int, user_id: int) -> {str: Any}:
+    def create_theme_tree(self, theme_id: int, user_id: int) -> dict:
         """
         Create Theme Tree
         :param theme_id: Theme Id
