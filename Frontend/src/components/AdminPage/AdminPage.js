@@ -88,7 +88,7 @@ class AdminPage extends React.Component {
           </AppBar>
 
           {value === 0 && <TabContainer><UserList openAddUser={this.openAddUser}/></TabContainer>}
-          {value === 1 && <TabContainer><ImportersList openAddUser={this.openAddUser}/></TabContainer>}
+          {value === 1 && <TabContainer><ImportersList openLogsModal={this.handleOpenImporterLogs}/></TabContainer>}
 
           <Dialog
             open={admin.deleteUserDialogOpen}
@@ -98,6 +98,8 @@ class AdminPage extends React.Component {
             <DeleteUserDialog cancelDelete={this.props.cancelDeleteUser} deleteUser={this.props.deleteUser}/>
           </Dialog>
         </main>
+
+        {/*Add User Modal*/}
         <Modal
           open={this.state.addUserModalOpen}
           onClose={this.handleAddUserClose}
