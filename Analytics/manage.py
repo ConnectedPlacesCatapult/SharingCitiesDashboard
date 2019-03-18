@@ -26,3 +26,4 @@ manager.add_command('add', AddDatasource)
 
 if __name__ == '__main__':
     manager.run()
+
