@@ -8,7 +8,10 @@ import {
   PROMPT_USER_DELETE,
   CANCEL_USER_DELETE,
   DELETE_USER_FULFILLED,
-  DELETE_USER_REJECTED
+  DELETE_USER_REJECTED,
+  FETCH_IMPORTER_STATUSES,
+  FETCH_IMPORTER_STATUSES_FULFILLED,
+  FETCH_IMPORTER_STATUSES_REJECTED,
 } from "./../constants";
 import {HIDE_NOTIFICATION} from "../constants";
 
@@ -30,6 +33,30 @@ export const fetchUsers = () => {
     .catch((err) => {
       dispatch({
         type: FETCH_USERS_REJECTED,
+        payload: err,
+      })
+    })
+  };
+};
+
+// Fetch Users for User List
+export const fetchImporterStatuses = () => {
+  return (dispatch) => {
+    dispatch({
+      type: FETCH_IMPORTER_STATUSES,
+    });
+    const requestData = {
+      limit: '10'
+    }
+    axiosInstance.get('importer_status', requestData).then((response) => {
+      dispatch({
+        type: FETCH_IMPORTER_STATUSES_FULFILLED,
+        payload: response.data,
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: FETCH_IMPORTER_STATUSES_REJECTED,
         payload: err,
       })
     })
