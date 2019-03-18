@@ -115,5 +115,3 @@ class ImporterStatusTestCase(unittest.TestCase):
         """
 
         ImporterStatuses.remove_where(limit)
-
-

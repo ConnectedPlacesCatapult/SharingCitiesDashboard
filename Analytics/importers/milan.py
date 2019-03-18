@@ -2,7 +2,7 @@ import json
 import logging
 import traceback
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, Union
 
 import numpy as np
 import pandas as pd
@@ -15,6 +15,7 @@ from .state_decorator import ImporterStatus, Status
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
+
 
 @GetConfig("MilanAPI")
 class MilanAPI(BaseImporter):
@@ -35,7 +36,7 @@ class MilanAPI(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -64,7 +65,7 @@ class MilanAPI(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Print Token Expired
         :param args: variable arguments list
@@ -93,7 +94,7 @@ class Milan_API_sensori_meteo_meta(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -115,7 +116,7 @@ class Milan_API_sensori_meteo_meta(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Print Token Expired
         :param args: variable arguments list
@@ -146,7 +147,7 @@ class Milan_API_sensori_meteo(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -196,7 +197,7 @@ class Milan_API_sensori_meteo(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Print Token Expired
         :param args: variable arguments list
@@ -225,7 +226,7 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -254,7 +255,7 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Print Token Expired
         :param args: variable arguments list
@@ -283,7 +284,7 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -317,7 +318,7 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Print Token Expired
         :param args: variable arguments list
@@ -348,7 +349,7 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
@@ -392,7 +393,7 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> None:
+    def _refresh_token(self) -> None:
         """
         Print Token Expired
         :param args: variable arguments list
