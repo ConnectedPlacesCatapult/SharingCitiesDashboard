@@ -6,6 +6,8 @@ from flask_restful import Api
 
 from db import db
 from models.revoked_tokens import RevokedTokens
+from models.importer_status import ImporterStatuses
+from models.api import API
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -47,6 +49,7 @@ from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
+from resources.import_status import ImportStatus
 
 
 def create_app(**config_overrides):
@@ -179,5 +182,6 @@ def create_app(**config_overrides):
     api.add_resource(UpdateAttributeSubTheme, '/admin/attributes/add_to_subtheme')
 
     api.add_resource(ExportData, '/export_data')
+    api.add_resource(ImportStatus, '/importer_status')
 
     return app
