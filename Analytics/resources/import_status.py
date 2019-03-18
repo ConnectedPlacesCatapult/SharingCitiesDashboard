@@ -9,7 +9,7 @@ class ImportStatus(Resource):
     API endpoint, return the status of importers and their is a failure,
     return the reasons for the failure
     """
-
+    
     def get(self) -> (str, int):
 
         statuses = ImporterStatuses.get_all()
@@ -20,4 +20,4 @@ class ImportStatus(Resource):
 
             return status_list, 200
         else:
-            return {"message": "No statuses available"}, 404
+            return [], 404
