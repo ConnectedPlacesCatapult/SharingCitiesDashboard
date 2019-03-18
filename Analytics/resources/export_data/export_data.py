@@ -1,7 +1,8 @@
 import json
+import logging
 import os
 from http import HTTPStatus
-from typing import Any
+from typing import Any, Union
 
 import numpy as np
 import pandas as pd
@@ -15,6 +16,9 @@ from db import db
 from models.location import Location
 from models.sensor import Sensor
 from models.sensor_attribute import SensorAttribute
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class ExportData(Resource):
@@ -33,7 +37,7 @@ class ExportData(Resource):
         self.reqparser.add_argument('limit', required=False, type=int, default=100, location='json')
 
     @jwt_required
-    def post(self):
+    def post(self) -> ({str: Any}, HTTPStatus):
         """
         Export data to file endpoint
         :param file_name: Name of the file to export data yo
@@ -92,7 +96,7 @@ class ExportData(Resource):
         columns = self.query_database(query_schema)
         return [column[0] for column in columns]
 
-    def fetch_table_entries_by_name(self, table_name: str, limit: int) -> pd.DataFrame:
+    def fetch_table_entries_by_name(self, table_name: str, limit: int) -> Union[pd.DataFrame, None]:
         """
         Fetch entries from database table
         :param table_name: Name of database table
@@ -108,25 +112,10 @@ class ExportData(Resource):
 
         data_frame = self.frame_data(column_names, entries)
         sensors = [self.get_sensor(sensor_id) for sensor_id in data_frame['s_id']]
-        sensor_data_frame = pd.DataFrame.from_dict(sensors)
+        sensor_data_frame = pd.DataFrame(sensors)
         data_frame = pd.merge(sensor_data_frame, data_frame, left_on='id', right_on='s_id', how='inner').drop('id',
                                                                                                               axis=1)
         return data_frame
-
-    def write_to_csv(self, data_frame: pd.DataFrame, file_name: str, extension: str) -> bool:
-        """
-        Write data to csv file for export
-        :param data_frame: Pandas DataFrame of data
-        :param file_name: Name of the file to save csv to
-        :param extension: File extension
-        :return: If exporting data to file is successful True is returned, otherwise False
-        """
-        directory = os.path.dirname(os.path.realpath(__file__)) + "/"
-        try:
-            data_frame.to_csv(directory + file_name + "." + extension, sep=',', encoding='utf-8')
-            return True
-        except Exception:
-            return False
 
     def get_sensor(self, sensor_id: str) -> {str: Any}:
         """
@@ -157,7 +146,6 @@ class ExportData(Resource):
         Get Sensor location data from database
         :param location_id: Location identification number
         :return: Location db entry
-        :rtype:
         """
         location = Location.get_by_id(location_id)
         if location:
@@ -178,14 +166,28 @@ class ExportData(Resource):
         data_frame = pd.DataFrame.from_records(entries, columns=column_names)
         return data_frame
 
-    def write_to_json(self, data_frame: pd.DataFrame, file_name: str, extension: str):
+    def write_to_csv(self, data_frame: pd.DataFrame, file_name: str, extension: str) -> bool:
+        """
+        Write data to csv file for export
+        :param data_frame: Pandas DataFrame of data
+        :param file_name: Name of the file to save csv to
+        :param extension: File extension
+        :return: If exporting data to file is successful True is returned, otherwise False
+        """
+        directory = os.path.dirname(os.path.realpath(__file__)) + "/"
+        try:
+            data_frame.to_csv(directory + file_name + "." + extension, sep=',', encoding='utf-8')
+            return True
+        except Exception:
+            return False
+
+    def write_to_json(self, data_frame: pd.DataFrame, file_name: str, extension: str) -> bool:
         """
         Write Pandas DataFrame to File in JSON format
-        :param data_frame:
-        :param file_name:
-        :param extension:
-        :return:
-        :rtype:
+        :param data_frame: Panadas Dataframe of Data to be exported
+        :param file_name: File name to export data to
+        :param extension:   File extension
+        :return: True if the data is exported successfully otherwise, False
         """
         try:
             directory = os.path.dirname(os.path.realpath(__file__)) + "/"
@@ -194,7 +196,7 @@ class ExportData(Resource):
                 outfile.write(output)
             return True
         except Exception as e:
-            print(e)
+            logger.error(e)
             return False
 
     def write_geojson(self, data_frame: pd.DataFrame, file_name: str, extension: str) -> bool:
@@ -203,6 +205,7 @@ class ExportData(Resource):
         :param data_frame: Panads DataFrame to export
         :param file_name: File name
         :param extension: File extension
+        :return: True if the data is exported successfully otherwise, False
         """
         try:
             directory = os.path.dirname(os.path.realpath(__file__)) + "/"
@@ -226,17 +229,15 @@ class ExportData(Resource):
         except Exception:
             return False
 
-    def return_file(self, file_name: str, extension: str) -> object:
+    def return_file(self, file_name: str, extension: str) -> Any:
         """
         Return File in Response
         :param file_name: Name of file to return
         :param extension: The File extension
         :return: Response with correct headers to download file
-        :rtype: flask.wrappers.Response
         """
         file = file_name + "." + extension
         response = send_from_directory(directory=os.path.dirname(os.path.realpath(__file__)), filename=file)
         response.headers['Content-Type'] = 'application/octet-stream'
         response.headers['Content-Disposition'] = 'attachment; filename="{}.{}"'.format(file_name, extension)
-        print(type(response))
         return response

@@ -1,7 +1,7 @@
 import json
 import logging
 import traceback
-from typing import Any
+from typing import Union
 
 import pandas as pd
 import requests
@@ -34,7 +34,7 @@ class LisbonAPI(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request headers
@@ -71,7 +71,7 @@ class LisbonAPI(BaseImporter):
         except Exception as e:
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
-    def _refresh_token(self, *args: [Any]) -> str:
+    def _refresh_token(self) -> str:
         """
         Refresh API Token
         :param args: variable argument list

@@ -39,6 +39,17 @@ class Theme(db.Model):
         """ Override dunder str method to return object data as a str"""
         return json.dumps(self.json())
 
+    @property
+    def serializable(self) -> {str: Union[str, int]}:
+        """
+        Create Serializable data of Model, Remove Duplicate Data to reduce ThemeTree size
+        :return: JSON Serializable data for theme tree
+        """
+        return {
+            "id": self.id,
+            "Name": self.name
+        }
+
     def json(self) -> {str: Union[str, int]}:
         """Creates a JSON of the theme data"""
         return {
@@ -96,6 +107,10 @@ class SubTheme(db.Model):
     name = db.Column(db.String(255), unique=False, nullable=False)
     timestamp = db.Column(db.DateTime)
 
+    attributes = db.relationship('Attributes',
+                                 primaryjoin="and_(SubTheme.id==Attributes.sub_theme_id)",
+                                 back_populates="sub_theme")
+
     # attributes = db.relationship('Attributes', backref='subtheme', lazy=True)
 
     def __init__(self, t_id: int, name: str, timestamp: datetime = None):
@@ -110,6 +125,14 @@ class SubTheme(db.Model):
 
     def __repr__(self) -> str:
         return 'Sub Theme Name: %s' % self.name
+
+    @property
+    def serializable(self) -> {str: Union[str, int]}:
+        """
+        Create Serializable data of Model, Remove Duplicate Data to reduce ThemeTree size
+        :return: JSON Serializable data for theme tree
+        """
+        return self.json()
 
     def json(self) -> {str: Union[int, str]}:
         """
@@ -163,3 +186,8 @@ class SubTheme(db.Model):
     def get_by_name(cls, name: str) -> db.Model:
         """Fetch Theme by name """
         return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def get_by_id(cls, subtheme_id: int) -> db.Model:
+        """Fetch SubTheme by Id """
+        return cls.query.filter_by(id=subtheme_id).first()

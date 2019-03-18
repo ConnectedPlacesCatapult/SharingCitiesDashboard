@@ -9,10 +9,9 @@ from db import db
 from models.attribute_alias import AttrAlias
 from models.attributes import Attributes
 from models.theme import Theme, SubTheme
-from models.unit import Unit
 
 
-class GETThemeTree(Resource):
+class GetThemeTree(Resource):
     """
     Fetch Theme Tree Themes
     """
@@ -22,6 +21,7 @@ class GETThemeTree(Resource):
         Set required arguments for POST request
         """
         self.reqparser = reqparse.RequestParser()
+        self.reqparser.add_argument('user_id', required=False, default=-1, type=int)
         self.reqparser.add_argument('theme_id', required=False, store_missing=False, type=int)
 
     @jwt_required
@@ -32,56 +32,72 @@ class GETThemeTree(Resource):
                  appropriate HTTP status code
         """
         args = self.reqparser.parse_args()
-
-        # Fetch single Theme's Tree
         if "theme_id" in args:
-            theme = Theme.get_by_id(args["theme_id"])
-            if not theme:
-                return {"error": "Theme not found", "theme_id": args["theme_id"]}, HTTPStatus.NOT_FOUND
-            self.create_theme_tree(theme)
-        # Fetch All Themes Trees
+            # Fetch Theme Tree by theme_id
+            response = self.create_theme_tree(args["theme_id"], args["user_id"])
         else:
-            themes = self.fetch_all_themes()
+            # Fetch All Theme Trees
+            theme_ids = {theme.id for theme in Theme.get_all()}
+            response = [resp for resp in [self.create_theme_tree(theme_id, args["user_id"]) for theme_id in theme_ids]]
 
-    def print_branch(self, branch):
-        print("==>>>\t{}".format(branch.__name__))
-        for item in branch:
-            if isinstance(item, dict):
-                for k, v in item.items():
-                    print("\t\t{}: {}".format(k, v))
-            if isinstance(item, list):
-                for i in item:
-                    print("\t\t{}".format(i))
-            print(item)
+        return response, 200
 
-    def create_theme_tree(self, theme: db.Model) -> ({str: {str: Any}}, HTTPStatus):
-        theme_root = theme.json()
-        subthemes = self.fetch_sub_themes(theme.id)
+    def create_theme_tree(self, theme_id: int, user_id: int) -> {str: Any}:
+        """
+        Create Theme Tree
+        :param theme_id: Theme Id
+        :param user_id: User Id
+        :return: Theme Tree containing SubTheme, Attributes and Attribute Aliases if a User Id is parsed
+        """
 
-        attributes = self.get_attributes_for_sub_themes(subthemes)
+        theme = Theme.get_by_id(theme_id)
+        if not theme:
+            return {}
 
-    def get_attributes_for_sub_themes(self, subthemes: [SubTheme]):
-        attributes = [attr.json() for attr in self.get_attributes_for_sub_themes(sub for sub in subthemes)]
-        aliases = [alias.json() for alias in self.fetch_Alias()]
+        theme_tree = theme.serializable
 
-        self.print_branch(attributes)
+        sub_themes = SubTheme.get_by_theme_id(theme_id)
+        if not sub_themes:
+            return theme_tree
 
-    def fetch_all_themes(self):
-        """Fetch all Themes"""
-        return Theme.get_all()
+        sub_theme_ids = {sub.id for sub in sub_themes}
 
-    def fetch_sub_themes(self, theme_id: int) -> [db.Model]:
-        """ Fetch SubThemes related to theme_id"""
-        return SubTheme.get_by_theme_id(theme_id)
+        sub_list = []
+        for sub in sub_themes:
+            sub_list.append(sub.serializable)
 
-    def fetch_attributes(self, subtheme_id: int) -> [db.Model]:
-        """ Fetch Attributes by SubThe Id"""
-        return Attributes.get_by_sub_theme_id(subtheme_id)
+        attribute_by_sub_id = self.get_attributes(user_id, sub_theme_ids)
 
-    def fetch_Alias(self, attr_id: int) -> [db.Model]:
-        """ Fetch Attributes by SubThe Id"""
-        return AttrAlias.get_by_attr_id(attr_id)
+        for sub in sub_list:
+            attr = attribute_by_sub_id.get(sub["id"])
+            if attr:
+                sub["attributes"] = attr
 
-    def fetch_unit(self, unit_id: int) -> db.Model:
-        """Fetch Unit by Id"""
-        return Unit.get_by_id(unit_id)
+        theme_tree["sub_themes"] = sub_list
+
+        return theme_tree
+
+    @staticmethod
+    def get_attributes(user_id: int, sub_theme_ids: [int]) -> [Attributes]:
+        """
+        Fetch Attributes by User Id and SubTheme Ids
+        :param user_id: The Users Id number
+        :param sub_theme_ids: A set of Subtheme id numbers
+        :return: Attributes that match the User id and Subtheme ids
+        """
+        # Fetch attributes
+        attributes = db.session.query(Attributes).filter(Attributes.sub_theme_id.in_(sub_theme_ids)).options(
+            db.joinedload(Attributes.sub_theme)).all()
+        attribute_by_sub_id = dict()
+
+        for attribute in attributes:
+
+            if attribute.sub_theme_id not in attribute_by_sub_id:
+                attribute_by_sub_id[attribute.sub_theme_id] = list()
+            attr_serial = attribute.serializable
+            alias = AttrAlias.get_by(user_id=user_id, attribute_id=attribute.id)
+            if alias:
+                attr_serial["alias"] = alias.serializable
+            attribute_by_sub_id[attribute.sub_theme_id].append(attr_serial)
+
+        return attribute_by_sub_id
