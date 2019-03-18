@@ -80,9 +80,9 @@ class ImporterStatuses(db.Model):
             logger.error(str(self.id) + ' importer status entry does not '
                                         'exists')
 
-    @classmethod
-    def get_all(cls) -> db.Model:
-        """Fetch all Importer Status fields """
+    @staticmethod
+    def get_all() -> db.Model:
+        """Fetch all entries in the Importer Status table"""
         return ImporterStatuses.query.all()
 
     @staticmethod
