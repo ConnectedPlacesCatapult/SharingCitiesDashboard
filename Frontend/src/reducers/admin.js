@@ -61,7 +61,7 @@ export default (state=initialState, action={}) => {
         ...state,
         fetching: false,
         fetched: true,
-        importers: action.payload.users,
+        importers: action.payload,
       }
     }
 
