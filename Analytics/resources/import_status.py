@@ -28,6 +28,6 @@ class ImportStatus(Resource):
 
                 return status_list, 200
             else:
-                return {"message": "No statuses available"}, 404
+                return [], 200
         else:
             return {"message": "Not Authorised"}, 403
