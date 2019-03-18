@@ -15,7 +15,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton';
 import ReplayIcon from '@material-ui/icons/Replay';
-import PlusIcon from '@material-ui/icons/Add';
+import SearchIcon from '@material-ui/icons/Search';
 
 // redux
 import { connect } from 'react-redux';
@@ -95,6 +95,11 @@ const styles = (theme) => ({
     padding: '10px',
     borderRadius: '2px',
     background: '#222230'
+  },
+  emptyList: {
+    marginTop: theme.spacing.unit * 2,
+    textAlign: 'center',
+    color: theme.palette.primary.main,
   }
 });
 
@@ -175,62 +180,79 @@ class ImportersList extends React.Component {
 
     return (
       <div className={classes.root}>
-        {/*Table*/}
-        <Paper className={classes.paper}>
-          <div className={classes.tableTitleBar}>
-            <Typography variant="h5" color="primary" className={classes.tableTitle}>
-              Importers
-            </Typography>
-            <Button variant="contained" color="primary" className={classes.tableTitleActionButton} onClick={this.props.handleOpenImporterLogs}>
-              <ReplayIcon className={classes.actionButtonIcon}/>
-              Retry All
-            </Button>
-          </div>
-          <Table className={classes.table}>
-            <TableHead>
-              <TableRow>
-                <TableCell>API ID</TableCell>
-                <TableCell align="right">Import Class Name</TableCell>
-                <TableCell align="right">State</TableCell>
-                <TableCell align="right">Reason</TableCell>
-                <TableCell align="right">Timestamp</TableCell>
-                <TableCell align="right"></TableCell>
-                <TableCell align="right"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {admin.importers.map(row => (
-                <TableRow key={row.api_id}>
-                  <TableCell component="th" scope="row">
-                    {row.api_id}
-                  </TableCell>
-                  <TableCell align="right">
-                    {row.import_class_name}
-                  </TableCell>
-                  <TableCell align="right">
-                    {this.stateIndicator(row.state)}
-                  </TableCell>
-                  <TableCell align="right">
-                    {row.reason}
-                  </TableCell>
-                  <TableCell align="right">
-                    { moment(row.timestamp).format('HH:mm - D/MM/YY') }
-                  </TableCell>
-                  <TableCell align="right" style={{textAlign: 'right'}}>
-                    {row.state === 'failure' ? <Button variant="text" size="small" fullWidth onClick={() => this.handleOpenImporterLogs(row)}>
-                      View Logs
-                    </Button> : null}
-                  </TableCell>
-                  <TableCell align="right" style={{textAlign: 'right'}}>
-                    {row.state === 'failure' ? <IconButton onClick={() => promptDeleteUser(row)}>
-                      <ReplayIcon color="primary" />
-                    </IconButton> : null}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
+        {
+          admin.importers && admin.importers.length
+            ? <Paper className={classes.paper}>
+              <div className={classes.tableTitleBar}>
+                <Typography variant="h5" color="primary" className={classes.tableTitle}>
+                  Importers
+                </Typography>
+                <Button variant="contained" color="primary" className={classes.tableTitleActionButton}
+                        onClick={this.props.handleOpenImporterLogs}>
+                  <ReplayIcon className={classes.actionButtonIcon}/>
+                  Retry All
+                </Button>
+              </div>
+              <Table className={classes.table}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>API ID</TableCell>
+                    <TableCell align="right">Import Class Name</TableCell>
+                    <TableCell align="right">State</TableCell>
+                    <TableCell align="right">Reason</TableCell>
+                    <TableCell align="right">Timestamp</TableCell>
+                    <TableCell align="right"></TableCell>
+                    <TableCell align="right"></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {admin.importers.map(row => (
+                    <TableRow key={row.api_id}>
+                      <TableCell component="th" scope="row">
+                        {row.api_id}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.import_class_name}
+                      </TableCell>
+                      <TableCell align="right">
+                        {this.stateIndicator(row.state)}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.reason}
+                      </TableCell>
+                      <TableCell align="right">
+                        {moment(row.timestamp).format('HH:mm - D/MM/YY')}
+                      </TableCell>
+                      <TableCell align="right" style={{textAlign: 'right'}}>
+                        {row.state === 'failure' ?
+                          <Button variant="text" size="small" fullWidth onClick={() => this.handleOpenImporterLogs(row)}>
+                            View Logs
+                          </Button> : null}
+                      </TableCell>
+                      <TableCell align="right" style={{textAlign: 'right'}}>
+                        {row.state === 'failure' ? <IconButton onClick={() => promptDeleteUser(row)}>
+                          <ReplayIcon color="primary"/>
+                        </IconButton> : null}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+            : <Paper className={classes.paper}>
+              <div className={classes.tableTitleBar}>
+                <Typography variant="h5" color="primary" className={classes.tableTitle}>
+                  Importers
+                </Typography>
+              </div>
+              <div className={classes.emptyList}>
+                <SearchIcon></SearchIcon>
+                <Typography variant="subtitle1" color="primary">
+                  No importers found
+                </Typography>
+              </div>
+            </Paper>
+        }
 
         <Modal
           open={this.state.logsModalOpen}
