@@ -57,7 +57,7 @@ class GetConfig(object):
                     importer_status.status = Status.failure(
                         self.__class__.__name__, e.__str__(),
                         traceback.format_exc())
-                    return
+                    return None
 
                 if len(args) == 2:
                     try:
