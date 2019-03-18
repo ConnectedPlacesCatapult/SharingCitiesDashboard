@@ -25,91 +25,6 @@ import {
 
 import moment from 'moment'
 
-const dummyData =
-  [
-    {
-      "api_id": 1,
-      "import_class_name": "GreenwichMeta",
-      "state": "failure",
-      "reason": "'latitude'",
-      "trace": "Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2656, in get_loc\n    return self._engine.get_loc(key)\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'latitude'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 173, in _create_datasource\n    is_dependent=True)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 153, in create_datasource\n    latitude = dataframe[location_tag.lat].tolist()\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/frame.py\", line 2927, in __getitem__\n    indexer = self.columns.get_loc(key)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2658, in get_loc\n    return self._engine.get_loc(self._maybe_cast_indexer(key))\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'latitude'\n Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2656, in get_loc\n    return self._engine.get_loc(key)\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'latitude'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 173, in _create_datasource\n    is_dependent=True)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 153, in create_datasource\n    latitude = dataframe[location_tag.lat].tolist()\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/frame.py\", line 2927, in __getitem__\n    indexer = self.columns.get_loc(key)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2658, in get_loc\n    return self._engine.get_loc(self._maybe_cast_indexer(key))\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'latitude'\n Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2656, in get_loc\n    return self._engine.get_loc(key)\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'latitude'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 173, in _create_datasource\n    is_dependent=True)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 153, in create_datasource\n    latitude = dataframe[location_tag.lat].tolist()\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/frame.py\", line 2927, in __getitem__\n    indexer = self.columns.get_loc(key)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2658, in get_loc\n    return self._engine.get_loc(self._maybe_cast_indexer(key))\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'latitude'\n Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2656, in get_loc\n    return self._engine.get_loc(key)\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'latitude'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 173, in _create_datasource\n    is_dependent=True)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 153, in create_datasource\n    latitude = dataframe[location_tag.lat].tolist()\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/frame.py\", line 2927, in __getitem__\n    indexer = self.columns.get_loc(key)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2658, in get_loc\n    return self._engine.get_loc(self._maybe_cast_indexer(key))\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'latitude'\n Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2656, in get_loc\n    return self._engine.get_loc(key)\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'latitude'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 173, in _create_datasource\n    is_dependent=True)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 153, in create_datasource\n    latitude = dataframe[location_tag.lat].tolist()\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/frame.py\", line 2927, in __getitem__\n    indexer = self.columns.get_loc(key)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2658, in get_loc\n    return self._engine.get_loc(self._maybe_cast_indexer(key))\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'latitude'\n",
-      "timestamp": "2019-03-14 15:23:44.886050"
-    },
-    {
-      "api_id": 36678,
-      "import_class_name": "GreenwichSiemens",
-      "state": "failure",
-      "reason": "'NoneType' object has no attribute 'replace'",
-      "trace": "Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 541, in _create_datasource\n    super()._create_datasource(headers)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 67, in _create_datasource\n    _, status_code = self.load_dataset(headers)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 87, in load_dataset\n    data = requests.get((self.url).replace(' ', '').replace('\\n', '') + self.api_key, headers=headers)\nAttributeError: 'NoneType' object has no attribute 'replace'\n",
-      "timestamp": "2019-03-14 15:23:43.912776"
-    },
-    {
-      "api_id": 35677,
-      "import_class_name": "GreenwichOCC_2",
-      "state": "failure",
-      "reason": "'NoneType' object has no attribute 'replace'",
-      "trace": "Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 335, in _create_datasource\n    super()._create_datasource(headers)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 67, in _create_datasource\n    _, status_code = self.load_dataset(headers)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 87, in load_dataset\n    data = requests.get((self.url).replace(' ', '').replace('\\n', '') + self.api_key, headers=headers)\nAttributeError: 'NoneType' object has no attribute 'replace'\n",
-      "timestamp": "2019-03-14 15:23:43.913869"
-    },
-    {
-      "api_id": 35442,
-      "import_class_name": "GreenwichKiwiPump",
-      "state": "failure",
-      "reason": "'NoneType' object has no attribute 'replace'",
-      "trace": "Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 418, in _create_datasource\n    super()._create_datasource(headers)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 67, in _create_datasource\n    _, status_code = self.load_dataset(headers)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 87, in load_dataset\n    data = requests.get((self.url).replace(' ', '').replace('\\n', '') + self.api_key, headers=headers)\nAttributeError: 'NoneType' object has no attribute 'replace'\n",
-      "timestamp": "2019-03-14 15:23:43.915831"
-    },
-    {
-      "api_id": 35676,
-      "import_class_name": "GreenwichMeta_2",
-      "state": "failure",
-      "reason": "'NoneType' object has no attribute 'replace'",
-      "trace": "Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 287, in _create_datasource\n    super()._create_datasource(headers)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 67, in _create_datasource\n    _, status_code = self.load_dataset(headers)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 87, in load_dataset\n    data = requests.get((self.url).replace(' ', '').replace('\\n', '') + self.api_key, headers=headers)\nAttributeError: 'NoneType' object has no attribute 'replace'\n",
-      "timestamp": "2019-03-14 15:23:43.916974"
-    },
-    {
-      "api_id": 2,
-      "import_class_name": "GreenwichOCC",
-      "state": "failure",
-      "reason": "'lotcode'",
-      "trace": "Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2656, in get_loc\n    return self._engine.get_loc(key)\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'lotcode'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 213, in _create_datasource\n    names = self.df['lotcode'].tolist()\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/frame.py\", line 2927, in __getitem__\n    indexer = self.columns.get_loc(key)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/lib/python3.7/site-packages/pandas/core/indexes/base.py\", line 2658, in get_loc\n    return self._engine.get_loc(self._maybe_cast_indexer(key))\n  File \"pandas/_libs/index.pyx\", line 108, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 132, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1601, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 1608, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'lotcode'\n",
-      "timestamp": "2019-03-14 15:23:44.848081"
-    },
-    {
-      "api_id": 5,
-      "import_class_name": "MilanAPI",
-      "state": "success",
-      "reason": "",
-      "trace": "",
-      "timestamp": "2019-03-14 15:23:51.643088"
-    },
-    {
-      "api_id": 3,
-      "import_class_name": "KCLAirQuality",
-      "state": "success",
-      "reason": "",
-      "trace": "",
-      "timestamp": "2019-03-14 15:23:55.736983"
-    },
-    {
-      "api_id": 4,
-      "import_class_name": "TfL_BikePoints",
-      "state": "failure",
-      "reason": "'BikePoints_545'",
-      "trace": "Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/tfl_bike_points.py\", line 46, in _create_datasource\n    description_tag='sourceSystemKey', api_timestamp_tag='modified')\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 248, in create_datasource_with_values\n    api_timestamp_tag, value_tag, attribute_tag, unit_value_tag)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 492, in insert_data\n    sensor_id = sensor_objects[sensor_prefix + str(sensor_name)].id\nKeyError: 'BikePoints_545'\n",
-      "timestamp": "2019-03-14 15:24:03.787294"
-    },
-    {
-      "api_id": 35443,
-      "import_class_name": "GreenwichWholeHouse",
-      "state": "failure",
-      "reason": "'NoneType' object has no attribute 'replace'",
-      "trace": "Traceback (most recent call last):\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/greenwich.py\", line 473, in _create_datasource\n    super()._create_datasource(headers)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 67, in _create_datasource\n    _, status_code = self.load_dataset(headers)\n  File \"/Users/keatonpennels/Documents/FCC/Production/FCCenv/ImporterStatus/Analytics/importers/base.py\", line 87, in load_dataset\n    data = requests.get((self.url).replace(' ', '').replace('\\n', '') + self.api_key, headers=headers)\nAttributeError: 'NoneType' object has no attribute 'replace'\n",
-      "timestamp": "2019-03-14 15:23:43.894011"
-    },
-  ]
-
-
 const styles = (theme) => ({
   root: {
     width: 'auto',
@@ -284,7 +199,7 @@ class ImportersList extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {dummyData.map(row => (
+              {admin.importers.map(row => (
                 <TableRow key={row.api_id}>
                   <TableCell component="th" scope="row">
                     {row.api_id}
