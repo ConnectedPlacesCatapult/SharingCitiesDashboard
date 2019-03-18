@@ -1,4 +1,5 @@
 import traceback
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -26,7 +27,7 @@ class TfL_BikePoints(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
-    def _create_datasource(self, headers: str = None) -> None:
+    def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
         :param headers: Request Headers
