@@ -55,8 +55,9 @@ class ImporterStatusTestCase(unittest.TestCase):
         access_token_header = self.generate_access_token()
         response_fail = self.testing_client.get('/importer_status',
                                                 headers=access_token_header)
-        self.assertEqual(response_fail.status_code, 404)
-        self.assertIn(b"No statuses", response_fail.data)
+        self.assertEqual(response_fail.status_code, 200)
+        num_states_returned = len(response_fail.get_json())
+        self.assertEqual(num_states_returned, 0)
 
     def generate_access_token(self) -> dict:
         """
