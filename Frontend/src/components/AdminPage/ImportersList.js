@@ -186,50 +186,50 @@ class ImportersList extends React.Component {
               Retry All
             </Button>
           </div>
-          {/*<Table className={classes.table}>*/}
-            {/*<TableHead>*/}
-              {/*<TableRow>*/}
-                {/*<TableCell>API ID</TableCell>*/}
-                {/*<TableCell align="right">Import Class Name</TableCell>*/}
-                {/*<TableCell align="right">State</TableCell>*/}
-                {/*<TableCell align="right">Reason</TableCell>*/}
-                {/*<TableCell align="right">Timestamp</TableCell>*/}
-                {/*<TableCell align="right"></TableCell>*/}
-                {/*<TableCell align="right"></TableCell>*/}
-              {/*</TableRow>*/}
-            {/*</TableHead>*/}
-            {/*<TableBody>*/}
-              {/*{admin.importers.map(row => (*/}
-                {/*<TableRow key={row.api_id}>*/}
-                  {/*<TableCell component="th" scope="row">*/}
-                    {/*{row.api_id}*/}
-                  {/*</TableCell>*/}
-                  {/*<TableCell align="right">*/}
-                    {/*{row.import_class_name}*/}
-                  {/*</TableCell>*/}
-                  {/*<TableCell align="right">*/}
-                    {/*{this.stateIndicator(row.state)}*/}
-                  {/*</TableCell>*/}
-                  {/*<TableCell align="right">*/}
-                    {/*{row.reason}*/}
-                  {/*</TableCell>*/}
-                  {/*<TableCell align="right">*/}
-                    {/*{ moment(row.timestamp).format('HH:mm - D/MM/YY') }*/}
-                  {/*</TableCell>*/}
-                  {/*<TableCell align="right" style={{textAlign: 'right'}}>*/}
-                    {/*{row.state === 'failure' ? <Button variant="text" size="small" fullWidth onClick={() => this.handleOpenImporterLogs(row)}>*/}
-                      {/*View Logs*/}
-                    {/*</Button> : null}*/}
-                  {/*</TableCell>*/}
-                  {/*<TableCell align="right" style={{textAlign: 'right'}}>*/}
-                    {/*{row.state === 'failure' ? <IconButton onClick={() => promptDeleteUser(row)}>*/}
-                      {/*<ReplayIcon color="primary" />*/}
-                    {/*</IconButton> : null}*/}
-                  {/*</TableCell>*/}
-                {/*</TableRow>*/}
-              {/*))}*/}
-            {/*</TableBody>*/}
-          {/*</Table>*/}
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell>API ID</TableCell>
+                <TableCell align="right">Import Class Name</TableCell>
+                <TableCell align="right">State</TableCell>
+                <TableCell align="right">Reason</TableCell>
+                <TableCell align="right">Timestamp</TableCell>
+                <TableCell align="right"></TableCell>
+                <TableCell align="right"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {admin.importers.map(row => (
+                <TableRow key={row.api_id}>
+                  <TableCell component="th" scope="row">
+                    {row.api_id}
+                  </TableCell>
+                  <TableCell align="right">
+                    {row.import_class_name}
+                  </TableCell>
+                  <TableCell align="right">
+                    {this.stateIndicator(row.state)}
+                  </TableCell>
+                  <TableCell align="right">
+                    {row.reason}
+                  </TableCell>
+                  <TableCell align="right">
+                    { moment(row.timestamp).format('HH:mm - D/MM/YY') }
+                  </TableCell>
+                  <TableCell align="right" style={{textAlign: 'right'}}>
+                    {row.state === 'failure' ? <Button variant="text" size="small" fullWidth onClick={() => this.handleOpenImporterLogs(row)}>
+                      View Logs
+                    </Button> : null}
+                  </TableCell>
+                  <TableCell align="right" style={{textAlign: 'right'}}>
+                    {row.state === 'failure' ? <IconButton onClick={() => promptDeleteUser(row)}>
+                      <ReplayIcon color="primary" />
+                    </IconButton> : null}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Paper>
 
         <Modal
