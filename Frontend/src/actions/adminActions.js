@@ -51,7 +51,7 @@ export const fetchImporterStatuses = () => {
     axiosInstance.get('importer_status', requestData).then((response) => {
       dispatch({
         type: FETCH_IMPORTER_STATUSES_FULFILLED,
-        payload: response,
+        payload: response.data,
       })
     })
     .catch((err) => {
