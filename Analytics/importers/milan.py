@@ -2,7 +2,7 @@ import json
 import logging
 import traceback
 from datetime import datetime, timedelta
-from typing import Union
+from typing import Any, Union
 
 import numpy as np
 import pandas as pd

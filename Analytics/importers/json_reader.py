@@ -23,13 +23,11 @@ It is a recursive algorithm that doesn't the depth of the json structure and fla
 '''
 
 import json
-
-import pandas as pd
 import requests
-
+import pandas as pd
 
 class JsonReader(object):
-    def __init__(self, url=None, object_seperator: str = None):
+    def __init__(self, url = None, object_seperator: str = None):
         self.url = url
         self.object_seperator = object_seperator
         self.list_of_objects = []
@@ -41,8 +39,8 @@ class JsonReader(object):
         return _json
 
     def create_objects(self, data, curr_key: str = None, ignore_tags: list = [],
-                       ignore_values: list = [], ignore_tag_values: dict = {},
-                       ignore_object_tags: list = []):
+                        ignore_values: list = [], ignore_tag_values: dict = {},
+                        ignore_object_tags: list = []):
         if isinstance(data, dict):
             for key in data:
                 if key in ignore_object_tags:
@@ -57,9 +55,8 @@ class JsonReader(object):
                     self.list_of_objects.append(self.json_objects)
                 self.json_objects = JsonObjects()
 
-            if data in ignore_values or curr_key in ignore_tags or (
-                    curr_key in ignore_tag_values and ignore_tag_values[curr_key] == data):
-                return
+            if data in ignore_values or curr_key in ignore_tags or (curr_key in ignore_tag_values and ignore_tag_values[curr_key] == data):
+                    return
 
             if curr_key in self.json_objects.object_dict:
                 self.json_objects.object_dict[curr_key].append(data)

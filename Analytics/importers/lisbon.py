@@ -1,7 +1,7 @@
 import json
 import logging
 import traceback
-from typing import Union
+from typing import Any, Union
 
 import pandas as pd
 import requests
