@@ -25,6 +25,17 @@ class ImporterStatuses(db.Model):
 
     def __init__(self, api_id: int, import_class_name: str, state: str,
                  reason: str, trace: str,timestamp: datetime = datetime.now()):
+        """
+        Initialise the Importer Statuses instance attributes
+
+        :param api_id: id of the API from which data is imported from
+        :param import_class_name: name of the class that implements the
+                                  importer
+        :param state: state of the importer.
+        :param reason: the error raised when the importer fails
+        :param trace: the stack trace raised when the importer fails
+        :param timestamp: the date and time when the status was persisted
+        """
 
         self.api_id = api_id
         self.import_class_name = import_class_name
@@ -110,8 +121,11 @@ class ImporterStatuses(db.Model):
         return cls.query.filter_by(import_class_name=name).first()
 
     @classmethod
-    def remove_where(cls, time_limit: datetime) -> db.Model:
-        """ Delete all entries entered after time_limit argument """
+    def remove_where(cls, time_limit: datetime):
+        """
+        Delete all entries entered after time_limit argument
+        :param time_limit: datetime after which entries should be deleted
+        """
 
         new_statuses = cls.query.filter(
             cls.timestamp >= time_limit)
