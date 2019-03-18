@@ -16,7 +16,7 @@ class ImporterStatuses(db.Model):
     __tablename__ = 'importer_status'
 
     id = db.Column(db.Integer, primary_key=True)
-    api_id = db.Column(db.Integer, db.ForeignKey('api.id'))
+    api_id = db.Column(db.Integer, nullable=False)
     import_class_name = db.Column(db.String(100), nullable=False)
     state = db.Column(db.String(50), nullable=False)
     reason = db.Column(db.Text)
@@ -83,7 +83,7 @@ class ImporterStatuses(db.Model):
     @classmethod
     def get_all(cls) -> db.Model:
         """Fetch all Importer Status fields """
-        return cls.query.all()
+        return ImporterStatuses.query.all()
 
     @staticmethod
     def commit():
@@ -106,6 +106,7 @@ class ImporterStatuses(db.Model):
         :param name: name of importer which is contained in the api table
         :return: the Importer Status entry that match the api_id argument
         """
+
         return cls.query.filter_by(import_class_name=name).first()
 
     @classmethod
