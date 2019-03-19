@@ -22,7 +22,9 @@ class API(db.Model):
 
     devices = db.relationship('Sensor', backref='api', lazy=True)
 
-    def __init__(self, name, url, api_key, api_class, refresh_time, token_expiry, timestamp=None):
+    def __init__(self, name: str, url: str, api_key: str, api_class: str,
+                 refresh_time: int, token_expiry: datetime, timestamp:
+            datetime =datetime.now()):
         """
         Initialise the attributes of the API model
         :param name: name of the API
@@ -39,12 +41,9 @@ class API(db.Model):
         self.api_class = api_class
         self.refresh_time = refresh_time
         self.token_expiry = token_expiry
-        if timestamp is None:
-            timestamp = datetime.utcnow()
-
         self.timestamp = timestamp
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Override the dunder repr method to cast the name and url attributes
         of the current API instance to a string
@@ -58,7 +57,7 @@ class API(db.Model):
         """
         return json.dumps(self.json())
 
-    def json(self):
+    def json(self) -> dict:
         """
         Create a JSON dict of the API object attributes
         :return: the API object attributes as a JSON (dict)
@@ -74,7 +73,7 @@ class API(db.Model):
             'timestamp': str(self.timestamp)
         }
 
-    def save(self):
+    def save(self) -> db.Model:
         """
         Add the current API fields to the SQLAlchemy session
         """
@@ -88,14 +87,14 @@ class API(db.Model):
 
         return self
 
-    def get(self):
+    def get(self) -> db.Model:
         """
         Return the API table entry which matches the current instance
         """
         return API.query.filter_by(name=self.name, url=self.url).first()
 
     @classmethod
-    def get_by_name(cls, name):
+    def get_by_name(cls, name: str) -> db.Model:
         """
         Return an entry in the API table whose name field matches the name
         argument
@@ -104,14 +103,14 @@ class API(db.Model):
         return API.query.filter_by(name=name).first()
 
     @classmethod
-    def get_by_api_id(cls, id):
+    def get_by_api_id(cls, id: int) -> db.Model:
         """
         Return an entry whose api id matches the id argument
-        :param class_name: name of class that implements the importer
+        :param id: the api id
         """
         return API.query.filter_by(id=id).first()
 
     @classmethod
-    def get_all(cls):
+    def get_all(cls) -> db.Model:
         """ Return all entries in API table """
         return API.query.all()
