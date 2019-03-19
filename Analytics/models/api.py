@@ -23,6 +23,16 @@ class API(db.Model):
     devices = db.relationship('Sensor', backref='api', lazy=True)
 
     def __init__(self, name, url, api_key, api_class, refresh_time, token_expiry, timestamp=None):
+        """
+        Initialise the attributes of the API model
+        :param name: name of the API
+        :param url: endpoint from which data is imported
+        :param api_key: key that allows access to endpoint that url represents
+        :param api_class: class that implements the importer
+        :param refresh_time: number of seconds between importer execution
+        :param token_expiry: date and time when api_key expires
+        :param timestamp: date and time when the API entry was persisted
+        """
         self.name = name
         self.url = url
         self.api_key = api_key
@@ -35,12 +45,24 @@ class API(db.Model):
         self.timestamp = timestamp
 
     def __repr__(self):
+        """
+        Override the dunder repr method to cast the name and url attributes
+        of the current API instance to a string
+        """
         return 'Name: %s, Url: %s' % (self.name, self.url)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        overrides the dunder string method to cast API attributes to a string
+        :return: a JSON string of the API objects attributes
+        """
         return json.dumps(self.json())
 
     def json(self):
+        """
+        Create a JSON dict of the API object attributes
+        :return: the API object attributes as a JSON (dict)
+        """
         return {
             'id': self.id,
             'name': self.name,
@@ -53,6 +75,9 @@ class API(db.Model):
         }
 
     def save(self):
+        """
+        Add the current API fields to the SQLAlchemy session
+        """
         try:
             db.session.add(self)
             db.session.flush()
@@ -64,16 +89,29 @@ class API(db.Model):
         return self
 
     def get(self):
+        """
+        Return the API table entry which matches the current instance
+        """
         return API.query.filter_by(name=self.name, url=self.url).first()
 
     @classmethod
     def get_by_name(cls, name):
+        """
+        Return an entry in the API table whose name field matches the name
+        argument
+        :param name: name of the API table entry
+        """
         return API.query.filter_by(name=name).first()
 
     @classmethod
     def get_by_api_id(cls, id):
+        """
+        Return an entry whose api id matches the id argument
+        :param class_name: name of class that implements the importer
+        """
         return API.query.filter_by(id=id).first()
 
     @classmethod
     def get_all(cls):
+        """ Return all entries in API table """
         return API.query.all()
