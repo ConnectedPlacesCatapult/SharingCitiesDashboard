@@ -23,8 +23,9 @@ class API(db.Model):
     devices = db.relationship('Sensor', backref='api', lazy=True)
 
     def __init__(self, name: str, url: str, api_key: str, api_class: str,
-                 refresh_time: int, token_expiry: datetime, timestamp:
-            datetime =datetime.now()):
+                 refresh_time : int, token_expiry: datetime,
+                 timestamp: datetime = datetime.utcnow()):
+
         """
         Initialise the attributes of the API model
         :param name: name of the API
@@ -77,6 +78,7 @@ class API(db.Model):
         """
         Add the current API fields to the SQLAlchemy session
         """
+        
         try:
             db.session.add(self)
             db.session.flush()
@@ -91,6 +93,7 @@ class API(db.Model):
         """
         Return the API table entry which matches the current instance
         """
+
         return API.query.filter_by(name=self.name, url=self.url).first()
 
     @classmethod
@@ -100,7 +103,24 @@ class API(db.Model):
         argument
         :param name: name of the API table entry
         """
-        return API.query.filter_by(name=name).first()
+
+        return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def get_by_api_class(cls, class_name: str) -> db.Model:
+        """
+        Return an entry whose api_class field contains the class_name
+        argument
+        :param class_name: name of class that implements the importer
+        """
+
+        entries = cls.get_all()
+        for entry in entries:
+            _class = entry.api_class.split('.')[2]
+            if _class == class_name:
+                return entry
+
+        return None
 
     @classmethod
     def get_by_api_id(cls, id: int) -> db.Model:
@@ -113,4 +133,6 @@ class API(db.Model):
     @classmethod
     def get_all(cls) -> db.Model:
         """ Return all entries in API table """
-        return API.query.all()
+        
+        return cls.query.all()
+

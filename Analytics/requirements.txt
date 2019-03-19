@@ -18,7 +18,7 @@ shapely
 bcrypt
 flask-jwt-extended
 pytest
-logging
 sendgrid
 celery==v4.3.0rc1
 apscheduler
+retrying

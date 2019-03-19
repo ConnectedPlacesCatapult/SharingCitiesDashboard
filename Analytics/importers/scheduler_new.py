@@ -8,10 +8,12 @@ import sqlalchemy
 from sqlalchemy.orm import sessionmaker, scoped_session
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from retrying import retry
 
 import settings
 from importers.state_decorator import ImporterStatus
 from models.importer_status import ImporterStatuses
+from models.api import API as Api_Class
 from app import create_app
 from db import db
 
@@ -29,8 +31,15 @@ sched = BackgroundScheduler(jobstores=jobstore)
 sched.start()
 
 
+class RetryingException(Exception):
+    """
+    Exception that is raised when a function that has a retry decorator fails
+    """
+    pass
+
+
 class Scheduler(object):
-    """ Schedule the execution importer tasks """
+    """ Schedule the execution of importer tasks """
 
     status_tracker = ImporterStatus.get_importer_status()
 
@@ -40,7 +49,6 @@ class Scheduler(object):
         Receive the status of an importer and persist it to the Importer
         Status table
         :param status: Status object identifying the
-        :return:
         """
         logger.info(status)
         importer_status = ImporterStatuses.find_by_name(status.name)
@@ -54,6 +62,45 @@ class Scheduler(object):
 
             importer_status.timestamp = datetime.now()
             importer_status.commit()
+
+            if status.state == "failure" and not importer_status.retrying:
+                importer_status.retrying = True
+                importer_status.save()
+                importer_status.commit()
+                try:
+                    Scheduler.retry_importer(status.name)
+                    logger.info("Exponential retry procedure was "
+                                "successful for class {}".format(status.name))
+                except RetryingException:
+                    logger.info("Exponential retry procedure was "
+                                "unsuccessful for class {}".format(status.name))
+
+                importer_status.retrying = False
+                importer_status.save()
+                importer_status.commit()
+
+    @staticmethod
+    @retry(wait_exponential_multiplier=10000, stop_max_delay=100000)
+    def retry_importer(importer_class_name: str):
+        """
+        Retry importer if it has failed at intervals that correspond to a
+        exponential back-off procedure
+        :param importer_class_name: name of class that implements the importer
+        :raise RetryingException: raise if importer retry was unsuccessful
+        """
+        logger.info("Importer retry for {}".format(importer_class_name))
+        retry_class = Api_Class.get_by_api_class(importer_class_name)
+        if retry_class:
+            api_name = retry_class.name
+            class_name = retry_class.api_class
+            Scheduler.fetch_data(class_name, api_name)
+
+        result_entry = ImporterStatuses.find_by_name(importer_class_name)
+        if result_entry:
+            if result_entry.state != "success":
+                raise RetryingException
+                # raising an exception informs the @retry decorator to retry
+                # the function according to it's arguments 
 
     @staticmethod
     def get_apis() -> list:
@@ -84,9 +131,8 @@ class Scheduler(object):
         _module, _class = class_name.rsplit('.', 1)
         data_class = getattr(importlib.import_module(_module), _class)
         _d_class = data_class()
-        logger.info('Starting Importer for {} at:{} '.format(_class,
-                                                             time.strftime(
-                                                                 '%Y-%m-%d%H:%M:%S')))
+        logger.info('Starting Importer for {} at:{} '.format
+                    (_class, time.strftime('%Y-%m-%d%H:%M:%S')))
         _d_class._create_datasource()
 
     @staticmethod
@@ -111,13 +157,12 @@ class Scheduler(object):
     @staticmethod
     def run():
         """ Schedule main_task to execute once a day """
-
         apis = Scheduler.get_apis()
         for api in apis:
             if not ImporterStatuses.find_by_api_id(api.id):
                 class_name = api.api_class.split('.')[2]
                 new_entry = ImporterStatuses(api.id, class_name, 'pending',
-                                             '', '', datetime.now())
+                                             '', '', False,datetime.now())
                 new_entry.save()
                 new_entry.commit()
 
