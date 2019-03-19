@@ -1,15 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-// material-ui
-import { withStyles } from '@material-ui/core/styles';
-import Paper from "@material-ui/core/Paper";
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
+import {
+  Button,
+  Divider,
+  Paper,
+  Typography,
+  withStyles,
+} from '@material-ui/core';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import BarChartIcon from '@material-ui/icons/BarChart';
+
+import {
+  FunctionFilter,
+  TimestampFilter,
+  SensorFilter,
+} from './../common/Filters';
 
 const styles = (theme) => ({
   root: {
@@ -19,9 +25,6 @@ const styles = (theme) => ({
   },
   paper: {
     padding: theme.spacing.unit * 2,
-  },
-  heading: {
-    //color: 'white',
   },
   actionButtons: {
     display: 'flex',
@@ -34,24 +37,46 @@ const styles = (theme) => ({
   actionButtonIcon: {
     marginRight: theme.spacing.unit,
   },
+  divider: {
+    margin: `${theme.spacing.unit}px 0`,
+  },
 });
 
 class OptionsSidePanel extends React.Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  };
+
   render() {
     const { classes } = this.props;
 
     return (
       <div className={classes.root}>
         <Paper className={classes.paper}>
-          <Typography variant="h6" className={classes.heading}>
-            Filters
-          </Typography>
-          <Typography variant="body1" color="primary">
-            Filters to set the number of records etc. can go here
-          </Typography>
-          <br />
-          <Divider light={true} />
-          <br />
+          <SensorFilter
+            heading="Filter by sensor"
+            subheading="Limit the data for all selected attributes by sensor name"
+          />
+          <Divider
+            className={classes.divider}
+            light={true}
+          />
+          <TimestampFilter
+            heading="Filter by time"
+            subheading="Specify 'from' and 'to' timestamps"
+          />
+          <Divider
+            className={classes.divider}
+            light={true}
+          />
+          <FunctionFilter
+            heading="Function"
+            subheading="Apply aggregate functions to the data"
+          />
+          <Divider
+            className={classes.divider}
+            light={true}
+          />
           <Typography variant="h6" className={classes.heading}>
             Actions
           </Typography>
@@ -74,10 +99,6 @@ class OptionsSidePanel extends React.Component {
     )
   }
 }
-
-OptionsSidePanel.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 OptionsSidePanel = withStyles(styles)(OptionsSidePanel);
 
