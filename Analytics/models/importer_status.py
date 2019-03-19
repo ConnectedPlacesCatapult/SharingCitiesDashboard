@@ -21,10 +21,12 @@ class ImporterStatuses(db.Model):
     state = db.Column(db.String(50), nullable=False)
     reason = db.Column(db.Text)
     trace = db.Column(db.Text)
+    retrying = db.Column(db.Boolean)
     timestamp = db.Column(db.DateTime)
 
     def __init__(self, api_id: int, import_class_name: str, state: str,
-                 reason: str, trace: str,timestamp: datetime = datetime.now()):
+                 reason: str, trace: str, retry: bool = False,
+                 timestamp: datetime = datetime.now()):
         """
         Initialise the Importer Statuses instance attributes
 
@@ -34,6 +36,8 @@ class ImporterStatuses(db.Model):
         :param state: state of the importer.
         :param reason: the error raised when the importer fails
         :param trace: the stack trace raised when the importer fails
+        :param retry: whether the importer is executing the exponential
+                      back-off retry procedure
         :param timestamp: the date and time when the status was persisted
         """
 
@@ -42,6 +46,7 @@ class ImporterStatuses(db.Model):
         self.state = state
         self.reason = reason
         self.trace = trace
+        self.retrying = retry
         self.timestamp = timestamp
 
     def __str__(self) -> str:
@@ -63,6 +68,7 @@ class ImporterStatuses(db.Model):
             'state': self.state,
             'reason': self.reason,
             'trace': self.trace,
+            'retrying': self.retrying,
             'timestamp' : str(self.timestamp)
         }
 
