@@ -1,6 +1,8 @@
 '''
 Data class for storing information about API
 '''
+import json
+
 from db import db
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
@@ -35,6 +37,9 @@ class API(db.Model):
     def __repr__(self):
         return 'Name: %s, Url: %s' % (self.name, self.url)
 
+    def __str__(self):
+        return json.dumps(self.json())
+
     def json(self):
         return {
             'id': self.id,
@@ -43,8 +48,8 @@ class API(db.Model):
             'api key': self.api_key,
             'api class': self.api_class,
             'refresh time': self.refresh_time,
-            'token expiry': self.token_expiry,
-            'timestamp': self.timestamp
+            'token expiry': str(self.token_expiry),
+            'timestamp': str(self.timestamp)
         }
 
     def save(self):
@@ -64,6 +69,10 @@ class API(db.Model):
     @classmethod
     def get_by_name(cls, name):
         return API.query.filter_by(name=name).first()
+
+    @classmethod
+    def get_by_api_id(cls, id):
+        return API.query.filter_by(id=id).first()
 
     @classmethod
     def get_all(cls):
