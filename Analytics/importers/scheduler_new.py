@@ -31,6 +31,13 @@ sched = BackgroundScheduler(jobstores=jobstore)
 sched.start()
 
 
+class RetryingException(Exception):
+    """
+    Exception that is raised when a function that has a retry decorator fails
+    """
+    pass
+
+
 class Scheduler(object):
     """ Schedule the execution of importer tasks """
 
@@ -64,7 +71,7 @@ class Scheduler(object):
                     Scheduler.retry_importer(status.name)
                     logger.info("Exponential retry procedure was "
                                 "successful for class {}".format(status.name))
-                except Exception:
+                except RetryingException:
                     logger.info("Exponential retry procedure was "
                                 "unsuccessful for class {}".format(status.name))
 
@@ -79,7 +86,7 @@ class Scheduler(object):
         Retry importer if it has failed at intervals that correspond to a
         exponential back-off procedure
         :param importer_class_name: name of class that implements the importer
-        :raise Exception: raise if retry was unsuccessful
+        :raise RetryingException: raise if importer retry was unsuccessful
         """
         logger.info("Importer retry for {}".format(importer_class_name))
         retry_class = Api_Class.get_by_api_class(importer_class_name)
@@ -91,7 +98,9 @@ class Scheduler(object):
         result_entry = ImporterStatuses.find_by_name(importer_class_name)
         if result_entry:
             if result_entry.state != "success":
-                raise Exception  # raise exception if retry is unsuccessful
+                raise RetryingException
+                # raising an exception informs the @retry decorator to retry
+                # the function according to it's arguments 
 
     @staticmethod
     def get_apis() -> list:
