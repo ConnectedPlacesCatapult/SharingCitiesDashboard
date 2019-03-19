@@ -98,14 +98,15 @@ class Scheduler(object):
 
         apis = Scheduler.get_apis()
         for api in apis:
+            class_name = api.api_class.split('.')[2]
             sched.add_job(Scheduler.fetch_data, 'interval',
                           name='{}'.format(api.name),
                           seconds=api.refresh_time,
                           start_date=datetime.now()+timedelta(seconds=5),
                           end_date=datetime.now()+timedelta(hours=23),
                           args=[api.api_class, api.name],
-                          replace_existing=True, id='{}'.format(api.api_class),
-                          jobstore='sqlalchemy')
+                          replace_existing=True, id='{}'.format(class_name),
+                          jobstore='sqlalchemy', misfire_grace_time=300)
 
     @staticmethod
     def run():

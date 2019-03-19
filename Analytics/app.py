@@ -51,6 +51,7 @@ from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
 from resources.import_status import ImportStatus
+from resources.import_retry import ImportRetry
 
 
 def create_app(**config_overrides):
@@ -185,5 +186,6 @@ def create_app(**config_overrides):
 
     api.add_resource(ExportData, '/export_data')
     api.add_resource(ImportStatus, '/importer_status')
+    api.add_resource(ImportRetry, '/importer_retry')
 
     return app
