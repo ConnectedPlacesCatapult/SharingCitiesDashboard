@@ -30,7 +30,7 @@ class ImportRetry(Resource):
         Status table
         :param status: Status object defining the state of an importer
         """
-        logger.info("{}".format(status))
+        logger.info(status)
         importer_status = ImporterStatuses.find_by_name(status.name)
         if importer_status:
             if status.state == "success":
@@ -44,7 +44,7 @@ class ImportRetry(Resource):
             importer_status.commit()
 
     @jwt_required
-    def post(self) -> (str, int):
+    def post(self) -> (dict, int):
         """
         POST request, allow an admin user to run the importer which
         corresponds to the api_id argument
