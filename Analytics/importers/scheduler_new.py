@@ -44,7 +44,7 @@ class Scheduler(object):
     status_tracker = ImporterStatus.get_importer_status()
 
     @status_tracker.changed.register
-    def status_has_changed(self, status: ImporterStatuses):
+    def status_has_changed(self, status: ImporterStatus):
         """
         Receive the status of an importer and persist it to the Importer
         Status table
