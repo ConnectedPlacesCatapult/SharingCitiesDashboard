@@ -6,13 +6,13 @@ import Button from '@material-ui/core/Button';
 import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
 import Modal from "@material-ui/core/Modal";
-import UserList from "./UserList"
-import ImportersList from "./ImportersList"
+import UserTable from "./UserTable"
 import AddUser from "../common/AddUser/AddUser"
 import DeleteUserDialog from "../common/DeleteUserDialog/DeleteUserDialog"
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import ImporterTable from './ImporterTable';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -87,8 +87,8 @@ class AdminPage extends React.Component {
             </Tabs>
           </AppBar>
 
-          {value === 0 && <TabContainer><UserList openAddUser={this.openAddUser}/></TabContainer>}
-          {value === 1 && <TabContainer><ImportersList openLogsModal={this.handleOpenImporterLogs}/></TabContainer>}
+          {value === 0 && <TabContainer><UserTable/></TabContainer>}
+          {value === 1 && <TabContainer><ImporterTable/></TabContainer>}
 
           <Dialog
             open={admin.deleteUserDialogOpen}
