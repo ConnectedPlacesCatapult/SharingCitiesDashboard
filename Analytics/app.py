@@ -41,6 +41,7 @@ from resources.themes import AddTheme
 from resources.themes import DeleteSubTheme
 from resources.themes import DeleteTheme
 from resources.themes import GetSubThemes
+from resources.themes import GetThemeTree
 from resources.themes import GetThemes
 from resources.themes import RenameSubTheme
 from resources.themes import RenameTheme
@@ -50,6 +51,7 @@ from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
 from resources.import_status import ImportStatus
+from resources.import_retry import ImportRetry
 
 
 def create_app(**config_overrides):
@@ -89,7 +91,7 @@ def create_app(**config_overrides):
 
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token: dict) -> bool:
-        """ 
+        """
         Query revoked tokens table for presence of decrypted_token argument
         :param decrypted_token: Decrypted version of a user's JWT
         :type decrypted_token: string
@@ -101,7 +103,7 @@ def create_app(**config_overrides):
 
     @jwt.user_claims_loader
     def add_claims_to_access_token(user: db.Model) -> dict:
-        """ 
+        """
         Add admin claim to access token
         :param user: Users model
         :type user: Users instance
@@ -112,7 +114,7 @@ def create_app(**config_overrides):
 
     @jwt.user_identity_loader
     def user_identity_lookup(user: db.Model) -> str:
-        """ 
+        """
         Define identity claim within JWT token
         :param user: Users model
         :type user: Users instance
@@ -168,6 +170,7 @@ def create_app(**config_overrides):
     api.add_resource(RenameTheme, '/admin/themes/rename_theme')
     api.add_resource(DeleteTheme, '/admin/themes/delete_theme')
     api.add_resource(GetThemes, '/admin/themes/get_themes')
+    api.add_resource(GetThemeTree, '/admin/themes/get_tree')
 
     # Sub Theme Endpoints
     api.add_resource(AddSubTheme, '/admin/themes/add_subtheme')
@@ -183,5 +186,6 @@ def create_app(**config_overrides):
 
     api.add_resource(ExportData, '/export_data')
     api.add_resource(ImportStatus, '/importer_status')
+    api.add_resource(ImportRetry, '/importer_retry')
 
     return app

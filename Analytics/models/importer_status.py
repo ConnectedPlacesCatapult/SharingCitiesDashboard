@@ -16,7 +16,7 @@ class ImporterStatuses(db.Model):
     __tablename__ = 'importer_status'
 
     id = db.Column(db.Integer, primary_key=True)
-    api_id = db.Column(db.Integer, db.ForeignKey('api.id'))
+    api_id = db.Column(db.Integer, nullable=False)
     import_class_name = db.Column(db.String(100), nullable=False)
     state = db.Column(db.String(50), nullable=False)
     reason = db.Column(db.Text)
@@ -25,6 +25,17 @@ class ImporterStatuses(db.Model):
 
     def __init__(self, api_id: int, import_class_name: str, state: str,
                  reason: str, trace: str,timestamp: datetime = datetime.now()):
+        """
+        Initialise the Importer Statuses instance attributes
+
+        :param api_id: id of the API from which data is imported from
+        :param import_class_name: name of the class that implements the
+                                  importer
+        :param state: state of the importer.
+        :param reason: the error raised when the importer fails
+        :param trace: the stack trace raised when the importer fails
+        :param timestamp: the date and time when the status was persisted
+        """
 
         self.api_id = api_id
         self.import_class_name = import_class_name
@@ -82,7 +93,7 @@ class ImporterStatuses(db.Model):
 
     @staticmethod
     def get_all() -> db.Model:
-        """Fetch all Importer Status fields """
+        """Fetch all entries in the Importer Status table"""
         return ImporterStatuses.query.all()
 
     @staticmethod
@@ -90,29 +101,34 @@ class ImporterStatuses(db.Model):
         """ Commit updated items to the database """
         db.session.commit()
 
-    @staticmethod
-    def find_by_api_id(api_id: int) -> db.Model:
+    @classmethod
+    def find_by_api_id(cls, api_id: int) -> db.Model:
         """
         Return the Importer Status entry that matches the api_id argument
         :param api_id: id of importer which is contained in the api table
         :return: the Importer Status entry that match the api_id argument
         """
-        return ImporterStatuses.query.filter_by(api_id=api_id).first()
+        return cls.query.filter_by(api_id=api_id).first()
 
-    @staticmethod
-    def find_by_name(name: str) -> db.Model:
+    @classmethod
+    def find_by_name(cls, name: str) -> db.Model:
         """
         Return the Importer Status entry that matches the api_id argument
         :param name: name of importer which is contained in the api table
         :return: the Importer Status entry that match the api_id argument
         """
-        return ImporterStatuses.query.filter_by(import_class_name=name).first()
 
-    @staticmethod
-    def remove_all() -> db.Model:
-        """Fetch all Importer Status fields """
+        return cls.query.filter_by(import_class_name=name).first()
 
-        status_entries = ImporterStatuses.query.all()
-        for entry in status_entries:
-            entry.delete()
-            entry.commit()
+    @classmethod
+    def remove_where(cls, time_limit: datetime):
+        """
+        Delete all entries entered after time_limit argument
+        :param time_limit: datetime after which entries should be deleted
+        """
+
+        new_statuses = cls.query.filter(
+            cls.timestamp >= time_limit)
+        for status in new_statuses:
+            status.delete()
+            status.commit()

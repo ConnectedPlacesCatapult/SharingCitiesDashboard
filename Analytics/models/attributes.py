@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from typing import Union
 
@@ -5,6 +6,8 @@ from sqlalchemy.exc import IntegrityError
 
 from db import db
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 class Attributes(db.Model):
     """
@@ -17,6 +20,7 @@ class Attributes(db.Model):
     name = db.Column(db.String(255), nullable=False, primary_key=True)
     table_name = db.Column(db.String(255), nullable=False)
     sub_theme_id = db.Column(db.Integer, db.ForeignKey('subtheme.id'), nullable=False)
+    sub_theme = db.relationship("SubTheme")
     unit_id = db.Column(db.Integer, db.ForeignKey('unit.id'), nullable=False, primary_key=True)
     unit_value = db.Column(db.Text, nullable=False, primary_key=True)
     description = db.Column(db.Text, nullable=True)
@@ -54,7 +58,22 @@ class Attributes(db.Model):
     def __repr__(self) -> str:
         return 'Name: %s, Table Name: %s' % (self.name, self.table_name)
 
-    def json(self) -> {str: Union[int, str, datetime]}:
+    @property
+    def serializable(self) -> dict:
+        """
+        Create Serializable data of Model, Remove Duplicate Data to reduce ThemeTree size
+        :return: JSON Serializable data for theme tree
+        """
+        return {
+            'id': self.id,
+            'name': self.name,
+            'table_name': self.table_name,
+            'Unit': self.unit_id,
+            'Unit Value': self.unit_value,
+            'Description': self.description
+        }
+
+    def json(self) -> dict:
         """
         Create JSON format of Attributes data
         :return:    JSON of Attributes data
@@ -69,7 +88,7 @@ class Attributes(db.Model):
             'Description': self.description
         }
 
-    def save(self) -> None:
+    def save(self) -> db.Model:
         """ Persist Attribute to database"""
         try:
             db.session.add(self)
@@ -80,6 +99,15 @@ class Attributes(db.Model):
                   'already exists')
             return self.get_by_name_unit_unitvalue()
         return self
+
+    def delete(self) -> None:
+        """put object in queue for deletion from database"""
+        try:
+            db.session.delete(self)
+            # db.session.flush()
+        except IntegrityError as ie:
+            db.session.rollback()
+            logger.error(self.name, 'theme does not exists')
 
     def commit(self) -> None:
         """ Commit changes to database"""

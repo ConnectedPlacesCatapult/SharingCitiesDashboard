@@ -307,8 +307,6 @@ class RequestForAttribute(Resource):
 			for val in values:
 				_data.append(float(val.value))
 				_timestamps.append(val.api_timestamp)
-
-
 			_pred, _mape, _method = predict(_data, _timestamps, n_pred)
 
 			if sensor_id:
