@@ -68,13 +68,13 @@ export const fetchImporterStatuses = () => {
 
 
 // Rerun Importer
-export const rerunImporter = (apiID) => {
+export const rerunImporter = (importer) => {
   return (dispatch) => {
     dispatch({
       type: RERUN_IMPORTER,
     });
     const requestData = {
-      api_id: apiID
+      api_id: importer.api_id
     }
     axiosInstance.post('importer_retry', requestData).then((response) => {
       dispatch({

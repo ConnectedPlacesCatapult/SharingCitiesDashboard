@@ -183,7 +183,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  rerunImporter: (apiID) => dispatch(rerunImporter(apiID)),
+  rerunImporter: (importer) => dispatch(rerunImporter(importer)),
   fetchImporterStatuses: () => dispatch(fetchImporterStatuses()),
 });
 
