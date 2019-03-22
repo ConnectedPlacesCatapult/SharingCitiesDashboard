@@ -120,7 +120,7 @@ class ImporterTable extends React.Component {
     return (
       <div className={classes.root}>
         {
-          admin && admin.importers && admin.importers.length > 0
+          admin.importers && admin.importers.length > 0
             ? <Paper>
                 <div className={classes.tableWrapper}>
                   <Table className={classes.table} aria-labelledby="tableTitle">
