@@ -74,7 +74,7 @@ class ImporterTableBody extends React.Component {
           component="th"
           scope="row"
           numeric={column.numeric}
-          padding="none"
+          padding="default"
           className={classNames(classes.cellValue, classes.cellBorder)}
         >
           {rowData[column.id]}
@@ -117,32 +117,22 @@ class ImporterTableBody extends React.Component {
                 key={key}
                 selected={selected}
               >
-                <TableCell
-                  padding="checkbox"
-                  className={classes.cellBorder}
-                >
-                  <Checkbox
-                    onClick={() => this.props.onClick(key)}
-                    checked={selected}
-                    className={classes.checkBox}
-                  />
-                </TableCell>
                 {this.generateCells(n)}
                 <TableCell
-                  padding="checkbox"
+                  padding="default"
                   className={classes.cellBorder}
                 >
                   {n['state'] === 'failure' ?
-                    <Button variant="text" size="small" fullWidth onClick={() => this.props.onLogsClick(n)}>
+                    <Button className={classes.cellValue} variant="text" size="small" fullWidth onClick={() => this.props.onLogsClick(n)}>
                       View Logs
                     </Button> : null}
                 </TableCell>
                 <TableCell
-                  padding="checkbox"
+                  padding="default"
                   className={classes.cellBorder}
                 >
                   <Tooltip title="Rerun Importer">
-                    <IconButton onClick={() => this.props.onRerunClick(n)} aria-label="Rerun">
+                    <IconButton className={classes.cellValue} onClick={() => this.props.onRerunClick(n)} aria-label="Rerun">
                       <RerunIcon />
                     </IconButton>
                   </Tooltip>
@@ -171,7 +161,6 @@ ImporterTableBody.propTypes = {
   orderBy: PropTypes.string.isRequired,
   page: PropTypes.number.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
-  onClick: PropTypes.func.isRequired,
   onLogsClick: PropTypes.func.isRequired,
   onRerunClick: PropTypes.func.isRequired,
   isSelected: PropTypes.func.isRequired,

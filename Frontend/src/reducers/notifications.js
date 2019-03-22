@@ -6,7 +6,9 @@ import {
   CREATE_NEW_USER_FULFILLED,
   DELETE_USER_FULFILLED,
   SAVE_WIDGET_FULFILLED,
-  SAVE_WIDGET_REJECTED
+  SAVE_WIDGET_REJECTED,
+  RERUN_IMPORTER_FULFILLED,
+  RERUN_IMPORTER_REJECTED
 } from "./../constants";
 
 const initialState = {
@@ -72,6 +74,24 @@ export default (state=initialState, action={}) => {
         showAlert: true,
         variant: 'failureNotification',
         error: action.payload
+      }
+    }
+
+    case RERUN_IMPORTER_FULFILLED: {
+      return {
+        ...state,
+        message: 'Importer Started Successfully',
+        showAlert: true,
+        variant: 'successNotification'
+      }
+    }
+
+    case RERUN_IMPORTER_REJECTED: {
+      return {
+        ...state,
+        message: 'Problem Starting Importer',
+        showAlert: true,
+        variant: 'failureNotification'
       }
     }
 
