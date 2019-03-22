@@ -12,8 +12,11 @@ import {
   FETCH_IMPORTER_STATUSES,
   FETCH_IMPORTER_STATUSES_FULFILLED,
   FETCH_IMPORTER_STATUSES_REJECTED,
+  RERUN_IMPORTER,
+  RERUN_IMPORTER_FULFILLED,
+  RERUN_IMPORTER_REJECTED,
+  HIDE_NOTIFICATION
 } from "./../constants";
-import {HIDE_NOTIFICATION} from "../constants";
 
 // Fetch Users for User List
 export const fetchUsers = () => {
@@ -39,7 +42,7 @@ export const fetchUsers = () => {
   };
 };
 
-// Fetch Users for User List
+// Fetch Importers for Importer List
 export const fetchImporterStatuses = () => {
   return (dispatch) => {
     dispatch({
@@ -60,6 +63,41 @@ export const fetchImporterStatuses = () => {
         payload: err,
       })
     })
+  };
+};
+
+
+// Rerun Importer
+export const rerunImporter = (apiID) => {
+  return (dispatch) => {
+    dispatch({
+      type: RERUN_IMPORTER,
+    });
+    const requestData = {
+      api_id: apiID
+    }
+    axiosInstance.post('importer_retry', requestData).then((response) => {
+      dispatch({
+        type: RERUN_IMPORTER_FULFILLED,
+        payload: response.data,
+      })
+      setTimeout(() => {
+        dispatch({
+          type: HIDE_NOTIFICATION,
+        })
+      }, 2000)
+    })
+      .catch((err) => {
+        dispatch({
+          type: RERUN_IMPORTER_REJECTED,
+          payload: err,
+        })
+      })
+    setTimeout(() => {
+        dispatch({
+          type: HIDE_NOTIFICATION,
+        })
+      }, 2000)
   };
 };
 

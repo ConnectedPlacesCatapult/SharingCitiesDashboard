@@ -51,25 +51,17 @@ class ImporterTableHead extends React.Component {
   };
 
   render() {
-    const { classes, onSelectAllClick, order, orderBy, numSelected, columns, rowCount } = this.props;
+    const { classes, order, orderBy, numSelected, columns, rowCount } = this.props;
 
     return (
       <TableHead>
         <TableRow>
-          <TableCell padding="checkbox" className={classes.cellBorder}>
-            <Checkbox
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={numSelected === rowCount}
-              onChange={onSelectAllClick}
-              className={classes.checkBox}
-            />
-          </TableCell>
           {columns.map((column, i) => {
             return (
               <TableCell
                 key={i}
                 numeric={column.numeric}
-                padding={(i === 0) ? 'none' : 'default'}
+                padding={'default'}
                 sortDirection={orderBy === column.id ? order : false}
                 className={classes.cellBorder}
               >
@@ -109,7 +101,6 @@ ImporterTableHead.propTypes = {
   columns: PropTypes.array.isRequired,
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.string.isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,

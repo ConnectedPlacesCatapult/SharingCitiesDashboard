@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
 import Modal from "@material-ui/core/Modal";
-import UserTable from "./UserTable"
+import UserList from "./UserList"
 import AddUser from "../common/AddUser/AddUser"
 import DeleteUserDialog from "../common/DeleteUserDialog/DeleteUserDialog"
 import AppBar from '@material-ui/core/AppBar';
@@ -19,7 +19,6 @@ import { withStyles } from '@material-ui/core/styles';
 
 // redux
 import { connect } from 'react-redux';
-import { promptDeleteUser } from "../../actions/adminActions";
 import { deleteUser } from "../../actions/adminActions";
 import { cancelDeleteUser } from "../../actions/adminActions";
 
@@ -87,7 +86,7 @@ class AdminPage extends React.Component {
             </Tabs>
           </AppBar>
 
-          {value === 0 && <TabContainer><UserTable/></TabContainer>}
+          {value === 0 && <TabContainer><UserList openAddUser={this.openAddUser}/></TabContainer>}
           {value === 1 && <TabContainer><ImporterTable/></TabContainer>}
 
           <Dialog
@@ -121,7 +120,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  promptDeleteUser: () => dispatch(promptDeleteUser()),
   deleteUser: () => dispatch(deleteUser()),
   cancelDeleteUser: () => dispatch(cancelDeleteUser()),
 });
