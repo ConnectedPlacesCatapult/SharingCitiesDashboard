@@ -36,14 +36,14 @@ class AddStartupAdmin(Command):
         persist these details in the users table
         """
 
-        print("ADD ADMIN USER")
-        print("Complete the following details ...")
-        print("==================================")
+        logger.info("ADD ADMIN USER")
+        logger.info("Complete the following details ...")
+        logger.info("==================================")
         fullname = input("Fullname: ")
         email = input("Email: ")
         pswd = getpass()
         pswd = bcrypt.hashpw(pswd.encode("utf8"), bcrypt.gensalt()).decode("utf8")
-        print("==================================")
+        logger.info("==================================")
 
         sql_text = sqlalchemy.text("insert into users(fullname,email,"
                                    "password,admin,activated, timestamp) "
@@ -54,9 +54,8 @@ class AddStartupAdmin(Command):
             with self.engine.connect() as con:
                 con.execute(sql_text)
 
-            print("Successfully added {} .".format(email))
-            logger.info("Added superuser {} to users table".format(email))
+            logger.info("Successfully added {} to users table.".format(email))
         except IntegrityError:
-            print("Unsuccessful. User {} already exists".format(email))
+            logger.info("Unsuccessful. User {} already exists".format(email))
         except ProgrammingError as e:
-            print("Unsuccessful on error:\n{}".format(e))
+            logger.info("Unsuccessful on error:\n{}".format(e))
