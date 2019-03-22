@@ -56,6 +56,6 @@ class AddStartupAdmin(Command):
 
             logger.info("Successfully added {} to users table.".format(email))
         except IntegrityError:
-            logger.info("Unsuccessful. User {} already exists".format(email))
+            logger.error("Unsuccessful. User {} already exists".format(email))
         except ProgrammingError as e:
-            logger.info("Unsuccessful on error:\n{}".format(e))
+            logger.error("Unsuccessful on error:\n{}".format(e))
