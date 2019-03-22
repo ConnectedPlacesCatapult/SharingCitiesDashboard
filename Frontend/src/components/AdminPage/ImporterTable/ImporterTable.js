@@ -95,10 +95,6 @@ class ImporterTable extends React.Component {
     this.setState({ page })
   };
 
-  handleBulkRerunClick = () => {
-    console.log('bulk rerun clicked')
-  };
-
   handleRerunClick = (selectedRerun) => {
     this.props.rerunImporter(selectedRerun)
   };
@@ -112,10 +108,8 @@ class ImporterTable extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { order, orderBy, selected, page, rowsPerPage, admin } = this.state;
-
-    // const columns = this.generateColumnsFromData();
+    const { classes, admin } = this.props;
+    const { order, orderBy, selected, page, rowsPerPage } = this.state;
 
     return (
       <div className={classes.root}>
@@ -179,11 +173,13 @@ class ImporterTable extends React.Component {
 ImporterTable.propTypes = {
   classes: PropTypes.object.isRequired,
   api: PropTypes.object.isRequired,
-  rerunImporter: PropTypes.func.isRequired
+  rerunImporter: PropTypes.func.isRequired,
+  admin: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   api: state.api,
+  admin: state.admin,
 });
 
 const mapDispatchToProps = (dispatch) => ({
