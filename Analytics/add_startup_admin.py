@@ -36,7 +36,6 @@ class AddStartupAdmin(Command):
         persist these details in the users table
         """
 
-        print("==================================")
         print("ADD ADMIN USER")
         print("Complete the following details ...")
         print("==================================")
