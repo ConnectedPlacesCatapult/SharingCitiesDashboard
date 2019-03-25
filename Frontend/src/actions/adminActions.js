@@ -77,13 +77,11 @@ export const rerunImporter = (importer) => {
       api_id: importer.api_id
     }
     axiosInstance.post('importer_retry', requestData).then((response) => {
+      fetchImporterStatuses()(dispatch)
       dispatch({
         type: RERUN_IMPORTER_FULFILLED,
         payload: response.data,
       })
-      dispatch({
-        type: FETCH_IMPORTER_STATUSES,
-      });
       setTimeout(() => {
         dispatch({
           type: HIDE_NOTIFICATION,
@@ -91,6 +89,7 @@ export const rerunImporter = (importer) => {
       }, 2000)
     })
     .catch((err) => {
+      fetchImporterStatuses()(dispatch)
       dispatch({
         type: RERUN_IMPORTER_REJECTED,
         payload: err,
