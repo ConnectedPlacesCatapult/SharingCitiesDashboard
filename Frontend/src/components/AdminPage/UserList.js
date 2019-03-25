@@ -75,7 +75,7 @@ class UserList extends React.Component {
       <div className={classes.root}>
         <Paper className={classes.paper}>
           <div className={classes.tableTitleBar}>
-            <Typography variant="h5" color="primary" className={classes.tableTitle}>
+            <Typography variant="h4" color="primary" className={classes.tableTitle}>
               Users
             </Typography>
             <Button variant="contained" color="primary" className={classes.tableTitleActionButton} onClick={this.props.openAddUser}>

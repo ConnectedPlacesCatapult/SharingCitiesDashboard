@@ -8,15 +8,9 @@ import {
   PROMPT_USER_DELETE,
   CANCEL_USER_DELETE,
   DELETE_USER_FULFILLED,
-  DELETE_USER_REJECTED,
-  FETCH_IMPORTER_STATUSES,
-  FETCH_IMPORTER_STATUSES_FULFILLED,
-  FETCH_IMPORTER_STATUSES_REJECTED,
-  RERUN_IMPORTER,
-  RERUN_IMPORTER_FULFILLED,
-  RERUN_IMPORTER_REJECTED,
-  HIDE_NOTIFICATION
+  DELETE_USER_REJECTED
 } from "./../constants";
+import {HIDE_NOTIFICATION} from "../constants";
 
 // Fetch Users for User List
 export const fetchUsers = () => {
@@ -39,65 +33,6 @@ export const fetchUsers = () => {
         payload: err,
       })
     })
-  };
-};
-
-// Fetch Importers for Importer List
-export const fetchImporterStatuses = () => {
-  return (dispatch) => {
-    dispatch({
-      type: FETCH_IMPORTER_STATUSES,
-    });
-    const requestData = {
-      limit: '10'
-    }
-    axiosInstance.get('importer_status', requestData).then((response) => {
-      dispatch({
-        type: FETCH_IMPORTER_STATUSES_FULFILLED,
-        payload: response.data,
-      })
-    })
-    .catch((err) => {
-      dispatch({
-        type: FETCH_IMPORTER_STATUSES_REJECTED,
-        payload: err,
-      })
-    })
-  };
-};
-
-
-// Rerun Importer
-export const rerunImporter = (importer) => {
-  return (dispatch) => {
-    dispatch({
-      type: RERUN_IMPORTER,
-    });
-    const requestData = {
-      api_id: importer.api_id
-    }
-    axiosInstance.post('importer_retry', requestData).then((response) => {
-      dispatch({
-        type: RERUN_IMPORTER_FULFILLED,
-        payload: response.data,
-      })
-      setTimeout(() => {
-        dispatch({
-          type: HIDE_NOTIFICATION,
-        })
-      }, 2000)
-    })
-      .catch((err) => {
-        dispatch({
-          type: RERUN_IMPORTER_REJECTED,
-          payload: err,
-        })
-      })
-    setTimeout(() => {
-        dispatch({
-          type: HIDE_NOTIFICATION,
-        })
-      }, 2000)
   };
 };
 
