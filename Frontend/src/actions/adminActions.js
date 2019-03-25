@@ -81,6 +81,9 @@ export const rerunImporter = (importer) => {
         type: RERUN_IMPORTER_FULFILLED,
         payload: response.data,
       })
+      dispatch({
+        type: FETCH_IMPORTER_STATUSES,
+      });
       setTimeout(() => {
         dispatch({
           type: HIDE_NOTIFICATION,
