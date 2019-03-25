@@ -1,7 +1,7 @@
 import json
 import logging
 import traceback
-from typing import Any, Union
+from typing import Union
 
 import pandas as pd
 import requests
@@ -16,21 +16,19 @@ logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
-@GetConfig("LisbonAPI")
+@GetConfig("LisbonAPI", 'environment', 'lisbon')
 class LisbonAPI(BaseImporter):
     """
     LisbonAPI Importer
     """
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Importer configurations
         Instantiate BaseImporter
         """
-        self.config = self.get_config('environment', 'lisbon')
-        self.USER_NAME = self.config['USER_NAME']
-        self.USER_PASSCODE = self.config['USER_PASSCODE']
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -74,8 +72,8 @@ class LisbonAPI(BaseImporter):
     def _refresh_token(self) -> str:
         """
         Refresh API Token
-        :param args: variable argument list
-        :return: new token
+        :param args: Variable argument list
+        :return: New token
         """
         headers = {"grant_type": "client_credentials"}
         token_url = 'https://iot.alticelabs.com/api/devices/token'

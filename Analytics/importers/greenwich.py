@@ -7,12 +7,13 @@ from models import location
 from models.sensor import Sensor
 from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
+from .token_exception import TokenExpired
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
-@GetConfig("GreenwichMeta")
+@GetConfig("GreenwichMeta", 'environment', 'greenwich_meta')
 class GreenwichMeta(BaseImporter):
     """
     This importer imports data from Greenwich ArcGIS REST API.
@@ -147,13 +148,12 @@ class GreenwichMeta(BaseImporter):
     """
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Importer Config
         Instantiate BAseImporter
-
         """
-        self.config = self.get_config('environment', 'greenwich_meta')
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -181,23 +181,21 @@ class GreenwichMeta(BaseImporter):
     def _refresh_token(self) -> None:
         """
         Refresh Tokken
-        :param args: variable argument list
         """
         logger.info('Token expired Refresh it manually')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichOCC")
+@GetConfig("GreenwichOCC", 'environment', 'greenwich_occ')
 class GreenwichOCC(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.config = self.get_config('environment', 'greenwich_occ')
-        if not self.config:
-            return
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -258,12 +256,12 @@ class GreenwichOCC(BaseImporter):
     def _refresh_token(self) -> None:
         """
         Refresh Tokken
-        :param args: variable argument list
         """
         logger.info('Token expired Refresh it manually')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichMeta_2")
+@GetConfig("GreenwichMeta_2", 'environment', 'greenwich_meta_2')
 class GreenwichMeta_2(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -271,10 +269,8 @@ class GreenwichMeta_2(BaseImporter):
         """
         Get Importer Config
         Instantiate BAseImporter
-
         """
-        self.config = self.get_config('environment', 'greenwich_meta_2')
-
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -308,21 +304,21 @@ class GreenwichMeta_2(BaseImporter):
     def _refresh_token(self) -> None:
         """
         Refresh Tokken
-        :param args: variable argument list
         """
         logger.info('Token expired Refresh it manually')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichOCC_2")
+@GetConfig("GreenwichOCC_2", 'environment', 'greenwich_occ_2')
 class GreenwichOCC_2(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.config = self.get_config('environment', 'greenwich_occ_2')
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -366,7 +362,6 @@ class GreenwichOCC_2(BaseImporter):
             self.df['latitude'] = latitude
             self.df['longitude'] = longitude
 
-            ### Renaming the columns so that they are not confused with GreenwichOCC
             self.df.rename(index=str, columns={'free': 'free_2',
                                                'isoffline': 'isoffline_2',
                                                'occupied': 'occupied_2'},
@@ -389,13 +384,13 @@ class GreenwichOCC_2(BaseImporter):
 
     def _refresh_token(self) -> None:
         """
-        Refresh Tokken
-        :param args: variable argument list
+        Refresh Token
         """
         logger.info('Token expired Refresh it manually')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichKiwiPump")
+@GetConfig("GreenwichKiwiPump", 'environment', 'greenwich_kiwi')
 class GreenwichKiwiPump(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -405,7 +400,7 @@ class GreenwichKiwiPump(BaseImporter):
         Instantiate BAseImporter
 
         """
-        self.config = self.get_config('environment', 'greenwich_kiwi')
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -418,14 +413,11 @@ class GreenwichKiwiPump(BaseImporter):
             super()._create_datasource(headers)
             self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
 
-            ### Hardcoding the location
             self.df['latitude'] = 51.485034
             self.df['longitude'] = -0.001097
             self.df['attribute'] = 'ernest_dense_pumps'
             self.df['description'] = 'Ernest Dense Boiler room pumps'
 
-            ### Faking a sensor id since the api returns data only from one sensor
-            ### Need to modify it when the api starts sourcing data from more sensors
             self.df['tag'] = 0
 
             self.create_datasource_with_values(dataframe=self.df, sensor_tag='tag', attribute_tag='attribute',
@@ -435,32 +427,27 @@ class GreenwichKiwiPump(BaseImporter):
 
             self.importer_status.status = Status.success(__class__.__name__)
 
-
         except Exception as e:
-
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
     def _refresh_token(self) -> None:
         """
         Refresh Tokken
-        :param args: variable argument list
         """
         logger.info('Token expired Refresh it manually')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichWholeHouse")
+@GetConfig("GreenwichWholeHouse", 'environment', 'greenwich_kiwi_house')
 class GreenwichWholeHouse(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Importer Config
         Instantiate BAseImporter
-
         """
-        self.config = self.get_config('environment', 'greenwich_kiwi_house')
-        if not self.config:
-            return
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -503,32 +490,27 @@ class GreenwichWholeHouse(BaseImporter):
 
             self.importer_status.status = Status.success(__class__.__name__)
 
-
         except Exception as e:
-
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
     def _refresh_token(self) -> None:
         """
         Refresh Tokken
-        :param args: variable argument list
         """
         logger.info('Token expired Refresh it manually')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichSiemens")
+@GetConfig("GreenwichSiemens", 'environment', 'greenwich_siemens')
 class GreenwichSiemens(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Importer Config
         Instantiate BAseImporter
-
         """
-        self.config = self.get_config('environment', 'greenwich_siemens')
-        if not self.config:
-            return
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -584,12 +566,11 @@ class GreenwichSiemens(BaseImporter):
             self.importer_status.status = Status.success(__class__.__name__)
 
         except Exception as e:
-
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
     def _refresh_token(self) -> None:
         """
         Refresh Tokken
-        :param args: variable argument list
         """
         logger.info('Token expired Refresh it manually')
+        raise TokenExpired("Token Expired")

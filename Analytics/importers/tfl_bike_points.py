@@ -9,7 +9,7 @@ from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
 
 
-@GetConfig("TfL_BikePoints")
+@GetConfig("TfL_BikePoints", 'environment', 'tfl_bike_points')
 class TfL_BikePoints(BaseImporter):
     """
     TFL Bike points importer
@@ -23,7 +23,7 @@ class TfL_BikePoints(BaseImporter):
         Get Import Config
         Instantiate BaseImporter
         """
-        self.config = self.get_config('environment', 'tfl_bike_points')
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 

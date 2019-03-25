@@ -13,7 +13,7 @@ from .config_decorator import GetConfig
 from .state_decorator import Status, ImporterStatus
 
 
-@GetConfig("KCLAirQuality", 'config.yml')
+@GetConfig("KCLAirQuality", 'environment', 'air_quality')
 class KCLAirQuality(BaseImporter):
     """
     Air Quality Importer
@@ -41,7 +41,7 @@ class KCLAirQuality(BaseImporter):
         """
         Get configurations, Instantiate BaseImporter, Set ImporterStatus to __init__
         """
-        self.config = self.get_config('environment', 'air_quality')
+        self.get_config()
 
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
@@ -75,7 +75,7 @@ class KCLAirQuality(BaseImporter):
             _today = _date.strftime('%d.%m.%Y')
             _tomorrow = (_date + timedelta(days=1)).strftime('%d.%m.%Y')
             self.df = None
-            for code in _codes[:3]:
+            for code in _codes:
                 self.url = self.BASE_URL % (code, _today, _tomorrow)
 
                 data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
