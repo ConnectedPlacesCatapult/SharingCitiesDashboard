@@ -86,7 +86,8 @@ class BaseImporter(object):
         :param headers: Request headers
         :return: Data set and an HTTP status code
         """
-        data = requests.get(self.url + self.api_key, headers=headers)
+        data = requests.get(self.url.replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
+
         self.dataset = json.loads(data.text)
         status_code, message = self.nginx_http_status(self.dataset, data.status_code)
         return self.dataset, status_code, message
