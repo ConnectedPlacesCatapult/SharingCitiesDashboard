@@ -90,17 +90,17 @@ export const rerunImporter = (importer) => {
         })
       }, 2000)
     })
-      .catch((err) => {
-        dispatch({
-          type: RERUN_IMPORTER_REJECTED,
-          payload: err,
-        })
+    .catch((err) => {
+      dispatch({
+        type: RERUN_IMPORTER_REJECTED,
+        payload: err,
       })
-    setTimeout(() => {
+      setTimeout(() => {
         dispatch({
           type: HIDE_NOTIFICATION,
         })
       }, 2000)
+    })
   };
 };
 

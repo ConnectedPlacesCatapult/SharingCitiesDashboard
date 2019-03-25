@@ -20,6 +20,15 @@ module.exports = {
         main: "#D54A44",
         //dark: "#AE3C38",
       },
+      success: {
+        main: '#4CAF50',
+      },
+      danger: {
+        main: '#ff5722',
+      },
+      info: {
+        main: '#81cfc7',
+      },
       background: {
         paper: "#313443",
         default: "#42465a",

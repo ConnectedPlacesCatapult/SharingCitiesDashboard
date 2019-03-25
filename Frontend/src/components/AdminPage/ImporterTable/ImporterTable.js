@@ -13,7 +13,6 @@ import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import Modal from "@material-ui/core/Modal";
 import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
 
 // redux
 import { connect } from 'react-redux';
@@ -183,8 +182,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  rerunImporter: (importer) => dispatch(rerunImporter(importer)),
   fetchImporterStatuses: () => dispatch(fetchImporterStatuses()),
+  rerunImporter: (importer) => dispatch(rerunImporter(importer)),
 });
 
 ImporterTable = withStyles(styles)(ImporterTable);

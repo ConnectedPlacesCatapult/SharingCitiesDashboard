@@ -7,6 +7,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import Checkbox from "@material-ui/core/Checkbox";
 import RerunIcon from '@material-ui/icons/Replay';
+import ClockIcon from '@material-ui/icons/AccessTime';
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import Button from '@material-ui/core/Button';
@@ -32,7 +33,7 @@ const styles = theme => ({
   pending: {
     color: theme.palette.primary.light,
     fontWeight: 800
-  }
+  },
 });
 
 function desc(a, b, orderBy) {
@@ -132,9 +133,10 @@ class ImporterTableBody extends React.Component {
                   className={classes.cellBorder}
                 >
                   <Tooltip title="Rerun Importer">
-                    <IconButton className={classes.cellValue} onClick={() => this.props.onRerunClick(n)} aria-label="Rerun">
-                      <RerunIcon />
-                    </IconButton>
+                    {n['state'] === 'pending' ?
+                      <ClockIcon className={classes.cellValue}/> : <IconButton className={classes.cellValue} onClick={() => this.props.onRerunClick(n)} aria-label="Rerun">
+                        <RerunIcon />
+                      </IconButton>}
                   </Tooltip>
                 </TableCell>
               </TableRow>
