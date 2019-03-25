@@ -9,6 +9,7 @@ import pandas as pd
 import requests
 import sqlalchemy
 from geoalchemy2.elements import WKTElement
+from requests import HTTPError
 from sqlalchemy.exc import IntegrityError
 
 from db import db
@@ -22,14 +23,12 @@ from models.sensor_attribute import SensorAttribute
 from models.theme import Theme, SubTheme
 from models.unit import Unit
 from utility import convert_unix_to_timestamp, convert_to_date
-from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-@GetConfig("BaseImporter", "config.yml")
 class BaseImporter(object):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -58,17 +57,20 @@ class BaseImporter(object):
         self.api_class = api_class
         self.dataset = None
 
-    def _create_datasource(self, headers: str) -> None:
+    def _create_datasource(self, headers: Union[dict, str]) -> None:
         """
         Create DataSource
         :param headers: Request headers
         :return: None
         """
-        _, status_code = self.load_dataset(headers)
+        _, status_code, message = self.load_dataset(headers)
+
+        if status_code == 498 or status_code == 499:
+            self._refresh_token()
 
         if status_code != 200:
-            self._refresh_token()
-            return
+            raise HTTPError(message)
+        return
 
     def _refresh_token(self):
         """
@@ -84,10 +86,31 @@ class BaseImporter(object):
         :param headers: Request headers
         :return: Data set and an HTTP status code
         """
-        data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
-
+        data = requests.get(self.url + self.api_key, headers=headers)
         self.dataset = json.loads(data.text)
-        return self.dataset, data.status_code
+        status_code, message = self.nginx_http_status(self.dataset, data.status_code)
+        return self.dataset, status_code, message
+
+    def nginx_http_status(self, data: dict, status_code: int) -> (int, Union[str, None]):
+        """
+        Handle nginx status code in content body.
+        :param data: HTTP response data
+        :param status_code: HTTP status code
+        :return: NGINX response status
+        """
+        message: str = None
+
+        if isinstance(data, dict):
+
+            try:
+                status = int(data['error']['code'])
+                if 'message' in data['error']:
+                    message = data['error']['message']
+                return status, message
+            except Exception:
+                return status_code, None
+
+        return status_code, None
 
     def create_dataframe(self, object_separator: Union[str, None] = None, ignore_tags: [str] = [],
                          ignore_values: [Any] = [],
@@ -299,8 +322,9 @@ class BaseImporter(object):
                     if _sensor:
                         sensor_objects[_sensor.name] = _sensor
                         sensor_exists.add(_hash)
-                        logger.info(s_name, 'sensor already exists with API ID:', str(api_id), 'and Location ID:',
-                                    str(loc.id))
+                        logger.info('{} sensor already exists with API ID: {} and Location ID:'.format(s_name,
+                                                                                                       str(api_id),
+                                                                                                       str(loc.id)))
                         continue
 
             sensor = Sensor(str(uuid.uuid4()), api_id, loc.id, s_name)

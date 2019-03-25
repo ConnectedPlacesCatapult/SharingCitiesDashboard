@@ -2,7 +2,7 @@ import json
 import logging
 import traceback
 from datetime import datetime, timedelta
-from typing import Any, Union
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -12,12 +12,13 @@ from models import location
 from models.sensor import Sensor
 from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
+from .token_exception import TokenExpired
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
-@GetConfig("MilanAPI")
+@GetConfig("MilanAPI", 'environment', 'milan')
 class MilanAPI(BaseImporter):
     """
     Milan Importer
@@ -27,12 +28,12 @@ class MilanAPI(BaseImporter):
     """
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Import configurations
         Instantiate BaseImporter
         """
-        self.config = self.get_config('environment', 'milan')
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -67,14 +68,13 @@ class MilanAPI(BaseImporter):
 
     def _refresh_token(self) -> None:
         """
-        Print Token Expired
-        :param args: variable arguments list
-
+        Refresh Token
         """
         logger.info('Token Expired')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("Milan_API_sensori_meteo_meta")
+@GetConfig("Milan_API_sensori_meteo_meta", 'environment', 'milan_sensori_meteo_meta')
 class Milan_API_sensori_meteo_meta(BaseImporter):
     """
     Milan Importer
@@ -84,13 +84,12 @@ class Milan_API_sensori_meteo_meta(BaseImporter):
     """
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Import configurations
         Instantiate BaseImporter
         """
-        self.config = self.get_config('environment', 'milan_sensori_meteo_meta')
-        self.HEADERS_SMM = self.config['HEADERS']
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -101,7 +100,7 @@ class Milan_API_sensori_meteo_meta(BaseImporter):
         """
         try:
             if not headers:
-                headers = json.loads(self.HEADERS_SMM.replace("'", '"'))
+                headers = json.loads(self.HEADERS.replace("'", '"'))
 
             super()._create_datasource(headers)
             self.df = self.create_dataframe(object_separator=None)
@@ -118,14 +117,13 @@ class Milan_API_sensori_meteo_meta(BaseImporter):
 
     def _refresh_token(self) -> None:
         """
-        Print Token Expired
-        :param args: variable arguments list
-
+        Refresh Token
         """
         logger.info('Token Expired')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("Milan_API_sensori_meteo")
+@GetConfig("Milan_API_sensori_meteo", 'environment', 'milan_sensori_meteo')
 class Milan_API_sensori_meteo(BaseImporter):
     """
     Milan Importer
@@ -135,15 +133,14 @@ class Milan_API_sensori_meteo(BaseImporter):
     """
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Import configurations
         Instantiate BaseImporter
         """
-        self.config.get_config('environment', 'milan_sensori_meteo')
+        self.get_config()
         self.BASE_URL += 'data_inizio={0}%2000%3A00%3A01&data_fine={1}%2000%3A00%3A01'.format(
             (datetime.now() - timedelta(1)).strftime('%Y-%m-%d'), datetime.now().strftime('%Y-%m-%d'))
-        self.HEADERS_SM = self.config['HEADERS']
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -154,7 +151,7 @@ class Milan_API_sensori_meteo(BaseImporter):
         """
         try:
             if not headers:
-                headers = json.loads(self.HEADERS_SM.replace("'", '"'))
+                headers = json.loads(self.HEADERS.replace("'", '"'))
 
             super()._create_datasource(headers)
 
@@ -162,11 +159,6 @@ class Milan_API_sensori_meteo(BaseImporter):
             names = self.df['dev_eui'].tolist()
             name_set = set()
             location_sensor = {}
-            sensor_location = {}
-            sensor_name_location = {}
-
-            latitude = []
-            longitude = []
 
             for s in names:
                 name_set.add(str(s))
@@ -199,14 +191,13 @@ class Milan_API_sensori_meteo(BaseImporter):
 
     def _refresh_token(self) -> None:
         """
-        Print Token Expired
-        :param args: variable arguments list
-
+        Refresh Token
         """
         logger.info('Token Expired')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("Milan_API_sc_parking_kiunsys_meta")
+@GetConfig("Milan_API_sc_parking_kiunsys_meta", 'environment', 'milan_sc_parking_kiunsys_meta')
 class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
     """
     Milan Importer
@@ -216,13 +207,12 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
     """
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Import configurations
         Instantiate BaseImporter
         """
-        self.config = self.get_config('environment', 'milan_sc_parking_kiunsys_meta')
-        self.HEADERS_KM = self.config['HEADERS']
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -233,7 +223,7 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
         """
         try:
             if not headers:
-                json.loads(self.HEADERS_KM.replace("'", '"'))
+                json.loads(self.HEADERS.replace("'", '"'))
 
             super()._create_datasource(headers)
 
@@ -257,13 +247,13 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
 
     def _refresh_token(self) -> None:
         """
-        Print Token Expired
-        :param args: variable arguments list
+        Refresh Token
         """
         logger.info('Token Expired')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("Milan_API_sc_parking_kiunsys")
+@GetConfig("Milan_API_sc_parking_kiunsys", 'environment', 'milan_sc_parking_kiunsys')
 class Milan_API_sc_parking_kiunsys(BaseImporter):
     """
     Milan Importer
@@ -273,14 +263,13 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
     """
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Import configurations
         Instantiate BaseImporter
         """
-        self.config = self.get_config('environment', 'milan_sc_parking_kiunsys')
+        self.get_config()
         self.BASE_URL += 'datetime={0}'.format(datetime.now().strftime('%Y%m%d%H%m%S'))
-        self.HEADERS = self.config['HEADERS']
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -320,13 +309,13 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
 
     def _refresh_token(self) -> None:
         """
-        Print Token Expired
-        :param args: variable arguments list
+        Refresh Token
         """
         logger.info('Token Expired')
+        raise TokenExpired("Token Expired")
 
 
-@GetConfig("Milan_API_sc_emobility_refeel")
+@GetConfig("Milan_API_sc_emobility_refeel", 'environment', 'milan_sc_emobility_refeel')
 class Milan_API_sc_emobility_refeel(BaseImporter):
     """
     Milan Importer
@@ -336,16 +325,15 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
     """
     importer_status = ImporterStatus.get_importer_status()
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Get Import configurations
         Instantiate BaseImporter
         """
-        self.config = self.get_config('environment', 'milan_sc_emobility_refeel')
-        self.BASE_URL += + 'fromTime={0}&toTime={1}'.format(
+        self.get_config()
+        self.BASE_URL += 'fromTime={0}&toTime={1}'.format(
             (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%m:%SZ'),
             (datetime.now()).strftime('%Y-%m-%dT%H:%m:%SZ'))
-        self.HEADERS = self.config['HEADERS']
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
@@ -395,8 +383,7 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
 
     def _refresh_token(self) -> None:
         """
-        Print Token Expired
-        :param args: variable arguments list
-
+        Refresh Token
         """
         logger.info('Token Expired')
+        raise TokenExpired("Token Expired")
