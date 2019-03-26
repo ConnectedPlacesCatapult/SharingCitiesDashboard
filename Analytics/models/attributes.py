@@ -177,3 +177,4 @@ class Attributes(db.Model):
         Fetch Attribute by id
         :return:    Attribute with id parsed
         """
+        return Attributes.query.filter_by(id=attribute_id).first()
