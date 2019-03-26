@@ -82,7 +82,7 @@ class GetThemeTree(Resource):
         self.response.extend([resp for resp in [self.create_theme_tree(theme_id, user_id) for theme_id in theme_ids]
                               if resp])
 
-    def create_theme_tree(self, theme_id: int, user_id: int):
+    def create_theme_tree(self, theme_id: int, user_id: int) -> None:
         """
         Create Theme Tree
         :param theme_id: Theme Id
