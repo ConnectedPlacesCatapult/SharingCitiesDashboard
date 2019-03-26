@@ -183,7 +183,7 @@ class AddUser extends React.Component {
               color="primary"
               className={classes.submit}
               onClick={this.props.closeAddUser}>
-              Cancel
+              Close
             </Button>
           </form>
         </Paper>
