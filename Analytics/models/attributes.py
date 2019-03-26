@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from typing import Union
 
 from sqlalchemy.exc import IntegrityError
 
@@ -8,6 +7,7 @@ from db import db
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
+
 
 class Attributes(db.Model):
     """
@@ -66,6 +66,7 @@ class Attributes(db.Model):
         """
         return {
             'id': self.id,
+            'sub_theme_id': self.sub_theme_id,
             'name': self.name,
             'table_name': self.table_name,
             'Unit': self.unit_id,
@@ -177,11 +178,3 @@ class Attributes(db.Model):
         :return:    Attribute with id parsed
         """
         return Attributes.query.filter_by(id=attribute_id).first()
-
-    @classmethod
-    def get_by_name(cls, name: str) -> db.Model:
-        """
-        Fetch Attribute by name
-        :return:    Attribute with name parsed
-        """
-        return cls.query.filter_by(name=name).first()
