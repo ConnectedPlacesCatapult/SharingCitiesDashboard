@@ -2,17 +2,15 @@ import React from "react";
 import PropTypes from 'prop-types';
 import Typography from "@material-ui/core/Typography";
 import Header from './../common/Header';
-import Button from '@material-ui/core/Button';
-import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
 import Modal from "@material-ui/core/Modal";
-import UserList from "./UserList"
 import AddUser from "../common/AddUser/AddUser"
 import DeleteUserDialog from "../common/DeleteUserDialog/DeleteUserDialog"
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import ImporterTable from './ImporterTable';
+import UserTable from './UserTable';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -86,7 +84,7 @@ class AdminPage extends React.Component {
             </Tabs>
           </AppBar>
 
-          {value === 0 && <TabContainer><UserList openAddUser={this.openAddUser}/></TabContainer>}
+          {value === 0 && <TabContainer><UserTable openAddUser={this.openAddUser}/></TabContainer>}
           {value === 1 && <TabContainer><ImporterTable/></TabContainer>}
 
           <Dialog

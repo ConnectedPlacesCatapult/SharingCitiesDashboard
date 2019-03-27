@@ -29,6 +29,9 @@ module.exports = {
       info: {
         main: '#81cfc7',
       },
+      disabled: {
+        main: '#828282',
+      },
       background: {
         paper: "#313443",
         default: "#42465a",
