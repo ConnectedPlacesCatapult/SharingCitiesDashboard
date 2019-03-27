@@ -15,12 +15,11 @@ from geojson import Feature, FeatureCollection, Point
 from db import db
 from models.location import Location
 from models.sensor import Sensor
-from models.sensor_attribute import SensorAttribute
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
+from pprint import pprint
 class ExportData(Resource):
     """
     Export data to file endpoint
@@ -52,8 +51,15 @@ class ExportData(Resource):
         if len(args["file_name"]) < 1:
             return {"error": "Invalid file name", "file_name": args['file_name']}, HTTPStatus.BAD_REQUEST
 
-        data_frame = self.fetch_table_entries_by_name(args['table_name'], args['limit'])
+        x = "SELECT * FROM {} LIMIT {};".format(args['table_name'], args['limit'])
+        df_rsql = pd.read_sql(x, con=db.engine)
+        sensors = [self.get_sensor(sensor_id) for sensor_id in df_rsql['s_id']]
+        sensor_data_frame = pd.DataFrame(sensors)
+        data_frame = pd.merge(sensor_data_frame, df_rsql, left_on='id', right_on='s_id', how='inner').drop('id',
+                                                                                                           axis=1)
 
+        # data_frame = self.fetch_table_entries_by_name(args['table_name'], args['limit'])
+        #
         if self.create_file(data_frame, args["file_name"], args["format"]):
             return self.return_file(args["file_name"], args["format"])
 
@@ -104,6 +110,7 @@ class ExportData(Resource):
         :return: A Query result set
         """
         column_names = self.get_column_names(table_name)
+
         query_entries = "SELECT * FROM {} LIMIT {};".format(table_name, limit)
         entries = self.query_database(query_entries)
 
@@ -112,9 +119,9 @@ class ExportData(Resource):
 
         data_frame = self.frame_data(column_names, entries)
         sensors = [self.get_sensor(sensor_id) for sensor_id in data_frame['s_id']]
-        sensor_data_frame = pd.DataFrame(sensors)
-        data_frame = pd.merge(sensor_data_frame, data_frame, left_on='id', right_on='s_id', how='inner').drop('id',
-                                                                                                              axis=1)
+        # sensor_data_frame = pd.DataFrame(sensors)
+        # data_frame = pd.merge(sensor_data_frame, data_frame, left_on='id', right_on='s_id', how='inner').drop('id',
+        #                                                                                                       axis=1)
         return data_frame
 
     def get_sensor(self, sensor_id: str) -> {str: Any}:
@@ -127,19 +134,15 @@ class ExportData(Resource):
 
         sensor = Sensor.get_by_id(sensor_id)
         if sensor:
+
             sensor_entry['id'] = sensor.id
             sensor_entry['name'] = sensor.name
-            attr_sensor = SensorAttribute._get_by_sid_aid(str(sensor_id), str(sensor.a_id))
-            if attr_sensor:
-                sensor_entry['a_id'] = attr_sensor.a_id
-            else:
-                sensor_entry['a_id'] = None
-
+            sensor_entry['a_id'] = sensor.name
             location = self.get_location(sensor.l_id)
             sensor_entry['latitude'] = location.lat if location else np.nan
             sensor_entry['longitude'] = location.lon if location else np.nan
             return sensor_entry
-        return {'id': sensor_id, 'name': "", 'latitude': np.nan, 'longitude': np.nan, 'a_id': None}
+        return {'id': sensor_id, 'name': "", 'a_id': None, 'latitude': np.nan, 'longitude': np.nan}
 
     def get_location(self, location_id: int) -> db.Model:
         """
@@ -162,7 +165,8 @@ class ExportData(Resource):
         """
         if not column_names or not entries:
             return None
-
+        print("=========>>>")
+        pprint(column_names)
         data_frame = pd.DataFrame.from_records(entries, columns=column_names)
         return data_frame
 
@@ -176,7 +180,7 @@ class ExportData(Resource):
         """
         directory = os.path.dirname(os.path.realpath(__file__)) + "/"
         try:
-            data_frame.to_csv(directory + file_name + "." + extension, sep=',', encoding='utf-8')
+            data_frame.to_csv(directory + file_name + "." + extension, sep=',', encoding='utf-8', index=False)
             return True
         except Exception:
             return False
