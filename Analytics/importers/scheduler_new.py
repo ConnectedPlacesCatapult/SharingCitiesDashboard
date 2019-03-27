@@ -10,12 +10,12 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from retrying import retry
 
-
 from importers.state_decorator import ImporterStatus
 from models.importer_status import ImporterStatuses
 from models.api import API as Api_Class
 from app import create_app
 from db import db
+
 sys.path.append('..')
 import settings
 
