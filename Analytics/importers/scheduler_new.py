@@ -10,15 +10,17 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from retrying import retry
 
-import settings
+
 from importers.state_decorator import ImporterStatus
 from models.importer_status import ImporterStatuses
 from models.api import API as Api_Class
 from app import create_app
 from db import db
+sys.path.append('..')
+import settings
+
 
 application = create_app()
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 logging.basicConfig(level='INFO', filename='importers.log', filemode='a')
 logger = logging.getLogger(__name__)
 
