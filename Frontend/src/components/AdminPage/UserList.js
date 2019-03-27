@@ -69,7 +69,7 @@ class UserList extends React.Component {
   }
 
   render() {
-    const { classes, admin, promptDeleteUser } = this.props;
+    const { classes, admin, user, promptDeleteUser } = this.props;
 
     return (
       <div className={classes.root}>
@@ -105,9 +105,9 @@ class UserList extends React.Component {
                   <TableCell align="right">{row.admin ? 'Yes' : 'No'}</TableCell>
                   <TableCell align="right">{row.activated ? 'Yes' : 'No'}</TableCell>
                   <TableCell align="right" style={{textAlign: 'right'}}>
-                    <IconButton onClick={() => promptDeleteUser(row)}>
+                    { row.id !== user.user.id ? <IconButton onClick={() => promptDeleteUser(row)}>
                       <DeleteIcon color="primary" />
-                    </IconButton>
+                    </IconButton> : null }
                   </TableCell>
                 </TableRow>
               ))}
@@ -126,6 +126,7 @@ UserList.propTypes = {
 
 const mapStateToProps = (state) => ({
   admin: state.admin,
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,6 +1,8 @@
 '''
 Data class for storing information about API
 '''
+import json
+
 from db import db
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
@@ -23,6 +25,7 @@ class API(db.Model):
     def __init__(self, name: str, url: str, api_key: str, api_class: str,
                  refresh_time : int, token_expiry: datetime,
                  timestamp: datetime = datetime.utcnow()):
+
         """
         Initialise the attributes of the API model
         :param name: name of the API
@@ -48,6 +51,13 @@ class API(db.Model):
         """
         return 'Name: %s, Url: %s' % (self.name, self.url)
 
+    def __str__(self) -> str:
+        """
+        overrides the dunder string method to cast API attributes to a string
+        :return: a JSON string of the API objects attributes
+        """
+        return json.dumps(self.json())
+
     def json(self) -> dict:
         """
         Create a JSON dict of the API object attributes
@@ -68,7 +78,7 @@ class API(db.Model):
         """
         Add the current API fields to the SQLAlchemy session
         """
-
+        
         try:
             db.session.add(self)
             db.session.flush()
@@ -113,7 +123,16 @@ class API(db.Model):
         return None
 
     @classmethod
+    def get_by_api_id(cls, id: int) -> db.Model:
+        """
+        Return an entry whose api id matches the id argument
+        :param id: the api id
+        """
+        return API.query.filter_by(id=id).first()
+
+    @classmethod
     def get_all(cls) -> db.Model:
         """ Return all entries in API table """
-
+        
         return cls.query.all()
+
