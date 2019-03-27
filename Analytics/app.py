@@ -8,6 +8,8 @@ from db import db
 from models.revoked_tokens import RevokedTokens
 from models.importer_status import ImporterStatuses
 from models.api import API
+from models.prediction_results import PredictionResults
+from models.user_predictions import UserPredictions
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
