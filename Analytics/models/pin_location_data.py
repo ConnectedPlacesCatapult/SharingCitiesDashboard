@@ -1,4 +1,5 @@
 import logging
+import random
 from datetime import datetime
 from typing import Union
 
@@ -17,22 +18,37 @@ class Tracker(db.Model):
     id = db.Column(db.Text, unique=True, primary_key=True, autoincrement=False, nullable=False)
     description = db.Column(db.Text, nullable=True)
     activated_date = db.Column(db.DateTime, default=datetime.now, nullable=False)
-
     loc_data = db.relationship("LocationData", back_populates="tracker",
-                               primaryjoin="and_(Tracker.id==LocationData.tracker_id)")  # ,
+                               primaryjoin="and_(Tracker.id==LocationData.tracker_id)")
 
-    def __init__(self, tracker_id: str, activated_date: datetime.timestamp = datetime.utcnow()):
+    def __init__(self, tracker_id: str, activated_date: datetime.timestamp = datetime.utcnow()) -> None:
+        """
+        Instantiate Tracker model
+        :param tracker_id: New Tracker Id
+        :param activated_date: Date Activated
+        """
         self.id = tracker_id
         self.activated_date = activated_date
 
     @property
-    def json(self):
+    def json(self) -> dict:
+        """
+        JSON Serialize Objects Attributes
+        :return: JSON of the models attributes
+        """
         return {
             "id": self.id,
             "activated_on": datetime.strftime(self.activated_date, "%d/%m/%y %H:%M"),
             "location_data": [point.json for point in self.loc_data]
-
         }
+
+    @property
+    def kml_coords(self) -> [dict]:
+        """
+        Create KML (Key Markup Language) Coordinates List
+        :return: KML Formatted GPS Coordinates
+        """
+        return [coord.kml_coord for coord in self.loc_data]
 
     def save(self) -> None:
         """
@@ -72,9 +88,14 @@ class Tracker(db.Model):
         pass
 
     @classmethod
-    def get_by_date_range(cls, tracker_id: str, start_date: datetime, end_date: datetime,
-                          limit: Union[int, None] = None) -> [db.Model]:
-        """Get Entries by DateTime"""
+    def get_by_date_range(cls, tracker_id: str, start_date: datetime, end_date: datetime) -> [db.Model]:
+        """
+        Get Entries by datetime between two dates
+        :param tracker_id: Tracker Id number
+        :param start_date: From date format 'dd/mm/yy'
+        :param end_date: To inclusive date format 'dd/mm/yy'
+        :return: A List of LocationData between the start_date and end_date
+        """
 
         ts_start = datetime.strptime(start_date, '%d/%m/%y')
         ts_end = datetime.strptime(end_date, '%d/%m/%y')
@@ -96,10 +117,6 @@ class LocationData(db.Model):
     __tablename__ = 'location_data'
 
     id = db.Column(db.Integer, primary_key=True)
-
-    tracker_id = db.Column(db.Text, db.ForeignKey('tracker.id'))
-    tracker = db.relationship("Tracker", back_populates="loc_data")
-
     timestamp = db.Column(db.DateTime, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
@@ -111,10 +128,28 @@ class LocationData(db.Model):
     signal_quality = db.Column(db.Integer, nullable=False)
     battery = db.Column(db.Float, nullable=True)
     charger = db.Column(db.Boolean, nullable=True)
+    value = db.Column(db.Float, nullable=True)
+
+    tracker_id = db.Column(db.Text, db.ForeignKey('tracker.id'))
+    tracker = db.relationship("Tracker", back_populates="loc_data")
 
     def __init__(self, tracker_id: str, timestamp: datetime, longitude: float, latitude: float,
                  speed: float, heading: float, elevation, sat_cnt: int, fix_quality: int, signal_quality: int,
                  battery: float) -> None:
+        """
+
+        :param tracker_id: Tracker Id number
+        :param timestamp: When the measurement was taken
+        :param longitude: GPS Longitudinal Coordinate in decimal degrees (DD.ddddddd)
+        :param latitude: GPS Latitudinal Coordinate in decimal degrees (DD.ddddddd)
+        :param speed: Velocity of reciever
+        :param heading: Heading (Direction of travel in degrees clockwise from North(0 degrees)
+        :param elevation: Height in meters above MSL (Mean Sea Level)
+        :param sat_cnt: GPS Satellite count in use at time of measurement
+        :param fix_quality: GPS Fix quality ( 0: not fix, 1: GPS Fix, 2: DGPS, etc...)
+        :param signal_quality: RSSI of tracker signal
+        :param battery: Battery level in percentage full
+        """
 
         self.tracker_id = tracker_id
         self.timestamp = datetime.strptime(timestamp, "%d/%m/%Y %H:%M")
@@ -127,19 +162,35 @@ class LocationData(db.Model):
         self.fix_quality = fix_quality
         self.signal_quality = signal_quality
         self.battery = battery
+        self.value = random.uniform(0, 100)
 
     @property
     def json(self):
+        """
+        JSON Serialize LocationData Attributes
+        :return:  JSON representation of LocationData instance
+        """
         return {"tracker_id": self.tracker_id,
                 "timestamp": datetime.strftime(self.timestamp, "%d/%m/%y %H:%M"),
                 "coordinates": {"latitude": self.latitude, "logintude": self.longitude, "sat_cnt": self.sat_cnt,
                                 "heading": self.heading, "speed": self.speed, "elevation": self.elevation},
                 "signal_quality": self.signal_quality,
-                "battery": self.battery
+                "battery": self.battery,
+                "value": self.value
                 }
 
-    def save(self) -> None:
+    @property
+    def kml_coord(self) -> (str, str, str):
+        """
+        Create KML (Key Markup Language) of Coordinate
+        :return: KML Formatted GPS Coordinate
+        """
+        return str(self.latitude), str(self.longitude), str(self.elevation)
 
+
+
+    def save(self) -> None:
+        """Add LocationData to Session"""
         try:
             db.session.add(self)
             db.session.flush()
@@ -148,7 +199,7 @@ class LocationData(db.Model):
             # logger.error("Tracker {} already exists".format(self.id))
 
     def delete(self) -> None:
-
+        """Remove LocationData from session"""
         try:
             db.session.delete(self)
             db.session.flush()
@@ -162,9 +213,14 @@ class LocationData(db.Model):
         db.session.commit()
 
     @classmethod
-    def get_by_date_range(cls, tracker_id: str, start_date: datetime, end_date: datetime,
-                          limit: Union[int, None] = None) -> [db.Model]:
-        """Get Entries by DateTime"""
+    def get_by_date_range(cls, tracker_id: str, start_date: datetime, end_date: datetime) -> [db.Model]:
+        """
+        Get Entries by DateTime
+        :param tracker_id: Tracker Id Number
+        :param start_date: Earliest Date to Fetch entries for
+        :param end_date: Latest Date to fetch entries for
+        :return: List of LocationData entries
+        """
 
         ts_start = datetime.strptime(start_date, '%d/%m/%y')
         ts_end = datetime.strptime(end_date, '%d/%m/%y')
@@ -173,7 +229,7 @@ class LocationData(db.Model):
             .filter(and_(cls.timestamp >= ts_start, cls.timestamp <= ts_end)).all()
 
     @classmethod
-    def get_by_location(cls, latitude: float, longitude: float, first: bool = True):
+    def get_by_location(cls, latitude: float, longitude: float, first: bool = True) -> Union[db.Model, list]:
         """
          Fetch database entries by location
         :param latitude: Latitude Decimal Degrees (DD.DDDDD)
@@ -188,7 +244,7 @@ class LocationData(db.Model):
             return cls.query.filter_by(latitude=latitude, longitude=longitude)
 
     @classmethod
-    def get_by_tracker_id(cls, tracker_id: str, first: bool = True):
+    def get_by_tracker_id(cls, tracker_id: str, first: bool = True) -> Union[db.Model, list]:
         """
         Get Entry / Entries by Tracker id
         :param tracker_id: Tracker id

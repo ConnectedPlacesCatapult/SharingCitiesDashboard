@@ -32,6 +32,7 @@ from resources.import_retry import ImportRetry
 from resources.import_status import ImportStatus
 from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
+from resources.moving_sensors.export_to_kml import ExportToKML
 from resources.moving_sensors.get_dummy_data import GetDummyData
 from resources.moving_sensors.get_location_data import GetLocationData
 from resources.refresh_token import TokenRefresh
@@ -190,5 +191,6 @@ def create_app(**config_overrides):
 
     api.add_resource(GetDummyData, '/dummy')
     api.add_resource(GetLocationData, '/get_loc_data')
+    api.add_resource(ExportToKML, '/export_kml')
 
     return app
