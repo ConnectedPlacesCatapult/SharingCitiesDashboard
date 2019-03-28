@@ -48,6 +48,8 @@ import subprocess
 
 from flask_restful import Resource, reqparse, inputs
 from celery.utils.log import get_task_logger
+from celery.exceptions import Ignore
+from celery import states
 import sqlalchemy
 import statistics
 import celery
@@ -64,6 +66,7 @@ from models.location import Location
 from models.unit import Unit
 from models.prediction_results import PredictionResults
 from models.user_predictions import UserPredictions
+from models.users import Users
 from resources.helper_functions import is_number
 from resources.request_grouped import request_grouped_data, request_harmonised_data
 
@@ -408,9 +411,9 @@ class RequestForData(Resource):
                                 "n_pred={} ".format(pred_data["status"],
                                                     attribute_table,
                                                     sensor_id, n_pred))
-            self.update_state(state='FAILURE', meta={
-                'status': "prediction task is in progress"})
-            return pred_data
+            self.update_state(state="REFUSED",
+                              meta={'status': pred_data["status"]})
+            raise Ignore()
         else:
         # check for sensor_id
             if sensor_id:
@@ -427,9 +430,9 @@ class RequestForData(Resource):
                         "n_pred={} ".format(pred_data["status"],
                                             attribute_table,
                                             sensor_id, n_pred))
-                    self.update_state(state='FAILURE', meta={
-                        'status': "prediction task is in progress"})
-                    return pred_data
+                    self.update_state(state="REFUSED",
+                                      meta={'status': pred_data["status"]})
+                    raise Ignore()
             else:    
                 values = db.session.query(model) \
                             .limit(_limit) \
@@ -442,61 +445,70 @@ class RequestForData(Resource):
                         "n_pred={} ".format(pred_data["status"],
                                             attribute_table, sensor_id,
                                             n_pred))
-                    self.update_state(state='FAILURE', meta={
-                        'status': "prediction task is in progress"})
-                    return pred_data
+                    self.update_state(state="REFUSED",
+                                      meta={'status': pred_data["status"]})
+                    raise Ignore()
 
-            self.update_state(state='PROGRESS', meta={
-                'status': "prediction task is in progress"})
+            if not Users.find_by_id(u_id):
+                pred_data = {
+                    "status": "user id {} does not exists".format(u_id),
+                    "result": "UNABLE"
+                    }
+                self.update_state(state="REFUSED",
+                                  meta={'status': pred_data["status"]})
+                celery_logger.error(pred_data["status"])
+                raise Ignore()
+            else:
+                self.update_state(state='PROGRESS',
+                                  meta={'status': "prediction task is in progress"})
 
-            for val in values:
-                _data.append(float(val.value))
-                _timestamps.append(val.api_timestamp)
+                for val in values:
+                    _data.append(float(val.value))
+                    _timestamps.append(val.api_timestamp)
 
-            predict_from_db = PredictionResults.find_by_prediction_args(
-                attribute_table, sensor_id, n_pred)
+                predict_from_db = PredictionResults.find_by_prediction_args(
+                    attribute_table, sensor_id, n_pred)
 
-            if predict_from_db:
-                existing_user_result = UserPredictions.get_entry(u_id,
-                                                           predict_from_db.id)
+                if predict_from_db:
+                    existing_user_result = UserPredictions.get_entry(u_id,
+                                                               predict_from_db.id)
 
-                if existing_user_result and predict_from_db.is_stale(model):
-                    existing_user_result.delete()
-                    existing_user_result.commit()
+                    if existing_user_result and predict_from_db.is_stale(model):
+                        existing_user_result.delete()
+                        existing_user_result.commit()
 
-                    if not UserPredictions.find_by_pred_id(predict_from_db.id):
-                        predict_from_db.delete()
+                        if not UserPredictions.find_by_pred_id(predict_from_db.id):
+                            predict_from_db.delete()
+                            predict_from_db.commit()
+
+                        result = PredictionResults.generate_predictions_results(
+                            attribute_table, sensor_id, n_pred, _data, _timestamps)
+                        UserPredictions.add_entry(u_id, result["Prediction_id"])
+
+                    else:
+                        # use a cached result
+                        predict_from_db.updated_timestamp = datetime.now()
+                        predict_from_db.save()
                         predict_from_db.commit()
+                        UserPredictions.add_entry(u_id, predict_from_db.id)
+
+                        result = {
+                            "Sensor_id": predict_from_db.sensor_id,
+                            "Forcasting_engine": predict_from_db.forcasting_engine,
+                            "Mean_Absolute_Percentage_Error":
+                                predict_from_db.mean_absolute_percentage_error,
+                            "Prediction_id": predict_from_db.id,
+                            "Predictions": predict_from_db.result
+                        }
+                else:
 
                     result = PredictionResults.generate_predictions_results(
                         attribute_table, sensor_id, n_pred, _data, _timestamps)
+
                     UserPredictions.add_entry(u_id, result["Prediction_id"])
 
+                pred_data = {"status": "task complete", "result": result}
 
-                else:
-                    # use a cached result
-                    predict_from_db.updated_timestamp = datetime.now()
-                    predict_from_db.save()
-                    predict_from_db.commit()
-                    UserPredictions.add_entry(u_id, predict_from_db.id)
-
-                    result = {
-                        "Sensor_id": predict_from_db.sensor_id,
-                        "Forcasting_engine": predict_from_db.forcasting_engine,
-                        "Mean_Absolute_Percentage_Error":
-                            predict_from_db.mean_absolute_percentage_error,
-                        "Prediction_id": predict_from_db.id,
-                        "Predictions": predict_from_db.result
-                    }
-
-            else:
-
-                result = PredictionResults.generate_predictions_results(
-                    attribute_table, sensor_id, n_pred, _data, _timestamps)
-
-                UserPredictions.add_entry(u_id, result["Prediction_id"])
-
-        pred_data = {"status": "task complete", "result": result}
         return pred_data
 
         
@@ -508,7 +520,7 @@ class PredictionStatus(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('task_id', type=str, store_missing=False)
 
-    def get(self) -> (str, int):
+    def get(self) -> (dict, int):
         """
         GET method endpoint. Use task_id argument and return state
         and result of the corresponding asynchronous prediction task. If no
@@ -539,17 +551,24 @@ class PredictionStatus(Resource):
             if task.state == 'PENDING':
                 response = {'state': task.state,
                             'status': 'if PENDING state persists, background task '
-                                    'may not be executing}'}
-            elif task.state != 'FAILURE':
+                                    'may not be executing'}
+            elif task.state == 'FAILURE':
+                logger.error("{} celery task was unable to complete because "
+                             "of error: {}".format(task_id,
+                                                   str(task.info)))
+                response = {'state': task.state, 'status': str(task.info)}
+                return response, 500
+            elif task.state == 'REFUSED':
+                logger.error("{} celery task refused to generate prediction "
+                             "because: {}".format(task_id, task.info["status"]))
+                response = {'state': task.state, 'status': task.info["status"]}
+                return response, 403
+
+            else:
                 response = {'state': task.state, 'status': task.info.get(
                     'status', '')
                             }
                 if 'result' in task.info:
                     response['result'] = task.info['result']
-            else:
-                logger.error("{} celery task was unable to complete because "
-                            "of error: {}".format(task_id, str(task.info)))
-                response = {'state': task.state, 'status': str(task.info)}
-                return response, 500
 
         return response, 200
