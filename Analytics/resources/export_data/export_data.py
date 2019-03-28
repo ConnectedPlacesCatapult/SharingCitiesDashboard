@@ -250,7 +250,7 @@ class ExportData(Resource):
             :return: HTTP response with file attachment
             """
             try:
-                os.remove(directory + '/' + file_name + "." + extension)
+                os.remove(os.path.join(directory, file_name + "." + extension))
             except IOError as ioe:
                 logger.error("IOError raised when removing temp file {}: {}".format(file, ioe.__str__()),
                              ioe.with_traceback(ioe.__traceback__))
