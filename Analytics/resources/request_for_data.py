@@ -483,7 +483,6 @@ class RequestForData(Resource):
                             attribute_table, sensor_id, n_pred, _data, _timestamps)
                         UserPredictions.add_entry(u_id, result["Prediction_id"])
 
-
                     else:
                         # use a cached result
                         predict_from_db.updated_timestamp = datetime.now()
@@ -499,7 +498,6 @@ class RequestForData(Resource):
                             "Prediction_id": predict_from_db.id,
                             "Predictions": predict_from_db.result
                         }
-
                 else:
 
                     result = PredictionResults.generate_predictions_results(
