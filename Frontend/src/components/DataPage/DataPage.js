@@ -1,19 +1,17 @@
 import React from "react";
 import PropTypes from 'prop-types';
+import {
+  Modal,
+  withStyles,
+} from '@material-ui/core';
+import { connect } from 'react-redux';
 
 import Header from './../common/Header';
 import SideBar from './../common/SideBar';
 import WidgetMaker from './../common/WidgetMaker';
-import DataTable from './DataTable';
 import OptionsSidePanel from './OptionsSidePanel';
 import NoData from './NoData';
-
-// material-ui
-import { withStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
-
-// redux
-import { connect } from 'react-redux';
+import AttributeTabs from './AttributeTabs';
 
 const styles = (theme) => ({
   root: {
@@ -22,7 +20,6 @@ const styles = (theme) => ({
   },
   content: {
     flexGrow: 1,
-    //backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
     height: '100vh',
     overflow: 'auto',
@@ -38,6 +35,11 @@ const styles = (theme) => ({
 class DataPage extends React.Component {
   state = {
     widgetModalOpen: false,
+  };
+
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    api: PropTypes.object.isRequired,
   };
 
   openWidgetMaker = () => {
@@ -57,14 +59,14 @@ class DataPage extends React.Component {
         <SideBar />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          {
-            api.fetched && api.data.length
-            ? <div className={classes.flexWrapper}>
-                <DataTable />
-                <OptionsSidePanel
-                  openWidgetMaker={this.openWidgetMaker}
+          {api.fetched && api.data.length
+            ? (
+              <div className={classes.flexWrapper}>
+                <AttributeTabs />
+                <OptionsSidePanel openWidgetMaker={this.openWidgetMaker}
                 />
               </div>
+            )
             : <NoData />
           }
         </main>
@@ -80,20 +82,11 @@ class DataPage extends React.Component {
   }
 }
 
-DataPage.propTypes = {
-  classes: PropTypes.object.isRequired,
-  api: PropTypes.object.isRequired,
-};
-
 const mapStateToProps = (state) => ({
   api: state.api,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-
-});
-
 DataPage = withStyles(styles)(DataPage);
-DataPage = connect(mapStateToProps, mapDispatchToProps)(DataPage);
+DataPage = connect(mapStateToProps, {})(DataPage);
 
 export default DataPage

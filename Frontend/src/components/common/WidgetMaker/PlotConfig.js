@@ -1,36 +1,33 @@
 import React from 'react';
-import PropTypes from "prop-types";
-
-import PlotEncodingChannel from './PlotEncodingChannel';
-
-// material-ui
-import { withStyles } from '@material-ui/core/styles';
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
-import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
-import Button from '@material-ui/core/Button';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import {
+  Button,
+  Divider,
+  FormControl,
+  FormGroup,
+  FormLabel,
+  MenuItem,
+  Select,
+  TextField,
+  withStyles,
+} from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import Select from "@material-ui/core/Select";
-import Divider from "@material-ui/core/Divider";
-
-// redux
 import { connect } from 'react-redux';
 import {
   setPlotProperty,
   setPlotEncoding,
 } from './../../../actions/widgetActions';
-
-// vega
 import {
+  DATA_FORMAT_OTHER,
+  DATA_FORMAT_RAW,
+  DATA_FORMAT_WIDE,
   VEGA_LITE_ENCODING_CHANNELS,
   VEGA_LITE_FIELDS,
   VEGA_LITE_MARKS,
 } from "./../../../constants";
 
-// misc utils
-import classNames from 'classnames';
+import PlotEncodingChannel from './PlotEncodingChannel';
 
 const styles = (theme) => ({
   root: {
@@ -80,6 +77,12 @@ class PlotConfig extends React.Component {
     expandedChannel: null,
   };
 
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    api: PropTypes.object.isRequired,
+    plotConfig: PropTypes.object.isRequired,
+  };
+
   getPermittedDefinitionFieldValues = (field) => {
     const currentFieldObject = VEGA_LITE_FIELDS.find((fieldObject) => fieldObject.name === field);
 
@@ -87,7 +90,8 @@ class PlotConfig extends React.Component {
 
     switch (currentFieldObject.type) {
       case "DataFieldName":
-        values = this.props.api.data.length ? Object.keys(this.props.api.data[0]) : [];
+        //values = this.props.api.data.length ? Object.keys(this.props.api.data[0]) : [];
+        values = this.props.plotConfig.data.values.length ? Object.keys(this.props.plotConfig.data.values[0]) : [];
 
         break;
 
@@ -320,12 +324,6 @@ class PlotConfig extends React.Component {
     )
   }
 }
-
-PlotConfig.propTypes = {
-  classes: PropTypes.object.isRequired,
-  api: PropTypes.object.isRequired,
-  plotConfig: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = (state) => ({
   api: state.api,

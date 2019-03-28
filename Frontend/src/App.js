@@ -1,5 +1,7 @@
 import React from 'react';
 
+import localStyles from './styles/locale.css';
+
 // base components
 import DashboardPage from './components/DashboardPage';
 import DataPage from './components/DataPage';
