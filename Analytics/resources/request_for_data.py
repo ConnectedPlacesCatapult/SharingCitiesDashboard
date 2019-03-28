@@ -408,8 +408,8 @@ class RequestForData(Resource):
                                 "n_pred={} ".format(pred_data["status"],
                                                     attribute_table,
                                                     sensor_id, n_pred))
-            self.update_state(state="REFUSED", meta={'status':
-                                                         pred_data["status"]})
+            self.update_state(state="REFUSED",
+                              meta={'status': pred_data["status"]})
             raise Ignore()
         else:
         # check for sensor_id
@@ -427,9 +427,8 @@ class RequestForData(Resource):
                         "n_pred={} ".format(pred_data["status"],
                                             attribute_table,
                                             sensor_id, n_pred))
-                    self.update_state(state="REFUSED", meta={'status':
-                                                                 pred_data[
-                                                                     "status"]})
+                    self.update_state(state="REFUSED",
+                                      meta={'status': pred_data["status"]})
                     raise Ignore()
             else:    
                 values = db.session.query(model) \
@@ -443,8 +442,8 @@ class RequestForData(Resource):
                         "n_pred={} ".format(pred_data["status"],
                                             attribute_table, sensor_id,
                                             n_pred))
-                    self.update_state(state="REFUSED", meta={'status':
-                                                                 pred_data["status"]})
+                    self.update_state(state="REFUSED",
+                                      meta={'status': pred_data["status"]})
                     raise Ignore()
 
             if not Users.find_by_id(u_id):
@@ -452,13 +451,13 @@ class RequestForData(Resource):
                     "status": "user id {} does not exists".format(u_id),
                     "result": "UNABLE"
                     }
-                self.update_state(state="REFUSED", meta={'status':
-                                                             pred_data["status"]})
+                self.update_state(state="REFUSED",
+                                  meta={'status': pred_data["status"]})
                 celery_logger.error(pred_data["status"])
                 raise Ignore()
             else:
-                self.update_state(state='PROGRESS', meta={
-                    'status': "prediction task is in progress"})
+                self.update_state(state='PROGRESS',
+                                  meta={'status': "prediction task is in progress"})
 
                 for val in values:
                     _data.append(float(val.value))
@@ -518,7 +517,7 @@ class PredictionStatus(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('task_id', type=str, store_missing=False)
 
-    def get(self) -> (str, int):
+    def get(self) -> (dict, int):
         """
         GET method endpoint. Use task_id argument and return state
         and result of the corresponding asynchronous prediction task. If no
@@ -560,6 +559,7 @@ class PredictionStatus(Resource):
                 logger.error("{} celery task refused to generate prediction "
                              "because: {}".format(task_id, task.info["status"]))
                 response = {'state': task.state, 'status': task.info["status"]}
+                return response, 403
 
             else:
                 response = {'state': task.state, 'status': task.info.get(
