@@ -1,9 +1,9 @@
 import logging
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Union
 
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 from sqlalchemy.exc import IntegrityError
 
 from db import db
@@ -83,9 +83,8 @@ class Tracker(db.Model):
         :param date: Date to start removing date from Inclusive
         :return: Number of records removed
         """
-        # TODO: Implement
-        raise NotImplementedError
-        pass
+        sql_statement = "DELETE FROM location_data WHERE timestamp <= UNIX_TIMESTAMP({}))".format(date)
+        db.engine.execute(sql_statement)
 
     @classmethod
     def get_by_date_range(cls, tracker_id: str, start_date: datetime, end_date: datetime) -> [db.Model]:
@@ -186,6 +185,30 @@ class LocationData(db.Model):
         :return: KML Formatted GPS Coordinate
         """
         return str(self.latitude), str(self.longitude), str(self.elevation)
+
+    @staticmethod
+    def windows_data(tracker_id: Union[str, None] = None, days: int = 365,
+                     start_date: datetime = datetime.now()) -> {str: int}:
+        """
+        Remove data older than X days. If a tracker Id is parsed only the specified tracker data is deleted
+        :param start_date: Date of newest data to be kept
+        :param tracker_id: Tracker id
+        :param days: Number of days old the data must be to be removed
+        """
+        rows_before = db.session.query(func.count(LocationData.id)).scalar()
+
+        cut_off_date = start_date - timedelta(days=days)
+
+        if tracker_id:
+            LocationData.query.filter(LocationData.timestamp <= cut_off_date).filter(
+                LocationData.tracker_id == tracker_id).delete()
+        else:
+            LocationData.query.filter(LocationData.timestamp <= cut_off_date).delete()
+
+        LocationData.commit()
+
+        rows_after = db.session.query(func.count(LocationData.id)).scalar()
+        return dict(before=rows_before, after=rows_after, removed=rows_before - rows_after)
 
     def save(self) -> None:
         """Add LocationData to Session"""

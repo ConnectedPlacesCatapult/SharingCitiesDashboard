@@ -35,6 +35,7 @@ from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.moving_sensors.export_to_kml import ExportToKML
 from resources.moving_sensors.get_dummy_data import GetDummyData
 from resources.moving_sensors.get_location_data import GetLocationData
+from resources.moving_sensors.remove_location_data import WindowLocationData
 from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import PredictionStatus
@@ -192,5 +193,6 @@ def create_app(**config_overrides):
     api.add_resource(GetDummyData, '/dummy')
     api.add_resource(GetLocationData, '/get_loc_data')
     api.add_resource(ExportToKML, '/export_kml')
+    api.add_resource(WindowLocationData, '/window_data')
 
     return app
