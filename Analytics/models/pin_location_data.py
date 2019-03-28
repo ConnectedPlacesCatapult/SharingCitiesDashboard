@@ -128,7 +128,7 @@ class LocationData(db.Model):
     signal_quality = db.Column(db.Integer, nullable=False)
     battery = db.Column(db.Float, nullable=True)
     charger = db.Column(db.Boolean, nullable=True)
-    value = db.Column(db.Float, nullable=True)
+    value = db.Column(db.JSON, default=str("'null'"), nullable=True)
 
     tracker_id = db.Column(db.Text, db.ForeignKey('tracker.id'))
     tracker = db.relationship("Tracker", back_populates="loc_data")
@@ -162,7 +162,7 @@ class LocationData(db.Model):
         self.fix_quality = fix_quality
         self.signal_quality = signal_quality
         self.battery = battery
-        self.value = random.uniform(0, 100)
+        self.value = {"o3": str(random.uniform(0, 100)), "no2": str(random.uniform(0, 100))}
 
     @property
     def json(self):
@@ -186,8 +186,6 @@ class LocationData(db.Model):
         :return: KML Formatted GPS Coordinate
         """
         return str(self.latitude), str(self.longitude), str(self.elevation)
-
-
 
     def save(self) -> None:
         """Add LocationData to Session"""

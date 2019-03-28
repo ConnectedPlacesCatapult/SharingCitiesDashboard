@@ -29,13 +29,9 @@ class GetLocationData(Resource):
 
         if 'start_date' in args and 'end_date' in args:
             loc_data_models = LocationData.get_by_date_range(args["tracker_id"], args["start_date"], args["end_date"])
-            print(loc_data_models)
             if isinstance(loc_data_models, list):
                 result = [lcdm.json for lcdm in loc_data_models]
             else:
                 result = loc_data_models.json
             return result, 200
-
-            # TODO: Finish implementation
-        print(tracker.json)
         return tracker.json, 200
