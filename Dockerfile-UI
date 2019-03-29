@@ -1,0 +1,12 @@
+FROM node:10
+
+RUN mkdir /code
+WORKDIR /code
+# Install dependencies
+# package*.json used to copy files package.json and package-lock.json
+COPY Frontend ./
+RUN apt-get update
+RUN apt-get install -y xsel
+RUN npm install
+RUN npm run build
+RUN npm install -g serve
