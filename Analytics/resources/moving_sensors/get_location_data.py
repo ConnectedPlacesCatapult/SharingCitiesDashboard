@@ -21,7 +21,7 @@ class GetLocationData(Resource):
         self.reqparser.add_argument('start_date', required=False, default=datetime.now(),
                                     help='Datetime Format: %d/%m/%y',
                                     type=lambda x: datetime.strptime(x, '%d/%m/%y'))
-        self.reqparser.add_argument('end_date', required=False, default=datetime.now(),
+        self.reqparser.add_argument('end_date', required=False, default=datetime.fromtimestamp(0),
                                     help='Datetime Format: %d/%m/%y',
                                     type=lambda x: datetime.strptime(x, '%d/%m/%y'))
 

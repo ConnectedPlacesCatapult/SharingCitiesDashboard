@@ -56,7 +56,6 @@ class Tracker(db.Model):
             "description": self.description
         }
 
-
     @property
     def kml_coords(self) -> [dict]:
         """
@@ -211,7 +210,8 @@ class LocationData(db.Model):
         JSON Serialize LocationData Attributes
         :return:  JSON representation of LocationData instance
         """
-        return {"tracker_id": self.tracker_id,
+        return {"id": self.id,
+                "tracker_id": self.tracker_id,
                 "timestamp": datetime.strftime(self.timestamp, "%d/%m/%y %H:%M"),
                 "coordinates": {"latitude": self.latitude, "logintude": self.longitude, "sat_cnt": self.sat_cnt,
                                 "heading": self.heading, "speed": self.speed, "elevation": self.elevation},
