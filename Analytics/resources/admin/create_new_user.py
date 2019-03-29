@@ -1,5 +1,11 @@
 from http import HTTPStatus
+import http.client
 
+import logging
+import flask
+import sendgrid
+import os
+from sendgrid.helpers.mail import Email, Content, Mail
 import bcrypt
 from flask import jsonify
 from flask_jwt_extended import get_jwt_claims
@@ -10,6 +16,9 @@ from flask_restful import reqparse
 from sqlalchemy import exc
 
 from models.users import Users
+
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
 
 
 class CreateNewUser(Resource):
@@ -80,6 +89,51 @@ class CreateNewUser(Resource):
             return abort(HTTPStatus.BAD_REQUEST.value, jsonify({'error': error}))
         return user_exsists is not None
 
+    @staticmethod
+    def send_forgot_password_email(name: str, email: str,
+                                   new_password: str) -> bool:
+
+        """
+        Send email to a user containing their new system generated password
+        """
+
+        text_version = """\n
+                Hi {username}
+
+                You have been added to the Sharing Cities Dashboard. \n
+                Your system generated password is : {password}\n
+                You can now login to the Sharing Cities Dashboard with this 
+                password.\n
+                It is recommended you change your password once logged in.
+                \n
+                """.format(username=name, password=new_password)
+        html_version = flask.render_template(
+            "new_user.html", username=name,
+            password=new_password)
+
+        sg = sendgrid.SendGridAPIClient(
+            apikey=os.environ.get("SENDGRID_API_KEY"))
+
+        from_email = Email("sharedcitiestesting@gmail.com")
+        to_email = Email(email)
+        subject = "Sharing Cities - New User"
+        content_text = Content("text/plain", text_version)
+        send_new_password_email = Mail(from_email, subject, to_email,
+                                       content_text)
+        content_html = Content("text/html", html_version)
+        send_new_password_email.add_content(content_html)
+
+        try:
+            email_response = sg.client.mail.send.post(
+                request_body=send_new_password_email.get())
+            logger.info("Sent forgot password email to {} with "
+                        "response code : {}".format(email,
+                                                    email_response.status_code))
+            return True
+        except http.client.IncompleteRead as e:
+            logger.error("Sendgrid API Key may not be set correctly", e)
+            return False
+
     @jwt_required
     def post(self) -> (dict, int):
         """
@@ -112,10 +166,16 @@ class CreateNewUser(Resource):
 
         # Create new user database entry in users table
         try:
-            hashed_password = Users.generate_hash(args["password"].encode("utf-8")).decode("utf-8")
-            new_user = Users(args["fullname"], args["email"], hashed_password, bool(args["admin"]), False)
-            new_user.save()
-            new_user.commit()
+            if self.send_forgot_password_email(args["fullname"],
+                                               args["email"],
+                                               args["password"]):
+
+                hashed_password = Users.generate_hash(args["password"].encode("utf-8")).decode("utf-8")
+                new_user = Users(args["fullname"], args["email"], hashed_password, bool(args["admin"]), False)
+                new_user.save()
+                new_user.commit()
+            else:
+                return {"message": "could not send email"}, 500
         except Exception as e:
             abort(HTTPStatus.BAD_REQUEST.value, error=e, admin=get_jwt_claims()['admin'])
         return ({"user": "User {} created successfully".format(args["email"])}), 201
