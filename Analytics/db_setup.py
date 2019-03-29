@@ -11,14 +11,6 @@ logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
-def create_application() -> Flask:
-    """
-    Create Flask App
-    :return: Flask App
-    """
-    return create_app()
-
-
 def create_unit(symbol: str = 'kg', description: str = 'Kilogram') -> None:
     """
     Create Unit
@@ -78,7 +70,7 @@ def create_minimal_db_entries():
     :raises ValueError: If any dependencies are not created succesfully
     """
     try:
-        app = create_application()
+        app = create_app()
         create_unit()
         theme = create_theme()
         create_sub_theme(theme)
