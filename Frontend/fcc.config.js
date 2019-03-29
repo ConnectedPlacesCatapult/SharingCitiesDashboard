@@ -20,6 +20,18 @@ module.exports = {
         main: "#D54A44",
         //dark: "#AE3C38",
       },
+      success: {
+        main: '#4CAF50',
+      },
+      danger: {
+        main: '#ff5722',
+      },
+      info: {
+        main: '#81cfc7',
+      },
+      disabled: {
+        main: '#828282',
+      },
       background: {
         paper: "#313443",
         default: "#42465a",
@@ -85,5 +97,10 @@ module.exports = {
     plotMarker: "point",
     widgetName: "New Widget",
     widgetType: "plot",
-  }
+  },
+  dataTableDefaults: {
+    order: 'desc',
+    orderBy: 'Timestamp',
+    rowsPerPage: 20,
+  },
 };

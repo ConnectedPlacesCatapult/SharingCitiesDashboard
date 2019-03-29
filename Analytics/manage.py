@@ -7,6 +7,7 @@ from app import create_app
 from drop_datasource import DropDatasource
 from add_datasource import AddDatasource
 from create_celery import make_celery
+from add_startup_admin import AddStartupAdmin
 
 application = create_app()
 celery_task = make_celery(application)
@@ -21,6 +22,7 @@ manager.add_command('runserver', Server(
 
 manager.add_command('remove', DropDatasource)
 manager.add_command('add', AddDatasource)
+manager.add_command('add_superuser', AddStartupAdmin)
 
 if __name__ == '__main__':
     manager.run()

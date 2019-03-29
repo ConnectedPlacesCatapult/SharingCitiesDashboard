@@ -1,0 +1,41 @@
+@font-face {
+  font-family: 'BrandonText';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local('BrandonText'),
+    local('BrandonText-Regular'),
+    url('./../fonts/BrandonText-Regular.otf') format('otf');
+}
+
+@font-face {
+  font-family: 'BrandonText';
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local('BrandonText Black'),
+    local('BrandonText-Black'),
+    url('./../fonts/BrandonText-Black.otf') format('otf');
+}
+
+#vg-tooltip-element {
+  background-color: #42465a;
+  font-family: 'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  z-index: 1301;
+  border: none;
+}
+
+#vg-tooltip-element td {
+  font-size: 14px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#vg-tooltip-element table tr td.key {
+  color: #fff;
+}
+
+#vg-tooltip-element table tr td.value {
+  color: #81cfc7;
+}

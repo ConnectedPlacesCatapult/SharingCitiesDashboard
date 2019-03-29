@@ -1,16 +1,14 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { withStyles } from "@material-ui/core/styles";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
-import TableRow from "@material-ui/core/TableRow";
-import Checkbox from "@material-ui/core/Checkbox";
+import {
+  TableBody,
+  TableCell,
+  TableRow,
+  withStyles,
+} from '@material-ui/core';
 
-const styles = theme => ({
-  checkBox: {
-    color: theme.palette.primary.main,
-  },
+const styles = (theme) => ({
   cellValue: {
     color: theme.palette.primary.main,
     fontWeight: 400,
@@ -21,12 +19,9 @@ const styles = theme => ({
 });
 
 function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
+  if (b[orderBy] < a[orderBy]) return -1;
+  if (b[orderBy] > a[orderBy]) return 1;
+
   return 0;
 }
 
@@ -37,6 +32,7 @@ function stableSort(array, cmp) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
+
   return stabilizedThis.map(el => el[0]);
 }
 
@@ -45,101 +41,51 @@ function getSorting(order, orderBy) {
 }
 
 class DataTableBody extends React.Component {
-  generateCells = rowData => {
-    const { classes, columns } = this.props;
-
-    let cells = [];
-
-    columns.forEach((column, i) => {
-      let cell;
-
-      if (i === 0) {
-        cell = <TableCell
-          key={i + 1}
-          component="th"
-          scope="row"
-          numeric={column.numeric}
-          padding="none"
-          className={classNames(classes.cellValue, classes.cellBorder)}
-        >
-          {rowData[column.id]}
-        </TableCell>
-      } else {
-        cell = <TableCell
-          key={i + 1}
-          numeric={column.numeric}
-          padding="default"
-          className={classNames(classes.cellValue, classes.cellBorder)}
-        >
-          {rowData[column.id]}
-        </TableCell>
-      }
-
-      cells.push(cell);
-    });
-
-    return cells;
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    data: PropTypes.array.isRequired,
+    columns: PropTypes.array.isRequired,
+    order: PropTypes.string.isRequired,
+    orderBy: PropTypes.string.isRequired,
+    page: PropTypes.number.isRequired,
+    rowsPerPage: PropTypes.number.isRequired,
   };
 
   render() {
     const { classes, data, columns, order, orderBy, page, rowsPerPage } = this.props;
 
+    const cells = (row) => {
+      return columns.map((column, i) =>
+        <TableCell
+          key={i}
+          numeric={column.numeric}
+          padding={(i === 0 || i === (columns.length - 1)) ? 'none' : 'default'}
+          className={classNames(classes.cellValue, classes.cellBorder)}
+        >
+          {row[column.id]}
+        </TableCell>
+      )
+    };
+    const rows = stableSort(data, getSorting(order, orderBy))
+      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+      .map((row, i) => <TableRow key={i} tabIndex={-1}>{cells(row)}</TableRow>);
+
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
       <TableBody>
-        {stableSort(data, getSorting(order, orderBy))
-          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-          .map((n, i) => {
-            const key = i + (page * rowsPerPage);
-            const selected = this.props.isSelected(key);
-
-            return (
-              <TableRow
-                hover
-                onClick={() => this.props.onClick(key)}
-                role="checkbox"
-                aria-checked={selected}
-                tabIndex={-1}
-                key={key}
-                selected={selected}
-              >
-                <TableCell
-                  padding="checkbox"
-                  className={classes.cellBorder}
-                >
-                  <Checkbox
-                    checked={selected}
-                    className={classes.checkBox}
-                  />
-                </TableCell>
-                {this.generateCells(n)}
-              </TableRow>
-            );
-          })}
-        {emptyRows > 0 && (
+        {rows}
+        {emptyRows > 0 &&
           <TableRow style={{ height: 49 * emptyRows }}>
             <TableCell
               colSpan={columns.length}
               className={classNames(classes.cellValue, classes.cellBorder)}
             />
           </TableRow>
-        )}
+        }
       </TableBody>
     )
   }
 }
-
-DataTableBody.propTypes = {
-  classes: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired,
-  columns: PropTypes.array.isRequired,
-  order: PropTypes.string.isRequired,
-  orderBy: PropTypes.string.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-  onClick: PropTypes.func.isRequired,
-  isSelected: PropTypes.func.isRequired,
-};
 
 export default withStyles(styles)(DataTableBody)
