@@ -32,6 +32,12 @@ from resources.import_retry import ImportRetry
 from resources.import_status import ImportStatus
 from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
+from resources.moving_sensors import AddNewLocationData
+from resources.moving_sensors import CreateTracker
+from resources.moving_sensors import DeleteLocationData
+from resources.moving_sensors import DeleteTracker
+from resources.moving_sensors import GetTracker
+from resources.moving_sensors import UpdateTracker
 from resources.moving_sensors.export_to_kml import ExportToKML
 from resources.moving_sensors.get_dummy_data import GetDummyData
 from resources.moving_sensors.get_location_data import GetLocationData
@@ -190,9 +196,15 @@ def create_app(**config_overrides):
     api.add_resource(ImportStatus, '/importer_status')
     api.add_resource(ImportRetry, '/importer_retry')
 
-    api.add_resource(GetDummyData, '/dummy')
-    api.add_resource(GetLocationData, '/get_loc_data')
-    api.add_resource(ExportToKML, '/export_kml')
-    api.add_resource(WindowLocationData, '/window_data')
+    api.add_resource(GetDummyData, '/moving/fetch_dummy_data')
+    api.add_resource(GetLocationData, '/moving/get_loc_data')
+    api.add_resource(ExportToKML, '/moving/export_kml')
+    api.add_resource(WindowLocationData, '/moving/window_data')
+    api.add_resource(AddNewLocationData, '/moving/add_new_data')
+    api.add_resource(CreateTracker, '/moving/add_tracker')
+    api.add_resource(DeleteTracker, '/moving/delete_tracker')
+    api.add_resource(UpdateTracker, '/moving/update_tracker')
+    api.add_resource(GetTracker, '/moving/get_tracker')
+    api.add_resource(DeleteLocationData, '/moving/delete_location_data')
 
     return app

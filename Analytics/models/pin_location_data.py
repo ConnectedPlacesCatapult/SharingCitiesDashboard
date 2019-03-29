@@ -21,7 +21,8 @@ class Tracker(db.Model):
     loc_data = db.relationship("LocationData", back_populates="tracker",
                                primaryjoin="and_(Tracker.id==LocationData.tracker_id)")
 
-    def __init__(self, tracker_id: str, activated_date: datetime.timestamp = datetime.utcnow()) -> None:
+    def __init__(self, tracker_id: str, description: str = "",
+                 activated_date: datetime.timestamp = datetime.utcnow()) -> None:
         """
         Instantiate Tracker model
         :param tracker_id: New Tracker Id
@@ -29,6 +30,19 @@ class Tracker(db.Model):
         """
         self.id = tracker_id
         self.activated_date = activated_date
+        self.description = description
+
+    @property
+    def json_with_location(self):
+        """
+        JSON Serialize Objects Attributes and Location data
+        :return: JSON of the models attributes and associated location data
+        """
+        return {
+            "id": self.id,
+            "activated_on": datetime.strftime(self.activated_date, "%d/%m/%y %H:%M"),
+            "location_data": [point.json for point in self.loc_data]
+        }
 
     @property
     def json(self) -> dict:
@@ -39,8 +53,9 @@ class Tracker(db.Model):
         return {
             "id": self.id,
             "activated_on": datetime.strftime(self.activated_date, "%d/%m/%y %H:%M"),
-            "location_data": [point.json for point in self.loc_data]
+            "description": self.description
         }
+
 
     @property
     def kml_coords(self) -> [dict]:
@@ -57,9 +72,10 @@ class Tracker(db.Model):
         try:
             db.session.add(self)
             db.session.flush()
-        except IntegrityError:
+        except IntegrityError as ite:
             db.session.rollback()
-            logger.error("Tracker {} already exists".format(self.id))
+            logger.error("Error occurred when saving Tracker to session: id {}".format(self.id),
+                         ite.with_traceback(ite.__traceback__))
 
     def delete(self) -> None:
         """
@@ -68,23 +84,15 @@ class Tracker(db.Model):
         try:
             db.session.delete(self)
             db.session.flush()
-        except IntegrityError:
+        except IntegrityError as ite:
             db.session.rollback()
-            logger.error("Tracker {} does not exists".format(self.id))
+            logger.error("Error occurred when deleting Tracker from session: id {}".format(self.id),
+                         ite.with_traceback(ite.__traceback__))
 
     @staticmethod
     def commit() -> None:
         """ Commit updated items to the database """
         db.session.commit()
-
-    def remove_before(self, date: datetime) -> int:
-        """
-        Remove Location Data before parsed Date
-        :param date: Date to start removing date from Inclusive
-        :return: Number of records removed
-        """
-        sql_statement = "DELETE FROM location_data WHERE timestamp <= UNIX_TIMESTAMP({}))".format(date)
-        db.engine.execute(sql_statement)
 
     @classmethod
     def get_by_date_range(cls, tracker_id: str, start_date: datetime, end_date: datetime) -> [db.Model]:
@@ -132,9 +140,10 @@ class LocationData(db.Model):
     tracker_id = db.Column(db.Text, db.ForeignKey('tracker.id'))
     tracker = db.relationship("Tracker", back_populates="loc_data")
 
-    def __init__(self, tracker_id: str, timestamp: datetime, longitude: float, latitude: float,
-                 speed: float, heading: float, elevation, sat_cnt: int, fix_quality: int, signal_quality: int,
-                 battery: float) -> None:
+    def __init__(self, tracker_id: str, timestamp: str, longitude: float, latitude: float,
+                 speed: float, heading: float, elevation, charger: bool, sat_cnt: int, fix_quality: int,
+                 signal_quality: int, battery: float,
+                 value: dict = {"o3": str(random.uniform(0, 100)), "no2": str(random.uniform(0, 100))}) -> None:
         """
 
         :param tracker_id: Tracker Id number
@@ -144,14 +153,19 @@ class LocationData(db.Model):
         :param speed: Velocity of reciever
         :param heading: Heading (Direction of travel in degrees clockwise from North(0 degrees)
         :param elevation: Height in meters above MSL (Mean Sea Level)
+        :param charger: Charging True or False
         :param sat_cnt: GPS Satellite count in use at time of measurement
         :param fix_quality: GPS Fix quality ( 0: not fix, 1: GPS Fix, 2: DGPS, etc...)
         :param signal_quality: RSSI of tracker signal
         :param battery: Battery level in percentage full
+        :param value: Value to be stored for location
         """
 
         self.tracker_id = tracker_id
-        self.timestamp = datetime.strptime(timestamp, "%d/%m/%Y %H:%M")
+        if isinstance(timestamp, str):
+            self.timestamp = datetime.strptime(timestamp, "%d/%m/%Y %H:%M")
+        else:
+            self.timestamp = timestamp
         self.longitude = longitude
         self.latitude = latitude
         self.speed = speed
@@ -161,7 +175,35 @@ class LocationData(db.Model):
         self.fix_quality = fix_quality
         self.signal_quality = signal_quality
         self.battery = battery
-        self.value = {"o3": str(random.uniform(0, 100)), "no2": str(random.uniform(0, 100))}
+        self.charger = charger
+        self.value = value
+
+    @staticmethod
+    def builder(tracker_id: str = "", timestamp: str = str(datetime.now()), longitude: float = 0.0,
+                latitude: float = 0.0,
+                speed: float = 0.0, heading: float = 0.0, elevation=0.0, sat_cnt: int = 0, fix_quality: int = 0,
+                signal_quality: int = 0,
+                battery: float = 0.0, charger: bool = False,
+                value: dict = {"o3": str(random.uniform(0, 100)), "no2": str(random.uniform(0, 100))}) -> db.Model:
+        """
+        Create New LocationData Instance and store in dB
+        :param tracker_id: Tracker Id number
+        :param timestamp: When the measurement was taken
+        :param longitude: GPS Longitudinal Coordinate in decimal degrees (DD.ddddddd)
+        :param latitude: GPS Latitudinal Coordinate in decimal degrees (DD.ddddddd)
+        :param speed: Velocity of reciever
+        :param heading: Heading (Direction of travel in degrees clockwise from North(0 degrees)
+        :param elevation: Height in meters above MSL (Mean Sea Level)
+        :param charger: Charging True or False
+        :param sat_cnt: GPS Satellite count in use at time of measurement
+        :param fix_quality: GPS Fix quality ( 0: not fix, 1: GPS Fix, 2: DGPS, etc...)
+        :param signal_quality: RSSI of tracker signal
+        :param battery: Battery level in percentage full
+        :param value: Value to be stored for location
+        :return: A new Instance of LocationData
+        """
+        return LocationData(tracker_id, timestamp, longitude, latitude, speed, heading, elevation, charger, sat_cnt,
+                            fix_quality, signal_quality, battery, value)
 
     @property
     def json(self):
@@ -175,6 +217,7 @@ class LocationData(db.Model):
                                 "heading": self.heading, "speed": self.speed, "elevation": self.elevation},
                 "signal_quality": self.signal_quality,
                 "battery": self.battery,
+                "charging": self.charger,
                 "value": self.value
                 }
 
@@ -201,32 +244,36 @@ class LocationData(db.Model):
 
         if tracker_id:
             LocationData.query.filter(LocationData.timestamp <= cut_off_date).filter(
-                LocationData.tracker_id == tracker_id).delete()
+                LocationData.timestamp > start_date).filter(LocationData.tracker_id == tracker_id).delete()
         else:
-            LocationData.query.filter(LocationData.timestamp <= cut_off_date).delete()
+            LocationData.query.filter(LocationData.timestamp <= cut_off_date).filter(
+                LocationData.timestamp > start_date).delete()
 
         LocationData.commit()
 
         rows_after = db.session.query(func.count(LocationData.id)).scalar()
-        return dict(before=rows_before, after=rows_after, removed=rows_before - rows_after)
+        return dict(before=rows_before, after=rows_after, removed=rows_before - rows_after,
+                    code=204 if rows_before - rows_after >= 0 else 500)
 
     def save(self) -> None:
         """Add LocationData to Session"""
         try:
             db.session.add(self)
             db.session.flush()
-        except IntegrityError:
+        except IntegrityError as ite:
             db.session.rollback()
-            # logger.error("Tracker {} already exists".format(self.id))
+            logger.error("Error occurred when saving LocationData to session: id {}".format(self.id),
+                         ite.with_traceback(ite.__traceback__))
 
     def delete(self) -> None:
         """Remove LocationData from session"""
         try:
             db.session.delete(self)
             db.session.flush()
-        except IntegrityError:
+        except IntegrityError as ite:
             db.session.rollback()
-            # logger.error("Tracker {} does not exists".format(self.id))
+            logger.error("Error occurred when deleting LocationData from session: id {}".format(self.id),
+                         ite.with_traceback(ite.__traceback__))
 
     @staticmethod
     def commit() -> None:
@@ -234,7 +281,8 @@ class LocationData(db.Model):
         db.session.commit()
 
     @classmethod
-    def get_by_date_range(cls, tracker_id: str, start_date: datetime, end_date: datetime) -> [db.Model]:
+    def get_by_date_range(cls, tracker_id: Union[str, None] = None, start_date: datetime = datetime.now(),
+                          end_date: datetime = datetime.now()) -> [db.Model]:
         """
         Get Entries by DateTime
         :param tracker_id: Tracker Id Number
@@ -242,12 +290,16 @@ class LocationData(db.Model):
         :param end_date: Latest Date to fetch entries for
         :return: List of LocationData entries
         """
+        if end_date < start_date:
+            start_date, end_date = end_date, start_date
 
-        ts_start = datetime.strptime(start_date, '%d/%m/%y')
-        ts_end = datetime.strptime(end_date, '%d/%m/%y')
+        end_date += timedelta(days=1.0)
+
+        if not tracker_id:
+            return cls.query.filter(and_(cls.timestamp >= start_date, cls.timestamp <= end_date)).all()
 
         return cls.query.join(Tracker).filter(Tracker.id == tracker_id) \
-            .filter(and_(cls.timestamp >= ts_start, cls.timestamp <= ts_end)).all()
+            .filter(and_(cls.timestamp >= start_date, cls.timestamp <= end_date)).all()
 
     @classmethod
     def get_by_location(cls, latitude: float, longitude: float, first: bool = True) -> Union[db.Model, list]:
@@ -276,3 +328,12 @@ class LocationData(db.Model):
             return cls.query.filter_by(tracker_id=tracker_id).first()
         else:
             return cls.query.filter_by(tracker_id=tracker_id)
+
+    @classmethod
+    def get_by_id(cls, loc_id: str) -> db.Model:
+        """
+        Get LocationData by id
+        :param loc_id: LocationData id
+        :return: LocationData entry
+        """
+        return cls.query.filter_by(id=loc_id).first()

@@ -136,8 +136,8 @@ class ExportData(Resource):
         try:
             data_frame.to_csv(file, sep=',', encoding='utf-8', index=False)
             return True
-        except Exception as e:
-            logger.error("Error writing to csv", e)
+        except IOError as e:
+            logger.error("Error writing to csv", e.with_traceback(e.__traceback__))
             return False
 
     @staticmethod
@@ -156,8 +156,8 @@ class ExportData(Resource):
             with open(file, 'w') as outfile:
                 outfile.write(output)
             return True
-        except Exception as e:
-            logger.error("Error writing to json file", e)
+        except IOError as e:
+            logger.error("Error writing to json file", e.with_traceback(e.__traceback__))
             return False
 
     @staticmethod
@@ -208,9 +208,23 @@ class ExportData(Resource):
                 geojson.dump(geojson.FeatureCollection(features), fp, sort_keys=True, ensure_ascii=False)
 
             return True
+        except IOError as ioe:
+            # File access error
+            logger.error("IOError raised while exporting to GEOJSON: {}".format(ioe.__str__()),
+                         ioe.with_traceback(ioe.__traceback__))
+        except TypeError as te:
+            # Object not JSON Serializable (Datetime serialization has been handled in method properties_dict())
+            logger.error("TypeError raised while exporting to GEOJSON: {}".format(te.__str__()),
+                         te.with_traceback(te.__traceback__))
+        except ValueError as ve:
+            # Most likely to be raised when failing to cast a malformed datetime to str in method properties_dict()
+            logger.error("Value error raised type casting datetime/pandas.TimeStamp to str: {}".format(ve.__str__()),
+                         ve.with_traceback(ve.__traceback__))
         except Exception as e:
-            logger.error("Error writing GEOJSON data to file", e)
-            return False
+            # Unexpected expected exception raised, log for debugging purposes
+            logger.error("Unexpected Exception raised while exporting to GEOJSON: {}".format(e.__str__()),
+                         e.with_traceback(e.__traceback__))
+        return False
 
     @staticmethod
     def return_file(file_name: str, extension: str) -> Any:
@@ -220,10 +234,11 @@ class ExportData(Resource):
         :param extension: The File extension
         :return: Response with correct headers to download file
         """
-        file = file_name + "." + extension
-        directory = os.path.dirname(os.path.realpath(__file__))
 
-        response = send_from_directory(directory=directory, filename=file)
+        directory = os.path.dirname(os.path.realpath(__file__))
+        file = os.path.join(directory, file_name + "." + extension)
+
+        response = send_from_directory(directory=directory, filename=file_name + "." + extension)
         response.headers['Content-Type'] = 'application/octet-stream'
         response.headers['Content-Disposition'] = 'attachment; filename="{}.{}"'.format(file_name, extension)
 
@@ -235,9 +250,10 @@ class ExportData(Resource):
             :return: HTTP response with file attachment
             """
             try:
-                os.remove(directory + '/' + file_name + "." + extension)
-            except Exception as error:
-                logger.error("Error removing temp file", error)
+                os.remove(os.path.join(directory, file_name + "." + extension))
+            except IOError as ioe:
+                logger.error("IOError raised when removing temp file {}: {}".format(file, ioe.__str__()),
+                             ioe.with_traceback(ioe.__traceback__))
 
             return response
 
