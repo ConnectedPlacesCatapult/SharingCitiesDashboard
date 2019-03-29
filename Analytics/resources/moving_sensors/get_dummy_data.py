@@ -31,7 +31,7 @@ class GetDummyData(Resource):
 
     def post(self) -> (dict, HTTPStatus):
         """
-        Get dummy data from CSV and Store dummy data in dB
+        Get dummy data from CSV and Store dummy data in database
         :param file_name: File name to extract data from.
         :return: A Status Report detailing the dB Entries created and an HTTP Status code 200 on success otherwise,
                  A error message is returned with the appropriate HTTPStatus code
