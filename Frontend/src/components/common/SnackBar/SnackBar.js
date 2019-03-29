@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
-import IconButton from '@material-ui/core/IconButton';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
 
@@ -13,12 +11,17 @@ const styles = theme => ({
     padding: theme.spacing.unit / 2,
   },
   successNotification: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: theme.palette.success.main,
+    color: 'white',
+    fontWeight: 600
+  },
+  infoNotification: {
+    backgroundColor: theme.palette.info.main,
     color: 'white',
     fontWeight: 600
   },
   failureNotification: {
-    backgroundColor: '#ff5722',
+    backgroundColor: theme.palette.danger.main,
     color: 'white',
     fontWeight: 600
   },
@@ -43,6 +46,8 @@ class SimpleSnackbar extends React.Component {
 
   renderIcon() {
     if (this.props.notification.variant === 'successNotification') {
+      return <CheckCircleIcon/>
+    } else if (this.props.notification.variant === 'infoNotification') {
       return <CheckCircleIcon/>
     } else {
       return <ErrorIcon/>

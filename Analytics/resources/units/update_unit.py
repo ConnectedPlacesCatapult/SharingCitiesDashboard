@@ -64,7 +64,7 @@ class UpdateUnitOfMeasure(Resource):
             unit.description = args["new_description"]
 
         if "new_symbol" in args:
-            unit.symbol = args["new_description"]
+            unit.symbol = args["new_symbol"]
 
         unit.save()
         unit.commit()

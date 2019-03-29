@@ -6,8 +6,11 @@ import {
   CREATE_NEW_USER_FULFILLED,
   DELETE_USER_FULFILLED,
   SAVE_WIDGET_FULFILLED,
-  SAVE_WIDGET_REJECTED
+  SAVE_WIDGET_REJECTED,
+  RERUN_IMPORTER_FULFILLED,
+  RERUN_IMPORTER_REJECTED
 } from "./../constants";
+import {RERUN_IMPORTER} from "../constants";
 
 const initialState = {
   message: 'Testing',
@@ -34,7 +37,6 @@ export default (state=initialState, action={}) => {
         message: 'Problem Saving Layout',
         showAlert: true,
         variant: 'failureNotification',
-        error: action.payload,
       }
     }
 
@@ -71,7 +73,33 @@ export default (state=initialState, action={}) => {
         message: 'Problem Saving Widget',
         showAlert: true,
         variant: 'failureNotification',
-        error: action.payload
+      }
+    }
+
+    case RERUN_IMPORTER: {
+      return {
+        ...state,
+        message: 'Importer Started',
+        showAlert: true,
+        variant: 'infoNotification'
+      }
+    }
+
+    case RERUN_IMPORTER_FULFILLED: {
+      return {
+        ...state,
+        message: 'Importer Completed Successfully',
+        showAlert: true,
+        variant: 'successNotification'
+      }
+    }
+
+    case RERUN_IMPORTER_REJECTED: {
+      return {
+        ...state,
+        message: 'Importer Failed ',
+        showAlert: true,
+        variant: 'failureNotification'
       }
     }
 

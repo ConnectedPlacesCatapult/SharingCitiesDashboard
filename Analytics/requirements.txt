@@ -20,3 +20,6 @@ flask-jwt-extended
 pytest
 sendgrid
 gunicorn
+celery==v4.3.0rc1
+apscheduler
+retrying

@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core';
 
 import ConfigPanel from './ConfigPanel';
 import PreviewPanel from './PreviewPanel';
-
-// material-ui
-import { withStyles } from '@material-ui/core/styles';
 
 const styles = (theme) => ({
   root: {
@@ -19,6 +17,10 @@ const styles = (theme) => ({
 });
 
 class WidgetMaker extends React.Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -30,10 +32,6 @@ class WidgetMaker extends React.Component {
     )
   }
 }
-
-WidgetMaker.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 WidgetMaker = withStyles(styles)(WidgetMaker);
 
