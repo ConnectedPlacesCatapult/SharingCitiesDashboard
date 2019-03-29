@@ -196,15 +196,20 @@ def create_app(**config_overrides):
     api.add_resource(ImportStatus, '/importer_status')
     api.add_resource(ImportRetry, '/importer_retry')
 
+    # Moving Sensors Utility Endpoints
     api.add_resource(GetDummyData, '/moving/fetch_dummy_data')
-    api.add_resource(GetLocationData, '/moving/get_loc_data')
     api.add_resource(ExportToKML, '/moving/export_kml')
+
+    # Moving Sensors LocationData Endpoints
+    api.add_resource(GetLocationData, '/moving/get_loc_data')
     api.add_resource(WindowLocationData, '/moving/window_data')
     api.add_resource(AddNewLocationData, '/moving/add_new_data')
+    api.add_resource(DeleteLocationData, '/moving/delete_location_data')
+
+    # Moving Sensors Tracker Endpoints
     api.add_resource(CreateTracker, '/moving/add_tracker')
     api.add_resource(DeleteTracker, '/moving/delete_tracker')
     api.add_resource(UpdateTracker, '/moving/update_tracker')
     api.add_resource(GetTracker, '/moving/get_tracker')
-    api.add_resource(DeleteLocationData, '/moving/delete_location_data')
 
     return app
