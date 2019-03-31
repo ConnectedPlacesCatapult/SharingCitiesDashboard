@@ -26,8 +26,8 @@ class DeleteLocationData(Resource):
         """
         Delete Location Data by Id
         :param id: LocationData Id
-        :return: No Content in body and an HTTPStatus 204 (No Content) otherwise an Json error message with an
-                 HTTPStatus code 404 (Not Found)
+        :return: No Content in body and an HTTPStatus 204 (No Content) on success, otherwise an Json error message with
+                 an HTTPStatus code 404 (Not Found)
         """
         args = self.reqparser.parse_args()
         loc_data = LocationData.get_by_id(args["id"])

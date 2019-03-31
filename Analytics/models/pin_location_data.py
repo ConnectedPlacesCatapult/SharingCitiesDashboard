@@ -13,11 +13,14 @@ logger = logging.getLogger(__name__)
 
 
 class Tracker(db.Model):
+    """
+    Create Tracker Database Model
+    """
     __tablename__ = 'tracker'
 
-    id = db.Column(db.Text, unique=True, primary_key=True, autoincrement=False, nullable=False)
+    id = db.Column(db.Text, unique=True, primary_key=True, autoincrement=False)
     description = db.Column(db.Text, nullable=True)
-    activated_date = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    activated_date = db.Column(db.DateTime, default=datetime.now)
     loc_data = db.relationship("LocationData", back_populates="tracker",
                                primaryjoin="and_(Tracker.id==LocationData.tracker_id)")
 
@@ -26,6 +29,7 @@ class Tracker(db.Model):
         """
         Instantiate Tracker model
         :param tracker_id: New Tracker Id
+        :param description: Description of tracker
         :param activated_date: Date Activated
         """
         self.id = tracker_id
@@ -33,9 +37,9 @@ class Tracker(db.Model):
         self.description = description
 
     @property
-    def json_with_location(self):
+    def json_with_location(self) -> dict:
         """
-        JSON Serialize Objects Attributes and Location data
+        Get Json encoded Attributes and LocationData
         :return: JSON of the models attributes and associated location data
         """
         return {
@@ -47,7 +51,7 @@ class Tracker(db.Model):
     @property
     def json(self) -> dict:
         """
-        JSON Serialize Objects Attributes
+        Get Json encode Attributes
         :return: JSON of the models attributes
         """
         return {
@@ -96,10 +100,10 @@ class Tracker(db.Model):
     @classmethod
     def get_by_date_range(cls, tracker_id: str, start_date: datetime, end_date: datetime) -> [db.Model]:
         """
-        Get Entries by datetime between two dates
+        Get Entries between two dates
         :param tracker_id: Tracker Id number
-        :param start_date: From date format 'dd/mm/yy'
-        :param end_date: To inclusive date format 'dd/mm/yy'
+        :param start_date: The date of the oldest data to return
+        :param end_date: The date of the newest data to return (inclusive)
         :return: A List of LocationData between the start_date and end_date
         """
 
@@ -120,21 +124,24 @@ class Tracker(db.Model):
 
 
 class LocationData(db.Model):
+    """
+    Create Database Model to store location data
+    """
     __tablename__ = 'location_data'
 
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, nullable=False)
-    latitude = db.Column(db.Float, nullable=False)
-    longitude = db.Column(db.Float, nullable=False)
+    timestamp = db.Column(db.DateTime)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
     speed = db.Column(db.Float, nullable=True)
     heading = db.Column(db.Float, nullable=True)
-    elevation = db.Column(db.Float, nullable=False)
-    sat_cnt = db.Column(db.Integer, nullable=False)
-    fix_quality = db.Column(db.Integer, nullable=False)
-    signal_quality = db.Column(db.Integer, nullable=False)
+    elevation = db.Column(db.Float)
+    sat_cnt = db.Column(db.Integere)
+    fix_quality = db.Column(db.Integer)
+    signal_quality = db.Column(db.Integer)
     battery = db.Column(db.Float, nullable=True)
     charger = db.Column(db.Boolean, nullable=True)
-    value = db.Column(db.JSON, default=str("'null'"), nullable=True)
+    value = db.Column(db.JSON, default="{}", nullable=True)
 
     tracker_id = db.Column(db.Text, db.ForeignKey('tracker.id'))
     tracker = db.relationship("Tracker", back_populates="loc_data")
@@ -149,7 +156,7 @@ class LocationData(db.Model):
         :param timestamp: When the measurement was taken
         :param longitude: GPS Longitudinal Coordinate in decimal degrees (DD.ddddddd)
         :param latitude: GPS Latitudinal Coordinate in decimal degrees (DD.ddddddd)
-        :param speed: Velocity of reciever
+        :param speed: Velocity of receiver
         :param heading: Heading (Direction of travel in degrees clockwise from North(0 degrees)
         :param elevation: Height in meters above MSL (Mean Sea Level)
         :param charger: Charging True or False
@@ -185,7 +192,7 @@ class LocationData(db.Model):
                 battery: float = 0.0, charger: bool = False,
                 value: dict = {"o3": str(random.uniform(0, 100)), "no2": str(random.uniform(0, 100))}) -> db.Model:
         """
-        Create New LocationData Instance and store in dB
+        Create New LocationData Instance and store in dB. Fill in default values for missing arguments
         :param tracker_id: Tracker Id number
         :param timestamp: When the measurement was taken
         :param longitude: GPS Longitudinal Coordinate in decimal degrees (DD.ddddddd)
@@ -205,9 +212,9 @@ class LocationData(db.Model):
                             fix_quality, signal_quality, battery, value)
 
     @property
-    def json(self):
+    def json(self) -> dict:
         """
-        JSON Serialize LocationData Attributes
+        JSON encode Attributes
         :return:  JSON representation of LocationData instance
         """
         return {"id": self.id,
@@ -233,10 +240,12 @@ class LocationData(db.Model):
     def windows_data(tracker_id: Union[str, None] = None, days: int = 365,
                      start_date: datetime = datetime.now()) -> {str: int}:
         """
-        Remove data older than X days. If a tracker Id is parsed only the specified tracker data is deleted
+        Remove data older than X days. Parse a Tracker Id to limit the data deletion to the specified Tracker
         :param start_date: Date of newest data to be kept
         :param tracker_id: Tracker id
         :param days: Number of days old the data must be to be removed
+        :return: A JSON response message of the number of entries in the table before, after and the difference after
+                 deletion
         """
         rows_before = db.session.query(func.count(LocationData.id)).scalar()
 
@@ -277,7 +286,7 @@ class LocationData(db.Model):
 
     @staticmethod
     def commit() -> None:
-        """ Commit updated items to the database """
+        """ Commit changes to the database """
         db.session.commit()
 
     @classmethod

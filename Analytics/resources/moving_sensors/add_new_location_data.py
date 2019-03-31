@@ -37,12 +37,12 @@ class AddNewLocationData(Resource):
 
     def post(self) -> (str, HTTPStatus):
         """
-        Create new location data entry
+        Create new location data
         :param tracker_id: Tracker Id number
         :param timestamp: When the measurement was taken
         :param longitude: GPS Longitudinal Coordinate in decimal degrees (DD.ddddddd)
         :param latitude: GPS Latitudinal Coordinate in decimal degrees (DD.ddddddd)
-        :param speed: Velocity of reciever
+        :param speed: Velocity of receiver
         :param heading: Heading (Direction of travel in degrees clockwise from North(0 degrees)
         :param elevation: Height in meters above MSL (Mean Sea Level)
         :param charger: Charging True or False
@@ -51,7 +51,7 @@ class AddNewLocationData(Resource):
         :param signal_quality: RSSI of tracker signal
         :param battery: Battery level in percentage full
         :param value: Value to be stored for location
-        :return: Location Data Id , Tracker id and an HTTPStatus code 201 (CREATED)
+        :return: A Json response with the Location Data Id , Tracker id and an HTTPStatus code 201 (CREATED)
         """
         args = self.reqparser.parse_args()
         # Fetch tracker

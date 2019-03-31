@@ -28,7 +28,6 @@ class UpdateTracker(Resource):
         Update existing Tracker
         :param tracker_id: Tracker Id number
         :param description: Description of the tracker
-        :param timestamp:  Optional Timestamp of when the tracker was activated. Defaults to datetime.now()
         :return: Tracker and an HTTPStatus code 200 (OK) otherwise a JSON error message and an
                  HTTPStatus 404 (Not Found)
         """

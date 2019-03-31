@@ -29,7 +29,8 @@ class CreateTracker(Resource):
         :param tracker_id: Tracker Id number
         :param description: Description of the tracker
         :param timestamp:  Optional Timestamp of when the tracker was activated. Defaults to datetime.now()
-        :return: Tracker id and an HTTPStatus code 201 (CREATED)
+        :return: Tracker id and an HTTPStatus code 201 (CREATED) on success, otherwise a JSON error response containing
+                 The tracker id and an HTTPStatus of 500 (Internal Server Error)
         """
         args = self.reqparser.parse_args()
         tracker = Tracker.get_by_tracker_id(args["id"])

@@ -31,9 +31,8 @@ class WindowLocationData(Resource):
         Delete All Data outside of the specified Date period
         :param tracker_id: Tracker Id
         :param days: Number of days before start date to keep
-        :param start_date: Date of newest data to keep ( format: %d/%m/%y)
-        :return: No Content in body and an HTTPStatus 204 (No Content)
-        :rtype:
+        :param start_date: Date of newest data to keep (format: %d/%m/%y)
+        :return: No Content in body and an HTTPStatus 204 (No Content) on success
         """
         args = self.reqparser.parse_args()
         results = LocationData.windows_data(**args)

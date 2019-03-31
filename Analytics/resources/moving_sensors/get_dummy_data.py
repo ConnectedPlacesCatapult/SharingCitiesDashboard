@@ -25,6 +25,7 @@ class GetDummyData(Resource):
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('file_name', type=str, required=False, default='bike_test_data.csv')
+
         self.t_ids = {}
         self.loc_stats = dict(before=0, after=0)
         self.tracker_stats = dict(before=0, after=0)
@@ -75,7 +76,7 @@ class GetDummyData(Resource):
 
     def create_trackers(self, tid: str) -> str:
         """
-        Create new Tracker and commit it to the dB
+        Create new Tracker
         :param tid: Tracker Id
         :return: The Tracker Id
         """
@@ -88,7 +89,7 @@ class GetDummyData(Resource):
                           heading: float, elevation: float, charger: bool, battery: float, signalquality: int,
                           satcnt: int) -> None:
         """
-        Create new LocationData entry and Commit to db
+        Create LocationData
         :param tracker_id: Trackers Id
         :param datetime: Timestamp of when measurement was made
         :param latitude: GPS Latitude coordinate in Decimal Degree (+-DD.ddddddd)
@@ -96,10 +97,10 @@ class GetDummyData(Resource):
         :param speed: Velocity of sensor in m per second
         :param heading: Heading in degrees
         :param elevation: Altitude above Mean Seal Level (MSL) in meters
-        :param charger: Charing True or False
+        :param charger: Charging True or False
         :param battery: Battery level in percent
-        :param signalquality: RSSI signal to noise radio in decibles (dB)
-        :param satcnt: Number of GPS saterlites in use when measurement was taken
+        :param signalquality: RSSI signal to noise radio in decibels (dB)
+        :param satcnt: Number of GPS satellites in use when measurement was taken
         """
 
         try:
@@ -114,7 +115,7 @@ class GetDummyData(Resource):
 
     def status_report(self) -> dict:
         """
-        Create Report For changes to the database tables
+        Create Report of changes to the database tables
         :return: Json report of new entry counts created during dump
         """
         return {
