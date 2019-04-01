@@ -17,13 +17,18 @@ class GetLocationData(Resource):
         Set required arguments for GET request
         """
         self.reqparser = reqparse.RequestParser()
-        self.reqparser.add_argument('tracker_id', required=False, store_missing=False, type=str)
-        self.reqparser.add_argument('start_date', required=False, default=datetime.now(),
-                                    help='Datetime Format: %d/%m/%y',
-                                    type=lambda x: datetime.strptime(x, '%d/%m/%y'))
-        self.reqparser.add_argument('end_date', required=False, default=datetime.fromtimestamp(0),
-                                    help='Datetime Format: %d/%m/%y',
-                                    type=lambda x: datetime.strptime(x, '%d/%m/%y'))
+        self.reqparser.add_argument('tracker_id', required=False,
+                                    store_missing=False, type=str)
+        self.reqparser.add_argument('start_date', required=False,
+                                    default=datetime.now(),
+                                    help='Datetime Format: %d/%m/%Y',
+                                    type=lambda x: datetime.strptime(x,
+                                                                     '%d/%m/%Y'))
+        self.reqparser.add_argument('end_date', required=False,
+                                    default=datetime.fromtimestamp(0),
+                                    help='Datetime Format: %d/%m/%Y',
+                                    type=lambda x: datetime.strptime(x,
+                                                                     '%d/%m/%Y'))
 
     def get(self) -> (dict, HTTPStatus):
         """
@@ -37,7 +42,8 @@ class GetLocationData(Resource):
         if "tracker_id" in args:
             tracker = Tracker.get_by_tracker_id(args["tracker_id"])
             if not tracker:
-                return dict(error="tracker id not found", id=args["tracker_id"]), HTTPStatus.NOT_FOUND
+                return dict(error="tracker id not found",
+                            id=args["tracker_id"]), HTTPStatus.NOT_FOUND
 
         if 'start_date' in args and 'end_date' in args:
             loc_data_models = LocationData.get_by_date_range(**args)
