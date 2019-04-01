@@ -28,8 +28,9 @@ apiRoot: "http://<api_address>:<api_port>/"
 DB_USERNAME = '<db_user>'
 DB_PASSWORD = '<db_password>'
 DATABASE_NAME = '<db_name>'
-DB_HOST = '<db_host>'
+DB_HOST = 'db'
 ```
+For the ```DB_HOST``` above we can use '**db**' as this is defined in the docker-compose.yaml file
 
 
 #### Deployment
