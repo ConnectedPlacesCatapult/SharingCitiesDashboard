@@ -3,7 +3,7 @@ import random
 from datetime import datetime, timedelta
 from typing import Union
 
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, desc
 from sqlalchemy.exc import IntegrityError
 
 from db import db
@@ -19,12 +19,15 @@ class Tracker(db.Model):
     __tablename__ = 'tracker'
 
     id = db.Column(db.Text, unique=True, primary_key=True, autoincrement=False)
+    sub_theme_id = db.Column(db.Integer, db.ForeignKey('subtheme.id'),
+                             nullable=False)
+    sub_theme = db.relationship("SubTheme")
     description = db.Column(db.Text, nullable=True)
     activated_date = db.Column(db.DateTime, default=datetime.now)
     loc_data = db.relationship("LocationData", back_populates="tracker",
                                primaryjoin="and_(Tracker.id==LocationData.tracker_id)")
 
-    def __init__(self, tracker_id: str, description: str = "",
+    def __init__(self, tracker_id: str, subtheme_id:int, description: str = "",
                  activated_date: datetime.timestamp = datetime.utcnow()) -> None:
         """
         Instantiate Tracker model
@@ -33,6 +36,7 @@ class Tracker(db.Model):
         :param activated_date: Date Activated
         """
         self.id = tracker_id
+        self.sub_theme_id = subtheme_id
         self.activated_date = activated_date
         self.description = description
 
@@ -121,6 +125,23 @@ class Tracker(db.Model):
         :return: A Tracker with the tracker_id
         """
         return cls.query.filter_by(id=tracker_id).first()
+
+    @classmethod
+    def get_by_subtheme_id(cls, subtheme_id: str) -> db.Model:
+        """
+        Get Tracker by subtheme id
+        :param subtheme_id: Subtheme id
+        :return: A Tracker with the subtheme_id
+        """
+        return cls.query.filter_by(sub_theme_id=subtheme_id).all()
+
+    @classmethod
+    def get_all(cls) -> db.Model:
+        """
+        Get all Trackers
+        :return: All entries in Tracker table
+        """
+        return cls.query.all()
 
 
 class LocationData(db.Model):
@@ -339,6 +360,18 @@ class LocationData(db.Model):
             return cls.query.filter_by(tracker_id=tracker_id)
 
     @classmethod
+    def get_by_tracker_id_with_limit(cls, tracker_id: str,
+                                     limit: int) -> Union[db.Model, list]:
+        """
+        Get limit number of entries which contain the corresponding tracker_id
+        :param tracker_id: Tracker id.
+        :param limit: number of entries to return.
+        :return: Entries related to the Tracker Id passed.
+        """
+        return cls.query.filter_by(tracker_id=tracker_id).order_by(desc(
+            LocationData.timestamp)).limit(limit)
+
+    @classmethod
     def get_by_id(cls, loc_id: str) -> db.Model:
         """
         Get LocationData by id
@@ -346,3 +379,35 @@ class LocationData(db.Model):
         :return: LocationData entry
         """
         return cls.query.filter_by(id=loc_id).first()
+
+    @classmethod
+    def get_tracker_attributes(cls, tracker_id: str) -> Union[list, None]:
+        """
+        Get the attributes a tracker records
+        :param tracker_id: A tracker id
+        :return: The attributes a tracker senses
+        """
+        tracker = cls.query.filter_by(tracker_id=tracker_id).first()
+        if tracker:
+            tracker_dict = dict(tracker.value)
+            return [*tracker_dict]
+        else:
+            return None
+
+    @classmethod
+    def does_tracker_record(cls, tracker_id: str, attr: str) -> Union[bool,
+                                                               None]:
+        """
+        Get the attributes a tracker records
+        :param tracker_id: A tracker id
+        :return: The attributes a tracker senses
+        """
+        tracker = cls.query.filter_by(tracker_id=tracker_id).first()
+        if tracker:
+            tracker_dict = dict(tracker.value)
+            if attr in [*tracker_dict]:
+                return True
+            else:
+                return False
+        else:
+            return None
