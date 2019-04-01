@@ -31,7 +31,7 @@ class GetLocationData(Resource):
         :param tracker_id: tracker Id
         :param start_date: Date to start
         :param end_date: Date to end (inclusive)
-        :return: Location data JSON serialized
+        :return: Json encoded Location data
         """
         args = self.reqparser.parse_args()
         if "tracker_id" in args:
