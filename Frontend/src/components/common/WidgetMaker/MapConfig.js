@@ -1,30 +1,26 @@
 import React from 'react';
-import PropTypes from "prop-types";
-
-// material-ui
-import { withStyles } from "@material-ui/core/styles";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import Divider from '@material-ui/core/Divider';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import InputLabel from "@material-ui/core/InputLabel";
-import Checkbox from '@material-ui/core/Checkbox';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import PropTypes from 'prop-types';
+import {
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  Switch,
+  withStyles,
+} from '@material-ui/core';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-
-// color picker
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import ColorPicker from 'material-ui-color-picker';
-
-// redux
 import { connect } from 'react-redux';
 import {
   setMapProperty,
   toggleMapTooltipField,
-} from "../../../actions/widgetActions";
+} from '../../../actions/widgetActions';
 
 const styles = (theme) => ({
   root: {
@@ -45,9 +41,13 @@ class MapConfig extends React.Component {
     tooltipFields: [],
   };
 
-  dataFields = Object.keys(this.props.data[0]).map(field => {
-    return field
-  });
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    config: PropTypes.object.isRequired,
+    mapConfig: PropTypes.object.isRequired,
+    setMapProperty: PropTypes.func.isRequired,
+    toggleMapTooltipField: PropTypes.func.isRequired,
+  };
 
   setMapMarkerColor = (color) => {
     this.props.setMapProperty('markerColor', color)
@@ -68,15 +68,17 @@ class MapConfig extends React.Component {
   render() {
     const { classes, config, mapConfig } = this.props;
 
+    const dataFields = mapConfig.data.features.length ? Object.keys(mapConfig.data.features[0].properties).map(field => field) : [];
+
     const menuItems = config.leafletTileLayers.map((tileLayer, i) => {
       return <MenuItem key={i} value={tileLayer.name}>{tileLayer.name}</MenuItem>
     });
 
-    const attributeItems = this.dataFields.map((field, i) => {
+    const attributeItems = dataFields.map((field, i) => {
       return <MenuItem key={i} value={field}>{field}</MenuItem>
     });
 
-    const tooltipFields = this.dataFields.map((field, i) => {
+    const tooltipFields = dataFields.map((field, i) => {
       return (
         <FormControlLabel
           key={i}
@@ -173,18 +175,8 @@ class MapConfig extends React.Component {
   }
 }
 
-MapConfig.propTypes = {
-  classes: PropTypes.object.isRequired,
-  config: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired,
-  mapConfig: PropTypes.object.isRequired,
-  setMapProperty: PropTypes.func.isRequired,
-  toggleMapTooltipField: PropTypes.func.isRequired,
-};
-
 const mapStateToProps = state => ({
   config: state.config.config,
-  data: state.api.data,
   mapConfig: state.widget.mapConfig,
 });
 

@@ -1,42 +1,50 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import { QUERY_PARAMS } from './../../../constants';
-
-// material-ui
-import { withStyles } from '@material-ui/core/styles';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import {
+  ListItem,
+  ListItemText,
+  withStyles,
+} from '@material-ui/core';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
-
-// redux
 import { connect } from 'react-redux';
-import { fetchAttributeData } from "../../../actions/apiActions";
+import {
+  toggleAttributeSelected,
+  fetchAttributeData,
+  removeAttributeData,
+} from '../../../actions/apiActions';
 
 const styles = (theme) => ({
-  root: {
-
-  },
   nested: {
     paddingLeft: theme.spacing.unit * 6,
   },
 });
 
 class AttributeListItem extends React.Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    themeId: PropTypes.number.isRequired,
+    subthemeId: PropTypes.number.isRequired,
+    attributeId: PropTypes.string.isRequired,
+    attributeName: PropTypes.string.isRequired,
+    isSelected: PropTypes.bool.isRequired,
+    toggleAttributeSelected: PropTypes.func.isRequired,
+    fetchAttributeData: PropTypes.func.isRequired,
+    removeAttributeData: PropTypes.func.isRequired,
+  };
+
   handleClick = () => {
-    // toggle isSelected
-    this.props.onClick();
+    const { themeId, subthemeId, attributeId, attributeName, isSelected, toggleAttributeSelected, fetchAttributeData, removeAttributeData } = this.props;
 
-    const queryParams = {
-      [QUERY_PARAMS.GROUPED]: true,
-      [QUERY_PARAMS.HARMONISING_METHOD]: QUERY_PARAMS.HARMONISING_METHOD_LONG,
-      [QUERY_PARAMS.LIMIT]: 100,
-      [QUERY_PARAMS.PER_SENSOR]: true,
-    };
+    // toggles attribute selected
+    toggleAttributeSelected(themeId, subthemeId, attributeId);
 
-    // fire off call for fresh data
-    this.props.fetchAttributeData(this.props.themeId, this.props.subthemeId, queryParams);
+    // either append or remove attribute data
+    if (isSelected) {
+      removeAttributeData(attributeId);
+    } else {
+      fetchAttributeData(attributeName, {});
+    }
   };
 
   render() {
@@ -44,10 +52,9 @@ class AttributeListItem extends React.Component {
 
     return (
       <ListItem button className={classes.nested} onClick={this.handleClick}>
-        {
-          isSelected
-            ? <RadioButtonCheckedIcon fontSize="small" color="primary" />
-            : <RadioButtonUncheckedIcon fontSize="small" color="primary" />
+        {isSelected
+          ? <RadioButtonCheckedIcon fontSize="small" color="primary" />
+          : <RadioButtonUncheckedIcon fontSize="small" color="primary" />
         }
         <ListItemText inset primary={attributeName} />
       </ListItem>
@@ -55,27 +62,13 @@ class AttributeListItem extends React.Component {
   }
 }
 
-AttributeListItem.propTypes = {
-  classes: PropTypes.object.isRequired,
-  themeId: PropTypes.number.isRequired,
-  subthemeId: PropTypes.number.isRequired,
-  attributeId: PropTypes.string.isRequired,
-  attributeName: PropTypes.string.isRequired,
-  isSelected: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
-  data: PropTypes.array.isRequired,
-  fetchAttributeData: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-  data: state.api.data,
-});
-
 const mapDispatchToProps = (dispatch) => ({
-  fetchAttributeData: (themeId, subthemeId, queryParams) => dispatch(fetchAttributeData(themeId, subthemeId, queryParams)),
+  toggleAttributeSelected: (themeId, subthemeId, attributeId) => dispatch(toggleAttributeSelected(themeId, subthemeId, attributeId)),
+  fetchAttributeData: (attributeId, queryParams) => dispatch(fetchAttributeData(attributeId, queryParams)),
+  removeAttributeData: (attributeId) => dispatch(removeAttributeData(attributeId)),
 });
 
 AttributeListItem = withStyles(styles)(AttributeListItem);
-AttributeListItem = connect(mapStateToProps, mapDispatchToProps)(AttributeListItem);
+AttributeListItem = connect(null, mapDispatchToProps)(AttributeListItem);
 
 export default AttributeListItem

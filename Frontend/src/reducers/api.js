@@ -14,6 +14,7 @@ import {
   FETCH_ATTRIBUTE_DATA,
   FETCH_ATTRIBUTE_DATA_FULFILLED,
   FETCH_ATTRIBUTE_DATA_REJECTED,
+  REMOVE_ATTRIBUTE_DATA,
   QUERY_PARAMS,
   RESET_STATE
 } from "./../constants";
@@ -174,16 +175,17 @@ export default (state=initialState, action={}) => {
     }
 
     case TOGGLE_ATTRIBUTE_SELECTED: {
-      const newThemes = [...state.themes];
-      const parentTheme = newThemes.find(theme => theme.id === action.payload.themeId);
-      const parentSubtheme = parentTheme.subthemes.find(subtheme => subtheme.id === action.payload.subthemeId);
+      const updatedThemes = [...state.themes];
 
-      const attributeToToggle = parentSubtheme.attributes.find(attr => attr.id === action.payload.attributeId);
+      const attributeToToggle = updatedThemes
+        .find((theme) => theme.id === action.payload.themeId).subthemes
+        .find((subtheme) => subtheme.id === action.payload.subthemeId).attributes
+        .find((attr) => attr.id === action.payload.attributeId);
       attributeToToggle.isSelected = !attributeToToggle.isSelected;
 
       return {
         ...state,
-        themes: newThemes,
+        themes: updatedThemes,
       }
     }
 
@@ -199,9 +201,7 @@ export default (state=initialState, action={}) => {
         ...state,
         fetching: false,
         fetched: true,
-        data: action.payload.data,
-        themeId: action.payload.themeId,
-        subthemeId: action.payload.subthemeId,
+        data: [...state.data, ...action.payload.data],
         queryParams: {
           ...state.queryParams,
           ...action.payload.queryParams,
@@ -221,6 +221,11 @@ export default (state=initialState, action={}) => {
     case RESET_STATE: {
       return initialState
     }
+
+    case REMOVE_ATTRIBUTE_DATA: return ({
+      ...state,
+      data: [...state.data].filter(attr => attr['Attribute_id'] !== action.payload),
+    });
 
   }
 

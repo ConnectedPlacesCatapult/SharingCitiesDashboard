@@ -1,15 +1,14 @@
 import React from 'react';
-import PropTypes from "prop-types";
-
-// material-ui
-import { withStyles } from "@material-ui/core/styles";
-import { darken, lighten } from "@material-ui/core/styles/colorManipulator";
-import List from '@material-ui/core/List';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-
-// leaflet
+import PropTypes from 'prop-types';
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListSubheader,
+  withStyles,
+} from '@material-ui/core';
+import { darken, lighten } from '@material-ui/core/styles/colorManipulator';
+import { connect } from 'react-redux';
 import {
   CircleMarker,
   FeatureGroup,
@@ -22,9 +21,6 @@ import {
   Circle,
 } from 'react-leaflet';
 import HeatmapLayer from 'react-leaflet-heatmap-layer';
-
-//redux
-import { connect } from 'react-redux';
 
 const styles = (theme) => ({
   root: {
@@ -40,8 +36,16 @@ const styles = (theme) => ({
 });
 
 class MapPreview extends React.Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    config: PropTypes.object.isRequired,
+    mapConfig: PropTypes.object.isRequired,
+  };
+
   getMarkerColor = (val) => {
-    const baseColor = this.props.mapConfig.markerColor;
+    const { mapConfig } = this.props;
+
+    const baseColor = mapConfig.markerColor;
     const diff = this.maxValue - this.minValue;
     const step = diff / 5;
 
@@ -60,14 +64,18 @@ class MapPreview extends React.Component {
   };
 
   getMarkerRadius = (val) => {
-    return this.props.mapConfig.markerRadius * ((val - this.minValue) / (this.maxValue - this.minValue))
+    const { mapConfig } = this.props;
+
+    return mapConfig.markerRadius * ((val - this.minValue) / (this.maxValue - this.minValue))
   };
 
   setValueLimits = () => {
+    const { mapConfig } = this.props;
+
     let min = null;
     let max = null;
-    let watchedAttribute = this.props.mapConfig.markerAttribute;
-    let features = this.props.mapConfig.data.features;
+    let watchedAttribute = mapConfig.markerAttribute;
+    let features = mapConfig.data.features;
 
     for (let feature of features) {
       let attributeValue = feature.properties[watchedAttribute];
@@ -176,22 +184,12 @@ class MapPreview extends React.Component {
   }
 }
 
-MapPreview.propTypes = {
-  classes: PropTypes.object.isRequired,
-  config: PropTypes.object.isRequired,
-  mapConfig: PropTypes.object.isRequired,
-};
-
 const mapStateToProps = (state) => ({
   config: state.config.config,
   mapConfig: state.widget.mapConfig,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-
-});
-
 MapPreview = withStyles(styles, { withTheme: true })(MapPreview);
-MapPreview = connect(mapStateToProps, mapDispatchToProps)(MapPreview);
+MapPreview = connect(mapStateToProps, null)(MapPreview);
 
 export default MapPreview

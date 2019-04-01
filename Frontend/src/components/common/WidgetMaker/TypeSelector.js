@@ -1,17 +1,15 @@
 import React from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
+import {
+  Button,
+  withStyles,
+} from '@material-ui/core';
+import { connect } from 'react-redux';
+import { setWidgetProperty } from '../../../actions/widgetActions';
 
 import PlotConfig from './PlotConfig';
 import MapConfig from './MapConfig';
 import AlertConfig from './AlertConfig';
-
-// material-ui
-import { withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-
-// redux
-import { connect } from 'react-redux';
-import { setWidgetProperty } from "../../../actions/widgetActions";
 
 const styles = (theme) => ({
   root: {
@@ -27,6 +25,12 @@ const styles = (theme) => ({
 });
 
 class TypeSelector extends React.Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    widget: PropTypes.object.isRequired,
+    setWidgetProperty: PropTypes.func.isRequired,
+  };
+
   setWidgetType = (e) => {
     this.props.setWidgetProperty('type', e.currentTarget.value)
   };
@@ -73,12 +77,6 @@ class TypeSelector extends React.Component {
     )
   }
 }
-
-TypeSelector.propTypes = {
-  classes: PropTypes.object.isRequired,
-  widget: PropTypes.object.isRequired,
-  setWidgetProperty: PropTypes.func.isRequired,
-};
 
 const mapStateToProps = (state) => ({
   widget: state.widget,
