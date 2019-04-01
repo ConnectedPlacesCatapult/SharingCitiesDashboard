@@ -6,10 +6,6 @@ from flask_restful import Api
 
 from db import db
 from models.revoked_tokens import RevokedTokens
-from models.importer_status import ImporterStatuses
-from models.api import API
-from models.prediction_results import PredictionResults
-from models.user_predictions import UserPredictions
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -32,8 +28,14 @@ from resources.attributes import GetAttributes
 from resources.attributes import UpdateAttributeSubTheme
 from resources.export_data import ExportData
 from resources.forgot_password import ForgotPassword
+from resources.import_retry import ImportRetry
+from resources.import_status import ImportStatus
 from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
+from resources.moving_sensors import CreateTracker
+from resources.moving_sensors import DeleteTracker
+from resources.moving_sensors import GetTracker
+from resources.moving_sensors import UpdateTracker
 from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import PredictionStatus
@@ -52,8 +54,6 @@ from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
-from resources.import_status import ImportStatus
-from resources.import_retry import ImportRetry
 
 
 def create_app(**config_overrides):
@@ -189,5 +189,10 @@ def create_app(**config_overrides):
     api.add_resource(ExportData, '/export_data')
     api.add_resource(ImportStatus, '/importer_status')
     api.add_resource(ImportRetry, '/importer_retry')
+
+    api.add_resource(CreateTracker, '/moving/add_tracker')
+    api.add_resource(DeleteTracker, '/moving/delete_tracker')
+    api.add_resource(UpdateTracker, '/moving/update_tracker')
+    api.add_resource(GetTracker, '/moving/get_tracker')
 
     return app
