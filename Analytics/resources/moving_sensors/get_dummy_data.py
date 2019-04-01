@@ -1,5 +1,6 @@
 import logging
 from http import HTTPStatus
+import random
 
 import pandas as pd
 from flask_restful import Resource
@@ -9,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 
 from db import db
 from models.pin_location_data import Tracker, LocationData
+from models.theme import Theme, SubTheme
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -50,10 +52,32 @@ class GetDummyData(Resource):
             return dict(error="Unable to parse CSV data to dataframe",
                         trackback=ioe.with_traceback(ioe.__traceback__)), HTTPStatus.BAD_REQUEST
 
+        moving_theme = Theme.get_by_name("Moving_Sensors")
+        if moving_theme:
+            moving_sensor_theme_id = moving_theme.id
+        else:
+            moving_sensor_theme = Theme("Moving_Sensors")
+            moving_sensor_theme.save()
+            moving_sensor_theme.commit()
+            moving_sensor_theme_id = moving_sensor_theme.id
+
+        moving_subtheme = SubTheme.get_by_name("Moving_Airquality")
+        if moving_subtheme:
+            moving_sensor_subtheme_id = moving_subtheme.id
+        else:
+            moving_sensor_subtheme = SubTheme(moving_sensor_theme_id,
+                                              "Moving_Airquality")
+            moving_sensor_subtheme.save()
+            moving_sensor_subtheme.commit()
+            moving_sensor_subtheme_id = moving_sensor_subtheme.id
+
+
         # Trackers must be unique, Fetch trackers and make dB entries for each unique tracker
         unique_tracker_ids = df["tracker"].unique()
+
         for tracker_id in unique_tracker_ids:
-            self.t_ids[self.create_trackers(str(tracker_id))] = 0
+            self.t_ids[self.create_trackers(str(tracker_id),
+                                            moving_sensor_subtheme_id)] = 0
 
         # Define Location data Pandas DataFrame Column names
         loc_df = df[
@@ -74,13 +98,13 @@ class GetDummyData(Resource):
 
         return self.status_report(), 200
 
-    def create_trackers(self, tid: str) -> str:
+    def create_trackers(self, tid: str, subtheme_id: int) -> str:
         """
         Create new Tracker
         :param tid: Tracker Id
         :return: The Tracker Id
         """
-        tracker = Tracker(tid)
+        tracker = Tracker(tid, subtheme_id)
         tracker.save()
         tracker.commit()
         return tid
@@ -104,10 +128,29 @@ class GetDummyData(Resource):
         """
 
         try:
+            value = None
+            if tracker_id == 2018:
+                value = {"o3": str(random.uniform(0, 100))}
+            elif tracker_id == 2020:
+                value = {"o3": str(random.uniform(0, 100)),
+                         "no2": str(random.uniform(0, 100))}
+            elif tracker_id == 2021:
+                value = {"o3": str(random.uniform(0, 100)),
+                         "no2": str(random.uniform(0, 100)),
+                         "co2": str(random.uniform(0, 100))}
+            elif tracker_id == 2022:
+                value = {"o3": str(random.uniform(0, 100)),
+                         "no2": str(random.uniform(0, 100)),
+                         "co2": str(random.uniform(0, 100)),
+                         "so2": str(random.uniform(0, 100))}
+            elif tracker_id == 2025:
+                value = {"no2": str(random.uniform(0, 100)),
+                         "co2": str(random.uniform(0, 100))}
+
             loc_data = LocationData.builder(tracker_id=tracker_id, timestamp=timestamp, latitude=latitude,
                                             longitude=longitude, speed=speed, heading=heading, elevation=elevation,
                                             sat_cnt=satcnt, fix_quality=1, signal_quality=signalquality,
-                                            battery=battery, charger=charger)
+                                            battery=battery, charger=charger, value=value)
             loc_data.save()
             loc_data.commit()
         except IntegrityError as ite:
