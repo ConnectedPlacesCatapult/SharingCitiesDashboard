@@ -86,7 +86,6 @@ class Tracker(db.Model):
         """
         try:
             db.session.delete(self)
-            db.session.flush()
         except IntegrityError as ite:
             db.session.rollback()
             logger.error("Error occurred when deleting Tracker from session: id {}".format(self.id),
@@ -277,7 +276,6 @@ class LocationData(db.Model):
         """Remove LocationData from db session"""
         try:
             db.session.delete(self)
-            db.session.flush()
         except IntegrityError as ite:
             db.session.rollback()
             logger.error("Error occurred when deleting LocationData from session: id {}".format(self.id),
@@ -335,7 +333,7 @@ class LocationData(db.Model):
         if first:
             return cls.query.filter_by(tracker_id=tracker_id).first()
         else:
-            return cls.query.filter_by(tracker_id=tracker_id)
+            return cls.query.filter(tracker_id=tracker_id).all()
 
     @classmethod
     def get_by_id(cls, loc_id: str) -> db.Model:
