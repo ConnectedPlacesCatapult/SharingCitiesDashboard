@@ -10,7 +10,8 @@ import {
   FETCH_WIDGETS_REJECTED,
   PROMPT_WIDGET_DELETE,
   CANCEL_WIDGET_DELETE,
-  DELETE_WIDGET_FULFILLED
+  DELETE_WIDGET_FULFILLED,
+  RESET_STATE
 } from "./../constants";
 
 const initialState = {
@@ -124,6 +125,10 @@ export default (state=initialState, action={}) => {
         fetching: false,
         deleteWidgetDialogOpen: false,
       }
+    }
+
+    case RESET_STATE: {
+      return initialState
     }
 
   }
