@@ -70,7 +70,7 @@ class Tracker(db.Model):
 
     def save(self) -> None:
         """
-        Add Tracker to session
+        Add Tracker to db session
         """
         try:
             db.session.add(self)
@@ -82,7 +82,7 @@ class Tracker(db.Model):
 
     def delete(self) -> None:
         """
-        Delete Tracker from session
+        Delete Tracker from db session
         """
         try:
             db.session.delete(self)
@@ -94,7 +94,7 @@ class Tracker(db.Model):
 
     @staticmethod
     def commit() -> None:
-        """ Commit updated items to the database """
+        """ Commit session changes to the database """
         db.session.commit()
 
     @classmethod
@@ -118,7 +118,7 @@ class Tracker(db.Model):
         """
         Get Tracker by id
         :param tracker_id: Tracker id
-        :return: Tracker entry
+        :return: A Tracker with the tracker_id
         """
         return cls.query.filter_by(id=tracker_id).first()
 
@@ -136,7 +136,7 @@ class LocationData(db.Model):
     speed = db.Column(db.Float, nullable=True)
     heading = db.Column(db.Float, nullable=True)
     elevation = db.Column(db.Float)
-    sat_cnt = db.Column(db.Integere)
+    sat_cnt = db.Column(db.Integer)
     fix_quality = db.Column(db.Integer)
     signal_quality = db.Column(db.Integer)
     battery = db.Column(db.Float, nullable=True)
@@ -151,7 +151,7 @@ class LocationData(db.Model):
                  signal_quality: int, battery: float,
                  value: dict = {"o3": str(random.uniform(0, 100)), "no2": str(random.uniform(0, 100))}) -> None:
         """
-
+        Create a instance of LocationData
         :param tracker_id: Tracker Id number
         :param timestamp: When the measurement was taken
         :param longitude: GPS Longitudinal Coordinate in decimal degrees (DD.ddddddd)
@@ -214,7 +214,7 @@ class LocationData(db.Model):
     @property
     def json(self) -> dict:
         """
-        JSON encode Attributes
+        Get JSON encoded Attributes
         :return:  JSON representation of LocationData instance
         """
         return {"id": self.id,
@@ -265,7 +265,7 @@ class LocationData(db.Model):
                     code=204 if rows_before - rows_after >= 0 else 500)
 
     def save(self) -> None:
-        """Add LocationData to Session"""
+        """Add LocationData to db Session"""
         try:
             db.session.add(self)
             db.session.flush()
@@ -275,7 +275,7 @@ class LocationData(db.Model):
                          ite.with_traceback(ite.__traceback__))
 
     def delete(self) -> None:
-        """Remove LocationData from session"""
+        """Remove LocationData from db session"""
         try:
             db.session.delete(self)
             db.session.flush()
@@ -313,7 +313,7 @@ class LocationData(db.Model):
     @classmethod
     def get_by_location(cls, latitude: float, longitude: float, first: bool = True) -> Union[db.Model, list]:
         """
-         Fetch database entries by location
+        Fetch database entries by location
         :param latitude: Latitude Decimal Degrees (DD.DDDDD)
         :param longitude: Longitude Decimal Degrees (DD.DDDD)
         :param first: If True only the first matching db entry is returned otherwise all matching db entries
