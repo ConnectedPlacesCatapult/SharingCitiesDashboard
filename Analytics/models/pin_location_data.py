@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class Tracker(db.Model):
     """
-    Create Tracker Database Model
+    Create Tracker Database Model and implement CRUD operations for tracker database table.
     """
     __tablename__ = 'tracker'
 
@@ -51,7 +51,7 @@ class Tracker(db.Model):
     @property
     def json(self) -> dict:
         """
-        Get Json encode Attributes
+        Get Json encoded Attributes
         :return: JSON of the models attributes
         """
         return {
@@ -99,13 +99,12 @@ class Tracker(db.Model):
     @classmethod
     def get_by_date_range(cls, tracker_id: str, start_date: datetime, end_date: datetime) -> [db.Model]:
         """
-        Get Entries between two dates
-        :param tracker_id: Tracker Id number
+        Get LocationData for a Tracker between two dates
+        :param tracker_id: The Tracker's Id
         :param start_date: The date of the oldest data to return
-        :param end_date: The date of the newest data to return (inclusive)
+        :param end_date: The inclusive date of the newest data to return
         :return: A List of LocationData between the start_date and end_date
         """
-
         ts_start = datetime.strptime(start_date, '%d/%m/%y')
         ts_end = datetime.strptime(end_date, '%d/%m/%y')
 
@@ -117,14 +116,14 @@ class Tracker(db.Model):
         """
         Get Tracker by id
         :param tracker_id: Tracker id
-        :return: A Tracker with the tracker_id
+        :return: A Tracker with an id matching tracker_id
         """
         return cls.query.filter_by(id=tracker_id).first()
 
 
 class LocationData(db.Model):
     """
-    Create Database Model to store location data
+    Create Database Model to store location data and implement CRUD operations for location_data database table.
     """
     __tablename__ = 'location_data'
 
@@ -145,12 +144,12 @@ class LocationData(db.Model):
     tracker_id = db.Column(db.Text, db.ForeignKey('tracker.id'))
     tracker = db.relationship("Tracker", back_populates="loc_data")
 
-    def __init__(self, tracker_id: str, timestamp: str, longitude: float, latitude: float,
+    def __init__(self, tracker_id: str, timestamp: Union[str, datetime], longitude: float, latitude: float,
                  speed: float, heading: float, elevation, charger: bool, sat_cnt: int, fix_quality: int,
                  signal_quality: int, battery: float,
                  value: dict = {"o3": str(random.uniform(0, 100)), "no2": str(random.uniform(0, 100))}) -> None:
         """
-        Create a instance of LocationData
+        Create a LocationData instance
         :param tracker_id: Tracker Id number
         :param timestamp: When the measurement was taken
         :param longitude: GPS Longitudinal Coordinate in decimal degrees (DD.ddddddd)
@@ -190,7 +189,7 @@ class LocationData(db.Model):
                 battery: float = 0.0, charger: bool = False,
                 value: dict = {"o3": str(random.uniform(0, 100)), "no2": str(random.uniform(0, 100))}) -> db.Model:
         """
-        Create New LocationData Instance and store in dB. Fill in default values for missing arguments
+        Create New LocationData Instance. Fill in default values for missing arguments
         :param tracker_id: Tracker Id number
         :param timestamp: When the measurement was taken
         :param longitude: GPS Longitudinal Coordinate in decimal degrees (DD.ddddddd)
@@ -217,7 +216,7 @@ class LocationData(db.Model):
         """
         return {"id": self.id,
                 "tracker_id": self.tracker_id,
-                "timestamp": datetime.strftime(self.timestamp, "%d/%m/%y %H:%M"),
+                "timestamp": self.timestamp.strftime("%d/%m/%y %H:%M"),
                 "coordinates": {"latitude": self.latitude, "longitude": self.longitude, "sat_cnt": self.sat_cnt,
                                 "heading": self.heading, "speed": self.speed, "elevation": self.elevation},
                 "signal_quality": self.signal_quality,
@@ -241,9 +240,9 @@ class LocationData(db.Model):
         Remove data older than X days. Parse a Tracker Id to limit the data deletion to the specified Tracker
         :param start_date: Date of newest data to be kept
         :param tracker_id: Tracker id
-        :param days: Number of days old the data must be to be removed
+        :param days: Number of days
         :return: A JSON response message of the number of entries in the table before, after and the difference after
-                 deletion
+                 data is deleted
         """
         rows_before = db.session.query(func.count(LocationData.id)).scalar()
 
@@ -273,7 +272,7 @@ class LocationData(db.Model):
                          ite.with_traceback(ite.__traceback__))
 
     def delete(self) -> None:
-        """Remove LocationData from db session"""
+        """Delete LocationData from db session"""
         try:
             db.session.delete(self)
         except IntegrityError as ite:
