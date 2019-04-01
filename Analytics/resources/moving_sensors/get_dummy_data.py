@@ -91,7 +91,7 @@ class GetDummyData(Resource):
         """
         Create LocationData
         :param tracker_id: Trackers Id
-        :param datetime: Timestamp of when measurement was made
+        :param timestamp: Timestamp of when measurement was made
         :param latitude: GPS Latitude coordinate in Decimal Degree (+-DD.ddddddd)
         :param longitude: GPS Latitude coordinate in Decimal Degree (+-DD.ddddddd)
         :param speed: Velocity of sensor in m per second

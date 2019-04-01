@@ -34,6 +34,8 @@ from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
 from resources.moving_sensors import CreateTracker
 from resources.moving_sensors import DeleteTracker
+from resources.moving_sensors import ExportToKML
+from resources.moving_sensors import GetDummyData
 from resources.moving_sensors import GetTracker
 from resources.moving_sensors import UpdateTracker
 from resources.moving_sensors.add_new_location_data import AddNewLocationData
@@ -203,5 +205,8 @@ def create_app(**config_overrides):
     api.add_resource(DeleteLocationData, '/moving/delete_location_data')
     api.add_resource(GetLocationData, '/moving/get_loc_data')
     api.add_resource(WindowLocationData, '/moving/window_data')
+    api.add_resource(ExportToKML, '/moving/export_kml')
+    api.add_resource(GetDummyData, '/moving/fetch_dummy_data')
+
 
     return app
