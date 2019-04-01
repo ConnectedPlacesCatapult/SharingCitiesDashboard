@@ -15,6 +15,7 @@ import {
   FETCH_ATTRIBUTE_DATA_FULFILLED,
   FETCH_ATTRIBUTE_DATA_REJECTED,
   QUERY_PARAMS,
+  RESET_STATE
 } from "./../constants";
 
 const initialState = {
@@ -215,6 +216,10 @@ export default (state=initialState, action={}) => {
         fetched: false,
         error: action.payload,
       }
+    }
+
+    case RESET_STATE: {
+      return initialState
     }
 
   }

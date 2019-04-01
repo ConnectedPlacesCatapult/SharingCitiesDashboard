@@ -5,6 +5,7 @@ import UserTableHead from './UserTableHead';
 import UserTableBody from './UserTableBody';
 import UserTablePagination from './UserTablePagination';
 import SearchIcon from '@material-ui/icons/Search';
+import LockIcon from '@material-ui/icons/Lock';
 import PlusIcon from '@material-ui/icons/Add';
 
 // material-ui
@@ -36,6 +37,7 @@ const styles = (theme) => ({
   noDataMessage: {
     textAlign: 'center',
     marginBottom: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 2,
   },
   noDataIcon: {
     marginTop: theme.spacing.unit * 2,
@@ -108,58 +110,67 @@ class UserTable extends React.Component {
     const { classes, admin, user } = this.props;
     const { order, orderBy, selected, page, rowsPerPage } = this.state;
 
+    // Not Authorised
+    if (admin.hideUsers) {
+      return (<Paper>
+        <div className={classes.tableWrapper}>
+          <Typography variant="subtitle1" color="primary" className={classes.noDataMessage}>
+            <LockIcon className={classes.noDataIcon}/>
+            This account is not authorised to view this page
+          </Typography>
+        </div>
+      </Paper>)
+    } else if (admin.users && admin.users.length > 0) {
     return (
-      <div className={classes.root}>
-        {
-          admin.users && admin.users.length > 0
-            ? <Paper>
-                <div className={classes.tableWrapper}>
-                  <Button variant="contained" color="primary" className={classes.tableTitleActionButton} onClick={this.props.openAddUser}>
-                    <PlusIcon className={classes.actionButtonIcon}/>
-                    Add User
-                  </Button>
-                  <Table className={classes.table} aria-labelledby="tableTitle">
-                    <UserTableHead
-                      numSelected={selected.length}
-                      order={order}
-                      orderBy={orderBy}
-                      onRequestSort={this.handleRequestSort}
-                      columns={columns}
-                      rowCount={admin.users.length}
-                    />
-                    <UserTableBody
-                      data={admin.users}
-                      columns={columns}
-                      order={order}
-                      orderBy={orderBy}
-                      page={page}
-                      rowsPerPage={rowsPerPage}
-                      onClick={this.handleClick}
-                      loggedInUser={user}
-                      onDeleteUserClick={this.handleDeleteUserClick}
-                      isSelected={this.isSelected}
-                    />
-                  </Table>
-                </div>
-                <UserTablePagination
-                  data={admin.users}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onChangePage={this.handleChangePage}
-                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                />
-            </Paper>
-            : <Paper>
-              <div className={classes.tableWrapper}>
-                <Typography variant="subtitle1" color="primary" className={classes.noDataMessage}>
-                  <SearchIcon className={classes.noDataIcon}/>
-                  Problem loading users
-                </Typography>
-              </div>
-            </Paper>
-        }
-      </div>
-    )
+      <Paper>
+        <div className={classes.tableWrapper}>
+          <Button variant="contained" color="primary" className={classes.tableTitleActionButton}
+                  onClick={this.props.openAddUser}>
+            <PlusIcon className={classes.actionButtonIcon}/>
+            Add User
+          </Button>
+          <Table className={classes.table} aria-labelledby="tableTitle">
+            <UserTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={this.handleRequestSort}
+              columns={columns}
+              rowCount={admin.users.length}
+            />
+            <UserTableBody
+              data={admin.users}
+              columns={columns}
+              order={order}
+              orderBy={orderBy}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              onClick={this.handleClick}
+              loggedInUser={user}
+              onDeleteUserClick={this.handleDeleteUserClick}
+              isSelected={this.isSelected}
+            />
+          </Table>
+        </div>
+        <UserTablePagination
+          data={admin.users}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={this.handleChangePage}
+          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+        />
+      </Paper>)
+    // Problem Loading Users
+    } else {
+      return (<Paper>
+        <div className={classes.tableWrapper}>
+          <Typography variant="subtitle1" color="primary" className={classes.noDataMessage}>
+            <SearchIcon className={classes.noDataIcon}/>
+            Problem loading users
+          </Typography>
+        </div>
+      </Paper>)
+    }
   }
 }
 

@@ -84,6 +84,11 @@ export const REGISTER_REJECTED = "REGISTER_REJECTED";
 // notifications
 export const HIDE_NOTIFICATION = "HIDE_NOTIFICATION";
 
+// Shared
+export const RESET_STATE = "RESET_STATE";
+export const NOT_AUTHORISED_TO_VIEW_IMPORTERS = "NOT_AUTHORISED_TO_VIEW_IMPORTERS";
+export const NOT_AUTHORISED_TO_VIEW_USERS = "NOT_AUTHORISED_TO_VIEW_USERS";
+
 // query params
 export const QUERY_PARAMS = {
   ATTRIBUTE: "attribute",
