@@ -28,7 +28,7 @@ class WindowLocationData(Resource):
 
     def post(self) -> (str, HTTPStatus):
         """
-        Delete All Data outside of the specified Date period
+        Delete All Data outside of the specified period
         :param tracker_id: Tracker Id
         :param days: Number of days before start date to keep
         :param start_date: Date of newest data to keep (format: %d/%m/%y)
