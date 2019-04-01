@@ -13,6 +13,25 @@ The following components are needed to run the application:
 - [Docker Engine](https://docs.docker.com/install/) 
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
+The following configuration files need to be edited:
+
+- Frontend; ```SharingCitiesDashboard/Frontend/src/api/urls.js```, update the value "LOCAL_URL" with the **API address and port**:
+```javascript
+export const LOCAL_URL = 'http://<api_address>:<api_port>'
+```
+- Frontend; ```SharingCitiesDashboard/Frontend/fcc.config.js```, update the value "apiRoot" with the **API address and port**:
+```javascript
+apiRoot: "http://<api_address>:<api_port>/"
+```
+- API; ```SharingCitiesDashboard/Analytics/settings.py```, update the database parameters as below:
+```python
+DB_USERNAME = '<db_user>'
+DB_PASSWORD = '<db_password>'
+DATABASE_NAME = '<db_name>'
+DB_HOST = '<db_host>'
+```
+
+
 #### Deployment
 
 As explained above, Docker files were used thus a working Docker instance is needed to run the containers and subsequently the application. The following steps/commands are needed are needed to deploy the application:
