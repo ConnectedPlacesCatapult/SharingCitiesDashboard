@@ -185,10 +185,9 @@ class LocationData(db.Model):
         self.value = value
 
     @staticmethod
-    def builder(tracker_id: str = "", timestamp: str = str(datetime.now()), longitude: float = 0.0,
-                latitude: float = 0.0,
-                speed: float = 0.0, heading: float = 0.0, elevation=0.0, sat_cnt: int = 0, fix_quality: int = 0,
-                signal_quality: int = 0,
+    def builder(tracker_id: str = "", timestamp: str = datetime.now().strftime("%d/%m/%Y %H:%M"),
+                longitude: float = 0.0, latitude: float = 0.0, speed: float = 0.0, heading: float = 0.0, elevation=0.0,
+                sat_cnt: int = 0, fix_quality: int = 0, signal_quality: int = 0,
                 battery: float = 0.0, charger: bool = False,
                 value: dict = {"o3": str(random.uniform(0, 100)), "no2": str(random.uniform(0, 100))}) -> db.Model:
         """
@@ -220,7 +219,7 @@ class LocationData(db.Model):
         return {"id": self.id,
                 "tracker_id": self.tracker_id,
                 "timestamp": datetime.strftime(self.timestamp, "%d/%m/%y %H:%M"),
-                "coordinates": {"latitude": self.latitude, "logintude": self.longitude, "sat_cnt": self.sat_cnt,
+                "coordinates": {"latitude": self.latitude, "longitude": self.longitude, "sat_cnt": self.sat_cnt,
                                 "heading": self.heading, "speed": self.speed, "elevation": self.elevation},
                 "signal_quality": self.signal_quality,
                 "battery": self.battery,
