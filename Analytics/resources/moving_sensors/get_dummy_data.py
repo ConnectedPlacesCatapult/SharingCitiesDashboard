@@ -35,7 +35,7 @@ class GetDummyData(Resource):
         Get dummy data from CSV. Store dummy data in database
         :param file_name: File name to extract data from.
         :return: A Status Report detailing the dB Entries created and an HTTP Status code 200 on success otherwise,
-                 A error message is returned with the appropriate HTTPStatus code
+                 a JSON error message is returned with the appropriate HTTPStatus code
         """
         args = self.reqparser.parse_args()
         # Get size of tables before import
