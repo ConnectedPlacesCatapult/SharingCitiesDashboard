@@ -32,7 +32,10 @@ DB_HOST = 'db'
 ```
 For the ```DB_HOST``` above we can use '**db**' as this is defined in the docker-compose.yaml file
 
-
+- Database; ```SharingCitiesDashboard/initdb-postgis.sh```, update the "dbname" parameter as below:
+```bash
+"${psql[@]}" --dbname=<db_name> <<-'EOSQL'
+```
 #### Deployment
 
 As explained above, Docker files were used thus a working Docker instance is needed to run the containers and subsequently the application. The following steps/commands are needed are needed to deploy the application:
