@@ -58,6 +58,7 @@ from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
+from resources.moving_sensors import GetDummyData
 
 
 def create_app(**config_overrides):
@@ -203,5 +204,6 @@ def create_app(**config_overrides):
     api.add_resource(DeleteLocationData, '/moving/delete_location_data')
     api.add_resource(GetLocationData, '/moving/get_loc_data')
     api.add_resource(WindowLocationData, '/moving/window_data')
+    api.add_resource(GetDummyData, '/moving/get_dummy_data')
 
     return app
