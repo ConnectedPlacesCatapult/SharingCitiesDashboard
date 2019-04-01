@@ -36,6 +36,10 @@ from resources.moving_sensors import CreateTracker
 from resources.moving_sensors import DeleteTracker
 from resources.moving_sensors import GetTracker
 from resources.moving_sensors import UpdateTracker
+from resources.moving_sensors.add_new_location_data import AddNewLocationData
+from resources.moving_sensors.delete_location_data import DeleteLocationData
+from resources.moving_sensors.get_location_data import GetLocationData
+from resources.moving_sensors.remove_location_data import WindowLocationData
 from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import PredictionStatus
@@ -194,5 +198,10 @@ def create_app(**config_overrides):
     api.add_resource(DeleteTracker, '/moving/delete_tracker')
     api.add_resource(UpdateTracker, '/moving/update_tracker')
     api.add_resource(GetTracker, '/moving/get_tracker')
+
+    api.add_resource(AddNewLocationData, '/moving/add_new_data')
+    api.add_resource(DeleteLocationData, '/moving/delete_location_data')
+    api.add_resource(GetLocationData, '/moving/get_loc_data')
+    api.add_resource(WindowLocationData, '/moving/window_data')
 
     return app
