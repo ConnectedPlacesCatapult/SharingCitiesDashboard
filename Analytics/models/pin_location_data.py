@@ -156,24 +156,27 @@ class LocationData(db.Model):
 
     def __init__(self, tracker_id: str,
                  measurement_date: Union[str, datetime], longitude: float,
-                 latitude: float,
-                 speed: float, heading: float, elevation: float, charger: bool,
-                 sat_cnt: int, fix_quality: int,
-                 signal_quality: int, battery: float,
+                 latitude: float, speed: float, heading: float,
+                 elevation: float, charger: bool, sat_cnt: int,
+                 fix_quality: int, signal_quality: int, battery: float,
                  value: dict = {"o3": str(random.uniform(0, 100)),
                                 "no2": str(random.uniform(0, 100))}) -> None:
         """
         Create a LocationData instance
         :param tracker_id: Tracker Id number
         :param measurement_date: When the measurement was taken
-        :param longitude: GPS Longitudinal Coordinate in decimal degrees (DD.ddddddd)
-        :param latitude: GPS Latitudinal Coordinate in decimal degrees (DD.ddddddd)
+        :param longitude: GPS Longitudinal Coordinate in decimal degrees
+               (DD.dddddd)
+        :param latitude: GPS Latitudinal Coordinate in decimal degrees
+               (DD.dddddd)
         :param speed: Velocity of receiver in meters per second
-        :param heading: Heading (Direction of travel in degrees clockwise from North(0 degrees)
+        :param heading: Heading (Direction of travel in degrees clockwise from
+               North (0 degrees)
         :param elevation: Height in meters above MSL (Mean Sea Level)
         :param charger: Charging True or False
         :param sat_cnt: GPS Satellite count in use at time of measurement
-        :param fix_quality: GPS Fix quality ( 0: not fix, 1: GPS Fix, 2: DGPS, etc...)
+        :param fix_quality: GPS Fix quality ( 0: not fix, 1: GPS Fix,
+               2: DGPS, etc...)
         :param signal_quality: RSSI of tracker signal
         :param battery: Battery level in percentage full
         :param value: Value to be stored for location
@@ -306,9 +309,8 @@ class LocationData(db.Model):
         except IntegrityError as ite:
             db.session.rollback()
             logger.error(
-                "Error occurred when saving LocationData to session: id {}".format(
-                    self.id),
-                ite.with_traceback(ite.__traceback__))
+                "Error occurred when saving LocationData to session: "
+                "id {}".format(self.id), ite.with_traceback(ite.__traceback__))
 
     def delete(self) -> None:
         """Delete LocationData from db session"""
@@ -317,9 +319,8 @@ class LocationData(db.Model):
         except IntegrityError as ite:
             db.session.rollback()
             logger.error(
-                "Error occurred when deleting LocationData from session: id {}".format(
-                    self.id),
-                ite.with_traceback(ite.__traceback__))
+                "Error occurred when deleting LocationData from session: "
+                "id {}".format(self.id), ite.with_traceback(ite.__traceback__))
 
     @staticmethod
     def commit() -> None:
