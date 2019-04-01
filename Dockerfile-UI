@@ -7,6 +7,6 @@ WORKDIR /code
 COPY Frontend ./
 RUN apt-get update
 RUN apt-get install -y xsel
-RUN npm install
+RUN npm i --save
 RUN npm run build
 RUN npm install -g serve

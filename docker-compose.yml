@@ -9,7 +9,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-API
-    command: ["python3", "manage.py", "runserver"]
+    command: ["python3", "manage.py", "gunicorn"]
     volumes:
       - ./Analytics/:/code
     ports:
@@ -21,6 +21,8 @@ services:
       context: .
       dockerfile: Dockerfile-UI
     command: serve -s build -l 8080
+    volumes:
+      - ./Frontend/:/code/Frontend
     ports:
       - "8080:8080"
     depends_on:
