@@ -32,7 +32,14 @@ DB_HOST = 'db'
 ```
 For the ```DB_HOST``` above we can use '**db**' as this is defined in the docker-compose.yaml file
 
-- Database; ```SharingCitiesDashboard/initdb-postgis.sh```, update the "dbname" parameter as below:
+- Database; ```SharingCitiesDashboard/Dockerfile-DB```, update the ENV variables as below, replacing the db_x values:
+```dockerfile
+ENV POSTGRES_USER db_user
+ENV POSTGRES_PASSWORD db_password
+ENV POSTGRES_DB db_name
+```
+
+- Database; ```SharingCitiesDashboard/initdb-postgis.sh```, update the "dbname" parameter below with the actual database name:
 ```bash
 "${psql[@]}" --dbname=<db_name> <<-'EOSQL'
 ```
