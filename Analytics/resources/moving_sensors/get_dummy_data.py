@@ -122,7 +122,7 @@ class GetDummyData(Resource):
         tracker.commit()
         return tid
 
-    def add_location_data(self, tracker_id: str, timestamp: str, latitude: float,
+    def add_location_data(self, tracker_id: str, measurement_date: str, latitude: float,
                           longitude: float, speed: float, heading: float,
                           elevation: float, charger: bool, battery: float,
                           signalquality: int, satcnt: int) -> None:
