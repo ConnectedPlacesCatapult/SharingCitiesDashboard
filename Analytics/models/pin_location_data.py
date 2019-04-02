@@ -100,8 +100,8 @@ class Tracker(db.Model):
         except IntegrityError as ite:
             db.session.rollback()
             logger.error(
-                "Error occurred when deleting Tracker from session: id {}".format(
-                    self.id),
+                "Error occurred when deleting Tracker "
+                "from session: id {}".format(self.id),
                 ite.with_traceback(ite.__traceback__))
 
     @staticmethod
@@ -368,7 +368,8 @@ class LocationData(db.Model):
 
         if not tracker_id:
             return cls.query.filter(and_(cls.measurement_date >= start_date,
-                                         cls.measurement_date <= end_date)).all()
+                                         cls.measurement_date
+                                         <= end_date)).all()
 
         return cls.query.join(Tracker).filter(Tracker.id == tracker_id) \
             .filter(and_(cls.measurement_date >= start_date,
@@ -443,11 +444,12 @@ class LocationData(db.Model):
             return None
 
     @classmethod
-    def does_tracker_record(cls, tracker_id: str, attr: str) -> Union[bool,
-                                                               None]:
+    def does_tracker_record(cls, tracker_id: str,
+                            attr: str) -> Union[bool, None]:
         """
         Get the attributes a tracker records
         :param tracker_id: A tracker id
+        :param attr: name of attribute to check
         :return: The attributes a tracker senses
         """
         tracker = cls.query.filter_by(tracker_id=tracker_id).first()
