@@ -4,13 +4,14 @@ import {
   FETCH_USERS_REJECTED,
   PROMPT_USER_DELETE,
   CANCEL_USER_DELETE,
-  DELETE_USER_FULFILLED
-} from "./../constants";
-import {
+  DELETE_USER_FULFILLED,
   FETCH_IMPORTER_STATUSES,
   FETCH_IMPORTER_STATUSES_FULFILLED,
-  FETCH_IMPORTER_STATUSES_REJECTED
-} from "../constants";
+  FETCH_IMPORTER_STATUSES_REJECTED,
+  NOT_AUTHORISED_TO_VIEW_USERS,
+  NOT_AUTHORISED_TO_VIEW_IMPORTERS,
+  RESET_STATE
+} from "./../constants";
 
 const initialState = {
   users: [],
@@ -19,6 +20,8 @@ const initialState = {
   fetched: false,
   deleteUserDialogOpen: false,
   error: null,
+  hideUsers: false,
+  hideImporters: false
 };
 
 export default (state=initialState, action={}) => {
@@ -95,6 +98,24 @@ export default (state=initialState, action={}) => {
         ...state,
         deleteUserDialogOpen: false,
       }
+    }
+
+    case NOT_AUTHORISED_TO_VIEW_USERS: {
+      return {
+        ...state,
+        hideUsers: true,
+      }
+    }
+
+    case NOT_AUTHORISED_TO_VIEW_IMPORTERS: {
+      return {
+        ...state,
+        hideImporters: true,
+      }
+    }
+
+    case RESET_STATE: {
+      return initialState
     }
 
   }

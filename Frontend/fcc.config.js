@@ -50,18 +50,21 @@ module.exports = {
       exact: true,
       component: "DashboardPage",
       name: "Dashboard",
+      roles: []
     },
     {
       path: "/data",
       exact: false,
       component: "DataPage",
       name: "Data Tools",
+      roles: []
     },
     {
       path: "/admin",
       exact: false,
       component: "AdminPage",
       name: "Admin",
+      roles: ["admin"]
     },
   ],
 

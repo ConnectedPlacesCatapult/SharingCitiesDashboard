@@ -46,7 +46,7 @@ class AddStartupAdmin(Command):
         sql_text = sqlalchemy.text("insert into users(fullname,email,"
                                    "password,admin,activated, timestamp) "
                                    "values('{}','{}','{}',{},{},'{}')".
-                                   format(fullname, email, pswd, True, True,
+                                   format(fullname, email, pswd, True, False,
                                           datetime.now()))
         try:
             with self.engine.connect() as con:

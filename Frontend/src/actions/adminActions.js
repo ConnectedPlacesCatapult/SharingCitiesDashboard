@@ -15,7 +15,9 @@ import {
   RERUN_IMPORTER,
   RERUN_IMPORTER_FULFILLED,
   RERUN_IMPORTER_REJECTED,
-  HIDE_NOTIFICATION
+  HIDE_NOTIFICATION,
+  NOT_AUTHORISED_TO_VIEW_IMPORTERS,
+  NOT_AUTHORISED_TO_VIEW_USERS,
 } from "./../constants";
 
 // Fetch Users for User List
@@ -33,12 +35,19 @@ export const fetchUsers = () => {
         payload: response.data,
       })
     })
-    .catch((err) => {
-      dispatch({
-        type: FETCH_USERS_REJECTED,
-        payload: err,
+      .catch((err) => {
+        if (err.response.status === 403) {
+          dispatch({
+            type: NOT_AUTHORISED_TO_VIEW_USERS,
+            payload: err,
+          })
+        } else {
+          dispatch({
+            type: FETCH_USERS_REJECTED,
+            payload: err,
+          })
+        }
       })
-    })
   };
 };
 
@@ -58,10 +67,17 @@ export const fetchImporterStatuses = () => {
       })
     })
     .catch((err) => {
-      dispatch({
-        type: FETCH_IMPORTER_STATUSES_REJECTED,
-        payload: err,
-      })
+      if (err.response.status === 403) {
+        dispatch({
+          type: NOT_AUTHORISED_TO_VIEW_IMPORTERS,
+          payload: err,
+        })
+      } else {
+        dispatch({
+          type: FETCH_IMPORTER_STATUSES_REJECTED,
+          payload: err,
+        })
+      }
     })
   };
 };

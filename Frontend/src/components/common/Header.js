@@ -25,7 +25,7 @@ import AccountIcon from '@material-ui/icons/AccountCircle';
 // router
 import {NavLink, withRouter} from "react-router-dom";
 
-import { doLogout, getUser } from "../../actions/userActions";
+import { logout, getUser } from "../../actions/userActions";
 
 // redux
 import { connect } from 'react-redux';
@@ -120,10 +120,10 @@ class Header extends React.Component {
     this.setState({ loginModalOpen: true });
   };
 
-  logOut = (e) =>  {
-    e.preventDefault();
-    doLogout(this.props)
-  }
+  // logOut = (e) =>  {
+  //   e.preventDefault();
+  //   doLogout(this.props)
+  // }
 
   handleModalClose = () => {
     this.setState({ loginModalOpen: false });
@@ -186,28 +186,46 @@ class Header extends React.Component {
     }
   }
 
-  render() {
-    const { classes, location, config, user } = this.props;
-    const { open } = this.state;
+  cards = () => {
+    return data.map((card, i, imgArr) => {
+      if (this.state.filter_selected === "all") {
+        return data;
+      } else if (card.filter === this.state.filter_selected) {
+        return card;
+      }
+    });
+  }
 
-    const pageLinks = config.routes.map((route, i) => (
-      <NavLink
-        key={i}
-        exact={route.exact}
-        to={route.path}
-        className={classes.link}
-        activeClassName={classes.linkActive}
-      >
-        <Button className={classes.button} size="small">
-          {
-            location.pathname === route.path
-              ? <RadioButtonCheckedIcon className={classes.radioButton} color="secondary" />
-              : <RadioButtonUncheckedIcon className={classes.radioButton} color="primary" />
-          }
-          {route.name}
-        </Button>
-      </NavLink>
-    ));
+  renderPageLinks() {
+    const { classes, location, config, user } = this.props;
+    if (user && user.email) {
+      return config.routes.map((route, i) => {
+        // Hide links from non-admin users that require admin rights
+        if (route.roles.indexOf("admin") !== -1 && user.admin || route.roles.indexOf("admin") === -1 ) {
+          return <NavLink
+            key={i}
+            exact={route.exact}
+            to={route.path}
+            className={classes.link}
+            activeClassName={classes.linkActive}
+          >
+            <Button className={classes.button} size="small">
+              {
+                location.pathname === route.path
+                  ? <RadioButtonCheckedIcon className={classes.radioButton} color="secondary"/>
+                  : <RadioButtonUncheckedIcon className={classes.radioButton} color="primary"/>
+              }
+              {route.name}
+            </Button>
+          </NavLink>
+        }
+      });
+    }
+  }
+
+  render() {
+    const { classes } = this.props;
+    const { open } = this.state;
 
     return (
       <AppBar position="absolute" color="default" className={classes.root}>
@@ -217,7 +235,7 @@ class Header extends React.Component {
             &nbsp;
           </Typography>
           <div>
-            {pageLinks}
+            {this.renderPageLinks()}
           </div>
             {this.userMenu()}
           <Popper open={open} anchorEl={this.headerList} transition disablePortal>
@@ -231,7 +249,7 @@ class Header extends React.Component {
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList>
                       <MenuItem disabled onClick={this.handleClose}><AccountIcon className={classes.menuIcon} />Profile</MenuItem>
-                      <MenuItem onClick={this.logOut}><LogoutIcon className={classes.menuIcon} />Logout</MenuItem>
+                      <MenuItem onClick={() => this.props.logout(this.props)}><LogoutIcon className={classes.menuIcon} />Logout</MenuItem>
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>
@@ -257,6 +275,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getUser: () => dispatch(getUser()),
+  logout: (props) => dispatch(logout(props)),
 });
 
 Header = withStyles(styles)(Header);
