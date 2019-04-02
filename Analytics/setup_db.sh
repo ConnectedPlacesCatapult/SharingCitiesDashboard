@@ -36,6 +36,10 @@ sudo -u postgres psql -d analytics -c "CREATE EXTENSION postgis"
 # Move to Analytics directory
 cd ~/SharingCitiesDashboard/Analytics
 
+# Install python requirements
+echo "$PREFIX Installing python requirements"
+pip3 install -r requirements.txt
+
 # Setup DB structure
 echo "$PREFIX Initialize DB structure"
 python3 db_setup.py
