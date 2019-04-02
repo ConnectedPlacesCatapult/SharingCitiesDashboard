@@ -209,7 +209,6 @@ def create_app(**config_overrides):
     api.add_resource(GetLocationData, '/moving/get_loc_data')
     api.add_resource(WindowLocationData, '/moving/window_data')
 
-    api.add_resource(GetDummyData, '/moving/get_dummy_data')
     api.add_resource(ExportToKML, '/moving/export_kml')
     api.add_resource(GetDummyData, '/moving/fetch_dummy_data')
 
