@@ -162,7 +162,7 @@ class GetDummyData(Resource):
                          "co2": str(random.uniform(0, 100))}
 
             loc_data = LocationData.builder(tracker_id=tracker_id,
-                                            timestamp=measurement_date,
+                                            measurement_date=measurement_date,
                                             latitude=latitude,
                                             longitude=longitude, speed=speed,
                                             heading=heading, elevation=elevation,
