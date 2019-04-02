@@ -1,7 +1,7 @@
 module.exports = {
 
   // root uri of the API
-  apiRoot: "http://<ip-address>/api/",
+  apiRoot: "http://<api-address>/",
 
   // optionally include localisation stylesheet (good for @font-face stuff)
   localeStyleSheet: "./styles/lisbon.css",

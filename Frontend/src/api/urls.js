@@ -1,1 +1,1 @@
-export const LOCAL_URL = 'http://<ip-address>/api/'
+export const LOCAL_URL = 'http://<api-address>/'
