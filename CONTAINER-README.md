@@ -17,7 +17,7 @@ The following configuration files need to be edited:
 
 - Frontend; ```SharingCitiesDashboard/Frontend/src/api/urls.js```, update the value "LOCAL_URL" with the **API address and port**:
 ```javascript
-export const LOCAL_URL = 'http://<api-address>'
+export const LOCAL_URL = 'http://<api-address>/'
 ```
 - Frontend; ```SharingCitiesDashboard/Frontend/fcc.config.js```, update the value "apiRoot" with the **API address and port**:
 ```javascript
