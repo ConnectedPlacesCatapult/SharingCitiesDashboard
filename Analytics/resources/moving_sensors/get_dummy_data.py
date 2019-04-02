@@ -26,7 +26,8 @@ class GetDummyData(Resource):
         Sets the required arguments to be in the POST request
         """
         self.reqparser = reqparse.RequestParser()
-        self.reqparser.add_argument('file_name', type=str, required=False, default='bike_test_data.csv')
+        self.reqparser.add_argument('file_name', type=str, required=False,
+                                    default='bike_test_data.csv')
 
         self.t_ids = {}
         self.loc_stats = dict(before=0, after=0)
@@ -34,23 +35,28 @@ class GetDummyData(Resource):
 
     def post(self) -> (dict, HTTPStatus):
         """
-        Get dummy data from CSV and Store dummy data in database
+        Get dummy data from CSV. Store dummy data in database
         :param file_name: File name to extract data from.
-        :return: A Status Report detailing the dB Entries created and an HTTP Status code 200 on success otherwise,
-                 A error message is returned with the appropriate HTTPStatus code
+        :return: A Status Report detailing the dB Entries created and an HTTP
+        Status code 200 on success otherwise, a JSON error message is returned
+        with the appropriate HTTPStatus code
         """
         args = self.reqparser.parse_args()
         # Get size of tables before import
-        self.loc_stats["before"] = db.session.query(func.count(LocationData.id)).scalar()
-        self.tracker_stats["before"] = db.session.query(func.count(Tracker.id)).scalar()
+        self.loc_stats["before"] = db.session.query(
+            func.count(LocationData.id)).scalar()
+        self.tracker_stats["before"] = db.session.query(
+            func.count(Tracker.id)).scalar()
 
         # Fetch Data from CSV
         try:
             df = pd.read_csv(args['file_name'])
         except IOError as ioe:
-            logger.error("Unable to parse CSV data to dataframe", ioe.with_traceback(ioe.__traceback__))
+            logger.error("Unable to parse CSV data to dataframe",
+                         ioe.with_traceback(ioe.__traceback__))
             return dict(error="Unable to parse CSV data to dataframe",
-                        trackback=ioe.with_traceback(ioe.__traceback__)), HTTPStatus.BAD_REQUEST
+                        trackback=ioe.with_traceback(
+                            ioe.__traceback__)), HTTPStatus.BAD_REQUEST
 
         moving_theme = Theme.get_by_name("Moving_Sensors")
         if moving_theme:
@@ -71,7 +77,9 @@ class GetDummyData(Resource):
             moving_sensor_subtheme.commit()
             moving_sensor_subtheme_id = moving_sensor_subtheme.id
 
-        # Trackers must be unique, Fetch trackers and make dB entries for each unique tracker
+
+        # Trackers must be unique, Fetch trackers and make dB entries for
+        # each unique tracker
         unique_tracker_ids = df["tracker"].unique()
 
         for tracker_id in unique_tracker_ids:
@@ -80,7 +88,8 @@ class GetDummyData(Resource):
 
         # Define Location data Pandas DataFrame Column names
         loc_df = df[
-            ['tracker', 'datetime', 'latitude', 'longitude', 'speed', 'heading', 'elevation', 'charger', 'battery',
+            ['tracker', 'datetime', 'latitude', 'longitude', 'speed',
+             'heading', 'elevation', 'charger', 'battery',
              'signalquality', 'satcnt']]
 
         # Drop all entries that are incomplete have NaN or None/ Null values
@@ -88,12 +97,17 @@ class GetDummyData(Resource):
 
         # Store Location Data in the dB
         for index, row in loc_df.iterrows():
-            self.add_location_data(row['tracker'], row['datetime'], row['latitude'], row['longitude'], row['speed'],
-                                   row['heading'], row['elevation'], row['charger'], row['battery'],
+            self.add_location_data(row['tracker'], row['datetime'],
+                                   row['latitude'], row['longitude'],
+                                   row['speed'],
+                                   row['heading'], row['elevation'],
+                                   row['charger'], row['battery'],
                                    row['signalquality'], row['satcnt'])
 
-        self.loc_stats["after"] = db.session.query(func.count(LocationData.id)).scalar()
-        self.tracker_stats["after"] = db.session.query(func.count(Tracker.id)).scalar()
+        self.loc_stats["after"] = db.session.query(
+            func.count(LocationData.id)).scalar()
+        self.tracker_stats["after"] = db.session.query(
+            func.count(Tracker.id)).scalar()
 
         return self.status_report(), 200
 
@@ -115,16 +129,16 @@ class GetDummyData(Resource):
         """
         Create LocationData
         :param tracker_id: Trackers Id
-        :param datetime: Timestamp of when measurement was made
-        :param latitude: GPS Latitude coordinate in Decimal Degree (+-DD.ddddddd)
-        :param longitude: GPS Latitude coordinate in Decimal Degree (+-DD.ddddddd)
-        :param speed: Velocity of sensor in m per second
+        :param measurement_date: Date and time of when the measurement was made
+        :param latitude: GPS Latitude coordinate in Decimal Degree(DD.ddddddd)
+        :param longitude: GPS Latitude coordinate in Decimal Degree(DD.ddddddd)
+        :param speed: Velocity of receiver in meters per second
         :param heading: Heading in degrees
         :param elevation: Altitude above Mean Seal Level (MSL) in meters
         :param charger: Charging True or False
         :param battery: Battery level in percent
         :param signalquality: RSSI signal to noise radio in decibels (dB)
-        :param satcnt: Number of GPS satellites in use when measurement was taken
+        :param satcnt: Number of GPS satellites in use
         """
 
         try:
@@ -148,7 +162,7 @@ class GetDummyData(Resource):
                          "co2": str(random.uniform(0, 100))}
 
             loc_data = LocationData.builder(tracker_id=tracker_id,
-                                            timestamp=timestamp,
+                                            timestamp=measurement_date,
                                             latitude=latitude,
                                             longitude=longitude, speed=speed,
                                             heading=heading, elevation=elevation,
@@ -159,7 +173,8 @@ class GetDummyData(Resource):
             loc_data.save()
             loc_data.commit()
         except IntegrityError as ite:
-            logger.error("Unable to commit new location data to db", ite.with_traceback(ite.__traceback__))
+            logger.error("Unable to commit new location data to db",
+                         ite.with_traceback(ite.__traceback__))
 
     def status_report(self) -> dict:
         """
@@ -177,6 +192,7 @@ class GetDummyData(Resource):
                 {
                     "Before": self.tracker_stats["before"],
                     "After": self.tracker_stats["after"],
-                    "New": self.tracker_stats["after"] - self.tracker_stats["before"]
+                    "New": self.tracker_stats["after"] - self.tracker_stats[
+                        "before"]
                 }
         }

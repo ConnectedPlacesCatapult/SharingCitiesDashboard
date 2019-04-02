@@ -26,8 +26,8 @@ class DeleteTracker(Resource):
         """
         Delete Tracker
         :param tracker_id: Tracker Id number
-        :return: No Content with an HTTPStatus of 204 (No Content) otherwise, a JSON error message with an HTTPStatus
-                 404 (Not Found)
+        :return: No Content with an HTTPStatus of 204 (No Content) otherwise,
+                 a JSON error message with an HTTPStatus 404 (Not Found)
         """
         args = self.reqparser.parse_args()
         tracker = Tracker.get_by_tracker_id(args["id"])
@@ -36,4 +36,5 @@ class DeleteTracker(Resource):
             tracker.commit()
             return "", HTTPStatus.NO_CONTENT
 
-        return {"error": "Tracker not found", "id": args["id"]}, HTTPStatus.NOT_FOUND
+        return {"error": "Tracker not found",
+                "id": args["id"]}, HTTPStatus.NOT_FOUND
