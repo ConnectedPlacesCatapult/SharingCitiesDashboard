@@ -4,7 +4,7 @@ class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
 
-    def __init__(self, host='localhost', port=5000, workers=4):
+    def __init__(self, host='<host-value>', port=5000, workers=4):
         self.port = port
         self.host = host
         self.workers = workers
@@ -42,7 +42,7 @@ class GunicornServer(Command):
                 def init(self, parser, opts, args):
                     return {
                         'bind': '{0}:{1}'.format(host, port),
-                        'workers': workers 
+                        'workers': workers
                     }
 
                 def load(self):
