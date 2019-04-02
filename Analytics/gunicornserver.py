@@ -4,7 +4,7 @@ class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
 
-    def __init__(self, host='api', port=5000, workers=4):
+    def __init__(self, host='<host-value>', port=5000, workers=4):
         self.port = port
         self.host = host
         self.workers = workers
