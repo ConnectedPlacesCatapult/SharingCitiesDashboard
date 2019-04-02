@@ -67,7 +67,7 @@ def create_app(**config_overrides):
     app = Flask(__name__)
     app.config.from_pyfile('settings.py')
     app.config.update(config_overrides)
-    cors = CORS(app, resources={r"/*": {"origins": "*"}})
+    CORS(app)
     api = Api(app)
 
     # # Configure application to store JWTs in cookies. Whenever you make
