@@ -226,10 +226,12 @@ class RequestForData(Resource):
                         limit = args["limit"]
 
                     if 'sensorid' in args:
-                        trackers = [Tracker.get_by_tracker_id(args["sensorid"])]
+                        trackers = \
+                            [Tracker.get_by_tracker_id(args["sensorid"])]
                         if trackers == [None]:
-                            return {"message": "could not find sensor with "
-                                               "id {}".format(args["sensorid"])}, 400
+                            return {"message": "could not "
+                                               "find sensor with id {}".
+                                                format(args["sensorid"])}, 400
                     else:
                         trackers = Tracker.get_all()
 
