@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime
 from http import HTTPStatus
 
@@ -6,9 +5,6 @@ from flask_restful import Resource
 from flask_restful import reqparse
 
 from models.pin_location_data import LocationData
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 class WindowLocationData(Resource):
@@ -41,8 +37,4 @@ class WindowLocationData(Resource):
         """
         args = self.reqparser.parse_args()
         results = LocationData.windows_data(**args)
-        logger.info(
-            "Apply window to location_data: location_data table row : ",
-            ",".join(" {} >> {}".format(
-                key, value) for key, value in results.items()))
-        return "", HTTPStatus.NO_CONTENT
+        return results, HTTPStatus.OK
