@@ -26,12 +26,13 @@ class GetTracker(Resource):
         """
         Get Tracker
         :param tracker_id: Tracker Id number
-        :return: JSON encoded Tracker and an HTTPStatus of 200 (OK) otherwise, a JSON error message with an HTTPStatus
-                 404 (Not Found)
+        :return: JSON encoded Tracker and an HTTPStatus of 200 (OK) otherwise,
+                 a JSON error message with an HTTPStatus 404 (Not Found)
         """
         args = self.reqparser.parse_args()
         tracker = Tracker.get_by_tracker_id(args["id"])
         if tracker:
             return tracker.json, HTTPStatus.OK
 
-        return {"error": "Tracker not found", "id": args["id"]}, HTTPStatus.NOT_FOUND
+        return {"error": "Tracker not found",
+                "id": args["id"]}, HTTPStatus.NOT_FOUND

@@ -18,8 +18,10 @@ class ExportToKML(Resource):
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('tracker_id', required=True, type=str)
-        self.reqparser.add_argument('start_date', required=False, store_missing=False, type=str)
-        self.reqparser.add_argument('end_date', required=False, store_missing=False, type=str)
+        self.reqparser.add_argument('start_date', required=False,
+                                    store_missing=False, type=str)
+        self.reqparser.add_argument('end_date', required=False,
+                                    store_missing=False, type=str)
 
     def get(self) -> ({str: str}, HTTPStatus):
         """
@@ -27,14 +29,15 @@ class ExportToKML(Resource):
         :param tracker_id: Tracker Id
         :param start_date: Creation date of new data to export
         :param end_date: Creation date of the oldest data to export
-        :return: JSON containing the filename and an HTTPStatus of 204 (created) otherwise an JSON error response with
-                 the appropriate HTTPStatus
+        :return: JSON containing the filename and an HTTPStatus of 204(created)
+            otherwise an JSON error response with the appropriate HTTPStatus
         """
         args = self.reqparser.parse_args()
         kml = simplekml.Kml()
         tracker = Tracker.get_by_tracker_id(args["tracker_id"])
         if not tracker:
-            return {"error": "tracker with id {} not found".format(args["tracker_id"])}, HTTPStatus.NOT_FOUND
+            return {"error": "tracker with id {} not found".format(
+                args["tracker_id"])}, HTTPStatus.NOT_FOUND
 
         path = kml.newlinestring(name="{}".format(tracker.id), description="",
                                  coords=tracker.kml_coords)
@@ -45,7 +48,8 @@ class ExportToKML(Resource):
         try:
             kml.save('{}.kml'.format(tracker.id))
         except IOError as ioe:
-            return dict(error="Unable to create KML file", traceback=ioe.with_traceback(ioe.__traceback__)), \
+            return dict(error="Unable to create KML file",
+                        traceback=ioe.with_traceback(ioe.__traceback__)), \
                    HTTPStatus.INTERNAL_SERVER_ERROR
 
         return dict(file_name=args["tracker_id"] + ".kml"), HTTPStatus.CREATED

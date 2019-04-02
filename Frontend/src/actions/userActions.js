@@ -1,5 +1,6 @@
 import { axiosInstance } from '../api/axios'
-import {SET_CURRENT_USER, SET_CURRENT_USER_REJECTED, REQUEST_PASSWORD_FULFILLED, REQUEST_PASSWORD_REJECTED, LOGIN_REJECTED, CLEAR_LOGIN_ERRORS, REGISTER_FULFILLED, REGISTER_REJECTED} from './../constants';
+import {SET_CURRENT_USER, SET_CURRENT_USER_REJECTED, REQUEST_PASSWORD_FULFILLED, REQUEST_PASSWORD_REJECTED, LOGIN_REJECTED, CLEAR_LOGIN_ERRORS, REGISTER_FULFILLED, REGISTER_REJECTED, RESET_STATE} from './../constants';
+import {PROMPT_USER_DELETE} from "../constants";
 
 export const login = (userCredentials, props) => {
   return (dispatch) => {
@@ -111,9 +112,15 @@ export const clearLoginErrors = () => {
   }
 }
 
-export function doLogout(props) {
-  localStorage.removeItem('token');
-  localStorage.removeItem('fullname');
-  localStorage.removeItem('id');
-  props.history.push('/login')
-}
+export const logout = (props) => {
+  return (dispatch) => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('fullname');
+    localStorage.removeItem('id');
+    props.history.push('/login')
+    dispatch({
+      type: RESET_STATE,
+    });
+  };
+};
+
