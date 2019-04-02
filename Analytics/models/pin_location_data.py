@@ -26,10 +26,12 @@ class Tracker(db.Model):
     description = db.Column(db.Text, nullable=True)
     activated_date = db.Column(db.DateTime, default=datetime.now)
     loc_data = db.relationship("LocationData", back_populates="tracker",
-                               primaryjoin="and_(Tracker.id==LocationData.tracker_id)")
+                               primaryjoin=
+                               "and_(Tracker.id==LocationData.tracker_id)")
 
-    def __init__(self, tracker_id: str, subtheme_id:int, description: str = "",
-                 activated_date: datetime.timestamp = datetime.utcnow()) -> None:
+    def __init__(self, tracker_id: str, subtheme_id: int, description: str = "",
+                 activated_date: datetime.timestamp =
+                 datetime.utcnow()) -> None:
         """
         Instantiate Tracker model
         :param tracker_id: New Tracker Id
