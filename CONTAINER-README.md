@@ -17,11 +17,11 @@ The following configuration files need to be edited:
 
 - Frontend; ```SharingCitiesDashboard/Frontend/src/api/urls.js```, update the value "LOCAL_URL" with the **API address and port**:
 ```javascript
-export const LOCAL_URL = 'http://<api_address>:<api_port>'
+export const LOCAL_URL = 'http://<api-address>'
 ```
 - Frontend; ```SharingCitiesDashboard/Frontend/fcc.config.js```, update the value "apiRoot" with the **API address and port**:
 ```javascript
-apiRoot: "http://<api_address>:<api_port>/"
+apiRoot: "http://<api-address>/"
 ```
 - API; Rename the ```SharingCitiesDashboard/Analytics/settings.py.bak``` file to ```SharingCitiesDashboard/Analytics/settings.py``` and update the database parameters below:
 ```python
@@ -32,11 +32,28 @@ DB_HOST = 'db'
 ```
 For the ```DB_HOST``` above we can use '**db**' as this is defined in the docker-compose.yaml file
 
+- API; ```SharingCitiesDashboard/Analytics/manage.py```, update the variable **host** with the **API host IP address**:
+```python
+manager.add_command('runserver', Server(
+    use_debugger=False,
+    use_reloader=True,
+    host='<host-value>'
+))
+```
+
+- API; ```SharingCitiesDashboard/Analytics/gunicornserver.py```, update the variable **host** with the **API host IP address**:
+```python
+    def __init__(self, host='<host-value>', port=5000, workers=4):
+        self.port = port
+        self.host = host
+        self.workers = workers
+```
+
 - Database; ```SharingCitiesDashboard/Dockerfile-DB```, update the ENV variables as below, replacing the db_x values:
 ```dockerfile
-ENV POSTGRES_USER db_user
-ENV POSTGRES_PASSWORD db_password
-ENV POSTGRES_DB db_name
+ENV POSTGRES_USER <db-user>
+ENV POSTGRES_PASSWORD <db-password>
+ENV POSTGRES_DB <db-name>
 ```
 
 - Database; ```SharingCitiesDashboard/initdb-postgis.sh```, update the "dbname" parameter below with the actual database name:

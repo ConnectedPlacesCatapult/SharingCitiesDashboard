@@ -1,9 +1,9 @@
 FROM postgres:11.2-alpine
 
 # Set Up the Database, Users & Roles
-ENV POSTGRES_USER sharingcities
-ENV POSTGRES_PASSWORD sharingcities
-ENV POSTGRES_DB test_analytics
+ENV POSTGRES_USER <db-user>
+ENV POSTGRES_PASSWORD <db-password>
+ENV POSTGRES_DB <db-name>
 
 # Install postgis
 # Code taken from:
