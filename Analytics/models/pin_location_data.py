@@ -418,7 +418,7 @@ class LocationData(db.Model):
         :return: Entries related to the Tracker Id passed.
         """
         return cls.query.filter_by(tracker_id=tracker_id).order_by(desc(
-            LocationData.timestamp)).limit(limit)
+            LocationData.measurement_date)).limit(limit)
 
     @classmethod
     def get_by_id(cls, loc_id: str) -> db.Model:
