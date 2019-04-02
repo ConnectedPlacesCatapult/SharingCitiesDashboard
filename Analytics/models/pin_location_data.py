@@ -29,8 +29,8 @@ class Tracker(db.Model):
                                primaryjoin=
                                "and_(Tracker.id==LocationData.tracker_id)")
 
-    def __init__(self, tracker_id: str, subtheme_id: int, description: str = "",
-                 activated_date: datetime.timestamp =
+    def __init__(self, tracker_id: str, subtheme_id: int,
+                 description: str = "", activated_date: datetime.timestamp =
                  datetime.utcnow()) -> None:
         """
         Instantiate Tracker model
