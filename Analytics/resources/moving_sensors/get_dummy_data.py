@@ -71,7 +71,6 @@ class GetDummyData(Resource):
             moving_sensor_subtheme.commit()
             moving_sensor_subtheme_id = moving_sensor_subtheme.id
 
-
         # Trackers must be unique, Fetch trackers and make dB entries for each unique tracker
         unique_tracker_ids = df["tracker"].unique()
 
