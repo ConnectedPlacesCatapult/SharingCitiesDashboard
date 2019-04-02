@@ -213,5 +213,4 @@ def create_app(**config_overrides):
     api.add_resource(ExportToKML, '/moving/export_kml')
     api.add_resource(GetDummyData, '/moving/fetch_dummy_data')
 
-
     return app
