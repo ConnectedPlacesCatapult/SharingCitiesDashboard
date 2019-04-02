@@ -71,7 +71,8 @@ from models.user_predictions import UserPredictions
 from models.users import Users
 from models.pin_location_data import Tracker, LocationData
 from resources.helper_functions import is_number
-from resources.request_grouped import request_grouped_data, request_harmonised_data
+from resources.request_grouped import request_grouped_data
+from resources.request_grouped import request_harmonised_data
 
 
 LIMIT = 30
@@ -114,7 +115,8 @@ class RequestForData(Resource):
     parser.add_argument('per_sensor', type=inputs.boolean, store_missing=False)
     parser.add_argument('sensorid', type=str, store_missing = False)
     parser.add_argument('n_predictions', type=int, store_missing = False)
-    parser.add_argument('predictions', type=inputs.boolean, store_missing = False)
+    parser.add_argument('predictions', type=inputs.boolean,
+                        store_missing = False)
     parser.add_argument('user_id', type=int, store_missing=False)
     parser.add_argument('moving', type=inputs.boolean, required=False,
                         store_missing = False)
@@ -137,7 +139,8 @@ class RequestForData(Resource):
                         subthemes = SubTheme.get_by_theme_id(theme_id)
                         if subthemes:
                             moving_subthemes = [subtheme.json() for subtheme in
-                                                subthemes if "Moving"in subtheme.name]
+                                                subthemes if "Moving"in
+                                                subtheme.name]
                             return moving_subthemes, 200
                         else:
                             return {"message": "could not find subthemes "
@@ -149,13 +152,16 @@ class RequestForData(Resource):
                     if subtheme_id == 'all':
                         subthemes = SubTheme.get_all()
                         moving_subthemes = [subtheme.json() for subtheme in
-                                            subthemes if "Moving"in subtheme.name]
+                                            subthemes if "Moving"in
+                                            subtheme.name]
                         return moving_subthemes, 200
                     else:
                         trackers = Tracker.get_by_subtheme_id(subtheme_id)
                         if trackers:
-                            moving_sensors = [tracker.json for tracker in trackers
-                                              if tracker.sub_theme_id == int(subtheme_id)]
+                            moving_sensors = [tracker.json for tracker in
+                                              trackers if
+                                              tracker.sub_theme_id ==
+                                              int(subtheme_id)]
                             return moving_sensors, 200
                         else:
                             return {"message": "could not find sensors "
@@ -167,7 +173,8 @@ class RequestForData(Resource):
                     if sensor_id == "all":
                         sensors = Tracker.get_all()
                         if sensors:
-                            moving_sensors = [sensor.json for sensor in sensors]
+                            moving_sensors = [sensor.json for sensor
+                                              in sensors]
                             return moving_sensors, 200
                         else:
                             return {"message": "No moving sensors"}, 400
@@ -187,12 +194,14 @@ class RequestForData(Resource):
                             result = [
                                 {"id": tracker.id,
                                  "attributes":
-                                     LocationData.get_tracker_attributes(tracker.id)
+                                     LocationData.get_tracker_attributes(
+                                         tracker.id)
                                  } for tracker in all_trackers
                             ]
                             return result, 200
                     else:
-                        tracker_attrs = LocationData.get_tracker_attributes(sensor_id)
+                        tracker_attrs = LocationData.get_tracker_attributes(
+                            sensor_id)
                         if tracker_attrs:
                             return {"id": sensor_id,
                                     "attributes": tracker_attrs
@@ -233,7 +242,8 @@ class RequestForData(Resource):
 
                                 tracker_data = {"id": track.id, "data": []}
                                 tracker_data_result = \
-                                        LocationData.get_by_tracker_id_with_limit(track.id, limit)
+                                        LocationData.get_by_tracker_id_with_limit(
+                                            track.id, limit)
                                 for entry in tracker_data_result:
                                     tracker_data["data"].append(entry.json)
 
