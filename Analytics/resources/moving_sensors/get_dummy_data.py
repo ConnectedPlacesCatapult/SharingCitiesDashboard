@@ -108,9 +108,10 @@ class GetDummyData(Resource):
         tracker.commit()
         return tid
 
-    def add_location_data(self, tracker_id: str, timestamp: str, latitude: float, longitude: float, speed: float,
-                          heading: float, elevation: float, charger: bool, battery: float, signalquality: int,
-                          satcnt: int) -> None:
+    def add_location_data(self, tracker_id: str, timestamp: str, latitude: float,
+                          longitude: float, speed: float, heading: float,
+                          elevation: float, charger: bool, battery: float,
+                          signalquality: int, satcnt: int) -> None:
         """
         Create LocationData
         :param tracker_id: Trackers Id
@@ -146,10 +147,15 @@ class GetDummyData(Resource):
                 value = {"no2": str(random.uniform(0, 100)),
                          "co2": str(random.uniform(0, 100))}
 
-            loc_data = LocationData.builder(tracker_id=tracker_id, timestamp=timestamp, latitude=latitude,
-                                            longitude=longitude, speed=speed, heading=heading, elevation=elevation,
-                                            sat_cnt=satcnt, fix_quality=1, signal_quality=signalquality,
-                                            battery=battery, charger=charger, value=value)
+            loc_data = LocationData.builder(tracker_id=tracker_id,
+                                            timestamp=timestamp,
+                                            latitude=latitude,
+                                            longitude=longitude, speed=speed,
+                                            heading=heading, elevation=elevation,
+                                            sat_cnt=satcnt, fix_quality=1,
+                                            signal_quality=signalquality,
+                                            battery=battery, charger=charger,
+                                            value=value)
             loc_data.save()
             loc_data.commit()
         except IntegrityError as ite:
