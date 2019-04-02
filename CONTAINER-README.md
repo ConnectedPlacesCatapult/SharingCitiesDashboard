@@ -23,7 +23,7 @@ export const LOCAL_URL = 'http://<api_address>:<api_port>'
 ```javascript
 apiRoot: "http://<api_address>:<api_port>/"
 ```
-- API; ```SharingCitiesDashboard/Analytics/settings.py```, update the database parameters as below:
+- API; Rename the ```SharingCitiesDashboard/Analytics/settings.py.bak``` file to ```SharingCitiesDashboard/Analytics/settings.py``` and update the database parameters below:
 ```python
 DB_USERNAME = '<db_user>'
 DB_PASSWORD = '<db_password>'
