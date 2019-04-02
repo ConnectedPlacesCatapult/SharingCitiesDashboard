@@ -28,6 +28,8 @@ Note: If no parameters are passed then by default all the themes are returned
     grouped: boolean specifying whether the sensor records are to be grouped at hourly intervals
         per_sensor: boolean specifying whether the sensor records are to be grouped at hourly intervals and 
                     per individual sensor. Defaults to False
+    moving: boolean specifying whether data related to moving sensors is to be
+            returned
 
     Note: fromdate and todate both needs to be present in order for date filtering to work
 
@@ -182,17 +184,19 @@ class RequestForData(Resource):
                     if sensor_id == 'all':
                         all_trackers =  Tracker.get_all()
                         if all_trackers:
-                            result = [{"id": tracker.id,
-                                       "attributes" :
-                                           LocationData.get_tracker_attributes(tracker.id)}
-                                      for tracker in all_trackers]
+                            result = [
+                                {"id": tracker.id,
+                                 "attributes":
+                                     LocationData.get_tracker_attributes(tracker.id)
+                                 } for tracker in all_trackers
+                            ]
                             return result, 200
                     else:
-                        tracker_attrs = \
-                            LocationData.get_tracker_attributes(sensor_id)
+                        tracker_attrs = LocationData.get_tracker_attributes(sensor_id)
                         if tracker_attrs:
-                            return {"id" : sensor_id,
-                                    "attributes": tracker_attrs}, 200
+                            return {"id": sensor_id,
+                                    "attributes": tracker_attrs
+                                    }, 200
 
                 if 'attribute' in args:
                     attr_name = args['attribute']
@@ -226,7 +230,8 @@ class RequestForData(Resource):
                         for track in trackers:
                             if LocationData.does_tracker_record(track.id,
                                                                 attr_name):
-                                tracker_data = {"id": track.id, "data":[]}
+
+                                tracker_data = {"id": track.id, "data": []}
                                 tracker_data_result = \
                                         LocationData.get_by_tracker_id_with_limit(track.id, limit)
                                 for entry in tracker_data_result:
