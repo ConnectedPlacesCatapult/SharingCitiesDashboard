@@ -1,8 +1,6 @@
 import unittest
-from datetime import datetime
 
 from app import create_app
-from models.theme import Theme
 
 
 class RequestMovingSensorDataTestCase(unittest.TestCase):
@@ -25,18 +23,30 @@ class RequestMovingSensorDataTestCase(unittest.TestCase):
         self.testing_client_context.pop()
 
     def test_request_for_themes(self):
+        """
+        Test whether the correct Theme is returned when the moving param
+        is set to True
+        """
         theme_param = 'all'
         response = self.testing_client.get('/data?moving=True&theme=' +
                                            theme_param)
         self.assertIn(b"Moving_Sensor",response.data)
 
     def test_request_for_subtheme(self):
+        """
+        Test whether the correct subtheme is returned when the moving param
+        is set to True
+        """
         subtheme_param = 'all'
         response = self.testing_client.get('/data?moving=True&subtheme=' +
                                            subtheme_param)
         self.assertIn(b"Moving_Airquality", response.data)
 
     def test_request_for_sensor(self):
+        """
+        Test whether the correct sensors are returned when the moving param
+        is set to True
+        """
         sensor_param = 'all'
         response = self.testing_client.get('/data?moving=True&sensor=' +
                                            sensor_param)
