@@ -3,7 +3,7 @@ import random
 from datetime import datetime, timedelta
 from typing import Union
 
-from sqlalchemy import and_, func, desc
+from sqlalchemy import and_, func, or_
 from sqlalchemy.exc import IntegrityError
 
 from db import db
@@ -288,7 +288,7 @@ class LocationData(db.Model):
         Create KML (Key Markup Language) of Coordinate
         :return: KML Formatted GPS Coordinate
         """
-        return str(self.latitude), str(self.longitude), str(self.elevation)
+        return str(self.longitude), str(self.latitude), str(self.elevation)
 
     @staticmethod
     def windows_data(tracker_id: Union[str, None] = None, days: int = 365,
@@ -300,22 +300,23 @@ class LocationData(db.Model):
         :param tracker_id: Tracker id
         :param days: Number of days
         :return: A JSON response message of the number of entries in the table
-        before, after and the difference after
-                 data is deleted
+        before, after and the difference after data is deleted
         """
         rows_before = db.session.query(func.count(LocationData.id)).scalar()
 
         cut_off_date = start_date - timedelta(days=days)
 
         if tracker_id:
-            LocationData.query.filter(
-                LocationData.measurement_date <= cut_off_date).filter(
-                LocationData.measurement_date > start_date).filter(
+            LocationData.query.filter(or_(
+                LocationData.measurement_date <= cut_off_date,
+                LocationData.measurement_date > start_date + timedelta(
+                    days=1))).filter(
                 LocationData.tracker_id == tracker_id).delete()
         else:
-            LocationData.query.filter(
-                LocationData.measurement_date <= cut_off_date).filter(
-                LocationData.measurement_date > start_date).delete()
+            LocationData.query.filter(or_(
+                LocationData.measurement_date <= cut_off_date,
+                LocationData.measurement_date > start_date + timedelta(
+                    days=1))).delete()
 
         LocationData.commit()
 
