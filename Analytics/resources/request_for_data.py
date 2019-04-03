@@ -28,6 +28,8 @@ Note: If no parameters are passed then by default all the themes are returned
     grouped: boolean specifying whether the sensor records are to be grouped at hourly intervals
         per_sensor: boolean specifying whether the sensor records are to be grouped at hourly intervals and 
                     per individual sensor. Defaults to False
+    moving: boolean specifying whether data related to moving sensors is to be
+            returned
 
     Note: fromdate and todate both needs to be present in order for date filtering to work
 
@@ -67,8 +69,10 @@ from models.unit import Unit
 from models.prediction_results import PredictionResults
 from models.user_predictions import UserPredictions
 from models.users import Users
+from models.pin_location_data import Tracker, LocationData
 from resources.helper_functions import is_number
-from resources.request_grouped import request_grouped_data, request_harmonised_data
+from resources.request_grouped import request_grouped_data
+from resources.request_grouped import request_harmonised_data
 
 
 LIMIT = 30
@@ -109,15 +113,149 @@ class RequestForData(Resource):
                         choices=('long', 'wide', 'geo'),
                         store_missing=False)
     parser.add_argument('per_sensor', type=inputs.boolean, store_missing=False)
-    parser.add_argument('sensorid', type=str)
+    parser.add_argument('sensorid', type=str, store_missing = False)
     parser.add_argument('n_predictions', type=int, store_missing = False)
-    parser.add_argument('predictions', type=inputs.boolean, store_missing = False)
+    parser.add_argument('predictions', type=inputs.boolean,
+                        store_missing = False)
     parser.add_argument('user_id', type=int, store_missing=False)
+    parser.add_argument('moving', type=inputs.boolean, required=False,
+                        store_missing = False)
 
     def get(self):
         args = self.parser.parse_args()
         theme, subtheme, attribute_data, sensor, sensor_name, sensor_attribute, attributes, sensorid, n_predictions, predictions, grouped, harmonising_method, per_sensor, freq, method = None, None, None, None, None, None, [], None, 100, None, None, None, None, '1H', 'mean'
         user_id = None
+
+        if 'moving' in args:
+            if args['moving']:
+                if 'theme' in args:
+                    theme_id = args['theme']
+                    if theme_id == 'all':
+                        themes = Theme.get_all()
+                        moving_themes = [theme.json() for theme in themes
+                                         if "Moving" in theme.name]
+                        return moving_themes, 200
+                    else:
+                        subthemes = SubTheme.get_by_theme_id(theme_id)
+                        if subthemes:
+                            moving_subthemes = [subtheme.json() for subtheme in
+                                                subthemes if "Moving"in
+                                                subtheme.name]
+                            return moving_subthemes, 200
+                        else:
+                            return {"message": "could not find subthemes "
+                                               "corresponding to theme id "
+                                               "{}".format(theme_id)}, 400
+
+                if 'subtheme' in args:
+                    subtheme_id = args['subtheme']
+                    if subtheme_id == 'all':
+                        subthemes = SubTheme.get_all()
+                        moving_subthemes = [subtheme.json() for subtheme in
+                                            subthemes if "Moving"in
+                                            subtheme.name]
+                        return moving_subthemes, 200
+                    else:
+                        trackers = Tracker.get_by_subtheme_id(subtheme_id)
+                        if trackers:
+                            moving_sensors = [tracker.json for tracker in
+                                              trackers if
+                                              tracker.sub_theme_id ==
+                                              int(subtheme_id)]
+                            return moving_sensors, 200
+                        else:
+                            return {"message": "could not find sensors "
+                                               "corresponding to subtheme id "
+                                               "{}".format(subtheme_id)}, 400
+
+                if 'sensor' in args:
+                    sensor_id = args["sensor"]
+                    if sensor_id == "all":
+                        sensors = Tracker.get_all()
+                        if sensors:
+                            moving_sensors = [sensor.json for sensor
+                                              in sensors]
+                            return moving_sensors, 200
+                        else:
+                            return {"message": "No moving sensors"}, 400
+                    else:
+                        moving_sensor = Tracker.get_by_tracker_id(sensor_id)
+                        if moving_sensor:
+                            return moving_sensor.json, 200
+                        else:
+                            return {"message": "could not find sensor with "
+                                               "id {}".format(sensor_id)}, 400
+
+                if 'sensorattribute' in args:
+                    sensor_id = args["sensorattribute"]
+                    if sensor_id == 'all':
+                        all_trackers =  Tracker.get_all()
+                        if all_trackers:
+                            result = [
+                                {"id": tracker.id,
+                                 "attributes":
+                                     LocationData.get_tracker_attributes(
+                                         tracker.id)
+                                 } for tracker in all_trackers
+                            ]
+                            return result, 200
+                    else:
+                        tracker_attrs = LocationData.get_tracker_attributes(
+                            sensor_id)
+                        if tracker_attrs:
+                            return {"id": sensor_id,
+                                    "attributes": tracker_attrs
+                                    }, 200
+
+                if 'attribute' in args:
+                    attr_name = args['attribute']
+                    all_trackers = Tracker.get_all()
+                    if all_trackers:
+                        result = {"attribute": attr_name, "trackers": []}
+                        for track in all_trackers:
+                            if LocationData.does_tracker_record(track.id,
+                                                                attr_name):
+                                result["trackers"].append({"id":track.id})
+                        return result, 200
+                    else:
+                        return {"message": "No moving sensors"}, 400
+
+                if 'attributedata' in args:
+                    limit = 5
+                    if 'limit' in args:
+                        limit = args["limit"]
+
+                    if 'sensorid' in args:
+                        trackers = \
+                            [Tracker.get_by_tracker_id(args["sensorid"])]
+                        if trackers == [None]:
+                            return {"message": "could not "
+                                               "find sensor with id {}".
+                                                format(args["sensorid"])}, 400
+                    else:
+                        trackers = Tracker.get_all()
+
+                    attr_name = args['attributedata']
+                    if trackers:
+                        result = {"attribute": attr_name, "attributedata": []}
+                        for track in trackers:
+                            if LocationData.does_tracker_record(track.id,
+                                                                attr_name):
+
+                                tracker_data = {"id": track.id, "data": []}
+                                tracker_data_result = \
+                                        LocationData.get_by_tracker_id_with_limit(
+                                            track.id, limit)
+                                for entry in tracker_data_result:
+                                    tracker_data["data"].append(entry.json)
+
+                                result["attributedata"].append(tracker_data)
+
+                        return result, 200
+                    else:
+                        return {"message": "No moving sensor"}, 400
+
+            return {"error": "error occurred while processing request"}, 400
 
         if 'theme' in args:
             theme = args['theme']

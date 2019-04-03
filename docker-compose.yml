@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile-DB
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile-API
+    command: ["python3", "manage.py", "gunicorn"]
+    volumes:
+      - ./Analytics/:/code
+    ports:
+      - "8000:5000"
+    depends_on:
+      - db
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile-UI
+    command: serve -s build -l 8080
+    volumes:
+      - ./Frontend/:/code/Frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api

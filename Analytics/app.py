@@ -60,13 +60,14 @@ from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
+from resources.moving_sensors import GetDummyData
 
 
 def create_app(**config_overrides):
     app = Flask(__name__)
     app.config.from_pyfile('settings.py')
     app.config.update(config_overrides)
-    cors = CORS(app, resources={r"/*": {"origins": "*"}})
+    CORS(app)
     api = Api(app)
 
     # # Configure application to store JWTs in cookies. Whenever you make
@@ -207,6 +208,7 @@ def create_app(**config_overrides):
     api.add_resource(DeleteLocationData, '/moving/delete_location_data')
     api.add_resource(GetLocationData, '/moving/get_loc_data')
     api.add_resource(WindowLocationData, '/moving/window_data')
+
     api.add_resource(ExportToKML, '/moving/export_kml')
     api.add_resource(GetDummyData, '/moving/fetch_dummy_data')
 
