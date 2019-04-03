@@ -24,3 +24,5 @@ celery==v4.3.0rc1
 apscheduler
 retrying
 pyyaml
+simplekml
+simplejson
