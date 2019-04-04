@@ -43,6 +43,12 @@ cd ~/SharingCitiesDashboard/Analytics
 
 # Check if python requirements have been installed
 if [ $PYREQ_INSTALLED = False ]; then
+    # Check if pip is installed
+    if [ -z "$(which pip3)" ]; then
+        # Install python3-pip3
+        echo "$PREFIX Installing pip3"
+        sudo apt install python3-pip
+    fi
     # Install python requirements
     echo "$PREFIX Installing python requirements"
     pip3 install -r requirements.txt
