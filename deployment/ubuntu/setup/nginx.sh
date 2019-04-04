@@ -29,7 +29,7 @@ sudo cp ~/SharingCitiesDashboard/nginx.conf /etc/nginx/nginx.conf
 
 # Check Nginx status
 echo "$PREFIX Checking Nginx status"
-NGINX_STATUS=$(systemctl status nginx | grep active | awk '{ print $2 }')
+NGINX_STATUS=$(sudo systemctl status nginx | grep active | awk '{ print $2 }')
 if [ $NGINX_STATUS = "active" ]; then
     # Reload Nginx
     echo "$PREFIX Restarting Nginx"
