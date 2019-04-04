@@ -4,7 +4,7 @@ unset DEBUG
 PREFIX="   -"
 
 # Initialize script
-echo "-- FCC DB Setup Script --"
+echo "-- FCC DB Setup --"
 
 # Check if postgres is installed
 echo "$PREFIX Checking for postgres"
@@ -36,9 +36,13 @@ sudo -u postgres psql -d analytics -c "CREATE EXTENSION postgis"
 # Move to Analytics directory
 cd ~/SharingCitiesDashboard/Analytics
 
-# Install python requirements
-echo "$PREFIX Installing python requirements"
-pip3 install -r requirements.txt
+# Check if python requirements have been installed
+if [ $PYREQ_INSTALLED = False ]; then
+    # Install python requirements
+    echo "$PREFIX Installing python requirements"
+    pip3 install -r requirements.txt
+    export PYREQ_INSTALLED=True
+fi
 
 # Setup DB structure
 echo "$PREFIX Initialize DB structure"
