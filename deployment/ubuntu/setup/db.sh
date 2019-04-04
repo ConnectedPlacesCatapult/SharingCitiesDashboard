@@ -18,7 +18,7 @@ if [ -z "$(which psql)" ]; then
     echo "   $PREFIX Installing postgresql"
     sudo apt update
     sudo apt install postgresql postgresql-contrib
-    sudo apt-get install postgis
+    sudo apt-get install postgis libpq-dev
 fi
 echo "   $PREFIX Postgres installed!"
 
