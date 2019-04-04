@@ -1,7 +1,9 @@
+var apiAddress = process.env.API_ADDRESS;
+
 module.exports = {
 
   // root uri of the API
-  apiRoot: "http://<api-address>/",
+  apiRoot: "http://" + apiAddress + "/",
 
   // optionally include localisation stylesheet (good for @font-face stuff)
   localeStyleSheet: "./styles/lisbon.css",

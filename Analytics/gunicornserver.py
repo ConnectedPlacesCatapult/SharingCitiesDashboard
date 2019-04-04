@@ -1,10 +1,15 @@
+from os import environ
 from flask_script import Command, Option
+
+
+hostValue = environ.get('GUN_HOST_VALUE')
+
 
 class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
 
-    def __init__(self, host='<host-value>', port=5000, workers=4):
+    def __init__(self, host=hostValue, port=5000, workers=4):
         self.port = port
         self.host = host
         self.workers = workers

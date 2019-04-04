@@ -12,6 +12,7 @@ from create_celery import make_celery
 from add_startup_admin import AddStartupAdmin
 
 
+hostValue = os.environ.get('MAN_HOST_VALUE')
 application = create_app()
 celery_task = make_celery(application)
 manager = Manager(app=application)
@@ -20,7 +21,7 @@ manager.add_command('db', MigrateCommand)
 manager.add_command('runserver', Server(
     use_debugger=False,
     use_reloader=True,
-    host='<host-value>'
+    host=hostValue
 ))
 
 manager.add_command("gunicorn", GunicornServer())

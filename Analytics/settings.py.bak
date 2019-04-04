@@ -1,11 +1,18 @@
 import os
 
+
+dbUser = os.environ.get('DB_USERNAME')
+dbPassword = os.environ.get('DB_PASSWORD')
+dbHost = os.environ.get('DB_HOST')
+dbName = os.environ.get('DATABASE_NAME')
+
+
 SECRET_KEY = 'Use-your-secret-key'
 DEBUG=True
-DB_USERNAME = '<DB username>'
-DB_PASSWORD = '<DB password>'
-DATABASE_NAME = 'analytics'
-DB_HOST = '<host_name>'
+DB_USERNAME = dbUser
+DB_PASSWORD = dbPassword
+DB_HOST = dbHost
+DATABASE_NAME = dbName
 DB_URI = "postgresql+psycopg2://%s:%s@%s/%s" % (DB_USERNAME, DB_PASSWORD, DB_HOST, DATABASE_NAME)
 SQLALCHEMY_DATABASE_URI = DB_URI
 SQLALCHEMY_TRACK_MODIFICATIONS = False
