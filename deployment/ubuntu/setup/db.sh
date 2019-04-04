@@ -3,6 +3,11 @@
 unset DEBUG
 PREFIX="   -"
 
+# Set install flags
+if [ ! $PYREQ_INSTALLED ]; then
+    export PYREQ_INSTALLED=False
+fi
+
 # Initialize script
 echo "-- FCC DB Setup --"
 
