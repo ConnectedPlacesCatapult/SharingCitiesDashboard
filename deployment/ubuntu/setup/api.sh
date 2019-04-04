@@ -19,8 +19,8 @@ export GUN_HOST_VALUE="localhost"
 # Initialize script
 echo "-- FCC API Setup --"
 
-# Move to Frontend directory
-cd ~/SharingCitiesDashboard/Frontend
+# Move to Analytics directory
+cd ~/SharingCitiesDashboard/Analytics
 
 # Check if python requirements have been installed
 if [ $PYREQ_INSTALLED = False ]; then
@@ -39,6 +39,14 @@ fi
 # Rename settings.py.bak
 echo "$PREFIX Initializing flask settings"
 mv settings.py.bak settings.py
+
+# Setup DB structure
+echo "$PREFIX Initialize DB structure"
+python3 db_setup.py
+
+# Create SuperUser account
+echo "$PREFIX Setup SuperUser account"
+python3 manage.py add_superuser
 
 # Serve the API on port 5000
 # python3 manage.py gunicorn
