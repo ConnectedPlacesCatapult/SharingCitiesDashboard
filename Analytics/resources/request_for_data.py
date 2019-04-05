@@ -430,9 +430,9 @@ class RequestForData(Resource):
                             data.append(pred_data)
 
                         else:
-                            #### Ceck for data
+                            # Check for data
                             if data[0]["Total_Records"] != 0:
-                            #### Check for non numeric data
+                            # Check for non numeric data
                                 if is_number(data[0]["Attribute_Values"][0][
                                                   "Value"]):
                                     prediction_task =  \
