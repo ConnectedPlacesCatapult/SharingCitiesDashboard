@@ -348,62 +348,87 @@ class RequestForData(Resource):
                 and 'todate' in args and args['todate'] is not None):
                 if grouped:
                     if harmonising_method:
-                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET,
-                                                       args['fromdate'], args['todate'],
-                                                       operation)
-                        data = request_harmonised_data(data,
-                                                       harmonising_method=harmonising_method)
+                        data = self.get_attribute_data(
+                            attribute_data, LIMIT, OFFSET, args['fromdate'],
+                            args['todate'], operation)
+                        data = request_harmonised_data(
+                            data, harmonising_method=harmonising_method)
                     else:
-                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
-                                                args['fromdate'], args['todate'], operation)
-                        data = request_grouped_data(data, per_sensor=per_sensor, freq=freq, method=method)
+                        data = self.get_attribute_data(
+                            attribute_data, LIMIT, OFFSET, args['fromdate'],
+                            args['todate'], operation)
+                        data = request_grouped_data(
+                            data, per_sensor=per_sensor, freq=freq,
+                            method=method)
                 else:
-                    data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
-                                                args['fromdate'], args['todate'], operation)
+                    data = self.get_attribute_data(
+                        attribute_data, LIMIT, OFFSET, args['fromdate'],
+                        args['todate'], operation)
                 if predictions:
-                    if not Users.find_by_id(user_id):
+                    if not Attributes.get_by_name(attribute_data):
                         pred_data = {
-                            "message": "Unable to make predictions as user id "
-                                       "{} does not exists".format(user_id)
+                            "message": "Unable to make predictions as "
+                                       "attribute table {} does not "
+                                       "exist".format(attribute_data)
                         }
                         logger.error(pred_data["message"])
                         data.append(pred_data)
                     else:
-                        prediction_task = self.get_predictions.apply_async(
-                            args=(data[0]["Attribute_Table"], sensorid,
-                                  n_predictions, user_id))
-
-                        data.append({"message": "Forecasting engine making "
-                                                "predictions",
-                                    "task_id": str(prediction_task.id)})
-            else:
-                if grouped:
-                    if harmonising_method:
-                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-                        data = request_harmonised_data(data, harmonising_method=harmonising_method)
-                    else:
-                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-                        data = request_grouped_data(data, per_sensor=per_sensor, freq=freq, method=method)
-                else:
-                    data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-
-                if predictions:
-                    if not Users.find_by_id(user_id):
-                        pred_data = {
-                            "message": "Unable to make predictions as user id "
-                                       "{} does not exists".format(user_id)
-                        }
-                        logger.error(pred_data["message"])
-                        data.append(pred_data)
-                    else:
-                        if not Attributes.get_by_name(attribute_data):
+                        if not Users.find_by_id(user_id):
                             pred_data = {
-                                "message": "Unable to make predictions as "
-                                           "attribute table {} does not "
-                                           "exist".format(attribute_data)
+                                "message": "Unable to make predictions as user"
+                                           " id {} does not"
+                                           " exists".format(user_id)
                             }
                             logger.error(pred_data["message"])
                             data.append(pred_data)
+                        else:
+                            prediction_task = self.get_predictions.apply_async(
+                                args=(data[0]["Attribute_Table"], sensorid,
+                                      n_predictions, user_id))
+
+                            data.append({"message": "Forecasting engine making"
+                                                    " predictions",
+                                        "task_id": str(prediction_task.id)})
+            else:
+                if grouped:
+                    if harmonising_method:
+                        data = self.get_attribute_data(attribute_data,
+                                                       LIMIT, OFFSET,
+                                                       operation=operation)
+                        data = request_harmonised_data(
+                            data, harmonising_method=harmonising_method)
+                    else:
+                        data = self.get_attribute_data(attribute_data,
+                                                       LIMIT, OFFSET,
+                                                       operation=operation)
+                        data = request_grouped_data(
+                            data, per_sensor=per_sensor, freq=freq,
+                            method=method)
+                else:
+                    data = self.get_attribute_data(attribute_data,
+                                                   LIMIT, OFFSET,
+                                                   operation=operation)
+
+                if predictions:
+                    if not Attributes.get_by_name(attribute_data):
+                        pred_data = {
+                            "message": "Unable to make predictions as "
+                                       "attribute table {} does not "
+                                       "exist".format(attribute_data)
+                        }
+                        logger.error(pred_data["message"])
+                        data.append(pred_data)
+                    else:
+                        if not Users.find_by_id(user_id):
+                            pred_data = {
+                                "message": "Unable to make predictions as user"
+                                           " id {} does not "
+                                           "exists".format( user_id)
+                            }
+                            logger.error(pred_data["message"])
+                            data.append(pred_data)
+
                         else:
                             #### Ceck for data
                             if data[0]["Total_Records"] != 0:
@@ -420,8 +445,9 @@ class RequestForData(Resource):
                                                    "making predictions",
                                         "task_id": str(prediction_task.id)})
                                 else:
-                                    data.append({"message": "Cannot predict"
-                                                            "non-numeric data"})
+                                    data.append({
+                                        "message": "Cannot predict "
+                                                   "non-numeric data"})
                             else:
                                 pass
             return data, 200
