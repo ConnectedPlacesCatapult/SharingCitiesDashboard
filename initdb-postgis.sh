@@ -7,6 +7,6 @@ export PGUSER="$POSTGRES_USER"
 
 # Load PostGIS into both template_database and $POSTGRES_DB
 echo "Loading PostGIS extensions into test_analytics"
-"${psql[@]}" --dbname=<db_name> <<-'EOSQL'
+"${psql[@]}" --dbname="$POSTGRES_DB" <<-'EOSQL'
     CREATE EXTENSION IF NOT EXISTS postgis;
 EOSQL

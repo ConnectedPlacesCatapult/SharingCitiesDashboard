@@ -1,1 +1,1 @@
-export const LOCAL_URL = 'http://<api-address>/'
+export const LOCAL_URL = 'http://localhost:8000/'
