@@ -430,9 +430,9 @@ class RequestForData(Resource):
                             data.append(pred_data)
 
                         else:
-                            #### Ceck for data
+                            # Check for data
                             if data[0]["Total_Records"] != 0:
-                            #### Check for non numeric data
+                            # Check for non numeric data
                                 if is_number(data[0]["Attribute_Values"][0][
                                                   "Value"]):
                                     prediction_task =  \
@@ -682,10 +682,8 @@ class RequestForData(Resource):
                         "Predictions": predict_from_db.result
                     }
             else:
-
                 result = PredictionResults.generate_predictions_results(
                     attribute_table, sensor_id, n_pred, _data, _timestamps)
-
                 UserPredictions.add_entry(u_id, result["Prediction_id"])
 
             pred_data = {"status": "task complete", "result": result}
