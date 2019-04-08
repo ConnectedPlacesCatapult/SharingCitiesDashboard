@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+export const LOCAL_URL = process.env.API_ADDRESS;
 
 module.exports = {
   apiRoot: process.env.API_ADDRESS,
