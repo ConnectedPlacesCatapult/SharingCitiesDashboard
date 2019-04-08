@@ -55,7 +55,7 @@ class ReplaceKey(Resource):
     @jwt_required
     def post(self) -> (dict, int):
         """
-        GET request endpoint. Test whether new API key is valid and if so,
+        POST request endpoint. Test whether new API key is valid and if so,
         replace the current Sendgrid API environment variable
         :return: a dictionary containing boolean value indicating whether
                  the replacement procedure was successful
