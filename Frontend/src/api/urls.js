@@ -1,3 +1,1 @@
-var apiAddress = process.env.API_ADDRESS;
-
-export const LOCAL_URL = 'http://' + apiAddress + '/';
+export const LOCAL_URL = process.env.API_ADDRESS;

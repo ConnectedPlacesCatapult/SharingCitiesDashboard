@@ -6,6 +6,7 @@ module.exports = {
    historyApiFallback: true,
    host:'localhost',
    port:'8080',
+   apiRoot: process.env.API_ADDRESS,
   },
   entry: "./src/index.js",
   output: {
@@ -64,7 +65,4 @@ module.exports = {
       filename: "./index.html"
     })
   ],
-  devServer: {
-    historyApiFallback: true,
-  },
 };
