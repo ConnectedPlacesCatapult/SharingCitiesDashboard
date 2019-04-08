@@ -3,11 +3,11 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 export const LOCAL_URL = process.env.API_ADDRESS;
 
 module.exports = {
-  apiRoot: process.env.API_ADDRESS,
   devServer: {
    historyApiFallback: true,
    host:'localhost',
    port:'8080',
+   apiRoot: process.env.API_ADDRESS,
   },
   entry: "./src/index.js",
   output: {
