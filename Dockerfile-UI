@@ -9,6 +9,4 @@ RUN apt-get update
 RUN apt-get install -y xsel
 RUN npm i --save
 RUN npm install -g serve
-# ARG LOCAL_URL_API
-# ENV LOCAL_URL_API=${LOCAL_URL_API}
 RUN npm run build
