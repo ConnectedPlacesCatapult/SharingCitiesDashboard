@@ -21,8 +21,6 @@ class TestKeyValidity(Resource):
         :return: a dictionary containing boolean value indicating the
         validity of the api key and a reason if the key is invalid
         """
-        # os.environ['SENDGRID_API_KEY'] = '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'
-        # print(os.environ)
         if get_jwt_claims()["admin"]:
             sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
             if sendgrid_api_key:
@@ -44,7 +42,7 @@ class TestKeyValidity(Resource):
 
 class ReplaceKey(Resource):
     """
-    API endpoint, replace the current Sendgrid API key environment varibale
+    API endpoint, replace the current Sendgrid API key environment variable
     """
 
     reqparser = reqparse.RequestParser()
@@ -87,6 +85,16 @@ class ReplaceKey(Resource):
     @staticmethod
     def replace_sendgrid_key(new_api_key: str, folder: str,
                              file: str) -> (bool, str):
+        """
+        Replace Sendgrid API key environment variable export statement
+        within the provided file argument
+        :param new_api_key: Sendgrid API key that will replace the current
+        :param folder: Name of folder that contains the shell configuration
+                       file
+        :param file: Name of shell configuration file
+        :return: Whether the replacement process was successful and a
+                 reason if the process failed
+        """
 
         if folder == "~":
             folder = os.path.expanduser('~')
@@ -121,10 +129,16 @@ class ReplaceKey(Resource):
 
 
 class SendgridHelper:
-    """ Helper Class. Methods used by sendgrid endpoints """
+    """ Helper Class. Contains methods used by Sendgrid Resource classes """
 
     @staticmethod
     def send_test_request(sendgrid_api_key: str) -> requests.Response:
+        """
+        Send POST request to the Sendgrid test endpoint containing
+        the the supplied API key
+        :param sendgrid_api_key: Key whose validity is to be tested
+        :return: The HTTP response received from Sendgrid
+        """
 
         headers = {
             "Content-Type": "application/json",
@@ -143,6 +157,13 @@ class SendgridHelper:
     @staticmethod
     def handle_sendgrid_response(
             sendgrid_response: requests.Response) -> (dict, int):
+        """
+        Return the applicable feedback according to the supplied Sendgrid
+        response
+        :param sendgrid_response: An HTTP response from the Sengrid test
+                                  endpoint
+        :return:
+        """
 
         if sendgrid_response.status_code == 202:
             return {"api_key": True, "reason": ""}, 200
@@ -159,4 +180,3 @@ class SendgridHelper:
                                  "Response code from Sengrid = {}"
                                  "".format(sendgrid_response.status_code)
                    }, 500
-
