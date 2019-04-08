@@ -5,6 +5,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-DB
+#      args:
+#        POSTGRES_DB: test_analytics
+#        POSTGRES_USER: sharingcities
+#        POSTGRES_PASSWORD: sharingcities
+    env_file:
+      - ./Frontend/.env
   api:
     build:
       context: .
@@ -16,6 +22,13 @@ services:
       - "8000:5000"
     depends_on:
       - db
+    env_file:
+      - ./Frontend/.env
+#    environment:
+#      - DATABASE_NAME=test_analytics
+#      - DB_USERNAME=sharingcities
+#      - DB_PASSWORD=sharingcities
+#      - SECRET_KEY=Use-your-secret-key
   ui:
     build:
       context: .
@@ -27,3 +40,5 @@ services:
       - "8080:8080"
     depends_on:
       - api
+#    environment:
+#      - LOCAL_URL_API=http://localhost:8000/
