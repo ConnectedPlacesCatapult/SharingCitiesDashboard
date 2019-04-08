@@ -1,6 +1,9 @@
-import { LOCAL_URL } from './urls'
+// import { LOCAL_URL } from './urls'
 import { getAuthToken } from './session'
 import axios from 'axios'
+
+
+export const LOCAL_URL = process.env.API_ADDRESS;
 
 export const axiosInstance = axios.create({
   baseURL: LOCAL_URL
