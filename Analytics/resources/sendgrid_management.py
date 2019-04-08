@@ -5,8 +5,6 @@ from flask_jwt_extended import jwt_required, get_jwt_claims
 import requests
 import logging
 
-from db import db
-
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
