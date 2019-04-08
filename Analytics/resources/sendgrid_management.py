@@ -32,6 +32,8 @@ class TestKeyValidity(Resource):
                     SendgridHelper.handle_sendgrid_response(sendgrid_response)
 
             else:
+                logger.error("Sendgrid API is not set as an environment "
+                             "variable")
                 return {
                     "api_key": False,
                     "reason": "Sendgrid API key is not set in the environment "
