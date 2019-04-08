@@ -1,1 +1,1 @@
-export const LOCAL_URL = process.env.LOCAL_URL   //"http://<api-address>/"
+export const LOCAL_URL = process.env.LOCAL_URL_API
