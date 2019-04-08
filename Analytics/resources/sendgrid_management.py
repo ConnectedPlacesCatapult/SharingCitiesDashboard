@@ -169,7 +169,8 @@ class SendgridHelper:
         response
         :param sendgrid_response: An HTTP response from the Sengrid test
                                   endpoint
-        :return:
+        :return: a dictionary containing whether the API key is valid and
+                 the corresponding response code
         """
 
         if sendgrid_response.status_code == 202:
