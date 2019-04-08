@@ -14,20 +14,20 @@ from importers.state_decorator import ImporterStatus
 from models.importer_status import ImporterStatuses
 from models.api import API as Api_Class
 from app import create_app
-from db import db
+from Analytics.settings import GetConfig
 
 sys.path.append('..')
-import settings
 
 
+config = GetConfig.configure('postgres')
 application = create_app()
 logging.basicConfig(level='INFO', filename='importers.log', filemode='a')
 logger = logging.getLogger(__name__)
 
-engine = sqlalchemy.create_engine(settings.DB_URI)
+engine = sqlalchemy.create_engine(config['db_uri'])
 session = scoped_session(sessionmaker(bind=engine))
 jobstore = {
-    'sqlalchemy': SQLAlchemyJobStore(url=settings.DB_URI)
+    'sqlalchemy': SQLAlchemyJobStore(url=config['db_uri'])
 }
 sched = BackgroundScheduler(jobstores=jobstore)
 sched.start()

@@ -7,16 +7,16 @@ import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
 
+from Analytics.settings import GetConfig
 from importers.base import BaseImporter
 from importers.json_reader import JsonReader
-from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
-@GetConfig("LisbonAPI", 'environment', 'lisbon')
+@GetConfig("LisbonAPI", 'api_endpoints', 'lisbon')
 class LisbonAPI(BaseImporter):
     """
     LisbonAPI Importer
@@ -28,9 +28,9 @@ class LisbonAPI(BaseImporter):
         Get Importer configurations
         Instantiate BaseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
-                         self.TOKEN_EXPIRY)
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS, self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
@@ -61,13 +61,16 @@ class LisbonAPI(BaseImporter):
                 logger.error('Nothing to save as dataframe is empty')
             else:
                 logger.info(concat_df)
-                self.create_datasource(dataframe=concat_df, sensor_tag='', attribute_tag=[],
-                                       unit_value=[], bespoke_unit_tag=[], description=[],
-                                       bespoke_sub_theme=[], location_tag='loc',
+                self.create_datasource(dataframe=concat_df, sensor_tag='',
+                                       attribute_tag=[], unit_value=[],
+                                       bespoke_unit_tag=[], description=[],
+                                       bespoke_sub_theme=[],
+                                       location_tag='loc',
                                        api_timestamp_tag='run_time_stamp')
             self.importer_status.status = Status.success(__class__.__name__)
         except Exception as e:
-            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
+            self.importer_status.status = Status.failure(
+                __class__.__name__, e.__str__(), traceback.format_exc())
 
     def _refresh_token(self) -> str:
         """
@@ -77,5 +80,7 @@ class LisbonAPI(BaseImporter):
         """
         headers = {"grant_type": "client_credentials"}
         token_url = 'https://iot.alticelabs.com/api/devices/token'
-        token = requests.post(token_url, headers=headers, auth=HTTPBasicAuth(self.USER_NAME, self.USER_PASSCODE))
+        token = requests.post(token_url, headers=headers,
+                              auth=HTTPBasicAuth(self.USER_NAME,
+                                                 self.USER_PASSCODE))
         return str(token.text)
