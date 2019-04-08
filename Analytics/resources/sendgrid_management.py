@@ -7,6 +7,9 @@ import logging
 
 from db import db
 
+logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
+
 
 class TestKeyValidity(Resource):
     """
@@ -19,7 +22,7 @@ class TestKeyValidity(Resource):
         GET request endpoint. Send POST request to Sendgrid to test the
         validity of the current api key
         :return: a dictionary containing boolean value indicating the
-        validity of the api key and a reason if the key is invalid
+                 validity of the api key and a reason if the key is invalid
         """
         if get_jwt_claims()["admin"]:
             sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
@@ -55,7 +58,7 @@ class ReplaceKey(Resource):
         GET request endpoint. Test whether new API key is valid and if so,
         replace the current Sendgrid API environment variable
         :return: a dictionary containing boolean value indicating whether
-        the replacement procedure was successful
+                 the replacement procedure was successful
         """
 
         if get_jwt_claims()["admin"]:
@@ -71,6 +74,8 @@ class ReplaceKey(Resource):
                                                                 ".bash_profile")
                 if is_replaced:
                     os.environ["SENDGRID_API_KEY"] = new_api_key
+                    logger.info("Sendgrid API key has been replaced "
+                                "with new key = {}".format(new_api_key))
                     return {"message": "success"}, 200
                 else:
                     return {
@@ -125,6 +130,8 @@ class ReplaceKey(Resource):
             fileout.close()
             return True, None
         else:
+            logger.error("The required `export SENDGRID_API_KEY` statement "
+                         "is not present within{}".format(file_path))
             return False, "Could not replace API key as it does not exist"
 
 
@@ -168,6 +175,11 @@ class SendgridHelper:
         if sendgrid_response.status_code == 202:
             return {"api_key": True, "reason": ""}, 200
         elif sendgrid_response.status_code == 401:
+            logger.critical("Current Sendgrid API key environment variable is "
+                            "invalid. Please replace this environment "
+                            "variable with a new authorized Sengrid API key "
+                            "and replace the export statement in "
+                            "~/.bash_profile with this key")
             response_json = sendgrid_response.json()
             return {
                        "api_key": False,
