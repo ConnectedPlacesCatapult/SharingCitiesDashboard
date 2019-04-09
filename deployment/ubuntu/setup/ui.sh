@@ -3,10 +3,6 @@
 unset DEBUG
 PREFIX="   -"
 
-# Set environment variables
-export EXT_IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
-export API_ADDRESS=$EXT_IP/api
-
 # Initialize script
 echo "-- FCC UI Setup --"
 
@@ -26,6 +22,10 @@ cd ~/SharingCitiesDashboard/Frontend
 # Install node dependencies
 echo "$PREFIX Installing node dependenciess"
 npm i --save
+
+# Set environment variables
+export EXT_IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
+export REACT_APP_API_ADDRESS=http://$EXT_IP/api/
 
 # Build UI for Production
 echo "$PREFIX Building UI for Production"
