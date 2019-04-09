@@ -13,9 +13,8 @@ from .state_decorator import ImporterStatus, Status
 class TfL_BikePoints(BaseImporter):
     """
     TFL Bike points importer
-    The importer gets extended from BaseImporter and doesn't have any bespoke
-    code apart from defining the structure of the api, like sensor, attributes,
-    data tables and values
+    The importer gets extended from BaseImporter and doesn't have any bespoke code apart from defining the
+    structure of the api, like sensor, attributes, data tables and values
     """
     importer_status = ImporterStatus.get_importer_status()
 
@@ -54,5 +53,6 @@ class TfL_BikePoints(BaseImporter):
                                                api_timestamp_tag='modified')
             self.importer_status.status = Status.success(__class__.__name__)
         except Exception as e:
-            self.importer_status.status = Status.failure(
-                __class__.__name__, e.__str__(), traceback.format_exc())
+            self.importer_status.status = Status.failure(__class__.__name__,
+                                                         e.__str__(),
+                                                         traceback.format_exc())

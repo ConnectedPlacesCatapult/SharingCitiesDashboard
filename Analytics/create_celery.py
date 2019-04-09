@@ -14,7 +14,6 @@ logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
-
 def make_celery(app: flask.app.Flask) -> Celery:
     """
     Instantiate a Celery object, configure broker/backend settings and

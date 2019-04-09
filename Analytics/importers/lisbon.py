@@ -62,15 +62,17 @@ class LisbonAPI(BaseImporter):
             else:
                 logger.info(concat_df)
                 self.create_datasource(dataframe=concat_df, sensor_tag='',
-                                       attribute_tag=[], unit_value=[],
-                                       bespoke_unit_tag=[], description=[],
+                                       attribute_tag=[],
+                                       unit_value=[], bespoke_unit_tag=[],
+                                       description=[],
                                        bespoke_sub_theme=[],
                                        location_tag='loc',
                                        api_timestamp_tag='run_time_stamp')
             self.importer_status.status = Status.success(__class__.__name__)
         except Exception as e:
-            self.importer_status.status = Status.failure(
-                __class__.__name__, e.__str__(), traceback.format_exc())
+            self.importer_status.status = Status.failure(__class__.__name__,
+                                                         e.__str__(),
+                                                         traceback.format_exc())
 
     def _refresh_token(self) -> str:
         """

@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from http import HTTPStatus
 
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -38,6 +39,7 @@ class AddNewLocationData(Resource):
         self.reqparser.add_argument('value', required=True, type=str)
         self.reqparser.add_argument('fix_quality', required=True, type=int)
 
+    @jwt_required
     def post(self) -> (str, HTTPStatus):
         """
         Create new location data

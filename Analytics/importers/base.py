@@ -38,21 +38,17 @@ class BaseImporter(object):
         """
         Base Importer
         All the importers needs to be extended from this class
-        The class provides methods to save API, Sensor, Attributes, Location
-        and Data Tables All the methods provided here can be overridden or can
-        be extended by calling the super method from base class and then
-        extending it in Child class All new common functionality can be added
-        to this base class, which then automatically be inherited
+        The class provides methods to save API, Sensor, Attributes, Location and Data Tables
+        All the methods provided here can be overridden or can be extended by calling the super method
+        from base class and then extending it in Child class
+        All new common functionality can be added to this base class, which then automatically be inherited
         by all the child classes.
-        :param api_name: The name of the API, it needs to be unique, else
-                        database waring would be received
+        :param api_name: The name of the API, it needs to be unique, else database waring would be received
         :param url: he url which needs to be pinged to get the data, periodically
         :param refresh_time: After how many seconds the API needs to be pinged
         :param api_key: Key to access the API (if any)
-        :param api_class: The full path of the class from package to class name
-                          like importers.air_quality.KCLAirQuality
-        :param token_expiry: Time in which token will get expired, so that new
-               token can be renewed again
+        :param api_class: The full path of the class from package to class name like importers.air_quality.KCLAirQuality
+        :param token_expiry: Time in which token will get expired, so that new token can be renewed again
         """
         self.api_name = api_name
         self.url = url
@@ -91,7 +87,9 @@ class BaseImporter(object):
         :param headers: Request headers
         :return: Data set and an HTTP status code
         """
-        data = requests.get(self.url + self.api_key, headers=headers)
+        data = requests.get(
+            self.url.replace(' ', '').replace('\n', '') + self.api_key,
+            headers=headers)
 
         self.dataset = json.loads(data.text)
         status_code, message = self.nginx_http_status(self.dataset,
@@ -99,7 +97,7 @@ class BaseImporter(object):
         return self.dataset, status_code, message
 
     def nginx_http_status(self, data: dict, status_code: int) -> (
-            int, Union[str, None]):
+    int, Union[str, None]):
         """
         Handle nginx status code in content body.
         :param data: HTTP response data
@@ -159,36 +157,27 @@ class BaseImporter(object):
         """
         Setup the database for the new Importer/API
         :param dataframe: pandas dataframe
-        :param sensor_tag: Takes a column name from the DataFrame whose value
-        would act as sensor
+        :param sensor_tag: Takes a column name from the DataFrame whose value would act as sensor
         :param attribute_tag: Takes a list of column names from the DataFrame
-        :param unit_value:  Takes a list of column names from DataFrame which
-        would act as unit value
-                            for an attribute and they need to be passed in the
-                            same order as attribute
+        :param unit_value:  Takes a list of column names from DataFrame which would act as unit value
+                            for an attribute and they need to be passed in the same order as attribute
                             e.g
-                            passing an attribute list as ['no2', 'rainfall']
-                            which are 2 separate cols in dataframe and if their
-                            unit values are contained in two separate cols in
-                            dataframe like ['no2_unit', 'rainfall_unit'], then
-                            these two unit col names should come in the same
-                            order, if only one col name is provided for two
-                            attributes then that one unit value col would be
-                            assigned both attributes. If you want to assign the
-                            unit value to one col e.g for 2 attributes ['no2',
-                            'rainfall'], you have only one unit value col
-                            ['no2_unit'] and dont want it to get assigned to
-                            rainfall attribute then pass the unit_value as
+                            passing an attribute list as ['no2', 'rainfall'] which are 2 separate cols in dataframe
+                            and if their unit values are contained in two separate cols in dataframe like
+                            ['no2_unit', 'rainfall_unit'], then these two unit col names should come in the same
+                            order, if only one col name is provided for 2 attributes then that one unit value col
+                            would be assigned both attributes.
+                            If you want to assign the unit value to one col e.g for 2 attributes
+                            ['no2', 'rainfall'], you have only one unit value col ['no2_unit'] and dont want
+                            it to get assigned to rainfall attribute then pass the unit_value as
                             ['no2_unit', None]
         :param description: description
-        :param bespoke_unit_tag: Accepts a list and follows the same principle
-                                 as unit_value, unit tag is usually something
-                                 like a unit that a value is expressed in like
-                                 kg but this has to exists in our database.
+        :param bespoke_unit_tag: Accepts a list and follows the same principle as unit_value, unit tag is usually
+                                 something like a unit that a value is expressed in like kg but this has to exists in
+                                 our database.
         :param bespoke_sub_theme: Subtheme
-        :param location_tag: Takes an object of Location class which in turn
-                             contains the name of the latitude and longitude
-                             cols.
+        :param location_tag: Takes an object of Location class which in turn contains the name of the latitude and
+                             longitude cols.
         :param sensor_prefix: Prefix for all the sensor tags
         :param api_timestamp_tag:
         :param check_sensor_exists_by_name: Check if sensor exists
@@ -242,8 +231,7 @@ class BaseImporter(object):
                                       sub_theme: int = 1) -> None:
         """
         Setup the database for the new Importer/API and commit Values.
-        Consider values of the tags as sensors, attributes and data values
-        instead of the tags themselves
+        Consider values of the tags as sensors, attributes and data values instead of the tags themselves
 
         ========================
         |   A   |   B    |  C  |
@@ -502,7 +490,7 @@ class BaseImporter(object):
                 if _sa:
                     logger.info(
                         'Sensor ID: %s, Attribute Id: %s already exists' % (
-                            _sa.s_id, _sa.a_id))
+                        _sa.s_id, _sa.a_id))
                     continue
 
                 sa = SensorAttribute(sensor.id, attr.id)
@@ -522,10 +510,7 @@ class BaseImporter(object):
         for attr in attributes:
             if attr.table_name.lower() not in tables:
                 db.session.execute(
-                    'CREATE TABLE %s (s_id TEXT NOT NULL, value TEXT NOT NULL,'
-                    ' api_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL, '
-                    'timestamp TIMESTAMP WITHOUT TIME ZONE, '
-                    'PRIMARY KEY(s_id, value, api_timestamp))' % (
+                    'CREATE TABLE %s (s_id TEXT NOT NULL, value TEXT NOT NULL, api_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL, timestamp TIMESTAMP WITHOUT TIME ZONE, PRIMARY KEY(s_id, value, api_timestamp))' % (
                         attr.table_name))
                 logger.info('Created Table', attr.table_name.lower())
 
@@ -567,8 +552,8 @@ class BaseImporter(object):
                 _dataframe = None
                 if unit_value_tag is not None:
                     _dataframe = dataframe[
-                        (dataframe[attribute_tag] == attr.name) &
-                        (dataframe[unit_value_tag] == attr.unit_value)]
+                        (dataframe[attribute_tag] == attr.name) & (dataframe[
+                                                                       unit_value_tag] == attr.unit_value)]
                 else:
                     _dataframe = dataframe[
                         dataframe[attribute_tag] == attr.name]
@@ -618,7 +603,7 @@ class BaseImporter(object):
                     db.session.rollback()
                     logger.info(
                         'Sensor id: %s with value %s at time %s already exists' % (
-                            sensor_id, values[i], a_date))
+                        sensor_id, values[i], a_date))
 
                 value_exists.add(_hash)
 
@@ -632,8 +617,7 @@ class BaseImporter(object):
         except IntegrityError as e:
             db.session.rollback()
             logger.info(
-                'Unable to save certain values as they '
-                'already are in the system, check logs')
+                'Unable to save certain values as they already are in the system, check logs')
 
     def _hash_it(self, *args: [Any]) -> int:
         """

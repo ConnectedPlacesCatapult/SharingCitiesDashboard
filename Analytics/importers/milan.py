@@ -23,9 +23,8 @@ class MilanAPI(BaseImporter):
     """
     Milan Importer
     The class inherits from BaseImporter and doesn't contain any bespoke code
-    apart from converting the data from json to tabular format but using
-    BaseImporter methods The api doesn't have any credentials and doesn't have
-    any key or token expiry
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
     """
     importer_status = ImporterStatus.get_importer_status()
 
@@ -96,9 +95,8 @@ class Milan_API_sensori_meteo_meta(BaseImporter):
     """
     Milan Importer
     The class inherits from BaseImporter and doesn't contain any bespoke code
-    apart from converting the data from json to tabular format but using
-    BaseImporter methods. The api doesn't have any credentials and doesn't have
-    any key or token expiry
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
     """
     importer_status = ImporterStatus.get_importer_status()
 
@@ -152,9 +150,8 @@ class Milan_API_sensori_meteo(BaseImporter):
     """
     Milan Importer
     The class inherits from BaseImporter and doesn't contain any bespoke code
-    apart from converting the data from json to tabular format but using
-    BaseImporter methods. The api doesn't have any credentials and doesn't have
-     any key or token expiry
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
     """
     importer_status = ImporterStatus.get_importer_status()
 
@@ -238,9 +235,8 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
     """
     Milan Importer
     The class inherits from BaseImporter and doesn't contain any bespoke code
-    apart from converting the data from json to tabular format but using
-    BaseImporter methods The api doesn't have any credentials and doesn't have
-    any key or token expiry
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
     """
     importer_status = ImporterStatus.get_importer_status()
 
@@ -249,7 +245,7 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
         Get Import configurations
         Instantiate BaseImporter
         """
-
+        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
@@ -268,8 +264,7 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
             self.df = self.create_dataframe(object_separator=None)
             self.df['api_timestamp_tag'] = datetime.now().timestamp()
 
-            ### The response contains null coordinates...Filling them with
-            # SHCS02001 coordinates.
+            ### The response contains null coordinates...Filling them with SHCS02001 coordinates.
             self.df['latitude'].fillna(value=self.df.iloc[0]['latitude'],
                                        inplace=True)
             self.df['longitude'].fillna(value=self.df.iloc[0]['longitude'],
@@ -305,9 +300,8 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
     """
     Milan Importer
     The class inherits from BaseImporter and doesn't contain any bespoke code
-    apart from converting the data from json to tabular format but using
-    BaseImporter methods The api doesn't have any credentials and doesn't have
-    any key or token expiry
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
     """
     importer_status = ImporterStatus.get_importer_status()
 
@@ -340,9 +334,8 @@ class Milan_API_sc_parking_kiunsys(BaseImporter):
 
             for i in range(0, len(self.df)):
                 lid = \
-                    Sensor.get_by_name_in(
-                        [self.df.parkingSpotSensorCode.iloc[i]])[
-                        0].l_id
+                Sensor.get_by_name_in([self.df.parkingSpotSensorCode.iloc[i]])[
+                    0].l_id
                 loc = location.Location.get_by_id_in([lid])[0]
                 self.df.set_value(i, 'latitude', loc.lat)
                 self.df.set_value(i, 'longitude', loc.lon)
@@ -380,9 +373,8 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
     """
     Milan Importer
     The class inherits from BaseImporter and doesn't contain any bespoke code
-    apart from converting the data from json to tabular format but using
-    BaseImporter methods. The api doesn't have any credentials and doesn't have
-    any key or token expiry
+    apart from converting the data from json to tabular format but using BaseImporter methods
+    The api doesn't have any credentials and doesn't have any key or token expiry
     """
     importer_status = ImporterStatus.get_importer_status()
 
@@ -420,10 +412,11 @@ class Milan_API_sc_emobility_refeel(BaseImporter):
                     df.at[index, 'plate'] = plate['plate']
                     df.at[index, 'rentalState'] = s['rentalState']
                     df.at[index, 'date'] = s['dateFrom']
-                    df.at[index, 'duration'] = np.abs(
-                        (datetime.strptime(s['dateTill'], '%Y-%m-%dT%H:%M:%SZ')
-                         - datetime.strptime(s['dateFrom'],
-                                             '%Y-%m-%dT%H:%M:%SZ')).total_seconds())
+                    df.at[index, 'duration'] = np.abs((datetime.strptime(
+                        s['dateTill'], '%Y-%m-%dT%H:%M:%SZ') - \
+                                                       datetime.strptime(
+                                                           s['dateFrom'],
+                                                           '%Y-%m-%dT%H:%M:%SZ')).total_seconds())
                     index = index + 1
 
             df['latitude'] = 45.443384

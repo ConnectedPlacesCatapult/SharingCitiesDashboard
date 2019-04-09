@@ -46,6 +46,7 @@ from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import PredictionStatus
 from resources.request_for_data import RequestForData
+from resources.sendgrid_management import TestKeyValidity, ReplaceKey
 from resources.themes import AddSubTheme
 from resources.themes import AddTheme
 from resources.themes import DeleteSubTheme
@@ -207,5 +208,8 @@ def create_app(**config_overrides):
 
     api.add_resource(ExportToKML, '/moving/export_kml')
     api.add_resource(GetDummyData, '/moving/fetch_dummy_data')
+
+    api.add_resource(TestKeyValidity, "/sendgrid/test_key_validity")
+    api.add_resource(ReplaceKey, "/sendgrid/replace_key")
 
     return app
