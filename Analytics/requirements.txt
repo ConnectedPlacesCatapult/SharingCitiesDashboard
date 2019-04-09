@@ -26,3 +26,4 @@ retrying
 pyyaml
 simplekml
 simplejson
+redis

@@ -11,11 +11,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-API
-    command: ["python3", "manage.py", "gunicorn"]
+    command: bash -c "python manage.py gunicorn & service redis-server start & celery -A manage.celery_task worker -l info"
     volumes:
       - ./Analytics/:/code
     ports:
       - "8000:5000"
+      - "6379:6379"
     depends_on:
       - db
     env_file:
