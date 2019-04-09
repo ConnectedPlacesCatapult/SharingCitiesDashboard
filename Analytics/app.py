@@ -61,6 +61,7 @@ from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
 from resources.moving_sensors import GetDummyData
+from resources.sendgrid_management import TestKeyValidity, ReplaceKey
 
 
 def create_app(**config_overrides):
@@ -211,5 +212,8 @@ def create_app(**config_overrides):
 
     api.add_resource(ExportToKML, '/moving/export_kml')
     api.add_resource(GetDummyData, '/moving/fetch_dummy_data')
+
+    api.add_resource(TestKeyValidity, "/sendgrid/test_key_validity")
+    api.add_resource(ReplaceKey, "/sendgrid/replace_key")
 
     return app
