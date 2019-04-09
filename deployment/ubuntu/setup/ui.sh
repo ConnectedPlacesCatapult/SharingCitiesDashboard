@@ -40,4 +40,4 @@ fi
 echo "   $PREFIX Serve installed!"
 
 # Serve the UI on port 8080
-# sudo serve -s build -l 8080
+sudo serve -s build -l 8080

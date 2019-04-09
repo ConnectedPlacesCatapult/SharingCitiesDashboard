@@ -32,6 +32,14 @@ fi
 echo "$PREFIX Initializing flask settings"
 mv settings.py.bak settings.py
 
+# Set environment variables
+export DB_USERNAME="sharingcities"
+export DB_PASSWORD="sharingcities"
+export DATABASE_NAME="analytics"
+export DB_HOST="localhost"
+export MAN_HOST_VALUE="0.0.0.0"
+export GUN_HOST_VALUE="localhost"
+
 # Setup DB structure
 echo "$PREFIX Initialize DB structure"
 python3 db_setup.py
@@ -40,13 +48,5 @@ python3 db_setup.py
 echo "$PREFIX Setup SuperUser account"
 python3 manage.py add_superuser
 
-# Serve API
-# Set environment variables
-export DB_USERNAME="sharingcities"
-export DB_PASSWORD="sharingcities"
-export DATABASE_NAME="analytics"
-export DB_HOST="localhost"
-export MAN_HOST_VALUE="0.0.0.0"
-export GUN_HOST_VALUE="localhost"
 # Serve the API on port 5000
 python3 manage.py gunicorn
