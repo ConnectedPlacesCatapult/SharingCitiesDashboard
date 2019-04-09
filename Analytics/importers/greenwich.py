@@ -2,10 +2,10 @@ import logging
 import traceback
 from typing import Union
 
+from Analytics.settings import GetConfig
 from importers.base import BaseImporter, Location
 from models import location
 from models.sensor import Sensor
-from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
 from .token_exception import TokenExpired
 
@@ -13,25 +13,30 @@ logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
-@GetConfig("GreenwichMeta", 'environment', 'greenwich_meta')
+@GetConfig("GreenwichMeta", 'api_endpoints', 'greenwich_meta')
 class GreenwichMeta(BaseImporter):
     """
     This importer imports data from Greenwich ArcGIS REST API.
 
     Description:
 
-        GreenwichMeta, GreenwichMeta_2, GreenwichOCC, GreenwichOCC_2 import data related to Smart Parking as well
-        as metadata related to the type of parking bays. Specifically, the metadata consist of two layers with similar structure. The only difference is in the baytype values
-        with the first one having "Disabled" and "Pay & Display" while the second "Car Club Bay", "Shared Coach Bays" and
-        "EV Bay". In terms of tables, the API provides attributes related to the status of the sensors.
+        GreenwichMeta, GreenwichMeta_2, GreenwichOCC, GreenwichOCC_2 import
+        data related to Smart Parking as well as metadata related to the type of
+        parking bays. Specifically, the metadata consist of two layers with
+        similar structure. The only difference is in the baytype values with the
+        first one having "Disabled" and "Pay & Display" while the second "Car
+        Club Bay", "Shared Coach Bays" and "EV Bay". In terms of tables, the API
+        provides attributes related to the status of the sensors.
 
-        The  classes GreenwichOCC and GreenwichOCC_2 are dependent upon GreenwichMeta and GreenwichMeta_2
-        thus these 'meta' classes needs to be imported first before importing GreenwichOCC and GreenwichOCC_2.
+        The  classes GreenwichOCC and GreenwichOCC_2 are dependent upon
+        GreenwichMeta and GreenwichMeta_2 thus these 'meta' classes needs to be
+        imported first before importing GreenwichOCC and GreenwichOCC_2.
 
         Both the classes share the same API key.
-        The classes doesn't have any bespoke code apart from calling urls and converting them into dataframes.
-        Once that is done it calls the create_datasource method of the base class which saves the sensors, attributes,
-        location, creates data tables and saves values.
+        The classes doesn't have any bespoke code apart from calling urls and
+        converting them into dataframes. Once that is done it calls the
+        create_datasource method of the base class which saves the sensors,
+        attributes, location, creates data tables and saves values.
 
         example responses:
             gla_gis.gisapdata.sharingcities_smartparking_meta:
@@ -74,10 +79,13 @@ class GreenwichMeta(BaseImporter):
                 "run_time_stamp": 1539214505000
                }
 
-        Importers GreenwichKiwiPump and GreenwichWholeHouse import layer energy related data from Ernest Dence Boiler House and household
-        energy consumption data.
-        It is not clear whether they relate to timeseries or individual sensors, and at the moment these are treated
-        as a single sensor. The data appears to be static and this is reflected on REFRESH_TIME_KIWI and REFRESH_TIME_KIWI_HOUSE.
+        Importers GreenwichKiwiPump and GreenwichWholeHouse import layer energy
+        related data from Ernest Dence Boiler House and household energy
+        consumption data.
+        It is not clear whether they relate to timeseries or individual sensors,
+        and at the moment these are treated as a single sensor. The data
+        appears to be static and this is reflected on REFRESH_TIME_KIWI and
+        REFRESH_TIME_KIWI_HOUSE.
         Also note that new Units and Subtheme are needed for these importers.
 
         example units table:
@@ -123,7 +131,8 @@ class GreenwichMeta(BaseImporter):
                 "value_kw": 19
                }
 
-        Importer GreenwichSiemens imports data from gla_gis.gisapdata.sharingcities_siemens_energy layer.
+        Importer GreenwichSiemens imports data from gla_gis.gisapdata.
+        sharingcities_siemens_energy layer.
 
         example resposnse:
 
@@ -153,8 +162,9 @@ class GreenwichMeta(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -164,19 +174,26 @@ class GreenwichMeta(BaseImporter):
         """
         try:
             super()._create_datasource(headers)
-            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+            self.df = self.create_dataframe(
+                ignore_object_tags=['fieldAliases', 'fields'])
 
             loc = Location('latitude', 'longitude')
-            self.create_datasource(dataframe=self.df, sensor_tag='lotcode', attribute_tag=['baycount', 'baytype'],
-                                   unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[],
-                                   location_tag=loc, sensor_prefix='smart_parking_', api_timestamp_tag='run_time_stamp',
+            self.create_datasource(dataframe=self.df, sensor_tag='lotcode',
+                                   attribute_tag=['baycount', 'baytype'],
+                                   unit_value=[], bespoke_unit_tag=[],
+                                   description=[], bespoke_sub_theme=[],
+                                   location_tag=loc,
+                                   sensor_prefix='smart_parking_',
+                                   api_timestamp_tag='run_time_stamp',
                                    is_dependent=True)
 
             self.importer_status.status = Status.success(__class__.__name__)
 
         except Exception as e:
 
-            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
+            self.importer_status.status = Status.failure(__class__.__name__,
+                                                         e.__str__(),
+                                                         traceback.format_exc())
 
     def _refresh_token(self) -> None:
         """
@@ -186,7 +203,7 @@ class GreenwichMeta(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichOCC", 'environment', 'greenwich_occ')
+@GetConfig("GreenwichOCC", 'api_endpoints', 'greenwich_occ')
 class GreenwichOCC(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -195,8 +212,9 @@ class GreenwichOCC(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -206,7 +224,8 @@ class GreenwichOCC(BaseImporter):
         """
         try:
             super()._create_datasource(headers)
-            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+            self.df = self.create_dataframe(
+                ignore_object_tags=['fieldAliases', 'fields'])
 
             names = self.df['lotcode'].tolist()
 
@@ -242,16 +261,20 @@ class GreenwichOCC(BaseImporter):
             loc = Location('latitude', 'longitude')
 
             self.create_datasource(dataframe=self.df, sensor_tag='lotcode',
-                                   attribute_tag=['free', 'isoffline', 'occupied'],
-                                   unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[],
+                                   attribute_tag=['free', 'isoffline',
+                                                  'occupied'],
+                                   unit_value=[], bespoke_unit_tag=[],
+                                   description=[], bespoke_sub_theme=[],
                                    location_tag=loc,
-                                   sensor_prefix='smart_parking_', api_timestamp_tag='run_time_stamp',
+                                   sensor_prefix='smart_parking_',
+                                   api_timestamp_tag='run_time_stamp',
                                    is_dependent=True)
             self.importer_status.status = Status.success(__class__.__name__)
 
         except Exception as e:
 
-            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
+            self.importer_status.status = Status.failure(
+                __class__.__name__, e.__str__(), traceback.format_exc())
 
     def _refresh_token(self) -> None:
         """
@@ -261,7 +284,7 @@ class GreenwichOCC(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichMeta_2", 'environment', 'greenwich_meta_2')
+@GetConfig("GreenwichMeta_2", 'api_endpoints', 'greenwich_meta_2')
 class GreenwichMeta_2(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -270,8 +293,9 @@ class GreenwichMeta_2(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -282,7 +306,8 @@ class GreenwichMeta_2(BaseImporter):
         try:
             super()._create_datasource(headers)
 
-            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+            self.df = self.create_dataframe(
+                ignore_object_tags=['fieldAliases', 'fields'])
 
             ### Renaming the columns so that they are not confused with GreenwichMeta
             self.df.rename(index=str, columns={'baycount': 'baycount_2',
@@ -290,16 +315,20 @@ class GreenwichMeta_2(BaseImporter):
                            inplace=True)
 
             loc = Location('latitude', 'longitude')
-            self.create_datasource(dataframe=self.df, sensor_tag='lotcode', attribute_tag=['baycount_2', 'baytype_2'],
-                                   unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[],
-                                   location_tag=loc, sensor_prefix='smart_parking_2_',
+            self.create_datasource(dataframe=self.df, sensor_tag='lotcode',
+                                   attribute_tag=['baycount_2', 'baytype_2'],
+                                   unit_value=[], bespoke_unit_tag=[],
+                                   description=[], bespoke_sub_theme=[],
+                                   location_tag=loc,
+                                   sensor_prefix='smart_parking_2_',
                                    api_timestamp_tag='run_time_stamp',
                                    is_dependent=True)
             self.importer_status.status = Status.success(__class__.__name__)
 
         except Exception as e:
 
-            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
+            self.importer_status.status = Status.failure(
+                __class__.__name__, e.__str__(), traceback.format_exc())
 
     def _refresh_token(self) -> None:
         """
@@ -309,7 +338,7 @@ class GreenwichMeta_2(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichOCC_2", 'environment', 'greenwich_occ_2')
+@GetConfig("GreenwichOCC_2", 'api_endpoints', 'greenwich_occ_2')
 class GreenwichOCC_2(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -318,8 +347,9 @@ class GreenwichOCC_2(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -329,7 +359,8 @@ class GreenwichOCC_2(BaseImporter):
         """
         try:
             super()._create_datasource(headers)
-            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+            self.df = self.create_dataframe(
+                ignore_object_tags=['fieldAliases', 'fields'])
 
             names = self.df['lotcode'].tolist()
             name_set = set()
@@ -369,10 +400,13 @@ class GreenwichOCC_2(BaseImporter):
 
             loc = Location('latitude', 'longitude')
             self.create_datasource(dataframe=self.df, sensor_tag='lotcode',
-                                   attribute_tag=['free_2', 'isoffline_2', 'occupied_2'],
-                                   unit_value=[], bespoke_unit_tag=[], description=[], bespoke_sub_theme=[],
+                                   attribute_tag=['free_2', 'isoffline_2',
+                                                  'occupied_2'],
+                                   unit_value=[], bespoke_unit_tag=[],
+                                   description=[], bespoke_sub_theme=[],
                                    location_tag=loc,
-                                   sensor_prefix='smart_parking_2_', api_timestamp_tag='run_time_stamp',
+                                   sensor_prefix='smart_parking_2_',
+                                   api_timestamp_tag='run_time_stamp',
                                    is_dependent=True)
 
             self.importer_status.status = Status.success(__class__.__name__)
@@ -380,7 +414,8 @@ class GreenwichOCC_2(BaseImporter):
 
         except Exception as e:
 
-            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
+            self.importer_status.status = Status.failure(
+                __class__.__name__, e.__str__(), traceback.format_exc())
 
     def _refresh_token(self) -> None:
         """
@@ -390,7 +425,7 @@ class GreenwichOCC_2(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichKiwiPump", 'environment', 'greenwich_kiwi')
+@GetConfig("GreenwichKiwiPump", 'api_endpoints', 'greenwich_kiwi')
 class GreenwichKiwiPump(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -400,8 +435,9 @@ class GreenwichKiwiPump(BaseImporter):
         Instantiate BAseImporter
 
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -411,7 +447,8 @@ class GreenwichKiwiPump(BaseImporter):
         """
         try:
             super()._create_datasource(headers)
-            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+            self.df = self.create_dataframe(
+                ignore_object_tags=['fieldAliases', 'fields'])
 
             self.df['latitude'] = 51.485034
             self.df['longitude'] = -0.001097
@@ -420,15 +457,22 @@ class GreenwichKiwiPump(BaseImporter):
 
             self.df['tag'] = 0
 
-            self.create_datasource_with_values(dataframe=self.df, sensor_tag='tag', attribute_tag='attribute',
-                                               value_tag='value_kw', latitude_tag='latitude', longitude_tag='longitude',
-                                               description_tag='description', api_timestamp_tag='time_',
+            self.create_datasource_with_values(dataframe=self.df,
+                                               sensor_tag='tag',
+                                               attribute_tag='attribute',
+                                               value_tag='value_kw',
+                                               latitude_tag='latitude',
+                                               longitude_tag='longitude',
+                                               description_tag='description',
+                                               api_timestamp_tag='time_',
                                                unit_id=4, sub_theme=3)
 
             self.importer_status.status = Status.success(__class__.__name__)
 
         except Exception as e:
-            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
+            self.importer_status.status = Status.failure(__class__.__name__,
+                                                         e.__str__(),
+                                                         traceback.format_exc())
 
     def _refresh_token(self) -> None:
         """
@@ -438,7 +482,7 @@ class GreenwichKiwiPump(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichWholeHouse", 'environment', 'greenwich_kiwi_house')
+@GetConfig("GreenwichWholeHouse", 'api_endpoints', 'greenwich_kiwi_house')
 class GreenwichWholeHouse(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -447,8 +491,9 @@ class GreenwichWholeHouse(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -458,7 +503,8 @@ class GreenwichWholeHouse(BaseImporter):
         """
         try:
             super()._create_datasource(headers)
-            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+            self.df = self.create_dataframe(
+                ignore_object_tags=['fieldAliases', 'fields'])
 
             ### Hardcoding the location
             self.df['latitude'] = 51.484216
@@ -470,20 +516,24 @@ class GreenwichWholeHouse(BaseImporter):
             self.df['tag'] = 0
 
             #### the attribute names are too big for name+hashing as table names.
-            self.df.rename(index=str, columns={'power_wm_sid_761573_wholehouse': 'power_sid_761573',
-                                               'light_avg_lux_sid_400191_e_room': 'avg_lux_sid_400191',
-                                               'temp_avg_degc_sid_400191_e_room': 'temp_sid_400191'},
+            self.df.rename(index=str, columns={
+                'power_wm_sid_761573_wholehouse': 'power_sid_761573',
+                'light_avg_lux_sid_400191_e_room': 'avg_lux_sid_400191',
+                'temp_avg_degc_sid_400191_e_room': 'temp_sid_400191'},
                            inplace=True)
 
             loc = Location('latitude', 'longitude')
 
-            self.create_datasource(dataframe=self.df, sensor_tag='tag', attribute_tag=['power_sid_761573',
-                                                                                       'avg_lux_sid_400191',
-                                                                                       'temp_sid_400191'],
-                                   unit_value=[4, 5, 6], bespoke_sub_theme=[3, 3, 1],
+            self.create_datasource(dataframe=self.df, sensor_tag='tag',
+                                   attribute_tag=['power_sid_761573',
+                                                  'avg_lux_sid_400191',
+                                                  'temp_sid_400191'],
+                                   unit_value=[4, 5, 6],
+                                   bespoke_sub_theme=[3, 3, 1],
                                    bespoke_unit_tag=[4, 5, 6],
                                    location_tag=loc,
-                                   description=['description', 'description', 'description'],
+                                   description=['description', 'description',
+                                                'description'],
                                    api_timestamp_tag='time',
                                    sensor_prefix='',
                                    is_dependent=True)
@@ -491,7 +541,9 @@ class GreenwichWholeHouse(BaseImporter):
             self.importer_status.status = Status.success(__class__.__name__)
 
         except Exception as e:
-            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
+            self.importer_status.status = Status.failure(__class__.__name__,
+                                                         e.__str__(),
+                                                         traceback.format_exc())
 
     def _refresh_token(self) -> None:
         """
@@ -501,7 +553,7 @@ class GreenwichWholeHouse(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichSiemens", 'environment', 'greenwich_siemens')
+@GetConfig("GreenwichSiemens", 'api_endpoints', 'greenwich_siemens')
 class GreenwichSiemens(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -510,8 +562,9 @@ class GreenwichSiemens(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+        ()
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -521,40 +574,48 @@ class GreenwichSiemens(BaseImporter):
         """
         try:
             super()._create_datasource(headers)
-            self.df = self.create_dataframe(ignore_object_tags=['fieldAliases', 'fields'])
+            self.df = self.create_dataframe(
+                ignore_object_tags=['fieldAliases', 'fields'])
 
-            ### Hardcoding the location. As there is no information on the location of the sensor
+            ### Hardcoding the location. As there is no information on the
+            # location of the sensor
             ### the centroid coordinates of Greenwich is used
             self.df['latitude'] = 51.482877
             self.df['longitude'] = -0.007516
             self.df['description'] = 'siemens energy'
 
-            ### Faking a sensor id since the api returns data only from one sensor
-            ### Need to modify it when the api starts sourcing data from more sensors
+            ### Faking a sensor id since the api returns data only from one
+            # sensor
+            ### Need to modify it when the api starts sourcing data from more
+            # sensors
             self.df['tag'] = 0
 
-            ### As of current behaviour _create_datasource method fails if the dataframe passed contains null values
+            ### As of current behaviour _create_datasource method fails if the
+            # dataframe passed contains null values
             ### eg:  displayFieldName   date_time   b1_heat_value   b1_flow_value
             ###      0  1521480600000   20  null
-            ### The only way to import would be to drop the nulls but this will drop the row all together.
-            ### We could choose a default value for nulls like -999 but there must be a more flexible way.
+            ### The only way to import would be to drop the nulls but this will
+            # drop the row all together.
+            ### We could choose a default value for nulls like -999 but there
+            # must be a more flexible way.
             ### For now (illustrative purposes) we just drop
             self.df.dropna(inplace=True)
 
             loc = Location('latitude', 'longitude')
 
-            self.create_datasource(dataframe=self.df, sensor_tag='tag', attribute_tag=['b1_heat_value',
-                                                                                       'b1_flow_value',
-                                                                                       'b1_temp_out_value',
-                                                                                       'b1_temp_back_value',
-                                                                                       'b2_heat_value',
-                                                                                       'b2_flow_value',
-                                                                                       'b2_temp_out_value',
-                                                                                       'b2_temp_back_value',
-                                                                                       'b3_heat_value',
-                                                                                       'b3_flow_value',
-                                                                                       'b3_temp_out_value',
-                                                                                       'b3_temp_back_value'],
+            self.create_datasource(dataframe=self.df, sensor_tag='tag',
+                                   attribute_tag=['b1_heat_value',
+                                                  'b1_flow_value',
+                                                  'b1_temp_out_value',
+                                                  'b1_temp_back_value',
+                                                  'b2_heat_value',
+                                                  'b2_flow_value',
+                                                  'b2_temp_out_value',
+                                                  'b2_temp_back_value',
+                                                  'b3_heat_value',
+                                                  'b3_flow_value',
+                                                  'b3_temp_out_value',
+                                                  'b3_temp_back_value'],
                                    unit_value=[], bespoke_sub_theme=[],
                                    bespoke_unit_tag=[],
                                    location_tag=loc,
@@ -566,7 +627,9 @@ class GreenwichSiemens(BaseImporter):
             self.importer_status.status = Status.success(__class__.__name__)
 
         except Exception as e:
-            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
+            self.importer_status.status = Status.failure(__class__.__name__,
+                                                         e.__str__(),
+                                                         traceback.format_exc())
 
     def _refresh_token(self) -> None:
         """

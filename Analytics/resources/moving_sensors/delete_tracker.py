@@ -1,8 +1,6 @@
 import logging
 from http import HTTPStatus
 
-from flask import abort
-from flask_jwt_extended import jwt_required, get_jwt_claims
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -24,7 +22,6 @@ class DeleteTracker(Resource):
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('id', required=True, type=str)
 
-    @jwt_required
     def post(self) -> (str, HTTPStatus):
         """
         Delete Tracker
@@ -32,10 +29,6 @@ class DeleteTracker(Resource):
         :return: No Content with an HTTPStatus of 204 (No Content) otherwise,
                  a JSON error message with an HTTPStatus 404 (Not Found)
         """
-        if not get_jwt_claims()['admin']:
-            abort(HTTPStatus.FORBIDDEN.value,
-                  error="administration privileges required")
-
         args = self.reqparser.parse_args()
         tracker = Tracker.get_by_tracker_id(args["id"])
         if tracker:

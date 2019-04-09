@@ -3,7 +3,7 @@ import random
 from datetime import datetime, timedelta
 from typing import Union
 
-from sqlalchemy import and_, func, or_, desc
+from sqlalchemy import and_, func, or_
 from sqlalchemy.exc import IntegrityError
 
 from db import db
@@ -364,6 +364,8 @@ class LocationData(db.Model):
         """
         if end_date < start_date:
             start_date, end_date = end_date, start_date
+
+        end_date += timedelta(days=1.0)
 
         if not tracker_id:
             return cls.query.filter(and_(cls.measurement_date >= start_date,

@@ -1,7 +1,6 @@
 import logging
 from http import HTTPStatus
 
-from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -24,7 +23,6 @@ class DeleteLocationData(Resource):
         self.reqparser.add_argument('id', required=True,
                                     help="LocationData id required", type=int)
 
-    @jwt_required
     def post(self) -> (str, HTTPStatus):
         """
         Delete Location Data by Id

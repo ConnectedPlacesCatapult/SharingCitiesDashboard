@@ -1,7 +1,6 @@
 import logging
 from http import HTTPStatus
 
-from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -23,7 +22,6 @@ class GetTracker(Resource):
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('id', required=True, type=str)
 
-    @jwt_required
     def get(self) -> (str, HTTPStatus):
         """
         Get Tracker

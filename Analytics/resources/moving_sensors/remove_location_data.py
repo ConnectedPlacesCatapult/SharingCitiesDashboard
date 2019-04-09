@@ -1,7 +1,6 @@
 from datetime import datetime
 from http import HTTPStatus
 
-from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -27,7 +26,6 @@ class WindowLocationData(Resource):
                                     type=lambda x: datetime.strptime(x,
                                                                      '%d/%m/%Y'))
 
-    @jwt_required
     def post(self) -> (str, HTTPStatus):
         """
         Delete All Data outside of the specified period

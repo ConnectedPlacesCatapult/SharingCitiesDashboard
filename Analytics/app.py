@@ -60,14 +60,13 @@ from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
-from resources.moving_sensors import GetDummyData
-from resources.sendgrid_management import TestKeyValidity, ReplaceKey
+from settings.get_config_decorator import GetConfig
 
 
 def create_app(**config_overrides):
+
     app = Flask(__name__)
-    app.config.from_pyfile('settings.py')
-    app.config.update(config_overrides)
+    app.config.update(GetConfig.configure('postgres'))
     CORS(app)
     api = Api(app)
 
@@ -89,11 +88,7 @@ def create_app(**config_overrides):
     # # for how safely store JWTs in cookies
     # app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 
-    app.config[
-        'JWT_SECRET_KEY'] = 'jwt-secret-string'  # TODO: change before deployment
-    # app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=1)  # TODO: change before deployment
-    app.config['JWT_BLACKLIST_ENABLED'] = True
-    app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
+    app.config.update(GetConfig.configure('jwt_auth'))
 
     db.init_app(app)
     db.app = app
@@ -212,8 +207,5 @@ def create_app(**config_overrides):
 
     api.add_resource(ExportToKML, '/moving/export_kml')
     api.add_resource(GetDummyData, '/moving/fetch_dummy_data')
-
-    api.add_resource(TestKeyValidity, "/sendgrid/test_key_validity")
-    api.add_resource(ReplaceKey, "/sendgrid/replace_key")
 
     return app

@@ -1,8 +1,6 @@
 import logging
 from http import HTTPStatus
 
-from flask import abort
-from flask_jwt_extended import jwt_required, get_jwt_claims
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -26,7 +24,6 @@ class UpdateTracker(Resource):
         self.reqparser.add_argument('description', required=False, default="",
                                     type=str)
 
-    @jwt_required
     def post(self) -> (str, HTTPStatus):
         """
         Update existing Tracker
@@ -35,11 +32,6 @@ class UpdateTracker(Resource):
         :return: Tracker and an HTTPStatus code 200 (OK) otherwise a JSON error
                  message and an HTTPStatus 404 (Not Found)
         """
-
-        if not get_jwt_claims()['admin']:
-            abort(HTTPStatus.FORBIDDEN.value,
-                  error="administration privileges required")
-
         args = self.reqparser.parse_args()
         tracker = Tracker.get_by_tracker_id(args["id"])
         if tracker:
