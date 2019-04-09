@@ -63,6 +63,8 @@ module.exports = {
     new HtmlWebPackPlugin({
       template: "./src/template.html",
       filename: "./index.html"
+    }),
+    new webpack.DefinePlugin({ `process.env.API_ADDRESS`: JSON.stringify(${env.API_ADDRESS})
     })
   ],
 };
