@@ -8,6 +8,8 @@ import DeleteWidgetDialog from './../common/DeleteWidgetDialog/DeleteWidgetDialo
 import Dialog from '@material-ui/core/Dialog';
 import CheckIcon from '@material-ui/icons/Check';
 import SaveLayoutPrompt from './SaveLayoutPrompt';
+import NoWidgets from './NoWidgets';
+import LoadingWidgets from './LoadingWidgets';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -65,7 +67,9 @@ class DashboardPage extends React.Component {
         <Header location={location} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <GridLayout />
+          { dashboard.fetching === false && dashboard.widgets && dashboard.widgets.length === 0 ? <NoWidgets/> : null }
+          { dashboard.fetching === true ? <LoadingWidgets/> : null }
+          <GridLayout/>
           <Dialog
             open={dashboard.deleteWidgetDialogOpen}
             onClose={this.props.cancelDeleteWidget}

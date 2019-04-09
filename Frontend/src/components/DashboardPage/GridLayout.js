@@ -47,7 +47,7 @@ class GridLayout extends React.Component {
   }
 
   render() {
-    const { classes, dashboard } = this.props;
+    const { classes, dashboard } = this.props
 
     if (dashboard.layout.length === dashboard.widgets.length) {
 
@@ -74,11 +74,7 @@ class GridLayout extends React.Component {
         </ReactGridLayout>
       )
     } else {
-      return (
-        <Typography variant="subtitle1">
-          Problem Loading Layout
-        </Typography>
-      )
+      return null
     }
   }
 }

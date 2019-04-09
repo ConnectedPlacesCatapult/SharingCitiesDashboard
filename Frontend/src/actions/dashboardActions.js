@@ -170,8 +170,6 @@ export const saveLayout = () => {
       layouts: cleanedLayout
     }
 
-    console.log("newLayout", newLayoutObject)
-
     dispatch({
       type: SAVE_LAYOUT,
     });
