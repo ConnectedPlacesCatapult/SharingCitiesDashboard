@@ -1,6 +1,7 @@
 from datetime import datetime
 from http import HTTPStatus
 
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -30,6 +31,7 @@ class GetLocationData(Resource):
                                     type=lambda x: datetime.strptime(x,
                                                                      '%d/%m/%Y'))
 
+    @jwt_required
     def get(self) -> (dict, HTTPStatus):
         """
         Fetch location data by date range
