@@ -46,13 +46,11 @@ class AddDatasource(Command):
     def run(self, get_datasources: bool, add_datasource: str) -> object:
         """
         Execute Commands
-        :param get_datasources: If True a list of DataSource Importers
-                                are returned
+        :param get_datasources: If True a list of DataSource Importers are returned
         :param add_datasource: Callable Str Name
         :return: A DataSource Object
         """
         config = GetConfig.configure(category='api_endpoints')
-        # config = config['api_endpoints']
         _importers = {}
         for c in config:
             _importers[config[c]['API_NAME']] = config[c]['API_CLASS']
