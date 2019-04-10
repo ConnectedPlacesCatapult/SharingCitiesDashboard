@@ -6,10 +6,6 @@ from flask_restful import Api
 
 from db import db
 from models.revoked_tokens import RevokedTokens
-from models.importer_status import ImporterStatuses
-from models.api import API
-from models.prediction_results import PredictionResults
-from models.user_predictions import UserPredictions
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -32,8 +28,20 @@ from resources.attributes import GetAttributes
 from resources.attributes import UpdateAttributeSubTheme
 from resources.export_data import ExportData
 from resources.forgot_password import ForgotPassword
+from resources.import_retry import ImportRetry
+from resources.import_status import ImportStatus
 from resources.login import Login, SecretResource
 from resources.logout import UserLogoutAccess, UserLogoutRefresh
+from resources.moving_sensors import CreateTracker
+from resources.moving_sensors import DeleteTracker
+from resources.moving_sensors import ExportToKML
+from resources.moving_sensors import GetDummyData
+from resources.moving_sensors import GetTracker
+from resources.moving_sensors import UpdateTracker
+from resources.moving_sensors.add_new_location_data import AddNewLocationData
+from resources.moving_sensors.delete_location_data import DeleteLocationData
+from resources.moving_sensors.get_location_data import GetLocationData
+from resources.moving_sensors.remove_location_data import WindowLocationData
 from resources.refresh_token import TokenRefresh
 from resources.register import Register
 from resources.request_for_data import PredictionStatus
@@ -52,8 +60,7 @@ from resources.units.delete_unit import DeleteUnitOfMeasurement
 from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
-from resources.import_status import ImportStatus
-from resources.import_retry import ImportRetry
+from resources.moving_sensors import GetDummyData
 
 
 def create_app(**config_overrides):
@@ -81,7 +88,8 @@ def create_app(**config_overrides):
     # # for how safely store JWTs in cookies
     # app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 
-    app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'  # TODO: change before deployment
+    app.config[
+        'JWT_SECRET_KEY'] = 'jwt-secret-string'  # TODO: change before deployment
     # app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=1)  # TODO: change before deployment
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
@@ -184,10 +192,24 @@ def create_app(**config_overrides):
     api.add_resource(AttributeAlias, '/admin/attributes/alias')
     api.add_resource(GetAttributes, '/admin/attributes/get_attributes')
     api.add_resource(DeleteAttributeAlias, '/admin/attributes/delete_alias')
-    api.add_resource(UpdateAttributeSubTheme, '/admin/attributes/add_to_subtheme')
+    api.add_resource(UpdateAttributeSubTheme,
+                     '/admin/attributes/add_to_subtheme')
 
     api.add_resource(ExportData, '/export_data')
     api.add_resource(ImportStatus, '/importer_status')
     api.add_resource(ImportRetry, '/importer_retry')
+
+    api.add_resource(CreateTracker, '/moving/add_tracker')
+    api.add_resource(DeleteTracker, '/moving/delete_tracker')
+    api.add_resource(UpdateTracker, '/moving/update_tracker')
+    api.add_resource(GetTracker, '/moving/get_tracker')
+
+    api.add_resource(AddNewLocationData, '/moving/add_new_data')
+    api.add_resource(DeleteLocationData, '/moving/delete_location_data')
+    api.add_resource(GetLocationData, '/moving/get_loc_data')
+    api.add_resource(WindowLocationData, '/moving/window_data')
+
+    api.add_resource(ExportToKML, '/moving/export_kml')
+    api.add_resource(GetDummyData, '/moving/fetch_dummy_data')
 
     return app

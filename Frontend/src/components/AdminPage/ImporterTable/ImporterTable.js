@@ -6,6 +6,7 @@ import ImporterTableBody from './ImporterTableBody';
 import ImporterTablePagination from './ImporterTablePagination';
 import ImporterLogsModal from './ImporterLogsModal';
 import SearchIcon from '@material-ui/icons/Search';
+import LockIcon from '@material-ui/icons/Lock';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -36,6 +37,7 @@ const styles = (theme) => ({
   noDataMessage: {
     textAlign: 'center',
     marginBottom: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 2,
   },
   noDataIcon: {
     marginTop: theme.spacing.unit * 2,
@@ -110,62 +112,71 @@ class ImporterTable extends React.Component {
     const { classes, admin } = this.props;
     const { order, orderBy, selected, page, rowsPerPage } = this.state;
 
+    // Not Authorised
+    if (admin.hideImporters) {
+      return (<Paper>
+        <div className={classes.tableWrapper}>
+          <Typography variant="subtitle1" color="primary" className={classes.noDataMessage}>
+            <LockIcon className={classes.noDataIcon}/>
+            This account is not authorised to view this page
+          </Typography>
+        </div>
+      </Paper>)
+    // Authorised
+    } if (admin.importers && admin.importers.length > 0) {
     return (
       <div className={classes.root}>
-        {
-          admin.importers && admin.importers.length > 0
-            ? <Paper>
-                <div className={classes.tableWrapper}>
-                  <Table className={classes.table} aria-labelledby="tableTitle">
-                    <ImporterTableHead
-                      numSelected={selected.length}
-                      order={order}
-                      orderBy={orderBy}
-                      onRequestSort={this.handleRequestSort}
-                      columns={columns}
-                      rowCount={admin.importers.length}
-                    />
-                    <ImporterTableBody
-                      data={admin.importers}
-                      columns={columns}
-                      order={order}
-                      orderBy={orderBy}
-                      page={page}
-                      rowsPerPage={rowsPerPage}
-                      onClick={this.handleClick}
-                      onLogsClick={this.handleImporterLogsOpen}
-                      onRerunClick={this.handleRerunClick}
-                      isSelected={this.isSelected}
-                    />
-                  </Table>
-                </div>
-                <ImporterTablePagination
-                  data={admin.importers}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onChangePage={this.handleChangePage}
-                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                />
-            </Paper>
-            : <Paper>
-              <div className={classes.tableWrapper}>
-                <Typography variant="subtitle1" color="primary" className={classes.noDataMessage}>
-                  <SearchIcon className={classes.noDataIcon}/>
-                  Problem loading importers
-                </Typography>
-              </div>
-            </Paper>
+        <Paper>
+          <div className={classes.tableWrapper}>
+            <Table className={classes.table} aria-labelledby="tableTitle">
+              <ImporterTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={this.handleRequestSort}
+                columns={columns}
+                rowCount={admin.importers.length}
+              />
+              <ImporterTableBody
+                data={admin.importers}
+                columns={columns}
+                order={order}
+                orderBy={orderBy}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                onClick={this.handleClick}
+                onLogsClick={this.handleImporterLogsOpen}
+                onRerunClick={this.handleRerunClick}
+                isSelected={this.isSelected}
+              />
+            </Table>
+          </div>
+          <ImporterTablePagination
+            data={admin.importers}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={this.handleChangePage}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          />
+        </Paper>
         }
-        <Modal
-          open={this.state.importerLogsModalOpen}
-          onClose={this.handleImporterLogsClose}
-          disableAutoFocus={true}
-        >
+        <Modal open={this.state.importerLogsModalOpen} onClose={this.handleImporterLogsClose} disableAutoFocus={true}>
           <ImporterLogsModal selectedImporter={this.state.selectedImporter} onCloseClick={this.handleImporterLogsClose}></ImporterLogsModal>
         </Modal>
-
-      </div>
-    )
+      </div>)
+    // Problem Loading Importers
+    } else {
+      return (
+        <Paper>
+          <div className={classes.tableWrapper}>
+            <Typography variant="subtitle1" color="primary" className={classes.noDataMessage}>
+              <SearchIcon className={classes.noDataIcon}/>
+              Problem loading importers
+            </Typography>
+          </div>
+        </Paper>
+      )
+    }
   }
 }
 

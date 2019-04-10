@@ -56,7 +56,7 @@ class App extends React.Component {
             <Switch>
               <Route exact path="/" component={DashboardPage} />
               <Route path="/data" component={DataPage} />
-              <Route path="/admin" component={AdminPage} />
+              <Route path="/admin" component={AdminPage}/>
               <Route path="/login" component={LoginPage} />
             </Switch>
           </BrowserRouter>

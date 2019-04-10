@@ -51,7 +51,7 @@ class UsersList(Resource):
         args = self.get_reqparser.parse_args()
 
         if not get_jwt_claims()['admin']:
-            abort(HTTPStatus.FORBIDDEN.value, error="administration privileges required")
+           return {"message": "not authorized"}, 403
 
         users = (marshal(user, self.user_fields)
                  for user in Users.query.filter_by().limit(args["limit"]))
