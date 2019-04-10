@@ -1,13 +1,13 @@
 import importlib
 import logging
 from typing import Callable
+
 from flask_script import Command, Option
+
+from settings.get_config_decorator import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
-
-
-from settings.get_config_decorator import GetConfig
 
 
 class AddDatasource(Command):
@@ -22,7 +22,8 @@ class AddDatasource(Command):
         python manage.py add -gd True
     """
 
-    def __init__(self, add_datasource: Callable = None, get_datasources: bool = False):
+    def __init__(self, add_datasource: Callable = None,
+                 get_datasources: bool = False):
         """
         Get or Add a DataSource
         :param add_datasource: Importer Callable
