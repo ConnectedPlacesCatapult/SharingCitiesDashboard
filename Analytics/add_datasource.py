@@ -1,12 +1,12 @@
 import importlib
 import logging
 from typing import Callable
+from flask_script import Command, Option
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
-import yaml
-from flask_script import Command, Option
+
 from settings.get_config_decorator import GetConfig
 
 
