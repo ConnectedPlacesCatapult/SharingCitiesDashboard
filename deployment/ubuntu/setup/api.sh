@@ -29,6 +29,7 @@ if [ $PYREQ_INSTALLED = False ]; then
 fi
 
 # Set env values
+echo "$PREFIX Setting env values"
 export $(xargs <~/SharingCitiesDashboard/.env)
 
 # Rename settings.py.bak
