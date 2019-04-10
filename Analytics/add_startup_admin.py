@@ -46,8 +46,7 @@ class AddStartupAdmin(Command):
         fullname = input("Fullname: ")
         email = input("Email: ")
         pswd = getpass()
-        pswd = bcrypt.hashpw(pswd.encode("utf8"), bcrypt.gensalt()).decode(
-            "utf8")
+        pswd = bcrypt.hashpw(pswd.encode("utf8"), bcrypt.gensalt()).decode("utf8")
 
         sql_text = sqlalchemy.text("insert into users(fullname,email,"
                                    "password,admin,activated, timestamp) "
@@ -63,8 +62,3 @@ class AddStartupAdmin(Command):
             logger.error(" Unsuccessful. User {} already exists".format(email))
         except ProgrammingError as e:
             logger.error(" Unsuccessful on error:\n{}".format(e))
-
-
-if __name__ == '__main__':
-    adm = AddStartupAdmin()
-    adm.run()
