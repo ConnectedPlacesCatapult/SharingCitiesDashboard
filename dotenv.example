@@ -1,4 +1,5 @@
-API_ADDRESS=http://$(dig +short myip.opendns.com @resolver1.opendns.com)/api/
+EXT_IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
+API_ADDRESS=http://$EXT_IP/api/
 SECRET_KEY="Use-your-secret-key"
 DB_USERNAME="sharingcities"
 DB_PASSWORD="sharingcities"

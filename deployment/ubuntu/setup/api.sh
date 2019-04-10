@@ -30,7 +30,7 @@ fi
 
 # Set env values
 echo "$PREFIX Setting env values"
-export $(xargs <~/SharingCitiesDashboard/.env)
+source ~/SharingCitiesDashboard/.env
 
 # Rename settings.py.bak
 echo "$PREFIX Initializing flask settings"
