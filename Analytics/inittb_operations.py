@@ -6,6 +6,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Analytics.app import create_app
 import sqlalchemy
 
+""" Initialize Database Command """
+
 app = create_app()
 
 db_uri = '%s://%s:%s@%s/%s' % (
