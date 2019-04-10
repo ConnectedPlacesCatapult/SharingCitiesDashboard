@@ -1,9 +1,10 @@
 import logging
-import os
 
 import requests
 from flask_jwt_extended import jwt_required, get_jwt_claims
 from flask_restful import Resource, reqparse
+
+from Analytics.settings.get_config_decorator import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
@@ -23,7 +24,8 @@ class TestKeyValidity(Resource):
                  validity of the api key and a reason if the key is invalid
         """
         if get_jwt_claims()["admin"]:
-            sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
+            sendgrid_api_key = GetConfig.configure('sendgrid', 'api_key')
+            print(sendgrid_api_key)
             if sendgrid_api_key:
                 sendgrid_response = \
                     SendgridHelper.send_test_request(sendgrid_api_key)
@@ -32,12 +34,11 @@ class TestKeyValidity(Resource):
                     SendgridHelper.handle_sendgrid_response(sendgrid_response)
 
             else:
-                logger.error("Sendgrid API is not set as an environment "
-                             "variable")
+                logger.error("Sendgrid API key not present "
+                             "in configurations file")
                 return {
                            "api_key": False,
-                           "reason": "Sendgrid API key is not set in the environment "
-                                     "variables"
+                           "reason": "Invalid Sendgrid API key"
                        }, 200
         else:
             return {"message": "Not Authorized"}, 403
@@ -69,11 +70,8 @@ class ReplaceKey(Resource):
                 SendgridHelper.handle_sendgrid_response(sendgrid_response)
 
             if result["api_key"]:
-                is_replaced, reason = self.replace_sendgrid_key(new_api_key,
-                                                                "~",
-                                                                ".bash_profile")
+                is_replaced, reason = self.replace_sendgrid_key(new_api_key)
                 if is_replaced:
-                    os.environ["SENDGRID_API_KEY"] = new_api_key
                     logger.info("Sendgrid API key has been replaced "
                                 "with new key = {}".format(new_api_key))
                     return {"message": "success"}, 200
@@ -88,8 +86,7 @@ class ReplaceKey(Resource):
             return {"message": "Not Authorized"}, 403
 
     @staticmethod
-    def replace_sendgrid_key(new_api_key: str, folder: str,
-                             file: str) -> (bool, str):
+    def replace_sendgrid_key(new_api_key: str) -> (bool, str):
         """
         Replace Sendgrid API key environment variable export statement
         within the provided file argument
@@ -100,38 +97,14 @@ class ReplaceKey(Resource):
         :return: Whether the replacement process was successful and a
                  reason if the process failed
         """
-
-        if folder == "~":
-            folder = os.path.expanduser('~')
-
-        file_path = folder + "/" + file
         try:
-            filein = open(file_path, 'r')
-        except FileNotFoundError:
-            return False, "Unable to find file {}".format(file_path)
-
-        found = False
-        new_lines = []
-        line = filein.readline()
-        while line:
-            if "export SENDGRID_API_KEY=" in line:
-                found = True
-                line = "export SENDGRID_API_KEY='{}'".format(new_api_key)
-
-            new_lines.append(line)
-            line = filein.readline()
-
-        new_lines.append('\n')
-        filein.close()
-
-        if found:
-            fileout = open(file_path, 'w')
-            fileout.writelines(new_lines)
-            fileout.close()
+            config = GetConfig.configure()
+            config["sendgrid"]["api_key"] = new_api_key
+            GetConfig.save_config(config)
             return True, None
-        else:
-            logger.error("The required `export SENDGRID_API_KEY` statement "
-                         "is not present within{}".format(file_path))
+        except IOError as ioe:
+            logger.error("New Sendgrip API Key not committed to config file",
+                         ioe.with_traceback(ioe.__traceback__))
             return False, "Could not replace API key as it does not exist"
 
 

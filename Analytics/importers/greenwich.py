@@ -283,7 +283,6 @@ class GreenwichMeta_2(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
@@ -426,7 +425,6 @@ class GreenwichKiwiPump(BaseImporter):
         Instantiate BAseImporter
 
         """
-        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)

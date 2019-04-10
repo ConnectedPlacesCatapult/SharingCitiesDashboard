@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 import simplekml
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -23,6 +24,7 @@ class ExportToKML(Resource):
         self.reqparser.add_argument('end_date', required=False,
                                     store_missing=False, type=str)
 
+    @jwt_required
     def get(self) -> ({str: str}, HTTPStatus):
         """
         Export Location data for Tracker to KML file

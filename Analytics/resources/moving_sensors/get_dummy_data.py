@@ -1,8 +1,9 @@
 import logging
-from http import HTTPStatus
 import random
+from http import HTTPStatus
 
 import pandas as pd
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
 from sqlalchemy import func
@@ -33,6 +34,7 @@ class GetDummyData(Resource):
         self.loc_stats = dict(before=0, after=0)
         self.tracker_stats = dict(before=0, after=0)
 
+    @jwt_required
     def post(self) -> (dict, HTTPStatus):
         """
         Get dummy data from CSV. Store dummy data in database

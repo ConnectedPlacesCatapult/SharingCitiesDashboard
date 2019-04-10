@@ -84,7 +84,6 @@ class KCLAirQuality(BaseImporter):
             self.df = None
             for code in _codes:
                 self.url = self.BASE_URL % (code, _today, _tomorrow)
-
                 data = requests.get((self.url).replace(' ', '').replace('\n',
                                                                         '') + self.api_key,
                                     headers=headers)

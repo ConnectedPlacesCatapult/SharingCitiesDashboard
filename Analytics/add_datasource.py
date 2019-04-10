@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 import yaml
 from flask_script import Command, Option
+from settings.get_config_decorator import GetConfig
 
 
 class AddDatasource(Command):
@@ -62,13 +63,14 @@ class AddDatasource(Command):
         :param add_datasource: Callable Str Name
         :return: A DataSource Object
         """
-        config = self.get_config()
-        config = config[config['environment']]
+        config = GetConfig.configure(category='api_endpoints')
+        # config = config['api_endpoints']
         _importers = {}
         for c in config:
             _importers[config[c]['API_NAME']] = config[c]['API_CLASS']
             if get_datasources and config[c]['API_CLASS'] is not None:
-                # Cannot remove this as the user will not receive any DataSources back as it is a command line util
+                # Cannot remove this as the user will not receive any
+                # DataSources back as it is a command line util
                 print(config[c]['API_NAME'])
 
         if get_datasources:

@@ -245,7 +245,6 @@ class Milan_API_sc_parking_kiunsys_meta(BaseImporter):
         Get Import configurations
         Instantiate BaseImporter
         """
-        self.get_config()
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
