@@ -38,7 +38,7 @@ class AddNewLocationData(Resource):
         self.reqparser.add_argument('sat_cnt', required=True, type=int)
         self.reqparser.add_argument('value', required=True, type=str)
         self.reqparser.add_argument('fix_quality', required=True, type=int)
-        
+
     @jwt_required
     def post(self) -> (str, HTTPStatus):
         """

@@ -1,18 +1,19 @@
 import logging
-from getpass import getpass
 from datetime import datetime
+from getpass import getpass
 
-from flask_script import Command
-import sqlalchemy
 import bcrypt
+import sqlalchemy
+from flask_script import Command
 from sqlalchemy.exc import IntegrityError, ProgrammingError
 
-import settings
+from settings.get_config_decorator import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
+@GetConfig('AddStartupAdmin', 'postgres')
 class AddStartupAdmin(Command):
     """
     Helper Class
@@ -28,7 +29,11 @@ class AddStartupAdmin(Command):
         Create a local sqlalchemy engine that connects to the database
         defined in settings.py
         """
-        self.engine = sqlalchemy.create_engine(settings.DB_URI)
+
+        db_uri = '%s://%s:%s@%s/%s' % (self.db_psql_base_uri, self.db_username,
+                                       self.db_password, self.db_host,
+                                       self.db_name)
+        self.engine = sqlalchemy.create_engine(db_uri)
 
     def run(self):
         """
