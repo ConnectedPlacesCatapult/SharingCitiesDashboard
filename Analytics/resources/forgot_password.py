@@ -86,8 +86,6 @@ class ForgotPassword(Resource):
             self.html_template, username=name,
             password=new_password)
 
-        # sg = sendgrid.SendGridAPIClient(
-        #     apikey=os.environ.get("SENDGRID_API_KEY"))
         sg = sendgrid.SendGridAPIClient(
             apikey=self.api_key)
 
