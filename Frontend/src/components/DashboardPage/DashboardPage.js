@@ -59,6 +59,15 @@ class DashboardPage extends React.Component {
     open: true,
   };
 
+  renderWidgetsLoading() {
+    const { dashboard } = this.props;
+    if (dashboard.fetching === false && dashboard.widgets && dashboard.widgets.length === 0) {
+      return <NoWidgets/>
+    } else if (dashboard.fetching === true) {
+      return <LoadingWidgets/>
+    }
+  }
+
   render() {
     const { classes, location, dashboard } = this.props;
 
@@ -67,8 +76,7 @@ class DashboardPage extends React.Component {
         <Header location={location} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          { dashboard.fetching === false && dashboard.widgets && dashboard.widgets.length === 0 ? <NoWidgets/> : null }
-          { dashboard.fetching === true ? <LoadingWidgets/> : null }
+          { this.renderWidgetsLoading() }
           <GridLayout/>
           <Dialog
             open={dashboard.deleteWidgetDialogOpen}
