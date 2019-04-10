@@ -1,12 +1,12 @@
 const path = require('path');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   devServer: {
    historyApiFallback: true,
    host:'localhost',
    port:'8080',
-   // apiRoot: process.env.API_ADDRESS,
   },
   entry: "./src/index.js",
   output: {
@@ -60,11 +60,12 @@ module.exports = {
     ]
   },
   plugins: [
+    new Dotenv({
+      path: '../.env'
+    }),
     new HtmlWebPackPlugin({
       template: "./src/template.html",
       filename: "./index.html"
-    }),
-    new webpack.DefinePlugin({ `process.env.API_ADDRESS`: JSON.stringify(${env.API_ADDRESS})
     })
   ],
 };

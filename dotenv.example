@@ -1,0 +1,8 @@
+API_ADDRESS="http://$(dig +short myip.opendns.com @resolver1.opendns.com)/api/"
+SECRET_KEY="Use-your-secret-key"
+DB_USERNAME="sharingcities"
+DB_PASSWORD="sharingcities"
+DATABASE_NAME="analytics"
+DB_HOST="localhost"
+MAN_HOST_VALUE="0.0.0.0"
+GUN_HOST_VALUE="localhost"

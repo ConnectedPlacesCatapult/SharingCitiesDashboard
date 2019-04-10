@@ -25,7 +25,7 @@ sudo ufw allow 'Nginx HTTP'
 # Setup correct Nginx config file
 echo "$PREFIX Setting Nginx config"
 sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bkup
-sudo cp ~/SharingCitiesDashboard/nginx.conf /etc/nginx/nginx.conf
+sudo cp ~/SharingCitiesDashboard/deployment/ubuntu/nginx.conf /etc/nginx/nginx.conf
 
 # Check Nginx status
 echo "$PREFIX Checking Nginx status"

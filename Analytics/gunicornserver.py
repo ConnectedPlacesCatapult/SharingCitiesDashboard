@@ -2,14 +2,11 @@ from os import environ
 from flask_script import Command, Option
 
 
-hostValue = environ.get('GUN_HOST_VALUE')
-
-
 class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
 
-    def __init__(self, host=hostValue, port=5000, workers=4):
+    def __init__(self, host=environ.get('GUN_HOST_VALUE'), port=5000, workers=4):
         self.port = port
         self.host = host
         self.workers = workers
@@ -38,7 +35,7 @@ class GunicornServer(Command):
         if version_info < (0, 9, 0):
             from gunicorn.arbiter import Arbiter
             from gunicorn.config import Config
-            arbiter = Arbiter(Config({'bind': "%s:%d" % (host, int(port)),'workers': workers}), app)
+            arbiter = Arbiter(Config({'bind': "%s:%d" % (host, int(port)), 'workers': workers}), app)
             arbiter.run()
         else:
             from gunicorn.app.base import Application

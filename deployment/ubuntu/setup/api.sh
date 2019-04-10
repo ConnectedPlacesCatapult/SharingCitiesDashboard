@@ -28,17 +28,12 @@ if [ $PYREQ_INSTALLED = False ]; then
     export PYREQ_INSTALLED=True
 fi
 
+# Set env values
+export $(xargs <~/SharingCitiesDashboard/.env)
+
 # Rename settings.py.bak
 echo "$PREFIX Initializing flask settings"
 mv settings.py.bak settings.py
-
-# Set environment variables
-export DB_USERNAME="sharingcities"
-export DB_PASSWORD="sharingcities"
-export DATABASE_NAME="analytics"
-export DB_HOST="localhost"
-export MAN_HOST_VALUE="0.0.0.0"
-export GUN_HOST_VALUE="localhost"
 
 # Setup DB structure
 echo "$PREFIX Initialize DB structure"

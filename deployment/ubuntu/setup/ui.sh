@@ -26,10 +26,6 @@ npm i --save
 # Fix npm issues
 npm audit fix
 
-# Set environment variables
-export EXT_IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
-export API_ADDRESS=http://$EXT_IP/api/
-
 # Build UI for Production
 echo "$PREFIX Building UI for Production"
 npm run build
