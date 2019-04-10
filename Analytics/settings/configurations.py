@@ -81,7 +81,7 @@ class Configurations(object):
         Check the Absolute Path exists and is a file
         :param config_path: Absolute path to configurations file
         :return: Path otherwise raise an IOError
-        :raises IOError: Raise if the path does not exist or is not a file
+        :raises IOError: Raise if the config_path does not exist or is not a file
         """
         # Check config file exists
         path = Path(config_path)

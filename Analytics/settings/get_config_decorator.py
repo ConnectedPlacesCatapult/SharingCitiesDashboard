@@ -93,7 +93,7 @@ class GetConfig(object):
     def save_config(config: {str: Any},
                     config_path: Union[str, None] = None) -> None:
         """
-        Commit Configuration changes to yamal Config file
+        Commit Configuration changes to yaml Config file
         :param config: Configuration dictionary to be committed to file
         :param config_path: Absolute path to file to commit changes configurations
         """
@@ -108,7 +108,7 @@ class GetConfig(object):
             Configurations.update_config(config_path)
 
         except IOError as ioe:
-            logger.error("An error occurred committing configurations yamal"
+            logger.error("An error occurred committing configurations yaml"
                          " file", ioe.with_traceback(ioe.__traceback__))
 
     def __call__(self, cls: object, *args: Any, **kwargs: dict) -> Callable:
