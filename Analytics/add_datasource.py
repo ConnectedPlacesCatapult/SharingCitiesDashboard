@@ -14,9 +14,7 @@ class AddDatasource(Command):
     """
     Helper Class
 
-    This class can be used to add any importer to the database and retrieve
-    information about them
-
+    This class can be used to add any importer to the database and retrieve information about them
     The importers can be added:
         python manage.py add -ad <Name-Of-The-Importer>
 
@@ -24,8 +22,7 @@ class AddDatasource(Command):
         python manage.py add -gd True
     """
 
-    def __init__(self, add_datasource: Callable = None,
-                 get_datasources: bool = False):
+    def __init__(self, add_datasource: Callable = None, get_datasources: bool = False):
         """
         Get or Add a DataSource
         :param add_datasource: Importer Callable
@@ -45,22 +42,6 @@ class AddDatasource(Command):
             Option('--add_datasource', '-ad', dest='add_datasource',
                    default=self.add_datasource),
         ]
-
-    def get_config(self) -> {str: {str}}:
-        """
-        Get Importer Config
-        :return: Importer Configurations
-        """
-        config = None
-        try:
-            with open("importers/config.yml") as ymlfile:
-                config = yaml.load(ymlfile)
-        except FileNotFoundError as e:
-            logger.critical("No Importer Config File Found",
-                            file="importers/config.yml")
-            raise FileNotFoundError
-
-        return config
 
     def run(self, get_datasources: bool, add_datasource: str) -> object:
         """
