@@ -91,9 +91,6 @@ class ReplaceKey(Resource):
         Replace Sendgrid API key environment variable export statement
         within the provided file argument
         :param new_api_key: Sendgrid API key that will replace the current
-        :param folder: Name of folder that contains the shell configuration
-                       file
-        :param file: Name of shell configuration file
         :return: Whether the replacement process was successful and a
                  reason if the process failed
         """
