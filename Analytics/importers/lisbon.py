@@ -61,18 +61,13 @@ class LisbonAPI(BaseImporter):
                 logger.error('Nothing to save as dataframe is empty')
             else:
                 logger.info(concat_df)
-                self.create_datasource(dataframe=concat_df, sensor_tag='',
-                                       attribute_tag=[],
-                                       unit_value=[], bespoke_unit_tag=[],
-                                       description=[],
-                                       bespoke_sub_theme=[],
-                                       location_tag='loc',
+                self.create_datasource(dataframe=concat_df, sensor_tag='', attribute_tag=[],
+                                       unit_value=[], bespoke_unit_tag=[], description=[],
+                                       bespoke_sub_theme=[], location_tag='loc',
                                        api_timestamp_tag='run_time_stamp')
             self.importer_status.status = Status.success(__class__.__name__)
         except Exception as e:
-            self.importer_status.status = Status.failure(__class__.__name__,
-                                                         e.__str__(),
-                                                         traceback.format_exc())
+            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
 
     def _refresh_token(self) -> str:
         """
@@ -82,7 +77,5 @@ class LisbonAPI(BaseImporter):
         """
         headers = {"grant_type": "client_credentials"}
         token_url = 'https://iot.alticelabs.com/api/devices/token'
-        token = requests.post(token_url, headers=headers,
-                              auth=HTTPBasicAuth(self.USER_NAME,
-                                                 self.USER_PASSCODE))
+        token = requests.post(token_url, headers=headers, auth=HTTPBasicAuth(self.USER_NAME, self.USER_PASSCODE))
         return str(token.text)

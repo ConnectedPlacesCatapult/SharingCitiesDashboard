@@ -34,8 +34,7 @@ class TfL_BikePoints(BaseImporter):
         """
         try:
             super()._create_datasource(headers)
-            self.df = self.create_dataframe(ignore_object_tags=['$type'],
-                                            object_separator='id')
+            self.df = self.create_dataframe(ignore_object_tags=['$type'], object_separator='id')
 
             self.df.dropna(inplace=True)
 
@@ -43,16 +42,9 @@ class TfL_BikePoints(BaseImporter):
             self.df['modified'] = self.df.modified.apply(lambda x: pd.to_datetime(x))
             self.df['modified'] = self.df['modified'].astype(np.int64)
 
-            self.create_datasource_with_values(dataframe=self.df,
-                                               sensor_tag='id',
-                                               attribute_tag='key',
-                                               value_tag='value',
-                                               latitude_tag='lat',
-                                               longitude_tag='lon',
-                                               description_tag='sourceSystemKey',
-                                               api_timestamp_tag='modified')
+            self.create_datasource_with_values(dataframe=self.df, sensor_tag='id', attribute_tag='key',
+                                               value_tag='value', latitude_tag='lat', longitude_tag='lon',
+                                               description_tag='sourceSystemKey', api_timestamp_tag='modified')
             self.importer_status.status = Status.success(__class__.__name__)
         except Exception as e:
-            self.importer_status.status = Status.failure(__class__.__name__,
-                                                         e.__str__(),
-                                                         traceback.format_exc())
+            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())

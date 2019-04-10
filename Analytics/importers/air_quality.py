@@ -60,22 +60,15 @@ class KCLAirQuality(BaseImporter):
             _data = j_reader.fetch_data()
 
             j_reader.create_objects(data=_data,
-                                    ignore_tags=['@SiteName', '@SiteType',
-                                                 '@SiteLink', '@DataOwner',
-                                                 '@DataManager',
-                                                 '@LatitudeWGS84',
-                                                 '@LongitudeWGS84',
-                                                 '@SpeciesCode',
-                                                 '@SpeciesDescription',
-                                                 '@Year',
-                                                 '@ObjectiveName', '@Value',
-                                                 '@Achieved'])
+                                    ignore_tags=['@SiteName', '@SiteType', '@SiteLink', '@DataOwner',
+                                                 '@DataManager', '@LatitudeWGS84', '@LongitudeWGS84',
+                                                 '@SpeciesCode', '@SpeciesDescription', '@Year',
+                                                 '@ObjectiveName', '@Value', '@Achieved'])
             _code_df = j_reader.create_dataframe()
             _codes = _code_df['@SiteCode'].tolist()
             zipped_codes = zip(_codes, _code_df['@Latitude'].tolist(),
                                _code_df['@Longitude'].tolist())
-            _codes_location = {site_code: [lat, lon] for site_code, lat, lon in
-                               list(zipped_codes)}
+            _codes_location = {site_code: [lat, lon] for site_code, lat, lon in list(zipped_codes)}
 
             # Fetching day data
             _date = datetime.utcnow()
@@ -84,9 +77,8 @@ class KCLAirQuality(BaseImporter):
             self.df = None
             for code in _codes:
                 self.url = self.BASE_URL % (code, _today, _tomorrow)
-                data = requests.get((self.url).replace(' ', '').replace('\n',
-                                                                        '') + self.api_key,
-                                    headers=headers)
+
+                data = requests.get((self.url).replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
                 dataset = json.loads(data.text)
                 jr = JsonReader(object_seperator='@SpeciesCode')
                 jr.create_objects(dataset)
@@ -98,8 +90,7 @@ class KCLAirQuality(BaseImporter):
                         _new_dates.append(np.nan)
                         continue
 
-                    s = time.mktime(datetime.strptime(str(d),
-                                                      '%Y-%m-%d %H:%M:%S').timetuple())
+                    s = time.mktime(datetime.strptime(str(d), '%Y-%m-%d %H:%M:%S').timetuple())
                     _new_dates.append(str(s))
                 rows = len(_df.index)
                 _s_code = [code] * rows
@@ -117,16 +108,9 @@ class KCLAirQuality(BaseImporter):
                 else:
                     self.df = self.df.append(_df, ignore_index=True)
 
-            self.create_datasource_with_values(dataframe=self.df,
-                                               sensor_tag='@SiteCode',
-                                               attribute_tag='@SpeciesCode',
-                                               value_tag='@Value',
-                                               latitude_tag='@Latitude',
-                                               longitude_tag='@Longitude',
-                                               description_tag='@Description',
-                                               api_timestamp_tag='@MeasurementDateGMT')
+            self.create_datasource_with_values(dataframe=self.df, sensor_tag='@SiteCode', attribute_tag='@SpeciesCode',
+                                               value_tag='@Value', latitude_tag='@Latitude', longitude_tag='@Longitude',
+                                               description_tag='@Description', api_timestamp_tag='@MeasurementDateGMT')
             self.importer_status.status = Status.success(__class__.__name__)
         except Exception as e:
-            self.importer_status.status = Status.failure(__class__.__name__,
-                                                         e.__str__(),
-                                                         traceback.format_exc())
+            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())

@@ -25,7 +25,6 @@ class CreateTracker(Resource):
         self.reqparser.add_argument('id', required=True, type=str)
         self.reqparser.add_argument('description', required=False, default="",
                                     type=str)
-
     @jwt_required
     def post(self) -> (str, HTTPStatus):
         """

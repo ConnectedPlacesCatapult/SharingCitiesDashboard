@@ -45,33 +45,35 @@ Note: If no parameters are passed then by default all the themes are returned
         {URL}?attributedata='<name1><name2>&limit=1000&grouped=True&harmonising_method=long // Harmonisies all attributes in the query to match the attribute with the most records. It also reformats the data to be structured as long (row stacked) or wide (column stacked)
 
 """
-import logging
-import statistics
-import subprocess
 from datetime import datetime
+import subprocess
 
-import celery
-import sqlalchemy
-from celery.exceptions import Ignore
-from celery.utils.log import get_task_logger
 from flask_restful import Resource, reqparse, inputs
+from celery.utils.log import get_task_logger
+from celery.exceptions import Ignore
+from celery import states
+import sqlalchemy
+import statistics
+import celery
+import logging
 
 from db import db
-from models.attribute_data import ModelClass
-from models.attributes import Attributes
-from models.location import Location
-from models.pin_location_data import Tracker, LocationData
-from models.prediction_results import PredictionResults
-from models.sensor import Sensor
-from models.sensor_attribute import SensorAttribute
-from models.theme import SubTheme
 from models.theme import Theme
+from models.attributes import Attributes
+from models.theme import SubTheme
+from models.attribute_data import ModelClass
+from models.sensor_attribute import SensorAttribute
+from models.sensor import Sensor
+from models.location import Location
 from models.unit import Unit
+from models.prediction_results import PredictionResults
 from models.user_predictions import UserPredictions
 from models.users import Users
+from models.pin_location_data import Tracker, LocationData
 from resources.helper_functions import is_number
 from resources.request_grouped import request_grouped_data
 from resources.request_grouped import request_harmonised_data
+
 
 LIMIT = 30
 OFFSET = 30
@@ -387,7 +389,7 @@ class RequestForData(Resource):
 
                             data.append({"message": "Forecasting engine making"
                                                     " predictions",
-                                         "task_id": str(prediction_task.id)})
+                                        "task_id": str(prediction_task.id)})
             else:
                 if grouped:
                     if harmonising_method:
@@ -422,7 +424,7 @@ class RequestForData(Resource):
                             pred_data = {
                                 "message": "Unable to make predictions as user"
                                            " id {} does not "
-                                           "exists".format(user_id)
+                                           "exists".format( user_id)
                             }
                             logger.error(pred_data["message"])
                             data.append(pred_data)
@@ -430,14 +432,13 @@ class RequestForData(Resource):
                         else:
                             # Check for data
                             if data[0]["Total_Records"] != 0:
-                                # Check for non numeric data
+                            # Check for non numeric data
                                 if is_number(data[0]["Attribute_Values"][0][
-                                                 "Value"]):
-                                    prediction_task = \
-                                        self.get_predictions.apply_async(args=(
-                                            data[0]["Attribute_Table"],
-                                            sensorid,
-                                            n_predictions, user_id))
+                                                  "Value"]):
+                                    prediction_task =  \
+                                    self.get_predictions.apply_async(args=(
+                                        data[0]["Attribute_Table"], sensorid,
+                                        n_predictions, user_id))
 
                                     data.append({
                                         "message": "Forecasting engine "
@@ -640,8 +641,7 @@ class RequestForData(Resource):
 
 
             self.update_state(state='PROGRESS',
-                              meta={
-                                  'status': "prediction task is in progress"})
+                              meta={'status': "prediction task is in progress"})
 
             for val in values:
                 _data.append(float(val.value))
@@ -652,7 +652,7 @@ class RequestForData(Resource):
 
             if predict_from_db:
                 existing_user_result = UserPredictions.get_entry(u_id,
-                                                                 predict_from_db.id)
+                                                           predict_from_db.id)
 
                 if existing_user_result and predict_from_db.is_stale(model):
                     existing_user_result.delete()
