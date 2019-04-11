@@ -13,24 +13,27 @@ class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
 
-    def __init__(self, host: Union[None, str] = None,
-                 port: Union[None, int] = None,
-                 workers: Union[None, int] = None):
+    def __init__(self, host: str = "localhost",
+                 port: int = 5000,
+                 workers: int = 4, override: bool = False):
         """
         Set Host, Port and Worker count for Gunicorn server
         :param host: Host URI
         :param port: Network port
         :param workers: Number of workers
+        :param override: Override defaults set by GetConfig decorator if true
+               otherwise use defaults set by GetConfig decorator
         """
-        if host:
+        if override:
             self.gunicorn_host = host
-        if port:
             self.gunicorn_port = port
-        if workers:
             self.gunicorn_workers = workers
 
-    def get_options(self):
-        """ Get Options """
+    def get_options(self) -> tuple:
+        """
+        Get Options
+        :return:  Options
+        """
         return (
             Option('-H', '--host',
                    dest='host',
@@ -47,8 +50,14 @@ class GunicornServer(Command):
                    default=self.gunicorn_workers),
         )
 
-    def __call__(self, app, host, port, workers):
-        """ Start Gunicorn server """
+    def __call__(self, app: object, host: str, port: int, workers: int) -> None:
+        """
+        Start Gunicorn Server
+        :param app:
+        :param host:
+        :param port:
+        :param workers:
+        """
 
         from gunicorn import version_info
 
