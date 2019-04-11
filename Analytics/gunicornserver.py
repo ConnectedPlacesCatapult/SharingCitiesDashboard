@@ -13,12 +13,6 @@ class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
 
-<<<<<<< HEAD
-    def __init__(self, host=None, port=None, workers=None):
-        self.host = host
-        self.port = port
-        self.workers = workers
-=======
     def __init__(self, host: str = "localhost",
                  port: int = 5000,
                  workers: int = 4, override: bool = False):
@@ -34,7 +28,6 @@ class GunicornServer(Command):
             self.gunicorn_host = host
             self.gunicorn_port = port
             self.gunicorn_workers = workers
->>>>>>> e5d4a179c3fdeca64d2317c03b5e96b03ee8c2ed
 
     def get_options(self) -> tuple:
         """
