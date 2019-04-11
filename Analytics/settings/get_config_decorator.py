@@ -43,6 +43,13 @@ class GetConfig(object):
                     self.config['db_host'],
                     self.config['db_name']
                 )
+                self.config['SQLALCHEMY_DATABASE_URI'] = "{}://{}:{}@{}/{}".format(
+                    self.config['db_psql_base_uri'],
+                    self.config['db_username'],
+                    self.config['db_password'],
+                    self.config['db_host'],
+                    self.config['db_name']
+                )
 
     @staticmethod
     def get_working_directory() -> str:

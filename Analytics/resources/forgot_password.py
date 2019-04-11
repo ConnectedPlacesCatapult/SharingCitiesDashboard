@@ -10,6 +10,9 @@ from sendgrid.helpers.mail import Email, Content, Mail
 from models.users import Users
 from Analytics.settings.get_config_decorator import GetConfig
 
+sys.path.append("../..")
+from settings import GetConfig
+
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
