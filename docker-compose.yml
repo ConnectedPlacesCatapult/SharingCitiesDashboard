@@ -5,10 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-DB
-    environment:
-      - POSTGRES_USER=sharingcities
-      - POSTGRES_PASSWORD=sharingcities
-      - POSTGRES_DB=test_analytics
   api:
     build:
       context: .
