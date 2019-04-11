@@ -51,10 +51,10 @@ class GunicornServer(Command):
     def __call__(self, app: object, host: str, port: int, workers: int) -> None:
         """
         Start Gunicorn Server
-        :param app:
-        :param host:
-        :param port:
-        :param workers:
+        :param app: application object
+        :param host: Host URI
+        :param port: Network port
+        :param workers: Number of workers
         """
 
         from gunicorn import version_info
