@@ -18,6 +18,18 @@ module.exports = {
         main: "#D54A44",
         //dark: "#AE3C38",
       },
+      success: {
+        main: '#4CAF50',
+      },
+      danger: {
+        main: '#ff5722',
+      },
+      info: {
+        main: '#81cfc7',
+      },
+      disabled: {
+        main: '#828282',
+      },
       background: {
         paper: "#313443",
         default: "#42465a",
@@ -28,6 +40,31 @@ module.exports = {
       fontFamily: "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
     },
   },
+
+  // currently used by the common/Header component to define links
+  routes: [
+    {
+      path: "/",
+      exact: true,
+      component: "DashboardPage",
+      name: "Dashboard",
+      roles: []
+    },
+    {
+      path: "/data",
+      exact: false,
+      component: "DataPage",
+      name: "Data Tools",
+      roles: []
+    },
+    {
+      path: "/admin",
+      exact: false,
+      component: "AdminPage",
+      name: "Admin",
+      roles: ["admin"]
+    },
+  ],
 
   // tileLayers to be made available in OpenMap widgets
   leafletTileLayers: [
@@ -66,6 +103,11 @@ module.exports = {
     widgetWidth: 200,
     widgetHeight: 200,
     widgetIsStatic: false,
+  },
+  dataTableDefaults: {
+    order: 'desc',
+    orderBy: 'Timestamp',
+    rowsPerPage: 20,
   },
   editorSettings: {
     widget: {
