@@ -20,7 +20,7 @@ class GunicornServer(Command):
         Set Host, Port and Worker count for Gunicorn server
         :param host: Host URI
         :param port: Network port
-        :param workers: NUmber of workers
+        :param workers: Number of workers
         """
         if host:
             self.gunicorn_host = host
