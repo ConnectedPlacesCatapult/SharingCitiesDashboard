@@ -1,5 +1,10 @@
 FROM postgres:11.2-alpine
 
+# Run Script to Read in Config file
+COPY ./parse_yaml.sh ./parse_yaml.sh
+COPY ./Analytics/settings/config.yml ./config.yml
+RUN /bin/sh parse_yaml.sh
+
 # Set Up the Database, Users & Roles
 ENV POSTGRES_USER=${POSTGRES_USER}
 ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}

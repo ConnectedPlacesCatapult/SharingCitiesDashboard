@@ -20,9 +20,6 @@ manager = Manager(app=application)
 manager.add_command('db', MigrateCommand)
 
 manager.add_command('runserver', Server(
-    use_debugger=False,
-    use_reloader=True,
-    host=os.getenv('API_HOST')
     **(GetConfig.configure('flask_server'))
 ))
 

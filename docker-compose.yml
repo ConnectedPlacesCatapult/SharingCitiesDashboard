@@ -5,22 +5,22 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-DB
-    env_file:
-      - ./Frontend/.env
+    environment:
+      - POSTGRES_USER=sharingcities
+      - POSTGRES_PASSWORD=sharingcities
+      - POSTGRES_DB=test_analytics
   api:
     build:
       context: .
       dockerfile: Dockerfile-API
     command: bash -c "python manage.py gunicorn & service redis-server start & celery -A manage.celery_task worker -l info"
     volumes:
-      - ./Analytics/:/code
+      - ./Analytics/:/Analytics
     ports:
       - "8000:5000"
       - "6379:6379"
     depends_on:
       - db
-    env_file:
-      - ./Frontend/.env
   ui:
     build:
       context: .

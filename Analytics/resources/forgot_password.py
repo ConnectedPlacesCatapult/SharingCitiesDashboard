@@ -1,14 +1,14 @@
 import http.client
 import logging
 import random
-
+import sys
 import flask
 import sendgrid
 from flask_restful import Resource, reqparse
 from sendgrid.helpers.mail import Email, Content, Mail
 
-from Analytics.settings import GetConfig
 from models.users import Users
+from Analytics.settings.get_config_decorator import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
