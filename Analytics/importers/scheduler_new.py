@@ -10,13 +10,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from retrying import retry
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from Analytics.settings import GetConfig
 from app import create_app
 from importers.state_decorator import ImporterStatus
 from models.api import API as Api_Class
 from models.importer_status import ImporterStatuses
 
-sys.path.append('..')
+sys.path.append('../..')
+from settings import GetConfig
 
 config = GetConfig.configure('postgres')
 application = create_app()
