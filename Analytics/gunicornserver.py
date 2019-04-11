@@ -1,6 +1,9 @@
-from flask_script import Command, Option
-from settings.get_config_decorator import GetConfig
 from typing import Union
+
+from flask_script import Command, Option
+
+from settings.get_config_decorator import GetConfig
+
 
 @GetConfig('GunicornServer', 'gunicorn_server')
 class GunicornServer(Command):
@@ -10,7 +13,9 @@ class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
 
-    def __init__(self, host: Union[None, str] = None, port: Union[None,int] = None, workers: Union[None,int] = None):
+    def __init__(self, host: Union[None, str] = None,
+                 port: Union[None, int] = None,
+                 workers: Union[None, int] = None):
         """
         Set Host, Port and Worker count for Gunicorn server
         :param host: Host URI
@@ -50,7 +55,8 @@ class GunicornServer(Command):
         if version_info < (0, 9, 0):
             from gunicorn.arbiter import Arbiter
             from gunicorn.config import Config
-            arbiter = Arbiter(Config({'bind': "%s:%d" % (host, int(port)),'workers': workers}), app)
+            arbiter = Arbiter(Config({'bind': "%s:%d" % (host, int(port)),
+                                      'workers': workers}), app)
             arbiter.run()
         else:
             from gunicorn.app.base import Application
