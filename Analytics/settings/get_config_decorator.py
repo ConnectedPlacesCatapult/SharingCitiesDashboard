@@ -51,8 +51,6 @@ class GetConfig(object):
                     self.config['db_name']
                 )
 
-
-
     @staticmethod
     def get_working_directory() -> str:
         """
