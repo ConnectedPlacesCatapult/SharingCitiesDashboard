@@ -1,12 +1,15 @@
 import traceback
 from typing import Union
+import sys
 
 import numpy as np
 import pandas as pd
 
-from Analytics.settings import GetConfig
 from importers.base import BaseImporter
 from .state_decorator import ImporterStatus, Status
+
+sys.path.append("../..")
+from settings import GetConfig
 
 
 @GetConfig("TfL_BikePoints", 'api_endpoints', 'tfl_bike_points')

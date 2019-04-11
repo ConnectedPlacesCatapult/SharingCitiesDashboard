@@ -1,32 +1,49 @@
 from flask_script import Command, Option
+from settings.get_config_decorator import GetConfig
+from typing import Union
 
+@GetConfig('GunicornServer', 'gunicorn_server')
 class GunicornServer(Command):
+    """
+    Startup Green Unicorn server
+    """
 
     description = 'Run the app within Gunicorn'
 
-    def __init__(self, host='<host-value>', port=5000, workers=4):
-        self.port = port
-        self.host = host
-        self.workers = workers
+    def __init__(self, host: Union[None, str] = None, port: Union[None,int] = None, workers: Union[None,int] = None):
+        """
+        Set Host, Port and Worker count for Gunicorn server
+        :param host: Host URI
+        :param port: Network port
+        :param workers: NUmber of workers
+        """
+        if host:
+            self.gunicorn_host = host
+        if port:
+            self.gunicorn_port = port
+        if workers:
+            self.gunicorn_workers = workers
 
     def get_options(self):
+        """ Get Options """
         return (
             Option('-H', '--host',
                    dest='host',
-                   default=self.host),
+                   default=self.gunicorn_host),
 
             Option('-p', '--port',
                    dest='port',
                    type=int,
-                   default=self.port),
+                   default=self.gunicorn_port),
 
             Option('-w', '--workers',
                    dest='workers',
                    type=int,
-                   default=self.workers),
+                   default=self.gunicorn_workers),
         )
 
     def __call__(self, app, host, port, workers):
+        """ Start Gunicorn server """
 
         from gunicorn import version_info
 

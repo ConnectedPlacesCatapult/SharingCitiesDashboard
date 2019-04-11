@@ -1,18 +1,21 @@
 import json
 import logging
 import traceback
+import sys
 from datetime import datetime, timedelta
 from typing import Union
 
 import numpy as np
 import pandas as pd
 
-from Analytics.settings import GetConfig
 from importers.base import BaseImporter, Location
 from models import location
 from models.sensor import Sensor
 from .state_decorator import ImporterStatus, Status
 from .token_exception import TokenExpired
+
+sys.path.append("../..")
+from settings import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)

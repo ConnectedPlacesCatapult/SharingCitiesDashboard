@@ -1,16 +1,19 @@
 import json
 import logging
 import traceback
+import sys
 from typing import Union
 
 import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
 
-from Analytics.settings import GetConfig
 from importers.base import BaseImporter
 from importers.json_reader import JsonReader
 from .state_decorator import ImporterStatus, Status
+
+sys.path.append("../..")
+from settings import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
