@@ -1,0 +1,22 @@
+.leaflet-popup-content-wrapper {
+  background: inherit;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  text-align: inherit;
+  color: inherit;
+}
+
+.leaflet-popup-content {
+  line-height: inherit;
+  margin: 0 19px;
+}
+
+a.leaflet-popup-close-button {
+  right: 19px;
+}
+
+.leaflet-popup-tip {
+  background-color: rgb(129, 207, 199);
+  box-shadow: none;
+}

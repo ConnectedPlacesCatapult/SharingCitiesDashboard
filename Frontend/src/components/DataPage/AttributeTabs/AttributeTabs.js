@@ -27,8 +27,8 @@ class AttributeTabs extends React.Component {
 
   // catch situation where the active tab's attribute has been deselected from the sde panel
   static getDerivedStateFromProps(props, state) {
-    if (state.activeTab >= props.api.data.length) {
-      state.activeTab = props.api.data.length - 1
+    if (state.activeTab >= props.dataTable.data.length) {
+      state.activeTab = props.dataTable.data.length - 1
     }
 
     return state;
@@ -39,11 +39,11 @@ class AttributeTabs extends React.Component {
   };
 
   render() {
-    const { classes, api } = this.props;
+    const { classes, dataTable } = this.props;
     const { activeTab } = this.state;
 
-    const tabs = api.data.map((attr, i) => <TabHeader key={i} value={i} onChange={this.handleChange} attributeId={attr["Attribute_id"]} attributeName={attr["Attribute_Name"]} />);
-    const contents = api.data.map((attr, i) => <TabContent key={i} isActive={activeTab === i} {...attr} />);
+    const tabs = dataTable.data.map((attr, i) => <TabHeader key={i} value={i} onChange={this.handleChange} attributeId={attr["Attribute_id"]} attributeName={attr["Attribute_Name"]} />);
+    const contents = dataTable.data.map((attr, i) => <TabContent key={i} isActive={activeTab === i} {...attr} />);
 
     return (
       <div className={classes.root}>
@@ -63,10 +63,10 @@ class AttributeTabs extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  api: state.api,
+  dataTable: state.dataTable,
 });
 
 AttributeTabs = withStyles(styles)(AttributeTabs);
-AttributeTabs = connect(mapStateToProps, {})(AttributeTabs);
+AttributeTabs = connect(mapStateToProps, null)(AttributeTabs);
 
 export default AttributeTabs

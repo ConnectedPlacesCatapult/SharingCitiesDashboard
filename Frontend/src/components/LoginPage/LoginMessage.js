@@ -49,11 +49,7 @@ const mapStateToProps = (state) => ({
   user: state.user,
 });
 
-const madDispatchToProps = (dispatch) => ({
-
-});
-
 LoginMessage = withStyles(styles)(LoginMessage);
-LoginMessage = connect(mapStateToProps, madDispatchToProps)(LoginMessage);
+LoginMessage = connect(mapStateToProps, null)(LoginMessage);
 
 export default LoginMessage

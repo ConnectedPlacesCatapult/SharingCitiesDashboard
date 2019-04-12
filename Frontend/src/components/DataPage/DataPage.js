@@ -1,17 +1,17 @@
-import React from "react";
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Modal,
   withStyles,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-
+import { closeEditor } from '../../actions/editorActions';
 import Header from './../common/Header';
-import SideBar from './../common/SideBar';
-import WidgetMaker from './../common/WidgetMaker';
+import SideBar from './SideBar';
 import OptionsSidePanel from './OptionsSidePanel';
 import NoData from './NoData';
 import AttributeTabs from './AttributeTabs';
+import Editor from './../Editor';
 
 const styles = (theme) => ({
   root: {
@@ -33,25 +33,20 @@ const styles = (theme) => ({
 });
 
 class DataPage extends React.Component {
-  state = {
-    widgetModalOpen: false,
-  };
-
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    api: PropTypes.object.isRequired,
+    editor: PropTypes.object.isRequired,
+    dataTable: PropTypes.object.isRequired,
   };
 
-  openWidgetMaker = () => {
-    this.setState({ widgetModalOpen: true })
-  };
+  handleEditorClose = () => {
+    const { closeEditor } = this.props;
 
-  handleWidgetMakerClose = () => {
-    this.setState({ widgetModalOpen: false })
+    closeEditor();
   };
 
   render() {
-    const { classes, location, api } = this.props;
+    const { classes, location, dataTable, editor } = this.props;
 
     return (
       <div className={classes.root}>
@@ -59,23 +54,22 @@ class DataPage extends React.Component {
         <SideBar />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          {api.fetched && api.data.length
+          {dataTable.fetched && dataTable.data.length
             ? (
               <div className={classes.flexWrapper}>
                 <AttributeTabs />
-                <OptionsSidePanel openWidgetMaker={this.openWidgetMaker}
-                />
+                <OptionsSidePanel />
               </div>
             )
             : <NoData />
           }
         </main>
         <Modal
-          open={this.state.widgetModalOpen}
-          onClose={this.handleWidgetMakerClose}
+          open={editor.open}
+          onClose={this.handleEditorClose}
           disableAutoFocus={true}
         >
-          <WidgetMaker />
+          <Editor />
         </Modal>
       </div>
     )
@@ -83,10 +77,15 @@ class DataPage extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  api: state.api,
+  editor: state.editor,
+  dataTable: state.dataTable,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  closeEditor: () => dispatch(closeEditor()),
 });
 
 DataPage = withStyles(styles)(DataPage);
-DataPage = connect(mapStateToProps, {})(DataPage);
+DataPage = connect(mapStateToProps, mapDispatchToProps)(DataPage);
 
 export default DataPage
