@@ -20,32 +20,30 @@ import {connect} from "react-redux";
 
 const styles = (theme) => ({
   widget: {
-    borderRadius: '3px',
-    // padding: theme.spacing.unit,
+    borderRadius: '5px',
     height: '100%',
+    padding: theme.spacing.unit * 1,
   },
   widgetHeader: {
-    // padding: theme.spacing.unit,
     overflow: 'hidden',
-    backgroundColor: "#212121"
+    backgroundColor: theme.palette.paper,
   },
   widgetDeleteConfirmation: {
-    // padding: theme.spacing.unit,
     overflow: 'hidden',
     backgroundColor: "#b74218"
   },
   widgetTitleContainer: {
-    // backgroundColor: "#fafafa",
     display: 'block',
     float: 'left',
   },
   widgetTitle: {
-    color: "white",
+    color: theme.palette.tertiary.main,
     paddingTop: "5px",
     paddingLeft: "10px",
     fontWeight: "600"
   },
   widgetButtons: {
+    color: theme.palette.secondary.main,
     display: 'block',
     float: 'right',
   },

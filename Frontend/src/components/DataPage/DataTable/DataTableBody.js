@@ -10,7 +10,7 @@ import {
 
 const styles = (theme) => ({
   cellValue: {
-    color: theme.palette.primary.main,
+    color: theme.palette.tertiary.main,
     fontWeight: 400,
   },
   cellBorder: {

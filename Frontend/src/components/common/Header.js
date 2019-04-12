@@ -32,13 +32,15 @@ import { connect } from 'react-redux';
 import {fetchConfig} from "../../actions/configActions";
 
 // ToDo :: add this to config and define a default logo (somewhere)
-const bgImage = require('./../../images/Lisbon-logo-med.png');
+const bgImage = require('./../../images/light_logo.png');
 
 const styles = (theme) => ({
   root: {
     zIndex: theme.zIndex.drawer + 1,
     margin: '30px 0',
-    //backgroundColor: theme.palette.primary.light,
+    backgroundColor: theme.palette.primary.light,
+    borderTop: 'solid 2px' + theme.palette.background.paper,
+    borderBottom: 'solid 2px' + theme.palette.background.paper,
     boxShadow: "none",
   },
   logoImage: {
@@ -57,6 +59,8 @@ const styles = (theme) => ({
     margin: theme.spacing.unit,
     width: theme.spacing.unit * 18,
     justifyContent: "left",
+    color: theme.palette.primary.dark,
+    fontWeight: 'bold'
   },
   link: {
     textDecoration: 'none',
@@ -228,7 +232,7 @@ class Header extends React.Component {
     const { open } = this.state;
 
     return (
-      <AppBar position="absolute" color="default" className={classes.root}>
+      <AppBar position="absolute" className={classes.root}>
         <Toolbar className={classes.toolbar} disableGutters>
           <img className={classes.logoImage} src={bgImage} width="220px" height="auto"/>
           <Typography className={classes.toolbarTitle} variant="h4">

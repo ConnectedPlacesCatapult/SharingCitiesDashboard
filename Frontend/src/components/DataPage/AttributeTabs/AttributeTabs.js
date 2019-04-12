@@ -4,6 +4,7 @@ import {
   AppBar,
   Tabs,
   withStyles,
+  Paper
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import TabHeader from './TabHeader';
@@ -46,8 +47,8 @@ class AttributeTabs extends React.Component {
     const contents = api.data.map((attr, i) => <TabContent key={i} isActive={activeTab === i} {...attr} />);
 
     return (
-      <div className={classes.root}>
-        <AppBar position="static">
+      <Paper className={classes.root}>
+        <AppBar position="static" elevation={0}>
           <Tabs
             value={activeTab}
             onChange={this.handleChange}
@@ -57,7 +58,7 @@ class AttributeTabs extends React.Component {
           </Tabs>
         </AppBar>
         {contents}
-      </div>
+      </Paper>
     )
   }
 }
