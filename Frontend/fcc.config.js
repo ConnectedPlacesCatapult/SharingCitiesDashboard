@@ -1,7 +1,7 @@
 module.exports = {
 
   // root uri of the API
-  apiRoot: `${process.env.NODE_HOST}${process.env.API_PORT}`,
+  apiRoot: "http://localhost:5000",
   //apiRoot: "http://192.168.0.12:5000",
 
   // overrides for MaterialUI default theme
@@ -35,21 +35,59 @@ module.exports = {
         default: "#42465a",
       }
     },
-    secondary: {
-      //light: "#FC554B",
-      main: "#D54A44",
+    typography: {
+      useNextVariants: true, // to avoid deprecation warnings
+      fontFamily: "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
     },
-    success: {
-      main: '#4CAF50',
+  },
+
+  // currently used by the common/Header component to define links
+  routes: [
+    {
+      path: "/",
+      exact: true,
+      component: "DashboardPage",
+      name: "Dashboard",
+      roles: []
     },
-    danger: {
-      main: '#ff5722',
+    {
+      path: "/data",
+      exact: false,
+      component: "DataPage",
+      name: "Data Tools",
+      roles: []
     },
-    info: {
-      main: '#81cfc7',
+    {
+      path: "/admin",
+      exact: false,
+      component: "AdminPage",
+      name: "Admin",
+      roles: ["admin"]
     },
-    disabled: {
-      main: '#828282',
+  ],
+
+  // tileLayers to be made available in OpenMap widgets
+  leafletTileLayers: [
+    {
+      name: "OpenStreetMap.Mapnik",
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    },
+    {
+      name: "CartoDB.DarkMatter",
+      url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    },
+    {
+      name: "Esri.WorldImagery",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+    },
+  ],
+  widgetEditorDefaults: {
+    mapCenter: {
+      lat: 51.505,
+      lng: -0.09,
     },
     mapMarkerAttribute: "Value",
     mapMarkerColor: "rgba(213, 74, 68, 0.8)",
@@ -65,6 +103,11 @@ module.exports = {
     widgetWidth: 200,
     widgetHeight: 200,
     widgetIsStatic: false,
+  },
+  dataTableDefaults: {
+    order: 'desc',
+    orderBy: 'Timestamp',
+    rowsPerPage: 20,
   },
   editorSettings: {
     widget: {
