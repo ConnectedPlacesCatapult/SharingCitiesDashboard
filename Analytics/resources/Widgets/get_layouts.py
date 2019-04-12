@@ -55,7 +55,7 @@ class GetLayouts(Resource):
         # Where widgets returned
         if not widgets:
             # no widgets related to the userID supplied
-            abort(HTTPStatus.NOT_FOUND.value, error="no widgets found")
+            return [], 200
 
         # Store layout instances to be returned
         layout_list = []

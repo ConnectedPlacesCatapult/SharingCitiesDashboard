@@ -6,7 +6,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import KeyBoardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import BarChartIcon from '@material-ui/icons/BarChart';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import MapOutlinedIcon from '@material-ui/icons/MapOutlined';
+
+// router
+import {Link, withRouter} from "react-router-dom";
 
 const styles = (theme) => ({
   root: {
@@ -17,6 +22,8 @@ const styles = (theme) => ({
   },
   paper: {
     marginTop: theme.spacing.unit * 3,
+    marginLeft: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -25,29 +32,35 @@ const styles = (theme) => ({
   },
   icon: {
     margin: theme.spacing.unit,
-    fontSize: 48,
+    fontSize: 32,
     float: "left",
   },
+  link: {
+    color: theme.palette.secondary.main,
+    fontWeight: 600,
+  }
 });
 
-class NoData extends React.Component {
+class NoWidgets extends React.Component {
   render() {
     const { classes } = this.props;
 
     return (
       <div className={classes.root}>
         <Paper className={classes.paper}>
+          <div style={{textAlign: 'center'}}>
+            <MapOutlinedIcon className={classes.icon} color="secondary" />
+            <BarChartIcon className={classes.icon} color="secondary" />
+            <NotificationsIcon className={classes.icon} color="secondary" />
+          </div>
           <div style={{display: "flex"}}>
-            <div style={{margin: "auto"}}>
-              <KeyBoardArrowLeft className={classes.icon} color="secondary" />
-            </div>
-            <div style={{}}>
+            <div style={{textAlign: 'center'}}>
               <Typography variant="h5" color="primary">
-                Select a Data Source
+                No Widgets Created
               </Typography>
               <Divider />
               <Typography variant="subtitle1" color="primary">
-                Please select a data source from the sidebar to begin
+                Navigate to the <Link to="/data" className={classes.link}>data page</Link> to create your widgets
               </Typography>
             </div>
           </div>
@@ -57,10 +70,10 @@ class NoData extends React.Component {
   }
 }
 
-NoData.propTypes = {
+NoWidgets.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-NoData = withStyles(styles)(NoData);
+NoWidgets = withStyles(styles)(NoWidgets);
 
-export default NoData
+export default NoWidgets
