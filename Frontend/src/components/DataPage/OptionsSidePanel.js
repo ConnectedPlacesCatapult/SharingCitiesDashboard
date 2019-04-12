@@ -3,12 +3,19 @@ import PropTypes from 'prop-types';
 import {
   Button,
   Divider,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Paper,
   Typography,
   withStyles,
 } from '@material-ui/core';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import AlarmIcon from '@material-ui/icons/Alarm';
 import BarChartIcon from '@material-ui/icons/BarChart';
+import MapIcon from '@material-ui/icons/Map';
+import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import TimelineIcon from '@material-ui/icons/Timeline';
 import { connect } from 'react-redux';
 import { openEditor } from '../../actions/editorActions';
 
@@ -42,15 +49,40 @@ class OptionsSidePanel extends React.Component {
     classes: PropTypes.object.isRequired,
   };
 
-  handleEditorOpen = (type='plot') => {
+  state = {
+    exportDataMenuAnchorEl: null,
+    createWidgetMenuAnchorEl: null,
+  };
 
+  handleExportDataClicked = (e) => {
+    this.setState({ exportDataMenuAnchorEl: e.currentTarget })
+  };
 
-    // ToDo :: need to pass the type from some sort of menu
+  handleCreateWidgetClicked = (e) => {
+    this.setState({ createWidgetMenuAnchorEl: e.currentTarget })
+  };
+
+  handleExportDataFormatClicked = (format) => {
+    this.handleCloseExportDataMenu();
+    console.log('export format selected:', format)
+  };
+
+  handleWidgetTypeClicked = (type) => {
+    this.handleCloseCreateWidgetMenu();
     this.props.openEditor('add', { type })
+  };
+
+  handleCloseExportDataMenu = () => {
+    this.setState({ exportDataMenuAnchorEl: null })
+  };
+
+  handleCloseCreateWidgetMenu = () => {
+    this.setState({ createWidgetMenuAnchorEl: null })
   };
 
   render() {
     const { classes, dataTable } = this.props;
+    const { exportDataMenuAnchorEl, createWidgetMenuAnchorEl } = this.state;
 
     return (
       <div className={classes.root}>
@@ -63,11 +95,66 @@ class OptionsSidePanel extends React.Component {
             light={true}
           />
           <div className={classes.actionButtons}>
-            <Button disabled={!dataTable.data.length} variant="contained" color="primary" className={classes.actionButton}>
+            <Menu
+              anchorEl={exportDataMenuAnchorEl}
+              open={Boolean(exportDataMenuAnchorEl)}
+              onClose={this.handleCloseExportDataMenu}
+            >
+              <MenuItem onClick={() => this.handleExportDataFormatClicked('meh')}>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary="some form of data" />
+              </MenuItem>
+            </Menu>
+            <Button
+              disabled={!dataTable.data.length}
+              variant="contained"
+              color="primary"
+              className={classes.actionButton}
+              onClick={this.handleExportDataClicked}
+            >
               <SaveAltIcon className={classes.actionButtonIcon} />
               Export Data
             </Button>
-            <Button disabled={!dataTable.data.length} variant="contained" color="primary" className={classes.actionButton} onClick={this.handleEditorOpen}>
+
+            <Menu
+              anchorEl={createWidgetMenuAnchorEl}
+              open={Boolean(createWidgetMenuAnchorEl)}
+              onClose={this.handleCloseCreateWidgetMenu}
+            >
+              <MenuItem onClick={() => this.handleWidgetTypeClicked('plot')}>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Plot widget" />
+              </MenuItem>
+              <MenuItem onClick={() => this.handleWidgetTypeClicked('map')}>
+                <ListItemIcon>
+                  <MapIcon />
+                </ListItemIcon>
+                <ListItemText primary="Map widget" />
+              </MenuItem>
+              <MenuItem onClick={() => this.handleWidgetTypeClicked('forecast')}>
+                <ListItemIcon>
+                  <TimelineIcon />
+                </ListItemIcon>
+                <ListItemText primary="Forecast widget" />
+              </MenuItem>
+              <MenuItem onClick={() => this.handleWidgetTypeClicked('alert')}>
+                <ListItemIcon>
+                  <AlarmIcon />
+                </ListItemIcon>
+                <ListItemText primary="Alert widget" />
+              </MenuItem>
+            </Menu>
+            <Button
+              disabled={!dataTable.data.length}
+              variant="contained"
+              color="primary"
+              className={classes.actionButton}
+              onClick={this.handleCreateWidgetClicked}
+            >
               <BarChartIcon className={classes.actionButtonIcon} />
               Create Widget
             </Button>
