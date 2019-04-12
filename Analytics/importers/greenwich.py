@@ -1,13 +1,16 @@
 import logging
 import traceback
 from typing import Union
+import sys
 
-from Analytics.settings import GetConfig
 from importers.base import BaseImporter, Location
 from models import location
 from models.sensor import Sensor
 from .state_decorator import ImporterStatus, Status
 from .token_exception import TokenExpired
+
+sys.path.append("../..")
+from settings import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)

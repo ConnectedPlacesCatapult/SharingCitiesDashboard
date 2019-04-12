@@ -1,20 +1,22 @@
 .react-grid-item.react-grid-placeholder {
   background: #D54A44;
-  background: #81cfc7;
-  opacity: 0.2;
   transition-duration: 100ms;
   z-index: 2;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  -o-user-select: none;
   user-select: none;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
-  -khtml-border-radius: 3px;
   border-radius: 3px;
+}
+
+.react-resizable .react-resizable-handle {
+  display: none;
+}
+
+.react-resizable:hover .react-resizable-handle {
+  display: block;
 }
 
 .react-resizable-handle {

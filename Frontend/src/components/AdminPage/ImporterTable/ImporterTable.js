@@ -182,13 +182,11 @@ class ImporterTable extends React.Component {
 
 ImporterTable.propTypes = {
   classes: PropTypes.object.isRequired,
-  api: PropTypes.object.isRequired,
   rerunImporter: PropTypes.func.isRequired,
   admin: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  api: state.api,
   admin: state.admin,
 });
 

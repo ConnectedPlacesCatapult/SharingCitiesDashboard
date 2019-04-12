@@ -1,16 +1,15 @@
 import {
-  SAVE_LAYOUT_FULFILLED,
-  SAVE_LAYOUT_REJECTED,
-  UPDATE_LAYOUT,
-  HIDE_NOTIFICATION,
   CREATE_NEW_USER_FULFILLED,
   DELETE_USER_FULFILLED,
+  HIDE_NOTIFICATION,
+  RERUN_IMPORTER,
+  RERUN_IMPORTER_FULFILLED,
+  RERUN_IMPORTER_REJECTED,
+  SAVE_LAYOUT_FULFILLED,
+  SAVE_LAYOUT_REJECTED,
   SAVE_WIDGET_FULFILLED,
   SAVE_WIDGET_REJECTED,
-  RERUN_IMPORTER_FULFILLED,
-  RERUN_IMPORTER_REJECTED
-} from "./../constants";
-import {RERUN_IMPORTER} from "../constants";
+} from './../constants';
 
 const initialState = {
   message: 'Testing',
@@ -20,7 +19,6 @@ const initialState = {
 
 export default (state=initialState, action={}) => {
   switch (action.type) {
-
     case SAVE_LAYOUT_FULFILLED: {
       return {
         ...state,
@@ -109,7 +107,7 @@ export default (state=initialState, action={}) => {
         showAlert: false,
       }
     }
-
   }
-  return state;
+
+  return state
 }

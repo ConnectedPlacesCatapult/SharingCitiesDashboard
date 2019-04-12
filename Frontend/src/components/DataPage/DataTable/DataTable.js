@@ -4,12 +4,12 @@ import {
   Table,
   withStyles,
 } from '@material-ui/core';
-import { connect } from 'react-redux';
-
 import DataTableToolbar from './DataTableToolbar';
 import DataTableHead from './DataTableHead';
 import DataTableBody from './DataTableBody';
 import DataTablePagination from './DataTablePagination';
+
+const FCC_CONFIG = require('./../../../../fcc.config');
 
 const styles = (theme) => ({
   root: {
@@ -25,10 +25,10 @@ const styles = (theme) => ({
 
 class DataTable extends React.Component {
   state = {
-    order: this.props.config.dataTableDefaults.order,
-    orderBy: this.props.config.dataTableDefaults.orderBy,
+    order: FCC_CONFIG.dataTableDefaults.order,
+    orderBy: FCC_CONFIG.dataTableDefaults.orderBy,
     page: 0,
-    rowsPerPage: this.props.config.dataTableDefaults.rowsPerPage,
+    rowsPerPage: FCC_CONFIG.dataTableDefaults.rowsPerPage,
   };
 
   static propTypes = {
@@ -113,11 +113,6 @@ class DataTable extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  config: state.config.config,
-});
-
 DataTable = withStyles(styles)(DataTable);
-DataTable = connect(mapStateToProps, null)(DataTable);
 
 export default DataTable
