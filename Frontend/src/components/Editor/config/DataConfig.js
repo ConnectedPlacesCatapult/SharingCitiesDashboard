@@ -26,6 +26,9 @@ const styles = (theme) => ({
   root: {
     flexDirection: 'column',
   },
+  checkBox: {
+    color: "#34b0a4"
+  }
 });
 
 class DataConfig extends React.Component {
@@ -94,6 +97,8 @@ class DataConfig extends React.Component {
             <Checkbox
               checked={selectedThemes.indexOf(theme.id) > -1}
               onChange={this.handleThemeChange}
+              color="primary"
+              className={classes.checkBox}
               value={theme.id.toString()}
             />
           }
@@ -120,7 +125,7 @@ class DataConfig extends React.Component {
         onClick={(e) => this.handleSubthemeClick(e, subtheme.id)}
       >
         <ListItemIcon>
-          <BarChartIcon />
+          <BarChartIcon color="primary"/>
         </ListItemIcon>
         <ListItemText>
           {subtheme.name}
@@ -131,7 +136,9 @@ class DataConfig extends React.Component {
     return (
       <FormGroup className={classes.root}>
         <FormControl component="fieldset">
-          <FormLabel component="legend">Themes</FormLabel>
+          {/*<FormLabel component="legend">Themes</FormLabel>*/}
+          <FormHelperText>Themes</FormHelperText>
+          <Divider />
           <FormGroup>
             {themeCheckboxes}
           </FormGroup>

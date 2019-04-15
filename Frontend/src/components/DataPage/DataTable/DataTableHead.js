@@ -14,15 +14,15 @@ const styles = (theme) => ({
     borderColor: theme.palette.background.default,
   },
   labelRoot: {
-    color: theme.palette.tertiary.main,
+    color: theme.palette.text.primary,
     fontWeight: 600,
   },
   labelActive: {
-    color: theme.palette.tertiary.main,
+    color: theme.palette.text.primary,
     fontWeight: 600,
   },
   labelHover: {
-    color: theme.palette.tertiary.main,
+    color: theme.palette.text.primary,
     fontWeight: 800,
   },
 });

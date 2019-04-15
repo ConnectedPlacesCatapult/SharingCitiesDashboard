@@ -12,7 +12,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 
 const styles = (theme) => ({
   columnLabel: {
-    color: theme.palette.primary.light,
+    color: theme.palette.text.primary,
     fontWeight: 600,
   },
   overRideInternalStateStyles: {
@@ -25,17 +25,17 @@ const styles = (theme) => ({
     borderColor: theme.palette.background.default,
   },
   labelRoot: {
-    color: theme.palette.primary.light,
+    color: theme.palette.text.primary,
     fontWeight: 600,
     '&$focus': {
-      color: theme.palette.primary.light,
+      color: theme.palette.text.primary,
     },
     '&$hover': {
-      color: theme.palette.primary.light,
+      color: theme.palette.text.primary,
     },
   },
   labelActive: {
-    color: theme.palette.primary.light,
+    color: theme.palette.text.primary,
   },
   focus: {
 

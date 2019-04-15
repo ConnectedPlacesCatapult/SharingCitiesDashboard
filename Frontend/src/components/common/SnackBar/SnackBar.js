@@ -5,23 +5,26 @@ import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
+import orange from '@material-ui/core/colors/red';
+import green from '@material-ui/core/colors/red';
+import blue from '@material-ui/core/colors/red';
 
 const styles = theme => ({
   close: {
     padding: theme.spacing.unit / 2,
   },
   successNotification: {
-    backgroundColor: theme.palette.success.main,
+    backgroundColor: green[500],
     color: 'white',
     fontWeight: 600
   },
   infoNotification: {
-    backgroundColor: theme.palette.info.main,
+    backgroundColor: blue[500],
     color: 'white',
     fontWeight: 600
   },
   failureNotification: {
-    backgroundColor: theme.palette.danger.main,
+    backgroundColor: orange[500],
     color: 'white',
     fontWeight: 600
   },

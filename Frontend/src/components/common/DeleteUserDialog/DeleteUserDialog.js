@@ -11,7 +11,7 @@ class AlertDialog extends React.Component {
       <div>
         <DialogTitle id="alert-dialog-title">{"Delete this user?"}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText color="text" id="alert-dialog-description">
             Are you sure you want to delete this user?
           </DialogContentText>
         </DialogContent>

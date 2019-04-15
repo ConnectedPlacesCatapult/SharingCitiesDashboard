@@ -11,7 +11,62 @@ module.exports = {
   // background: f1f1f2
   // card: ffffff
 
-  localeThemeData: {
+  localeThemeDataDark: {
+    palette: {
+      type: "dark",
+      primary: {
+        light: "#d3edea",
+        main: "#81cfc7",
+        dark: "#32b1a4",
+      },
+      secondary: {
+        light: "#FC554B",
+        main: "#D54A44",
+        dark: "#AE3C38",
+      },
+      tertiary: {
+        main: "#535460",
+      },
+      text: {
+        primary: "#fafafa"
+      },
+      background: {
+        paper: "#313443",
+        default: "#42465a",
+        dark: "#313443",
+      },
+      header: {
+        background: "#1b1e27",
+        border: "#1b1e27"
+      }
+    },
+    typography: {
+      useNextVariants: true, // to avoid deprecation warnings
+      fontFamily: "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
+    },
+    overrides: {
+      MuiOutlinedInput: {
+        root: {
+          "& $notchedOutline": {
+            borderColor: "#51545f"
+          },
+          "&$focused $notchedOutline": {
+            borderColor: "#ffffff"
+          },
+          color: "#81cfc7"
+        },
+        notchedOutline: {}
+      },
+      MuiFormLabel: {
+        root: {
+          color: "#a8abb9"
+        }
+      }
+    }
+  },
+// #595d6b
+
+  localeThemeDataLight: {
     palette: {
       type: "dark",
       primary: {
@@ -20,41 +75,58 @@ module.exports = {
         dark: "#34b0a4",
       },
       secondary: {
-        //light: "#FC554B",
+        light: "#FC554B",
         main: "#df685d",
-        //dark: "#AE3C38",
+        dark: "#AE3C38",
       },
       tertiary: {
         main: "#535460",
       },
-      success: {
-        main: '#4CAF50',
-      },
-      danger: {
-        main: '#ff5722',
-      },
-      info: {
-        main: '#81cfc7',
-      },
-      disabled: {
-        main: '#828282',
+      text: {
+        primary: "#535460"
       },
       background: {
+        light: "#fcfcfc",
         paper: "#ffffff",
         default: "#f1f1f2",
-        light: "#fcfcfc",
+      },
+      header: {
+        background: "#cceae7",
+        border: "#fff"
+      },
+      multilineColor:{
+        color:'red'
       }
     },
     typography: {
       useNextVariants: true, // to avoid deprecation warnings
       fontFamily: "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
     },
+    overrides: {
+      MuiOutlinedInput: {
+        root: {
+          "& $notchedOutline": {
+            borderColor: "#d4d4d4"
+          },
+          "&$focused $notchedOutline": {
+            borderColor: "#d4d4d4"
+          },
+          color: "#34b0a4"
+        },
+        notchedOutline: {}
+      },
+      MuiFormLabel: {
+        root: {
+          color: "#929292"
+        }
+      }
+    }
     // shadows: Array(2).fill('0px 2px 5px 0px #d6d6d6')
-    shadows: [
-      "none",
-      "0px 2px 5px 0px #d6d6d6",
-      "0px 2px 5px 0px #d6d6d6",
-    ],
+    // shadows: [
+    //   "none",
+    //   "0px 2px 5px 0px #d6d6d6",
+    //   "0px 2px 5px 0px #d6d6d6",
+    // ],
   },
 
   // currently used by the common/Header component to define links

@@ -88,6 +88,9 @@ const styles = (theme) => ({
   grow: {
     flexGrow: 1,
   },
+  actionButton: {
+    boxShadow: 'none'
+  }
 });
 
 class PlotConfig extends React.Component {
@@ -330,6 +333,7 @@ class PlotConfig extends React.Component {
             color="primary"
             size="small"
             onClick={this.addEncodingChannel}
+            className={classes.actionButton}
           >
             Add Channel
             <AddIcon className={classNames(classes.rightIcon, classes.iconSmall)} />

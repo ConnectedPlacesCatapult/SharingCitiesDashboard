@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import LoginForm from '../LoginPage/LoginForm';
+import LoginForm from '../../LoginPage/LoginForm';
 
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
@@ -23,13 +23,11 @@ import { Logout as LogoutIcon } from 'mdi-material-ui'
 import AccountIcon from '@material-ui/icons/AccountCircle';
 
 // router
-import {NavLink, withRouter} from "react-router-dom";
-
-import { logout, getUser } from "../../actions/userActions";
+import { NavLink, withRouter } from "react-router-dom";
 
 // redux
 import { connect } from 'react-redux';
-import {fetchConfig} from "../../actions/configActions";
+import { logout, getUser } from "../../../actions/userActions";
 
 const FCC_CONFIG = require('./../../../../fcc.config');
 
@@ -39,9 +37,9 @@ const styles = (theme) => ({
   root: {
     zIndex: theme.zIndex.drawer + 1,
     margin: '30px 0',
-    backgroundColor: theme.palette.primary.light,
-    borderTop: 'solid 2px' + theme.palette.background.paper,
-    borderBottom: 'solid 2px' + theme.palette.background.paper,
+    backgroundColor: theme.palette.header.background,
+    borderTop: 'solid 2px' + theme.palette.header.border,
+    borderBottom: 'solid 2px' + theme.palette.header.border,
     boxShadow: "none",
   },
   logoImage: {
@@ -60,8 +58,6 @@ const styles = (theme) => ({
     margin: theme.spacing.unit,
     width: theme.spacing.unit * 18,
     justifyContent: "left",
-    color: theme.palette.primary.dark,
-    fontWeight: 'bold'
   },
   link: {
     textDecoration: 'none',
@@ -146,26 +142,26 @@ class Header extends React.Component {
   };
 
   userMenu() {
-      const {classes, user} = this.props;
-      if (user && user.email) {
-          return (
-              <Button
-                  buttonRef={node => {
-                      this.headerList = node;
-                  }}
-                  aria-owns={open ? 'menu-list-grow' : undefined}
-                  aria-haspopup="true"
-                  onClick={this.handleToggle}
-                  className={classes.userButton}
-              >
-                  {user.fullname ? user.fullname : user.email}
-              </Button>
-          )
-      } else {
-        return (
-          <CircularProgress size={20} className={classes.progress} />
-        )
-      }
+    const {classes, user} = this.props;
+    if (user && user.email) {
+      return (
+        <Button
+          buttonRef={node => {
+            this.headerList = node;
+          }}
+          aria-owns={open ? 'menu-list-grow' : undefined}
+          aria-haspopup="true"
+          onClick={this.handleToggle}
+          className={classes.userButton}
+        >
+          {user.fullname ? user.fullname : user.email}
+        </Button>
+      )
+    } else {
+      return (
+        <CircularProgress size={20} className={classes.progress} />
+      )
+    }
   }
 
   showModal() {
@@ -202,9 +198,9 @@ class Header extends React.Component {
   }
 
   renderPageLinks() {
-    const { classes, location, config, user } = this.props;
+    const { classes, location, user } = this.props;
     if (user && user.email) {
-      return config.routes.map((route, i) => {
+      return FCC_CONFIG.routes.map((route, i) => {
         // Hide links from non-admin users that require admin rights
         if (route.roles.indexOf("admin") !== -1 && user.admin || route.roles.indexOf("admin") === -1 ) {
           return <NavLink
@@ -242,7 +238,7 @@ class Header extends React.Component {
           <div>
             {this.renderPageLinks()}
           </div>
-            {this.userMenu()}
+          {this.userMenu()}
           <Popper open={open} anchorEl={this.headerList} transition disablePortal>
             {({ TransitionProps, placement }) => (
               <Grow
@@ -270,11 +266,9 @@ class Header extends React.Component {
 
 Header.propTypes = {
   classes: PropTypes.object.isRequired,
-  config: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  config: state.config.config,
   user: state.user.user,
 });
 

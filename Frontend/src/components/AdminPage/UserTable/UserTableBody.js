@@ -11,24 +11,28 @@ import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Button from '@material-ui/core/Button';
+import orange from '@material-ui/core/colors/red';
+import green from '@material-ui/core/colors/red';
+import blue from '@material-ui/core/colors/red';
+import grey from '@material-ui/core/colors/grey';
 
 const styles = theme => ({
   checkBox: {
     color: theme.palette.primary.main,
   },
   cellValue: {
-    color: theme.palette.primary.main,
+    color: theme.palette.secondary.primary,
     fontWeight: 400,
   },
   cellBorder: {
     borderColor: theme.palette.background.default,
   },
   disabledButton: {
-    color: theme.palette.disabled.main,
+    color: grey[500],
     fontWeight: 400,
   },
   failure: {
-    color: theme.palette.secondary.main,
+    color: orange[500],
     fontWeight: 800
   },
   success: {
@@ -140,7 +144,7 @@ class UserTableBody extends React.Component {
               >
                   {n['id'] !== loggedInUser.id ?
                     <Tooltip title="Delete User">
-                      <IconButton className={classes.cellValue} onClick={() => this.props.onDeleteUserClick(n)}
+                      <IconButton color="secondary" onClick={() => this.props.onDeleteUserClick(n)}
                                   aria-label="Delete User">
                         <DeleteIcon/>
                       </IconButton>

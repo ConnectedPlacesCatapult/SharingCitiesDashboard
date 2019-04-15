@@ -15,12 +15,10 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import Collapse from '@material-ui/core/Collapse';
 import Typography from '@material-ui/core/Typography';
-import greyColor from '@material-ui/core/colors/grey';
 
 const styles = (theme) => ({
   listItemText: {
-    // color: greyColor[800],
-    color: theme.palette.tertiary.main,
+    color: theme.palette.text.primary,
     fontWeight: 'bold'
   },
 });

@@ -18,6 +18,12 @@ const styles = (theme) => ({
     flexDirection: 'column',
     padding: theme.spacing.unit,
   },
+  input: {
+    color: theme.palette.primary.main
+  },
+  inputText: {
+    color: theme.palette.primary.main
+  }
 });
 
 class WidgetConfig extends React.Component {
@@ -42,11 +48,14 @@ class WidgetConfig extends React.Component {
       <FormGroup className={classes.root}>
         <FormControl htmlFor="widget-name">
           <TextField
+            InputProps={{className: classes.input}}
+            className={classes.inputText}
             id="widget-name"
             label="Name"
             value={editor.widget.name}
             onChange={this.setWidgetProperty('name')}
             margin="normal"
+            variant="outlined"
           />
         </FormControl>
         <FormControl htmlFor="widget-description">
@@ -58,6 +67,7 @@ class WidgetConfig extends React.Component {
             margin="normal"
             multiline={true}
             rows={3}
+            variant="outlined"
           />
         </FormControl>
         <FormControl htmlFor="widget-width">
@@ -67,6 +77,7 @@ class WidgetConfig extends React.Component {
             value={editor.widget.width}
             onChange={this.setWidgetProperty('width')}
             margin="normal"
+            variant="outlined"
           />
         </FormControl>
         <FormControl htmlFor="widget-height">
@@ -76,6 +87,7 @@ class WidgetConfig extends React.Component {
             value={editor.widget.height}
             onChange={this.setWidgetProperty('height')}
             margin="normal"
+            variant="outlined"
           />
         </FormControl>
         <FormGroup row>

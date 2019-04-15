@@ -35,6 +35,7 @@ const styles = (theme) => ({
   actionButton: {
     width: '175px',
     margin: `${theme.spacing.unit}px auto`,
+    boxShadow: 'none'
   },
   actionButtonIcon: {
     marginRight: theme.spacing.unit,
@@ -125,25 +126,25 @@ class OptionsSidePanel extends React.Component {
             >
               <MenuItem onClick={() => this.handleWidgetTypeClicked('plot')}>
                 <ListItemIcon>
-                  <BarChartIcon />
+                  <BarChartIcon color="primary" />
                 </ListItemIcon>
                 <ListItemText primary="Plot widget" />
               </MenuItem>
               <MenuItem onClick={() => this.handleWidgetTypeClicked('map')}>
                 <ListItemIcon>
-                  <MapIcon />
+                  <MapIcon color="primary" />
                 </ListItemIcon>
                 <ListItemText primary="Map widget" />
               </MenuItem>
               <MenuItem onClick={() => this.handleWidgetTypeClicked('forecast')}>
                 <ListItemIcon>
-                  <TimelineIcon />
+                  <TimelineIcon color="primary" />
                 </ListItemIcon>
                 <ListItemText primary="Forecast widget" />
               </MenuItem>
               <MenuItem onClick={() => this.handleWidgetTypeClicked('alert')}>
                 <ListItemIcon>
-                  <AlarmIcon />
+                  <AlarmIcon color="primary" />
                 </ListItemIcon>
                 <ListItemText primary="Alert widget" />
               </MenuItem>

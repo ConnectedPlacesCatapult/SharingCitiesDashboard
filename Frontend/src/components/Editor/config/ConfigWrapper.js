@@ -61,12 +61,10 @@ class ConfigWrapper extends React.Component {
           <SettingsIcon className={classes.headerIcon} fontSize="small" />
           <Typography variant="subtitle1">Widget Editor</Typography>
         </div>
-        <AppBar position="static" color="default">
+        <AppBar position="static" elevation={0}>
           <Tabs
             value={selectedTabIndex}
             onChange={this.handleChangeTab}
-            textColor="primary"
-            indicatorColor="primary"
             variant="standard"
           >
             <Tab value={0} label="General options" />
