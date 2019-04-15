@@ -19,7 +19,7 @@ parse_yaml() {
 }
 
 # Parse Config file into Shell
-eval $(parse_yaml config.yml)
+eval $(parse_yaml config.env.yml)
 
 # Echo the variables
 export POSTGRES_USER=$postgres_db_username

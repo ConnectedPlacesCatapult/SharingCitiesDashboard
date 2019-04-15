@@ -1,11 +1,12 @@
 FROM node:10
 
-RUN mkdir /Frontend
-WORKDIR /Frontend
+RUN mkdir /Frontend /Analytics
+RUN mkdir /Analytics/settings
 # Install dependencies
 # package*.json used to copy files package.json and package-lock.json
-COPY Frontend ./
-COPY Analytics/settings/config.yml ./config.yml
+COPY /Frontend /Frontend
+COPY /Analytics/settings/config.env.yml /Analytics/settings/config.env.yml
+WORKDIR /Frontend
 RUN apt-get update
 RUN apt-get install -y xsel
 RUN npm i --save

@@ -3,3 +3,4 @@ settings.py
 migrations/
 localtest.py
 config.yml
+config.env.yml

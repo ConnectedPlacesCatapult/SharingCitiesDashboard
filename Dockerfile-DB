@@ -20,7 +20,7 @@ RUN set -ex; \
 ENV LANG en_US.utf8
 
 RUN mkdir /docker-entrypoint-initdb.d
-COPY ./Analytics/settings/config.yml config.yml
+COPY ./Analytics/settings/config.env.yml config.env.yml
 COPY ./docker-entrypoint.sh ./
 
 ENV PG_MAJOR 11
