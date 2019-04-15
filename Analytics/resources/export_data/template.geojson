@@ -1,0 +1,46 @@
+{
+  "type": "FeatureCollection",
+  "title": "Table name",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "sensor_id",
+      "attribute_name": "a_id",
+      "sensor_name": "name",
+      "properties": {
+        "marker-color": "#008038",
+        "marker-size": "medium",
+        "value": [
+          [
+            "12:00",
+            12.3
+          ],
+          [
+            "12:00",
+            12.3
+          ],
+          [
+            "12:00",
+            12.3
+          ],
+          [
+            "12:00",
+            12.3
+          ],
+          [
+            "12:00",
+            12.3
+          ]
+        ],
+        "title": "so2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.725544754742,
+          41.931917684342
+        ]
+      }
+    }
+  ]
+}

@@ -29,7 +29,7 @@ class GetConfig(object):
         self.name = cls_name
         if not config_path:
             self.working_dir = self.get_working_directory()
-            config_path = os.path.join(self.working_dir, 'config.yml')
+            config_path = os.path.join(self.working_dir, 'config.env.yml')
 
         self.config = Configurations.get_configurations(config_path)
         if category:
@@ -37,6 +37,13 @@ class GetConfig(object):
                                                   subcategory=sub_category)
             if category == 'postgres':
                 self.config['db_uri'] = '{}://{}:{}@{}/{}'.format(
+                    self.config['db_psql_base_uri'],
+                    self.config['db_username'],
+                    self.config['db_password'],
+                    self.config['db_host'],
+                    self.config['db_name']
+                )
+                self.config['SQLALCHEMY_DATABASE_URI'] = "{}://{}:{}@{}/{}".format(
                     self.config['db_psql_base_uri'],
                     self.config['db_username'],
                     self.config['db_password'],
