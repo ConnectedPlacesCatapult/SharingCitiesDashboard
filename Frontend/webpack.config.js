@@ -1,14 +1,14 @@
 const path = require('path');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const webpack = require('webpack');
-require('env-yaml').config({path: '.././Analytics/settings/.env.yml'});
+require('env-yaml').config({path: '.././Analytics/settings/config.env.yml'});
 
 module.exports = (env) => {
   return {
     devServer: {
     historyApiFallback: true,
     host:process.env.NODE_HOST,
-    port:process.env.HOST_PORT,
+    port:process.env.NODE_DEV_PORT,
     },
     entry: "./src/index.js",
     output: {
@@ -68,8 +68,8 @@ module.exports = (env) => {
       }),
       new webpack.DefinePlugin({ 
         'process.env.NODE_HOST': JSON.stringify(`${process.env.NODE_HOST}`),
-        'process.env.API_PORT': JSON.stringify(`${process.env.API_PORT}`),
-        'process.env.HOST_PORT': JSON.stringify(`${process.env.HOST_PORT}`)
+        'process.env.API_PORT': JSON.stringify(`${process.env.NODE_API_PORT}`),
+        'process.env.HOST_PORT': JSON.stringify(`${process.env.NODE_DEV_PORT}`)
       })
     ],
     devServer: {

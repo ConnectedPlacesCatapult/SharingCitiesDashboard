@@ -19,9 +19,9 @@ require('./styles/leaflet-popup-overrides.css');
 require('./styles/vega-tooltip-overrides.css');
 
 class App extends React.Component {
+  
   render() {
     const { notifications } = this.props;
-
     return (
       <MuiThemeProvider theme={localTheme}>
         <CssBaseline />
