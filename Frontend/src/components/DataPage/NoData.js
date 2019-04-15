@@ -42,7 +42,7 @@ class NoData extends React.Component {
               <KeyBoardArrowLeft className={classes.icon} color="secondary" />
             </div>
             <div style={{}}>
-              <Typography variant="h4" color="primary">
+              <Typography variant="h5" color="primary">
                 Select a Data Source
               </Typography>
               <Divider />

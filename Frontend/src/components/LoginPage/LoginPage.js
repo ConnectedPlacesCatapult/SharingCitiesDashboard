@@ -91,7 +91,7 @@ class LoginPage extends React.Component {
       )
     } else {
       return (
-      <ForgotPasswordForm/>
+        <ForgotPasswordForm/>
       )
     }
   }
@@ -120,7 +120,7 @@ class LoginPage extends React.Component {
   }
 
   render() {
-    const { classes, location, api } = this.props;
+    const { classes } = this.props;
 
     return (
       <div className={classes.root}>
@@ -143,18 +143,13 @@ class LoginPage extends React.Component {
 
 LoginPage.propTypes = {
   classes: PropTypes.object.isRequired,
-  api: PropTypes.object.isRequired,
 };
-
-const mapStateToProps = (state) => ({
-  api: state.api,
-});
 
 const mapDispatchToProps = (dispatch) => ({
   clearLoginErrors: () => dispatch(clearLoginErrors()),
 });
 
 LoginPage = withStyles(styles)(LoginPage);
-LoginPage = connect(mapStateToProps, mapDispatchToProps)(LoginPage);
+LoginPage = connect(null, mapDispatchToProps)(LoginPage);
 
 export default LoginPage

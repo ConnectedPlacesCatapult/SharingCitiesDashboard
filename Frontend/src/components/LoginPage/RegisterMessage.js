@@ -5,9 +5,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from "@material-ui/core/Typography";
 
-// redux
-import { connect } from 'react-redux';
-
 const styles = (theme) => ({
   errorMessage: {
     textAlign: "center"
@@ -41,15 +38,6 @@ RegisterMessage.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-
-});
-
-const madDispatchToProps = (dispatch) => ({
-
-});
-
 RegisterMessage = withStyles(styles)(RegisterMessage);
-RegisterMessage = connect(mapStateToProps, madDispatchToProps)(RegisterMessage);
 
 export default RegisterMessage

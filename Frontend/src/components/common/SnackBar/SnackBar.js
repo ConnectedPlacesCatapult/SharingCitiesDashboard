@@ -32,7 +32,7 @@ class SimpleSnackbar extends React.Component {
     open: false,
   };
 
-  handleClick = () => {   
+  handleClick = () => {
     this.setState({ open: true });
   };
 

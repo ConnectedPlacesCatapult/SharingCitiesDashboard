@@ -176,13 +176,11 @@ class UserTable extends React.Component {
 
 UserTable.propTypes = {
   classes: PropTypes.object.isRequired,
-  api: PropTypes.object.isRequired,
   admin: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  api: state.api,
   admin: state.admin,
   user: state.user.user,
 });
