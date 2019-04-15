@@ -5,18 +5,27 @@ module.exports = {
   //apiRoot: "http://192.168.0.12:5000",
 
   // overrides for MaterialUI default theme
+
+  // header: dbecea
+  // header menu: e9f4f4
+  // background: f1f1f2
+  // card: ffffff
+
   localeThemeData: {
     palette: {
       type: "dark",
       primary: {
-        //light: "#d3edea",
+        light: "#cceae7",
         main: "#81cfc7",
-        //dark: "#32b1a4",
+        dark: "#34b0a4",
       },
       secondary: {
         //light: "#FC554B",
-        main: "#D54A44",
+        main: "#df685d",
         //dark: "#AE3C38",
+      },
+      tertiary: {
+        main: "#535460",
       },
       success: {
         main: '#4CAF50',
@@ -31,14 +40,21 @@ module.exports = {
         main: '#828282',
       },
       background: {
-        paper: "#313443",
-        default: "#42465a",
+        paper: "#ffffff",
+        default: "#f1f1f2",
+        light: "#fcfcfc",
       }
     },
     typography: {
       useNextVariants: true, // to avoid deprecation warnings
       fontFamily: "'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif",
     },
+    // shadows: Array(2).fill('0px 2px 5px 0px #d6d6d6')
+    shadows: [
+      "none",
+      "0px 2px 5px 0px #d6d6d6",
+      "0px 2px 5px 0px #d6d6d6",
+    ],
   },
 
   // currently used by the common/Header component to define links

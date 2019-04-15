@@ -36,7 +36,7 @@ class NoData extends React.Component {
 
     return (
       <div className={classes.root}>
-        <Paper className={classes.paper}>
+        <Paper className={classes.paper} elevation={1}>
           <div style={{display: "flex"}}>
             <div style={{margin: "auto"}}>
               <KeyBoardArrowLeft className={classes.icon} color="secondary" />

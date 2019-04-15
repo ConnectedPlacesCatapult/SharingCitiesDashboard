@@ -14,11 +14,16 @@ const styles = (theme) => ({
     borderColor: theme.palette.background.default,
   },
   labelRoot: {
-    color: theme.palette.primary.light,
+    color: theme.palette.tertiary.main,
     fontWeight: 600,
   },
   labelActive: {
-    color: theme.palette.primary.light,
+    color: theme.palette.tertiary.main,
+    fontWeight: 600,
+  },
+  labelHover: {
+    color: theme.palette.tertiary.main,
+    fontWeight: 800,
   },
 });
 
@@ -61,6 +66,7 @@ class DataTableHead extends React.Component {
                     classes={{
                       root: classes.labelRoot,
                       active: classes.labelActive,
+                      hover: classes.labelHover,
                     }}
                   >
                     {column.label}

@@ -47,7 +47,7 @@ class NoWidgets extends React.Component {
 
     return (
       <div className={classes.root}>
-        <Paper className={classes.paper}>
+        <Paper className={classes.paper} elevation={1}>
           <div style={{textAlign: 'center'}}>
             <MapOutlinedIcon className={classes.icon} color="secondary" />
             <BarChartIcon className={classes.icon} color="secondary" />

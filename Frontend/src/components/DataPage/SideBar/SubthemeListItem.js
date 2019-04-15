@@ -10,10 +10,16 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import Collapse from '@material-ui/core/Collapse';
+import Typography from '@material-ui/core/Typography';
 
 const styles = (theme) => ({
   nested: {
     paddingLeft: theme.spacing.unit * 4,
+  },
+  listItemText: {
+    // color: greyColor[800],
+    color: theme.palette.primary.dark,
+    fontWeight: 'bold'
   },
 });
 
@@ -30,10 +36,13 @@ class SubthemeListItem extends React.Component {
         <ListItem button className={classes.nested} onClick={this.handleClick}>
           {
             isSelected
-              ? <ExpandMore color="primary" />
-              : <ChevronRight color="primary"/>
+              ? <ExpandMore color="secondary" />
+              : <ChevronRight color="secondary"/>
           }
-          <ListItemText inset primary={subthemeName} />
+          <ListItemText
+            disableTypography
+            primary={<Typography variant="subtitle1" color="primary" className={classes.listItemText}>{subthemeName}</Typography>}
+          />
         </ListItem>
         <Collapse in={isSelected} timeout="auto" unmountOnExit>
           <AttributeList

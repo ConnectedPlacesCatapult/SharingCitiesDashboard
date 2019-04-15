@@ -14,7 +14,7 @@ const styles = (theme) => ({
   drawerPaper: {
     position: 'relative',
     width: drawerWidth,
-    //backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.background.light,
   },
   appBarSpacer: theme.mixins.toolbar,
   root: {

@@ -4,6 +4,7 @@ import {
   ListItem,
   ListItemText,
   withStyles,
+  Typography
 } from '@material-ui/core';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
@@ -17,6 +18,10 @@ import {
 const styles = (theme) => ({
   nested: {
     paddingLeft: theme.spacing.unit * 6,
+  },
+  listItemText: {
+    color: theme.palette.primary.dark,
+    fontWeight: '500'
   },
 });
 
@@ -56,7 +61,10 @@ class AttributeListItem extends React.Component {
           ? <RadioButtonCheckedIcon fontSize="small" color="primary" />
           : <RadioButtonUncheckedIcon fontSize="small" color="primary" />
         }
-        <ListItemText inset primary={attributeName} />
+        <ListItemText
+          disableTypography
+          primary={<Typography variant="subtitle1" color="primary" className={classes.listItemText}>{attributeName}</Typography>}
+        />
       </ListItem>
     )
   }
