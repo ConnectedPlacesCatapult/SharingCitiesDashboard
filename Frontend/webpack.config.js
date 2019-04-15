@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
-const Dotenv = require('dotenv-webpack');
+const yamlEnv = require("env-yaml-webpack-plugin");
 
 module.exports = {
   devServer: {
@@ -60,7 +60,9 @@ module.exports = {
     ]
   },
   plugins: [
-    new Dotenv(),
+    new yamlEnv({
+      path: 'config.yml'
+    }),
     new HtmlWebPackPlugin({
       template: "./src/template.html",
       filename: "./index.html"

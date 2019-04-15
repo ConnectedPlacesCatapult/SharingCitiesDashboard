@@ -1,1 +1,1 @@
-export const LOCAL_URL = process.env.API_ADDRESS
+export const LOCAL_URL = process.env.api_host

@@ -1,7 +1,7 @@
 module.exports = {
 
   // root uri of the API
-  apiRoot: process.env.API_ADDRESS,
+  apiRoot: process.env.frontend_api_host,
 
   // optionally include localisation stylesheet (good for @font-face stuff)
   localeStyleSheet: "./styles/lisbon.css",

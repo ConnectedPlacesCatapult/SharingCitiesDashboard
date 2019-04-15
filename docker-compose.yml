@@ -23,7 +23,7 @@ services:
       dockerfile: Dockerfile-UI
     command: serve -s build -l 8080
     volumes:
-      - ./Frontend/:/code/Frontend
+      - ./Frontend/:/Frontend
     ports:
       - "8080:8080"
     depends_on:
