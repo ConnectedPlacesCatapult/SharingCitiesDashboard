@@ -5,6 +5,7 @@ from http import HTTPStatus
 from typing import Any
 
 import geojson
+from geojson import Feature
 import numpy as np
 import pandas as pd
 from flask import send_from_directory, after_this_request
@@ -15,6 +16,7 @@ from flask_restful import reqparse
 from db import db
 from models.location import Location
 from models.sensor import Sensor
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -36,6 +38,7 @@ class ExportData(Resource):
         self.reqparser.add_argument('directory', required=False, type=str,
                                     default=os.path.dirname(os.path.realpath(__file__)), location='json')
         self.reqparser.add_argument('limit', required=False, type=int, default=100, location='json')
+        self.table_name = ""
 
     @jwt_required
     def post(self) -> ({str: Any}, HTTPStatus):
@@ -50,7 +53,7 @@ class ExportData(Resource):
         """
 
         args = self.reqparser.parse_args()
-
+        self.table_name = args["table_name"]
         if len(args["file_name"]) < 1:
             return {"error": "Invalid file name", "file_name": args['file_name']}, HTTPStatus.BAD_REQUEST
 
@@ -172,17 +175,152 @@ class ExportData(Resource):
         properties = {col_name: df[col_name] for col_name in column_names
                       if col_name != "longitude" and col_name != "latitude"}
 
+
         for key, value in properties.items():
-            if isinstance(value, pd.Timestamp) or isinstance(value, datetime):
+
                 try:
-                    properties[key] = str(properties[key])
+                    if isinstance(value, pd.Timestamp) or isinstance(value, datetime):
+                        properties[key] = str(value)
+                    else:
+                        properties[key] = value
                 except ValueError:
                     properties[key] = ""
+        # print("---------------------------------<<<<<<")
+        # for k, v in properties.items():
+        #     print("{}: {}".format(k,v))
 
         return properties
 
     @staticmethod
-    def write_geojson(data_frame: pd.DataFrame, file_name: str, directory: os.path, extension: str) -> bool:
+    def get_rows_by_location(data_frame: pd.DataFrame, latitude: float,
+                                 longitude: float) -> pd.DataFrame:
+
+        data_frame_loc = data_frame.loc[(data_frame['latitude'] == latitude) & (data_frame['longitude'] == longitude)]
+        data_frame_loc = data_frame_loc.drop(["longitude", "latitude"], axis=1)
+        # print(data_frame_loc.to_string())
+
+    @staticmethod
+    def get_rows_by_sid(data_frame: pd.DataFrame, sensor_id: str) -> pd.DataFrame:
+
+        data_frame_sid = data_frame.loc[(data_frame['s_id'] == sensor_id)]
+        data_framesid = data_frame_sid.drop("s_id", axis=1)
+        return data_frame_sid
+# TODO: OPTION 1 -> Nested values list of dicts
+    # @staticmethod
+    # def create_feature_properties(data_frame: pd.DataFrame, column_names: {str}) -> dict:
+    #     properties = dict()
+    #     data = list()
+    #     header_added = False
+    #     print(column_names)
+    #     column_names = column_names.to_list()
+    #     for index, row in data_frame.iterrows():
+    #         measurement = dict()
+    #         if not header_added:
+    #             properties["attribute_id"] = row["a_id"]
+    #             properties["sensor_id"] = row["s_id"]
+    #             properties["name"] = row["name"]
+    #             column_names.remove("a_id")
+    #             column_names.remove("s_id")
+    #             column_names.remove("name")
+    #             column_names.remove("latitude")
+    #             column_names.remove("longitude")
+    #             header_added = True
+    #
+    #         for col_name in column_names:
+    #             try:
+    #                 if isinstance(row[col_name], pd.Timestamp) or isinstance(row[col_name], datetime):
+    #                     measurement[col_name] = str(row[col_name])
+    #                 else:
+    #                     measurement[col_name] = row[col_name]
+    #             except ValueError:
+    #                 measurement[col_name] = ""
+    #         data.append(measurement)
+    #     properties["measurements"] = data
+    #     return properties
+
+    # @staticmethod
+    # def create_feature_properties(data_frame: pd.DataFrame, column_names: {str}) -> dict:
+    #     properties = dict()
+    #
+    #     data = list()
+    #     times = list()
+    #     values = list()
+    #     header_added = False
+    #     print(column_names)
+    #     measurement = dict()
+    #     column_names = column_names.to_list()
+    #     count = 0
+    #     for index, row in data_frame.iterrows():
+    #
+    #         if not header_added:
+    #             properties["a_id"] = row["a_id"]
+    #             properties["sensor_id"] = row["s_id"]
+    #             properties["name"] = row["name"]
+    #             column_names.remove("a_id")
+    #             column_names.remove("s_id")
+    #             column_names.remove("name")
+    #             column_names.remove("latitude")
+    #             column_names.remove("longitude")
+    #             header_added = True
+    #         # times.append(str(row["timestamp"]))
+    #         # values.append(float(row["value"]))
+    #         # properties[str(count)] = dict(timestamp=str(row["timestamp"]), value=row["value"])
+    #         properties[str(row["timestamp"])] = float(row["value"])
+    #
+    #         # count += 1
+    #         # properties[str(row["timestamp"])] = row["value"]
+    #
+    #         # for col_name in column_names:
+    #         #     try:
+    #         #         if isinstance(row[col_name], pd.Timestamp) or isinstance(row[col_name], datetime):
+    #         #             measurement[col_name] = str(row[col_name])
+    #         #         else:
+    #         #             measurement[col_name] = row[col_name]
+    #         #     except ValueError:
+    #         #         measurement[col_name] = ""
+    #         # data.append(measurement)
+    #     # properties["measurements"] = measurement
+    #     # properties["value"] = values
+    #     # properties["timestamp"] = times
+    #     return properties
+
+    @staticmethod
+    def create_feature_properties(data_frame: pd.DataFrame, column_names: {str}) -> dict:
+        features = list()
+        properties = dict()
+
+        header_added = False
+
+
+        column_names = column_names.to_list()
+        for index, row in data_frame.iterrows():
+            if not header_added:
+                attribute_id = row["a_id"]
+
+                column_names.remove("a_id")
+                geometry = geojson.Point([row["longitude"],  row["latitude"]])
+                column_names.remove("longitude")
+                column_names.remove("latitude")
+                header_added = True
+
+            # properties["sensor_id"] = row["s_id"]
+
+            timestamp = row["timestamp"].value
+
+            for col_name in column_names:
+                try:
+                    if isinstance(row[col_name], pd.Timestamp) or isinstance(row[col_name], datetime):
+                        properties[col_name] = str(row[col_name])
+                    else:
+                        properties[col_name] = row[col_name]
+                except ValueError:
+                    properties[col_name] = ""
+
+            features.append(Feature(id="{}-{}".format(attribute_id,timestamp), geometry=geometry, properties=properties))
+            properties = dict()
+        return features
+
+    def write_geojson(self,data_frame: pd.DataFrame, file_name: str, directory: os.path, extension: str) -> bool:
         """
         Write Pandas DataFrame to File in GEOJSON format
         :param data_frame: Panads DataFrame to export
@@ -191,21 +329,33 @@ class ExportData(Resource):
         :param extension: File extension
         :return: True if the data is exported successfully otherwise, False
         """
-
+        # print(data_frame.to_string())
         columns_names = data_frame.columns
+        sensor_ids = set(data_frame["s_id"].to_list())
+        features = []
+        for sensor_id in sensor_ids:
+            df_by_sid = self.get_rows_by_sid(data_frame, sensor_id)
+
+
+
+            feature = self.create_feature_properties(df_by_sid, columns_names)
+            for feat in feature:
+                features.append(feat)
+
+
+
+
+        # print(data_frame.to_string())
+        # self.get_rows_by_location(data_frame,51.482877,-0.007516)
+        # prop_dict = self.get_rows_by_sid(data_frame, "85fdfd16-c265-42b3-9017-756d707f38d4")
+
 
         try:
 
             file = os.path.join(directory, file_name + "." + extension)
-            features = []
-            insert_features = lambda df: features.append(
-                geojson.Feature(geometry=geojson.Point((df["longitude"], df["latitude"])),
-                                properties=ExportData.properties_dict(df, columns_names)
-                                ))
 
-            data_frame.apply(insert_features, axis=1)
             with open(file, 'w', encoding='utf8') as fp:
-                geojson.dump(geojson.FeatureCollection(features), fp, sort_keys=True, ensure_ascii=False)
+                geojson.dump(geojson.FeatureCollection(features, title=self.table_name), fp, sort_keys=True, ensure_ascii=False)
 
             return True
         except IOError as ioe:
