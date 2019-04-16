@@ -32,18 +32,18 @@ DB_HOST = 'db'
 ```
 For the ```DB_HOST``` above we can use '**db**' as this is defined in the docker-compose.yaml file
 
-- API; ```SharingCitiesDashboard/Analytics/manage.py```, update the variable **host** with the **API host IP address**:
+- API; ```SharingCitiesDashboard/Analytics/manage.py```, update the variable **host** with the **API host** as **api** as below:
 ```python
 manager.add_command('runserver', Server(
     use_debugger=False,
     use_reloader=True,
-    host='<host-value>'
+    host='api'
 ))
 ```
 
-- API; ```SharingCitiesDashboard/Analytics/gunicornserver.py```, update the variable **host** with the **API host IP address**:
+- API; ```SharingCitiesDashboard/Analytics/gunicornserver.py```, update the variable **host** with the **API host** as **api** as below:
 ```python
-    def __init__(self, host='<host-value>', port=5000, workers=4):
+    def __init__(self, host='api', port=5000, workers=4):
         self.port = port
         self.host = host
         self.workers = workers

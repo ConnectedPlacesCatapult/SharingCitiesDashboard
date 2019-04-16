@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import {
   removeAttributeData,
   toggleAttributeSelected,
-} from "../../../actions/apiActions";
+} from "../../../actions/dataTableActions";
 
 const styles = (theme) => ({
   label: {
@@ -39,7 +39,7 @@ class TabHeader extends React.Component {
   handleCloseClick = (e) => {
     e.stopPropagation();
 
-    const { api, attributeId, removeAttributeData, toggleAttributeSelected } = this.props;
+    const { dataTable, attributeId, removeAttributeData, toggleAttributeSelected } = this.props;
 
     /**
      * products.filter(product =>
@@ -52,7 +52,7 @@ class TabHeader extends React.Component {
     let themeId = -1;
     let subthemeId = -1;
 
-    for (let theme of api.themes) {
+    for (let theme of dataTable.themes) {
       for (let subtheme of theme.subthemes) {
         if (subtheme.attributes.find((attr) => attr.id === attributeId)) {
           themeId = theme.id;
@@ -90,7 +90,7 @@ class TabHeader extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  api: state.api,
+  dataTable: state.dataTable,
 });
 
 const mapDispatchToProps = (dispatch) => ({

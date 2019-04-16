@@ -348,56 +348,108 @@ class RequestForData(Resource):
                 and 'todate' in args and args['todate'] is not None):
                 if grouped:
                     if harmonising_method:
-                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET,
-                                                       args['fromdate'], args['todate'],
-                                                       operation)
-                        data = request_harmonised_data(data,
-                                                       harmonising_method=harmonising_method)
+                        data = self.get_attribute_data(
+                            attribute_data, LIMIT, OFFSET, args['fromdate'],
+                            args['todate'], operation)
+                        data = request_harmonised_data(
+                            data, harmonising_method=harmonising_method)
                     else:
-                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
-                                                args['fromdate'], args['todate'], operation)
-                        data = request_grouped_data(data, per_sensor=per_sensor, freq=freq, method=method)
+                        data = self.get_attribute_data(
+                            attribute_data, LIMIT, OFFSET, args['fromdate'],
+                            args['todate'], operation)
+                        data = request_grouped_data(
+                            data, per_sensor=per_sensor, freq=freq,
+                            method=method)
                 else:
-                    data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, 
-                                                args['fromdate'], args['todate'], operation)
+                    data = self.get_attribute_data(
+                        attribute_data, LIMIT, OFFSET, args['fromdate'],
+                        args['todate'], operation)
                 if predictions:
-                    prediction_task = self.get_predictions.apply_async(args=(
-                            data[0]["Attribute_Table"], sensorid,
-                            n_predictions, user_id))
+                    if not Attributes.get_by_name(attribute_data):
+                        pred_data = {
+                            "message": "Unable to make predictions as "
+                                       "attribute table {} does not "
+                                       "exist".format(attribute_data)
+                        }
+                        logger.error(pred_data["message"])
+                        data.append(pred_data)
+                    else:
+                        if not Users.find_by_id(user_id):
+                            pred_data = {
+                                "message": "Unable to make predictions as user"
+                                           " id {} does not"
+                                           " exists".format(user_id)
+                            }
+                            logger.error(pred_data["message"])
+                            data.append(pred_data)
+                        else:
+                            prediction_task = self.get_predictions.apply_async(
+                                args=(data[0]["Attribute_Table"], sensorid,
+                                      n_predictions, user_id))
 
-                    data.append({"message": "Forecasting engine making "
-                                            "predictions",
-                                "task_id": str(prediction_task.id)})
+                            data.append({"message": "Forecasting engine making"
+                                                    " predictions",
+                                        "task_id": str(prediction_task.id)})
             else:
                 if grouped:
                     if harmonising_method:
-                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-                        data = request_harmonised_data(data, harmonising_method=harmonising_method)
+                        data = self.get_attribute_data(attribute_data,
+                                                       LIMIT, OFFSET,
+                                                       operation=operation)
+                        data = request_harmonised_data(
+                            data, harmonising_method=harmonising_method)
                     else:
-                        data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
-                        data = request_grouped_data(data, per_sensor=per_sensor, freq=freq, method=method)
+                        data = self.get_attribute_data(attribute_data,
+                                                       LIMIT, OFFSET,
+                                                       operation=operation)
+                        data = request_grouped_data(
+                            data, per_sensor=per_sensor, freq=freq,
+                            method=method)
                 else:
-                    data = self.get_attribute_data(attribute_data, LIMIT, OFFSET, operation=operation)
+                    data = self.get_attribute_data(attribute_data,
+                                                   LIMIT, OFFSET,
+                                                   operation=operation)
 
                 if predictions:
-                    #### Ceck for data
-                    if data[0]["Total_Records"] != 0:
-                    #### Check for non numeric data
-                        if is_number(data[0]["Attribute_Values"][0]["Value"]):
-                            prediction_task =  \
-                            self.get_predictions.apply_async(args=(
-                                data[0]["Attribute_Table"], sensorid,
-                                n_predictions, user_id))
-
-                            data.append(
-                                {"message": "Forecasting engine making "
-                                            "predictions",
-                                "task_id": str(prediction_task.id)})
-                        else:
-                            data.append({"message":"Cannot predict "
-                                                   "non-numeric data"})
+                    if not Attributes.get_by_name(attribute_data):
+                        pred_data = {
+                            "message": "Unable to make predictions as "
+                                       "attribute table {} does not "
+                                       "exist".format(attribute_data)
+                        }
+                        logger.error(pred_data["message"])
+                        data.append(pred_data)
                     else:
-                        pass
+                        if not Users.find_by_id(user_id):
+                            pred_data = {
+                                "message": "Unable to make predictions as user"
+                                           " id {} does not "
+                                           "exists".format( user_id)
+                            }
+                            logger.error(pred_data["message"])
+                            data.append(pred_data)
+
+                        else:
+                            # Check for data
+                            if data[0]["Total_Records"] != 0:
+                            # Check for non numeric data
+                                if is_number(data[0]["Attribute_Values"][0][
+                                                  "Value"]):
+                                    prediction_task =  \
+                                    self.get_predictions.apply_async(args=(
+                                        data[0]["Attribute_Table"], sensorid,
+                                        n_predictions, user_id))
+
+                                    data.append({
+                                        "message": "Forecasting engine "
+                                                   "making predictions",
+                                        "task_id": str(prediction_task.id)})
+                                else:
+                                    data.append({
+                                        "message": "Cannot predict "
+                                                   "non-numeric data"})
+                            else:
+                                pass
             return data, 200
 
         if attributes:
@@ -587,65 +639,54 @@ class RequestForData(Resource):
                                       meta={'status': pred_data["status"]})
                     raise Ignore()
 
-            if not Users.find_by_id(u_id):
-                pred_data = {
-                    "status": "user id {} does not exists".format(u_id),
-                    "result": "UNABLE"
-                    }
-                self.update_state(state="REFUSED",
-                                  meta={'status': pred_data["status"]})
-                celery_logger.error(pred_data["status"])
-                raise Ignore()
-            else:
-                self.update_state(state='PROGRESS',
-                                  meta={'status': "prediction task is in progress"})
 
-                for val in values:
-                    _data.append(float(val.value))
-                    _timestamps.append(val.api_timestamp)
+            self.update_state(state='PROGRESS',
+                              meta={'status': "prediction task is in progress"})
 
-                predict_from_db = PredictionResults.find_by_prediction_args(
-                    attribute_table, sensor_id, n_pred)
+            for val in values:
+                _data.append(float(val.value))
+                _timestamps.append(val.api_timestamp)
 
-                if predict_from_db:
-                    existing_user_result = UserPredictions.get_entry(u_id,
-                                                               predict_from_db.id)
+            predict_from_db = PredictionResults.find_by_prediction_args(
+                attribute_table, sensor_id, n_pred)
 
-                    if existing_user_result and predict_from_db.is_stale(model):
-                        existing_user_result.delete()
-                        existing_user_result.commit()
+            if predict_from_db:
+                existing_user_result = UserPredictions.get_entry(u_id,
+                                                           predict_from_db.id)
 
-                        if not UserPredictions.find_by_pred_id(predict_from_db.id):
-                            predict_from_db.delete()
-                            predict_from_db.commit()
+                if existing_user_result and predict_from_db.is_stale(model):
+                    existing_user_result.delete()
+                    existing_user_result.commit()
 
-                        result = PredictionResults.generate_predictions_results(
-                            attribute_table, sensor_id, n_pred, _data, _timestamps)
-                        UserPredictions.add_entry(u_id, result["Prediction_id"])
-
-                    else:
-                        # use a cached result
-                        predict_from_db.updated_timestamp = datetime.now()
-                        predict_from_db.save()
+                    if not UserPredictions.find_by_pred_id(predict_from_db.id):
+                        predict_from_db.delete()
                         predict_from_db.commit()
-                        UserPredictions.add_entry(u_id, predict_from_db.id)
-
-                        result = {
-                            "Sensor_id": predict_from_db.sensor_id,
-                            "Forcasting_engine": predict_from_db.forcasting_engine,
-                            "Mean_Absolute_Percentage_Error":
-                                predict_from_db.mean_absolute_percentage_error,
-                            "Prediction_id": predict_from_db.id,
-                            "Predictions": predict_from_db.result
-                        }
-                else:
 
                     result = PredictionResults.generate_predictions_results(
                         attribute_table, sensor_id, n_pred, _data, _timestamps)
-
                     UserPredictions.add_entry(u_id, result["Prediction_id"])
 
-                pred_data = {"status": "task complete", "result": result}
+                else:
+                    # use a cached result
+                    predict_from_db.updated_timestamp = datetime.now()
+                    predict_from_db.save()
+                    predict_from_db.commit()
+                    UserPredictions.add_entry(u_id, predict_from_db.id)
+
+                    result = {
+                        "Sensor_id": predict_from_db.sensor_id,
+                        "Forcasting_engine": predict_from_db.forcasting_engine,
+                        "Mean_Absolute_Percentage_Error":
+                            predict_from_db.mean_absolute_percentage_error,
+                        "Prediction_id": predict_from_db.id,
+                        "Predictions": predict_from_db.result
+                    }
+            else:
+                result = PredictionResults.generate_predictions_results(
+                    attribute_table, sensor_id, n_pred, _data, _timestamps)
+                UserPredictions.add_entry(u_id, result["Prediction_id"])
+
+            pred_data = {"status": "task complete", "result": result}
 
         return pred_data
 

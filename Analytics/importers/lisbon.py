@@ -1,6 +1,7 @@
 import json
 import logging
 import traceback
+import sys
 from typing import Union
 
 import pandas as pd
@@ -9,14 +10,16 @@ from requests.auth import HTTPBasicAuth
 
 from importers.base import BaseImporter
 from importers.json_reader import JsonReader
-from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
+
+sys.path.append("../..")
+from settings import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
-@GetConfig("LisbonAPI", 'environment', 'lisbon')
+@GetConfig("LisbonAPI", 'api_endpoints', 'lisbon')
 class LisbonAPI(BaseImporter):
     """
     LisbonAPI Importer
@@ -28,9 +31,9 @@ class LisbonAPI(BaseImporter):
         Get Importer configurations
         Instantiate BaseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
-                         self.TOKEN_EXPIRY)
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS, self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """

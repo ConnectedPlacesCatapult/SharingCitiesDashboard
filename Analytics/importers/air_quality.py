@@ -1,6 +1,7 @@
 import json
 import time
 import traceback
+import sys
 from datetime import datetime, timedelta
 from typing import Union
 
@@ -9,11 +10,12 @@ import requests
 
 from importers.base import BaseImporter
 from importers.json_reader import JsonReader
-from .config_decorator import GetConfig
 from .state_decorator import Status, ImporterStatus
 
+sys.path.append("../..")
+from settings import GetConfig
 
-@GetConfig("KCLAirQuality", 'environment', 'air_quality')
+@GetConfig("KCLAirQuality", 'api_endpoints', 'air_quality')
 class KCLAirQuality(BaseImporter):
     """
     Air Quality Importer
@@ -41,9 +43,9 @@ class KCLAirQuality(BaseImporter):
         """
         Get configurations, Instantiate BaseImporter, Set ImporterStatus to __init__
         """
-        self.get_config()
 
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
