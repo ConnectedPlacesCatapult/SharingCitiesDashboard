@@ -6,6 +6,8 @@ import {
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
   FETCH_WIDGETS_REJECTED,
+  DELETE_WIDGET_OPEN,
+  DELETE_WIDGET_CLOSE
 } from "./../constants";
 
 export const fetchLayout = () => {
@@ -58,3 +60,49 @@ export const fetchWidgets = () => {
     }
   }
 };
+
+export const closeDeleteWidget = () => ({
+  type: DELETE_WIDGET_CLOSE,
+});
+
+export const openDeleteWidget = () => ({
+  type: DELETE_WIDGET_OPEN,
+  payload: {
+    widgetProperties,
+  },
+});
+
+
+export const deleteWidget = () => {
+  return (dispatch, getState) => {
+
+    const currentState = getState();
+    const widgetID = currentState.dashboard.widgetToDelete
+    const userID = currentState.user.user.id
+
+    const requestData = {
+      limit: '10',
+      userID: userID,
+      widgetID: widgetID
+    };
+    axiosInstance.post('/widgets/delete_widget', requestData).then((response) => {
+      fetchWidgets()(
+        dispatch, getState
+      );
+      fetchLayout()(
+        dispatch, getState
+      );
+      dispatch({
+        type: DELETE_WIDGET_FULFILLED,
+        payload: response.data,
+      })
+    })
+      .catch((err) => {
+        dispatch({
+          type: DELETE_WIDGET_REJECTED,
+          payload: err,
+        })
+      })
+  };
+};
+

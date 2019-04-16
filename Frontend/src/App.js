@@ -11,8 +11,8 @@ import LoginPage from './components/LoginPage';
 
 const FCC_CONFIG = require('./../fcc.config');
 
-const localTheme = createMuiTheme(FCC_CONFIG.localeThemeDataLight || {});
-// const localTheme = createMuiTheme(FCC_CONFIG.localeThemeDataDark || {});
+// const localTheme = createMuiTheme(FCC_CONFIG.localeThemeDataLight || {});
+const localTheme = createMuiTheme(FCC_CONFIG.localeThemeDataDark || {});
 
 require('typeface-roboto');
 require('./styles/fonts.css');

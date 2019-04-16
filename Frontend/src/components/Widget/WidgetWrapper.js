@@ -12,11 +12,13 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import InfoIcon from '@material-ui/icons/Info';
 import OpenWithIcon from '@material-ui/icons/OpenWith';
 import MapIcon from '@material-ui/icons/Map';
+import DeleteIcon from '@material-ui/icons/Delete';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import AlarmIcon from '@material-ui/icons/Alarm';
 import { connect } from 'react-redux';
 import { openEditor } from '../../actions/editorActions';
+import { openDeleteWidget } from '../../actions/dashboardActions';
 
 const styles = (theme) => ({
   widget: {
@@ -65,7 +67,7 @@ class WidgetWrapper extends React.Component {
     config: PropTypes.object.isRequired,
     queryParams: PropTypes.object.isRequired,
     children: PropTypes.node.isRequired,
-    openEditor: PropTypes.func.isRequired,
+    openDeleteWidget: PropTypes.func.isRequired,
   };
 
   state = {
@@ -86,8 +88,12 @@ class WidgetWrapper extends React.Component {
 
   handleEditWidgetClick = () => {
     const { i, type, name, description, isStatic, width, height, config, queryParams, openEditor } = this.props;
-
     openEditor('edit', { i, type, name, description, isStatic, width, height, config, queryParams })
+  };
+
+  handleDeleteWidgetClick = () => {
+    const { i, openDeleteWidget } = this.props;
+    openDeleteWidget(i)
   };
 
   render() {
@@ -140,6 +146,18 @@ class WidgetWrapper extends React.Component {
                 </IconButton>
               </Tooltip>
             }
+            <Tooltip title="Delete widget" placement="top">
+              <span>
+                <IconButton
+                  color="primary"
+                  className={classes.smallerButton}
+                  onClick={this.handleDeleteWidgetClick}
+                  disabled={!Boolean(description.length)}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </span>
+            </Tooltip>
             <Tooltip title="Widget info" placement="top">
               <span>
                 <IconButton
@@ -175,6 +193,7 @@ class WidgetWrapper extends React.Component {
 
 const mapDispatchToProps = (dispatch) => ({
   openEditor: (mode, widgetProperties) => dispatch(openEditor(mode, widgetProperties)),
+  openDeleteWidget: (widgetProperties) => dispatch(openDeleteWidget(widgetProperties)),
 });
 
 WidgetWrapper = withStyles(styles)(WidgetWrapper);

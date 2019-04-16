@@ -3,12 +3,15 @@ import PropTypes from 'prop-types';
 import {
   Modal,
   withStyles,
+  Dialog
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { closeEditor } from '../../actions/editorActions';
+import { closeDeleteWidget, deleteWidget } from '../../actions/dashboardActions';
 import Header from './../common/Header';
 import GridLayout from './GridLayout';
 import Editor from './../Editor';
+import DeleteWidgetDialog from './../common/DeleteWidgetDialog'
 
 const styles = (theme) => ({
   root: {
@@ -28,6 +31,7 @@ class Dashboard extends React.Component {
     classes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
     closeEditor: PropTypes.func.isRequired,
+    closeDeleteWidget: PropTypes.func.isRequired,
   };
 
   handleEditorClose = () => {
@@ -36,8 +40,18 @@ class Dashboard extends React.Component {
     closeEditor();
   };
 
+  handleDeleteWidgetClose = () => {
+    const { i, closeDeleteWidget } = this.props;
+    closeDeleteWidget(i)
+  };
+
+  handleDeleteWidget = () => {
+    const { i, deleteWidget, user } = this.props;
+    deleteWidget(i, user)
+  };
+
   render() {
-    const { classes, editor } = this.props;
+    const { classes, editor, dashboard } = this.props;
 
     return (
       <div className={classes.root}>
@@ -53,6 +67,16 @@ class Dashboard extends React.Component {
         >
           <Editor />
         </Modal>
+
+        <Dialog
+          open={dashboard.deleteWidgetDialogOpen}
+          onClose={this.props.closeDeleteWidget}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description">
+          <DeleteWidgetDialog cancelDelete={this.handleDeleteWidgetClose} deleteWidget={this.handleDeleteWidget}/>
+        </Dialog>
+
+        {/*deleteWidgetDialogOpen*/}
       </div>
     )
   }
@@ -60,10 +84,13 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = (state) => ({
   editor: state.editor,
+  dashboard: state.dashboard,
+  user: state.dashboard,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   closeEditor: () => dispatch(closeEditor()),
+  closeDeleteWidget: () => dispatch(closeDeleteWidget()),
 });
 
 Dashboard = withStyles(styles)(Dashboard);

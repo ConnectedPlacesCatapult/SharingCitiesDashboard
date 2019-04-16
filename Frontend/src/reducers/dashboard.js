@@ -6,6 +6,8 @@ import {
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
   FETCH_WIDGETS_REJECTED,
+  DELETE_WIDGET_OPEN,
+  DELETE_WIDGET_CLOSE
 } from "./../constants";
 
 const initialState = {
@@ -14,6 +16,7 @@ const initialState = {
   fetching: false,
   fetched: false,
   error: null,
+  deleteWidgetDialogOpen: false
 };
 
 export default (state=initialState, action={}) => {
@@ -41,6 +44,20 @@ export default (state=initialState, action={}) => {
         fetching: false,
         fetched: false,
         error: action.payload,
+      }
+    }
+
+    case DELETE_WIDGET_OPEN: {
+      return {
+        ...state,
+        deleteWidgetDialogOpen: true,
+      }
+    }
+
+    case DELETE_WIDGET_CLOSE: {
+      return {
+        ...state,
+        deleteWidgetDialogOpen: false,
       }
     }
 
