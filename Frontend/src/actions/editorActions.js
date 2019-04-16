@@ -38,11 +38,6 @@ export const saveWidget = (mode, widget) => {
       widget.config.data = { values: [] };
     }
 
-    // ToDO :: check if we're adding a new widget or updating an existing one
-
-    console.log(mode);
-    return;
-
     const currentState = getState();
 
     const requestData = {
@@ -50,7 +45,17 @@ export const saveWidget = (mode, widget) => {
       data: widget,
     };
 
-    axiosInstance.post('widgets/create_widget', requestData).then((response) => {
+    let endpoint = "";
+    if (mode === "edit") {
+      // include widgetID and call update_widget endpoint if updating
+      requestData.widgetID = widget.i;
+      endpoint = "widgets/update_widget";
+    } else {
+      // call create_widget for add widget mode
+      endpoint = "widgets/create_widget";
+    }
+
+    axiosInstance.post(endpoint, requestData).then((response) => {
       dispatch({
         type: EDITOR_SAVE_WIDGET_FULFILLED,
         payload: response.data,
