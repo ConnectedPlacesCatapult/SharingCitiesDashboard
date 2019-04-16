@@ -38,15 +38,13 @@ class DataConfig extends React.Component {
   constructor(props) {
     super(props);
 
-    const { editor, getThemeTree } = props;
-
     this.state = {
       selectedThemes: [],
       selectedSubtheme: null,
-      themeTree: editor.themeTree,
+      themeTree: props.editor.themeTree,
     };
 
-    getThemeTree();
+    props.getThemeTree();
   }
 
   componentDidUpdate(nextProps) {
