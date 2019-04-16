@@ -73,6 +73,9 @@ export const fetchWidgets = () => {
           return {
             ...widgetData,
             i: widget.id,
+            width: parseInt(widgetData.width),
+            height: parseInt(widgetData.height),
+            isStatic: Boolean(widgetData.isStatic),
           }
         });
 
