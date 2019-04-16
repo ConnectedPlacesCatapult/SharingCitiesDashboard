@@ -19,7 +19,7 @@ The ```config.env.yml``` configuration file, located in ```/Analytics/settings/`
 ```yaml
 NODE_ENV: <environment> e.g. development
 NODE_HOST: <host> e.g. http://localhost
-NODE_API_PORT: :<api-port> e.g. 5000
+NODE_API_PORT: :<api-port> e.g. 8000
 NODE_DEV_PORT: :<dev-port> e.g. 8080
 ```
 - **API** & **Database**; Edit the configuration parameters for the Database creation and connection below with their respective values. For the ```db_host``` the correct host should be ```db``` as below. The rest should be entered as per design:

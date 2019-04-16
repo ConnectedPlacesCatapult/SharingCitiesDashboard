@@ -13,7 +13,7 @@ services:
     volumes:
       - ./Analytics/:/Analytics
     ports:
-      - "5000:5000"
+      - "8000:5000"
       - "6379:6379"
     depends_on:
       - db
