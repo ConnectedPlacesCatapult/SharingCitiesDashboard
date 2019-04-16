@@ -20,7 +20,7 @@ manager.add_command('db', MigrateCommand)
 manager.add_command('runserver', Server(
     use_debugger=False,
     use_reloader=True,
-    host='<host-value>'
+    host='localhost'
 ))
 
 manager.add_command("gunicorn", GunicornServer())

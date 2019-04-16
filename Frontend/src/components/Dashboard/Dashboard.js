@@ -68,7 +68,6 @@ class Dashboard extends React.Component {
           <Button
             variant="contained"
             color="primary"
-            className={classes.actionButton}
             onClick={this.handleCreateWidgetClicked}
           >
             Create Widget

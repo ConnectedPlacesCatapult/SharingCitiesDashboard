@@ -38,8 +38,8 @@ class GridLayout extends React.Component {
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
 
-    this.props.fetchLayout();
     this.props.fetchWidgets();
+    this.props.fetchLayout();
   }
 
   onLayoutChange(layout) {

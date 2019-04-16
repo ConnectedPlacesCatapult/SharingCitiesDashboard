@@ -13,6 +13,7 @@ At present, collecting data and adding it to the application database requires t
 *  Create the database: `CREATE DATABASE test_analytics;`. _Note that the user and database names can be changed when the application is deployed. You just have to be aware that things may need to be changed accordingly in your `settings.py` file_. 
 * For the new database, grant privileges: `GRANT ALL PRIVILEGES ON DATABASE "test_analytics" to sharingcities;`
 * Add a postGIS extension to the databse: `psql -d test_analytics -c "CREATE EXTENSION postgis";`
+
 * Rename the ```settings.py.bak``` to ```settings.py```.
 * Update your `settings.py` with correct IP (local if running locally), Username, Password, Database name.
     

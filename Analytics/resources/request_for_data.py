@@ -313,11 +313,11 @@ class RequestForData(Resource):
 
         if 'predictions' in args:
             predictions = args['predictions']
-            if predictions >= 100:
-                predictions = 100
 
         if 'n_predictions' in args:
             n_predictions = args['n_predictions']
+            if n_predictions >= 100:
+                n_predictions = 100
 
         if 'sensorid' in args:
             sensorid = args['sensorid']
