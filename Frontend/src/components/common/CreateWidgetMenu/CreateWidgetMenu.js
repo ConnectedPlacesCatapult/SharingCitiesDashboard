@@ -48,10 +48,10 @@ class CreateWidgetMenu extends React.Component {
   }
 
   handleTypeClicked = (type) => {
-    const { editorMode, onClose, openEditor } = this.props;
+    const { mode, onClose, openEditor } = this.props;
 
     onClose();
-    openEditor(editorMode, { type })
+    openEditor(mode, { type })
   };
 
   handleClose = () => {

@@ -23,7 +23,6 @@ export const fetchLayout = () => {
     axiosInstance
       .post('/widgets/get_layouts', requestData)
       .then((response) => {
-
         const layout = response.data.map((widget) => ({
           i: widget.id,
           x: widget.x,
@@ -65,7 +64,6 @@ export const fetchWidgets = () => {
     axiosInstance
       .post('widgets/load_widgets', requestData)
       .then((response) => {
-
         const parsed = response.data.map((widget) => {
 
           // ToDo :: needs further sanitizing to handle apostrophes

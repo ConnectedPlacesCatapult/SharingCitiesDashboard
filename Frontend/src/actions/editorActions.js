@@ -40,6 +40,9 @@ export const saveWidget = (mode, widget) => {
 
     // ToDO :: check if we're adding a new widget or updating an existing one
 
+    console.log(mode);
+    return;
+
     const currentState = getState();
 
     const requestData = {
