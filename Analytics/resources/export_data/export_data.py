@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 from datetime import datetime
 from http import HTTPStatus
 from typing import Any
@@ -227,16 +228,18 @@ class ExportData(Resource):
 
     @staticmethod
     def create_feature_properties(data_frame: pd.DataFrame,
-                                  column_names: {str}) -> [Feature]:
+                                  column_names: {str}, table_name: str) -> [
+        Feature]:
         """
         Create Feature and Properties for GeoJson export
         :param data_frame: Pandas Dataframe to be exported
         :param column_names: Column names in the dataframe
+        param table_name: Name of Attribute table to export
         :return: A list of GeoJson Feature to be exported
         """
         features = list()
         properties = dict()
-
+        unit = "NO_UNIT"
         header_added = False
 
         column_names = column_names.to_list()
@@ -261,8 +264,14 @@ class ExportData(Resource):
                 except ValueError:
                     properties[col_name] = ""
 
-            features.append(Feature(id="{}-{}".format(attribute_id, timestamp),
-                                    geometry=geometry, properties=properties))
+            matches = re.match(r".+?\d?_(?=[\d])", table_name)
+            if matches:
+                unit = matches.group(0)
+                unit = unit.strip('_')
+
+            features.append(
+                Feature(id="{}-{}-{}".format(attribute_id, unit, timestamp),
+                        geometry=geometry, properties=properties))
             properties = dict()
         return features
 
@@ -282,7 +291,8 @@ class ExportData(Resource):
         for sensor_id in sensor_ids:
             df_by_sid = self.get_rows_by_sid(data_frame, sensor_id)
 
-            feature = self.create_feature_properties(df_by_sid, columns_names)
+            feature = self.create_feature_properties(df_by_sid, columns_names,
+                                                     self.table_name)
             for feat in feature:
                 features.append(feat)
 
