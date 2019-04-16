@@ -1,6 +1,10 @@
 import { axiosInstance } from './../api/axios';
+import { getUserID } from './../api/session';
 import {
   EDITOR_CLOSE,
+  EDITOR_GET_THEME_TREE,
+  EDITOR_GET_THEME_TREE_FULFILLED,
+  EDITOR_GET_THEME_TREE_REJECTED,
   EDITOR_OPEN,
   EDITOR_SAVE_WIDGET,
   EDITOR_SAVE_WIDGET_FULFILLED,
@@ -18,6 +22,34 @@ import {
 export const closeEditor = () => ({
   type: EDITOR_CLOSE,
 });
+
+export const getThemeTree = () =>  {
+  return (dispatch) => {
+    dispatch({
+      type: EDITOR_GET_THEME_TREE,
+    });
+
+    const requestData = {
+      user_id: getUserID(),
+    };
+
+    axiosInstance
+      .get('/admin/themes/get_tree', requestData)
+      .then((response) => {
+
+        dispatch({
+          type: EDITOR_GET_THEME_TREE_FULFILLED,
+          payload: response.data,
+        })
+      })
+      .catch((error) => {
+        dispatch({
+          type: EDITOR_GET_THEME_TREE_REJECTED,
+          payload: error,
+        })
+      })
+  }
+};
 
 export const openEditor = (mode, widgetProperties=null) => ({
   type: EDITOR_OPEN,
