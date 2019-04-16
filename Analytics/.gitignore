@@ -2,6 +2,3 @@ __pycache__/
 settings.py
 migrations/
 localtest.py
-config.yml
-config.env.yml
-config.yml.old
