@@ -28,14 +28,6 @@ if [ $PYREQ_INSTALLED = False ]; then
     export PYREQ_INSTALLED=True
 fi
 
-# Set env values
-echo "$PREFIX Setting env values"
-source ~/SharingCitiesDashboard/.env
-
-# Rename settings.py.bak
-echo "$PREFIX Initializing flask settings"
-mv settings.py.bak settings.py
-
 # Setup DB structure
 echo "$PREFIX Initialize DB structure"
 python3 db_setup.py
