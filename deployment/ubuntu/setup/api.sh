@@ -28,6 +28,25 @@ if [ $PYREQ_INSTALLED = False ]; then
     export PYREQ_INSTALLED=True
 fi
 
+# Check if Redis is installed
+echo "$PREFIX Checking for Redis"
+if [ -z "$(which redis)" ]; then
+    # Install Nginx
+    echo "   $PREFIX Installing Redis"
+    sudo apt install redis-server
+fi
+echo "   $PREFIX Redis installed!"
+
+# Setup correct Nginx config file
+echo "$PREFIX Setting Redis config"
+sudo mv /etc/redis/redis.conf /etc/redis/redis.conf.bkup
+sudo cp ~/SharingCitiesDashboard/deployment/ubuntu/redis.conf /etc/redis/redis.conf
+sudo systemctl restart redis.service
+
+# Start Celery worker
+echo "$PREFIX Starting Celery worker"
+celery -A manage.celery_task worker -l info
+
 # Setup DB structure
 echo "$PREFIX Initialize DB structure"
 python3 db_setup.py
