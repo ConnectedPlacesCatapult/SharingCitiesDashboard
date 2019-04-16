@@ -68,6 +68,7 @@ def create_app(**config_overrides):
 
     app = Flask(__name__)
     app.config.update(GetConfig.configure('postgres'))
+
     CORS(app)
     api = Api(app)
 
@@ -90,7 +91,6 @@ def create_app(**config_overrides):
     # app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 
     app.config.update(GetConfig.configure('jwt_auth'))
-
     db.init_app(app)
     db.app = app
 

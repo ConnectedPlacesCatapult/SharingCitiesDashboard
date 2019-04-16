@@ -93,7 +93,7 @@ class GetConfig(object):
         else:
             if not config_path:
                 working_dir = GetConfig.get_working_directory()
-                config_path = os.path.join(working_dir, 'config.yml')
+                config_path = os.path.join(working_dir, 'config.env.yml')
             return Configurations.get_configurations(config_path)
 
     @staticmethod
@@ -107,7 +107,7 @@ class GetConfig(object):
         try:
             if not config_path:
                 working_dir = GetConfig.get_working_directory()
-                config_path = os.path.join(working_dir, 'config.yml')
+                config_path = os.path.join(working_dir, 'config.env.yml')
 
             with open(config_path, 'w') as config_file:
                 yaml.safe_dump(config, config_file)

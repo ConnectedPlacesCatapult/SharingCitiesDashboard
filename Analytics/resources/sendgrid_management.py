@@ -1,10 +1,12 @@
 import logging
+import sys
 
 import requests
 from flask_jwt_extended import jwt_required, get_jwt_claims
 from flask_restful import Resource, reqparse
 
-from Analytics.settings.get_config_decorator import GetConfig
+sys.path.append("../..")
+from settings import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
@@ -25,7 +27,6 @@ class TestKeyValidity(Resource):
         """
         if get_jwt_claims()["admin"]:
             sendgrid_api_key = GetConfig.configure('sendgrid', 'api_key')
-            print(sendgrid_api_key)
             if sendgrid_api_key:
                 sendgrid_response = \
                     SendgridHelper.send_test_request(sendgrid_api_key)

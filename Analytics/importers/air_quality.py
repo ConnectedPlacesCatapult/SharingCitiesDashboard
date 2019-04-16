@@ -1,17 +1,19 @@
 import json
 import time
 import traceback
+import sys
 from datetime import datetime, timedelta
 from typing import Union
 
 import numpy as np
 import requests
 
-from Analytics.settings import GetConfig
 from importers.base import BaseImporter
 from importers.json_reader import JsonReader
 from .state_decorator import Status, ImporterStatus
 
+sys.path.append("../..")
+from settings import GetConfig
 
 @GetConfig("KCLAirQuality", 'api_endpoints', 'air_quality')
 class KCLAirQuality(BaseImporter):
