@@ -12,7 +12,7 @@ The following components are needed to run the application:
 
 - [Docker Engine](https://docs.docker.com/install/) 
 - [Docker Compose](https://docs.docker.com/compose/install/)
-- <span style="color:red">**Config File** (/Analytics/settings/config.env.yml)</span>
+- **Config File** (/Analytics/settings/config.env.yml)
 
 The ```config.env.yml``` configuration file, located in ```/Analytics/settings/```, will need to be edited with the settings for the 3 services as below:
 
