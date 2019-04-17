@@ -1,9 +1,6 @@
 from flask_script import Command, Option
 from settings.get_config_decorator import GetConfig
-from typing import Union
-import os
 
-from settings.get_config_decorator import GetConfig
 
 @GetConfig('GunicornServer', 'gunicorn_server')
 class GunicornServer(Command):
