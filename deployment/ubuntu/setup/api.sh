@@ -45,7 +45,7 @@ sudo systemctl restart redis.service
 
 # Start Celery worker
 echo "$PREFIX Starting Celery worker"
-alias python='python3.6'
+alias python='python3'
 celery -A manage.celery_task worker -l info
 
 # Setup DB structure
