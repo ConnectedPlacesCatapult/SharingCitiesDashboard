@@ -57,7 +57,7 @@ class GetWidgets(Resource):
         # Were widget instances returned
         if not widgets:
             # No widgets found for userID
-            abort(HTTPStatus.NOT_FOUND.value, error="no widgets found for userID {}".format(args["userID"]))
+            return [], 200
 
         # Store widgets to be returned
         widget_list = []

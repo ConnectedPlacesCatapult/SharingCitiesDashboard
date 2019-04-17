@@ -1,15 +1,18 @@
 import traceback
 from typing import Union
+import sys
 
 import numpy as np
 import pandas as pd
 
 from importers.base import BaseImporter
-from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
 
+sys.path.append("../..")
+from settings import GetConfig
 
-@GetConfig("TfL_BikePoints", 'environment', 'tfl_bike_points')
+
+@GetConfig("TfL_BikePoints", 'api_endpoints', 'tfl_bike_points')
 class TfL_BikePoints(BaseImporter):
     """
     TFL Bike points importer
@@ -23,9 +26,9 @@ class TfL_BikePoints(BaseImporter):
         Get Import Config
         Instantiate BaseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
-                         self.TOKEN_EXPIRY)
+
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS, self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """

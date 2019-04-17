@@ -7,6 +7,8 @@ import {
   ListItemText,
   ListSubheader,
   withStyles,
+  Typography,
+  Paper
 } from '@material-ui/core';
 import {
   CircleMarker,
@@ -42,9 +44,38 @@ const styles = (theme) => ({
     borderRadius: theme.shape.borderRadius,
     padding: theme.spacing.unit,
   },
-  popupListItem: {
-
+  popupTitle: {
+    color: theme.palette.primary.main,
+    fontWeight: 600,
+    fontSize: 16,
   },
+  popupAttribute: {
+    fontSize: 14,
+    margin: 0
+  },
+  popupValue: {
+    fontWeight: 600,
+    fontSize: 22,
+    margin: 0
+  },
+  popupLocation: {
+    color: theme.palette.primary.main,
+    fontSize: 12,
+    fontWeight: 600,
+    margin: 0
+  },
+  popupTimeStamp: {
+    color: theme.palette.primary.main,
+    fontSize: 12,
+    fontWeight: 600,
+    margin: 0
+  },
+  popupData: {
+    marginTop: 10,
+    marginBottom: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+  }
 });
 
 class MapPreview extends React.Component {
@@ -276,31 +307,26 @@ class MapPreview extends React.Component {
             fillOpacity={markerOpacity}
           >
             <Popup>
-              <List
-                disablePadding={false}
-                dense
-                className={classes.popupList}
-              >
-                <ListSubheader
-                  disableGutters
-                  disableSticky
-                  inset={false}
-                >
+              <Paper
+              className={classes.popupList}>
+                <Typography variant="h6" className={classes.popupTitle}>
                   {feature.properties["Name"]}
-                </ListSubheader>
-                <ListItem className={classes.popupListItem} disableGutters alignItems={'flex-start'}>
-                  <ListItemText>{`${feature.geometry.coordinates[1].toFixed(6)}, ${feature.geometry.coordinates[0].toFixed(6)}`}</ListItemText>
-                </ListItem>
-                <ListItem className={classes.popupListItem} disableGutters alignItems={'flex-start'}>
-                  <ListItemText>Attribute: {feature.properties['Attribute_Name']}</ListItemText>
-                </ListItem>
-                <ListItem className={classes.popupListItem} disableGutters alignItems={'flex-start'}>
-                  <ListItemText>Value: {feature.properties['Value']}</ListItemText>
-                </ListItem>
-                <ListItem className={classes.popupListItem} disableGutters alignItems={'flex-start'}>
-                  <ListItemText>Recorded: {this.getFormattedTimestamp(feature.properties['Timestamp'])}</ListItemText>
-                </ListItem>
-              </List>
+                </Typography>
+                <div className={classes.popupData}>
+                  <Typography className={classes.popupValue} gutterBottom>
+                    {feature.properties['Value']}
+                  </Typography>
+                  <Typography className={classes.popupAttribute} gutterBottom>
+                    {feature.properties['Attribute_Name']}
+                  </Typography>
+                </div>
+                <Typography className={classes.popupLocation} gutterBottom>
+                  {this.getFormattedTimestamp(feature.properties['Timestamp'])}
+                </Typography>
+                <Typography className={classes.popupTimeStamp} gutterBottom>
+                  {`${feature.geometry.coordinates[1].toFixed(6)}, ${feature.geometry.coordinates[0].toFixed(6)}`}
+                </Typography>
+              </Paper>
             </Popup>
           </CircleMarker>
         )

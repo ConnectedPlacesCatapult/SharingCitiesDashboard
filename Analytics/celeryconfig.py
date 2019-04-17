@@ -1,7 +1,13 @@
-""" config file for Celery Instance """
+import copy
+from settings.get_config_decorator import GetConfig
 
-# Redis broker
-BROKER_URL = 'redis://localhost:6379/0'
+""" 
+Set the the broker and backend configurations according to the settings 
+defined in config.env.yaml 
+"""
 
-# Redis backend
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+config = GetConfig.configure('celery')
+
+BROKER_URL = copy.deepcopy(config["BROKER_URL"])
+
+CELERY_RESULT_BACKEND = copy.deepcopy(config["CELERY_RESULT_BACKEND"])
