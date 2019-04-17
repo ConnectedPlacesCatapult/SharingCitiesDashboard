@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -Eeo pipefail
 # TODO swap to -Eeuo pipefail above (after handling all potentially-unset variables)
 # Read YAML file and export variables
 parse_yaml() {
