@@ -18,13 +18,12 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import { connect } from 'react-redux';
 import { getThemeTree, setWidgetQueryProperty } from './../../../actions/editorActions';
 
-const STATIC_THEME_DATA = require('./../../../data/themes');
-const STATIC_SUBTHEME_DATA = require('./../../../data/subthemes');
-const STATIC_ATTRIBUTE_DATA = require('./../../../data/attributes');
-
 const styles = (theme) => ({
   root: {
     flexDirection: 'column',
+  },
+  spacer: {
+    margin: `${theme.spacing.unit}px 0`,
   },
 });
 
@@ -42,6 +41,8 @@ class DataConfig extends React.Component {
       selectedThemes: [],
       selectedSubtheme: null,
       themeTree: props.editor.themeTree,
+      allSubthemes: [],
+      allAttributes: [],
     };
 
     props.getThemeTree();
@@ -56,17 +57,31 @@ class DataConfig extends React.Component {
       let selectedThemes = [];
       let selectedSubtheme = null;
 
-      // ToDo :: this needs to be finished
-      for (let queryAttribute of attributesFromQueryParams) {
-        const attr = STATIC_ATTRIBUTE_DATA.find(a => a.name === queryAttribute);
+      let allSubthemes = [];
+      let allAttributes = [];
 
-        selectedThemes = [...selectedThemes, attr.themeId];
-        selectedSubtheme = attr.subthemeId;
+      for (let theme of editor.themeTree) {
+        for (let subtheme of theme.sub_themes) {
+          allSubthemes = [...allSubthemes, subtheme];
+
+          for (let attribute of subtheme.attributes) {
+            allAttributes = [...allAttributes, attribute]
+          }
+        }
+      }
+
+      for (let queryAttribute of attributesFromQueryParams) {
+        const attr = allAttributes.find(a => a.name === queryAttribute);
+
+        selectedThemes = [...selectedThemes, attr.theme_id];
+        selectedSubtheme = attr.sub_theme_id;
       }
 
       this.setState({
         selectedThemes: [...new Set(selectedThemes)],
         selectedSubtheme,
+        allSubthemes,
+        allAttributes,
       })
     }
   }
@@ -83,9 +98,9 @@ class DataConfig extends React.Component {
   handleSubthemeClick = (e, subthemeId) => {
     this.setState({ selectedSubtheme: subthemeId });
 
-    const subthemeAttributes = STATIC_ATTRIBUTE_DATA.reduce((attributes, attribute) => {
-      if (attribute.subthemeId === subthemeId) {
-        attributes.push(attribute.name);
+    const subthemeAttributes = this.state.allAttributes.reduce((attributes, attribute) => {
+      if (attribute['sub_theme_id'] === subthemeId) {
+        attributes.push(attribute['name']);
       }
       return attributes
     }, []);
@@ -94,19 +109,19 @@ class DataConfig extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { selectedThemes, selectedSubtheme } = this.state;
+    const { classes, editor } = this.props;
+    const { selectedThemes, selectedSubtheme, allSubthemes } = this.state;
 
-    const themeCheckboxes = STATIC_THEME_DATA.map((theme, i) => {
+    const themeCheckboxes = editor.themeTree.map((theme, i) => {
       return (
         <FormControlLabel
           key={i}
-          label={theme.name}
+          label={theme['Name']}
           control={
             <Checkbox
               checked={selectedThemes.indexOf(theme.id) > -1}
               onChange={this.handleThemeChange}
-              value={theme.id.toString()}
+              value={theme['id'].toString()}
             />
           }
         />
@@ -118,30 +133,31 @@ class DataConfig extends React.Component {
 
       // if no theme is selected show all subthemes
       if (!selectedThemes.length) {
-        subthemes = STATIC_SUBTHEME_DATA;
+        subthemes = allSubthemes;
 
       // filter available subthemes based on selected theme(s)
       } else {
-        subthemes = STATIC_SUBTHEME_DATA.filter((subtheme) => selectedThemes.includes(subtheme.themeId))
+        subthemes = allSubthemes.filter((subtheme) => selectedThemes.includes(subtheme['Theme id']))
       }
 
       return subthemes.map((subtheme, i) => <ListItem
         key={i}
         button
-        selected={selectedSubtheme === subtheme.id}
-        onClick={(e) => this.handleSubthemeClick(e, subtheme.id)}
+        selected={selectedSubtheme === subtheme['id']}
+        onClick={(e) => this.handleSubthemeClick(e, subtheme['id'])}
       >
         <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
         <ListItemText>
-          {subtheme.name}
+          {subtheme['Name']}
         </ListItemText>
       </ListItem>)
     };
 
     return (
       <FormGroup className={classes.root}>
+        <Divider className={classes.spacer} />
         <FormControl component="fieldset">
           <FormLabel component="legend">Themes</FormLabel>
           <FormGroup>

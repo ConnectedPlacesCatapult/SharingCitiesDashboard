@@ -19,7 +19,7 @@ const initialState = {
   open: false,
   mode: null,
   widget: null,
-  themeTree: null,
+  themeTree: [],
   fetching: false,
   fetched: false,
   error: null,

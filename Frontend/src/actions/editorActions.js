@@ -102,7 +102,7 @@ export const saveWidget = (mode, widget) => {
       .catch((error) => {
         dispatch({
           type: EDITOR_SAVE_WIDGET_REJECTED,
-          payload: error.statusText,
+          payload: error,
         })
       });
 
