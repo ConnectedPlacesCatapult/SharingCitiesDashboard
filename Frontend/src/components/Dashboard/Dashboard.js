@@ -61,7 +61,7 @@ class Dashboard extends React.Component {
           <div className={classes.appBarSpacer} />
           <GridLayout />
           <CreateWidgetMenu
-            mode="edit"
+            mode="add"
             anchorEl={createWidgetMenuAnchorEl}
             onClose={this.handleCloseCreateWidgetMenu}
           />
