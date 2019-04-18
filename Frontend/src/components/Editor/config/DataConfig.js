@@ -16,7 +16,7 @@ import {
 } from '@material-ui/core';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import { connect } from 'react-redux';
-import { getThemeTree, setWidgetQueryProperty } from './../../../actions/editorActions';
+import { setWidgetQueryProperty } from './../../../actions/editorActions';
 
 const STATIC_THEME_DATA = require('./../../../data/themes');
 const STATIC_SUBTHEME_DATA = require('./../../../data/subthemes');
@@ -38,37 +38,25 @@ class DataConfig extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      selectedThemes: [],
-      selectedSubtheme: null,
-      themeTree: props.editor.themeTree,
-    };
-
-    props.getThemeTree();
-  }
-
-  componentDidUpdate(nextProps) {
     const { editor } = this.props;
 
-    if (nextProps.editor.themeTree !== editor.themeTree) {
-      const attributesFromQueryParams = (editor.widget.queryParams && editor.widget.queryParams['attributedata']) ? editor.widget.queryParams['attributedata'].split(',') : [];
+    const attributesFromQueryParams = (editor.widget.queryParams && editor.widget.queryParams['attributedata']) ? editor.widget.queryParams['attributedata'].split(',') : [];
 
-      let selectedThemes = [];
-      let selectedSubtheme = null;
+    let selectedThemes = [];
+    let selectedSubtheme = null;
 
-      // ToDo :: this needs to be finished
-      for (let queryAttribute of attributesFromQueryParams) {
-        const attr = STATIC_ATTRIBUTE_DATA.find(a => a.name === queryAttribute);
+    // ToDo :: this could be tidier
+    for (let queryAttribute of attributesFromQueryParams) {
+      const attr = STATIC_ATTRIBUTE_DATA.find(a => a.name === queryAttribute);
 
-        selectedThemes = [...selectedThemes, attr.themeId];
-        selectedSubtheme = attr.subthemeId;
-      }
-
-      this.setState({
-        selectedThemes: [...new Set(selectedThemes)],
-        selectedSubtheme,
-      })
+      selectedThemes = [...selectedThemes, attr.themeId];
+      selectedSubtheme = attr.subthemeId;
     }
+
+    this.state = {
+      selectedThemes: [...new Set(selectedThemes)],
+      selectedSubtheme: selectedSubtheme,
+    };
   }
 
   handleThemeChange = (e) => {
@@ -166,7 +154,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getThemeTree: () => dispatch(getThemeTree()),
   setWidgetQueryProperty: (property, value) => dispatch(setWidgetQueryProperty(property, value)),
 });
 

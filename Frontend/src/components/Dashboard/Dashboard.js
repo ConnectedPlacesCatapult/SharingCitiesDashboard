@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button,
   Modal,
   withStyles,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { closeEditor } from '../../actions/editorActions';
-import CreateWidgetMenu from './../common/CreateWidgetMenu';
-import Editor from './../Editor';
-import GridLayout from './GridLayout';
 import Header from './../common/Header';
+import GridLayout from './GridLayout';
+import Editor from './../Editor';
 
 const styles = (theme) => ({
   root: {
@@ -32,27 +30,14 @@ class Dashboard extends React.Component {
     closeEditor: PropTypes.func.isRequired,
   };
 
-  state = {
-    createWidgetMenuAnchorEl: null,
-  };
-
   handleEditorClose = () => {
     const { closeEditor } = this.props;
 
     closeEditor();
   };
 
-  handleCreateWidgetClicked = (e) => {
-    this.setState({ createWidgetMenuAnchorEl: e.currentTarget })
-  };
-
-  handleCloseCreateWidgetMenu = () => {
-    this.setState({ createWidgetMenuAnchorEl: null })
-  };
-
   render() {
     const { classes, editor } = this.props;
-    const { createWidgetMenuAnchorEl } = this.state;
 
     return (
       <div className={classes.root}>
@@ -60,18 +45,6 @@ class Dashboard extends React.Component {
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <GridLayout />
-          <CreateWidgetMenu
-            mode="edit"
-            anchorEl={createWidgetMenuAnchorEl}
-            onClose={this.handleCloseCreateWidgetMenu}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleCreateWidgetClicked}
-          >
-            Create Widget
-          </Button>
         </main>
         <Modal
           open={editor.open}

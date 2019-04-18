@@ -38,7 +38,6 @@ const styles = (theme) => ({
   },
   widgetBodyWrapper: {
     height: 'inherit',
-    overflow: 'hidden',
   },
   widgetBodyContent: {
     height: '100%',
