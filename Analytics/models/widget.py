@@ -39,7 +39,7 @@ class WidgetModel(db.Model):
 
     def __str__(self) -> str:
         """
-        Return the layout instance as a string
+        Return the Widget Id and  User id and  as a string
         :return:  JSONified string of the layouts attributes
         """
         return "UserID: {} \t\tWidgetID: {}".format(self.user_id, self.id)
@@ -47,14 +47,11 @@ class WidgetModel(db.Model):
     def json(self) -> dict:
         """
         Create JSON of Widget Attributes
-        :param  id:      widgetID
-        :param  userID:  users identification number
-        :param  data:    Widget JSON data
         :return:  JSON serialized Widget attributes
         """
         # format response
         response_data = {"id": str(self.id), "userID": self.user_id,
-                         "data": self.data}
+                         "data": self.data, "layout": self.layout.json()}
         return response_data
 
     def save(self) -> NoReturn:
