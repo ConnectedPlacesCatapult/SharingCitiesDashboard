@@ -74,7 +74,6 @@ export const fetchWidgets = () => {
             .replace(/None/g, '"null"')
             .toString()
           ;
-          console.log(sanitizedString);
           const widgetData = JSON.parse(sanitizedString);
 
           return {
