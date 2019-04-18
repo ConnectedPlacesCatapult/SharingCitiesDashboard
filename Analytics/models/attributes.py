@@ -1,9 +1,11 @@
 import logging
 from datetime import datetime
 
+from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 
 from db import db
+from models.attribute_data import ModelClass
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
@@ -178,3 +180,17 @@ class Attributes(db.Model):
         :return:    Attribute with id parsed
         """
         return Attributes.query.filter_by(id=attribute_id).first()
+
+    @classmethod
+    def most_recent_timestamp(cls, attribute_table: str):
+        """
+        Return the most recent timestamp value from attribute_table
+        :param attribute_table: name of attribute data table
+        :return: most recent timestamp
+        """
+
+        attribute_data_model = ModelClass(attribute_table)
+        return db.session.query(attribute_data_model).order_by(
+            desc(attribute_data_model.api_timestamp))
+
+
