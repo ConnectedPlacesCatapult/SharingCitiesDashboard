@@ -83,4 +83,11 @@ class AttributeRange(db.Model):
             logger.error(str(self.user_id) + ' User Prediction ID does not '
                                              'exists')
 
+    @classmethod
+    def get_by_attr_id(cls, attr_id: str) -> db.Model:
+        """
+        Fetch Attribute Range by Attribute id
+        :return:    Attribute with id parsed
+        """
+        return AttributeRange.query.filter_by(attribute_idid=attr_id).first()
 
