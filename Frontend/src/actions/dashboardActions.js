@@ -66,8 +66,15 @@ export const fetchWidgets = () => {
       .then((response) => {
         const parsed = response.data.map((widget) => {
 
-          // ToDo :: needs further sanitizing to handle apostrophes
-          const sanitizedString = widget.data.replace(/'/g, '"').replace(/False/g, '"false"').replace(/True/g, '"true"').toString();
+          // ToDo :: needs further sanitizing to handle apostrophes within text fields
+          const sanitizedString = widget.data
+            .replace(/'/g, '"')
+            .replace(/False/g, '"false"')
+            .replace(/True/g, '"true"')
+            .replace(/None/g, '"null"')
+            .toString()
+          ;
+          console.log(sanitizedString);
           const widgetData = JSON.parse(sanitizedString);
 
           return {

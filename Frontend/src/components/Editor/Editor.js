@@ -35,8 +35,6 @@ class Editor extends React.Component {
   handleSaveWidgetClicked = () => {
     const { editor, saveWidget } = this.props;
 
-    console.log(editor.mode);
-
     saveWidget(editor.mode, editor.widget);
   };
 

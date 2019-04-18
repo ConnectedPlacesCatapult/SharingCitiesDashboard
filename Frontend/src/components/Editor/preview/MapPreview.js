@@ -263,9 +263,6 @@ class MapPreview extends React.Component {
     const featureLayers = attributes.map((attribute, i) => {
       const attributeFeatures = data.features.filter((feature) => feature.properties['Attribute_Name'] === attribute);
       const markers = attributeFeatures.map((feature, ii) => {
-
-        console.log(feature);
-
         return (
           <CircleMarker
             key={ii}
