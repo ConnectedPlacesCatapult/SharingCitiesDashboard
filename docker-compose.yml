@@ -10,7 +10,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-API
-    command: bash -c "python manage.py gunicorn & service redis-server start & celery -A manage.celery_task worker -l info"
+    command: bash -c "sleep 7; python manage.py gunicorn & service redis-server start & celery -A manage.celery_task worker -l info"
     volumes:
       - ./Analytics/:/Analytics
     ports:
