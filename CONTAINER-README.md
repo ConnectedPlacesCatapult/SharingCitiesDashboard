@@ -12,53 +12,37 @@ The following components are needed to run the application:
 
 - [Docker Engine](https://docs.docker.com/install/) 
 - [Docker Compose](https://docs.docker.com/compose/install/)
+- **Config File** (/Analytics/settings/config.env.yml)
 
-The following configuration files need to be edited:
+The ```config.env.yml``` configuration file, located in ```/Analytics/settings/```, will need to be edited with the settings for the 3 services as below:
 
-- Frontend; ```SharingCitiesDashboard/Frontend/src/api/urls.js```, update the value "LOCAL_URL" with the **API address and port**:
-```javascript
-export const LOCAL_URL = 'http://<api-address>/'
+- **UI**; Edit the configuration parameters below with their respective values for the dev port, the host and the environment. For the ```NODE_API_PORT``` the value should be as below:
+```yaml
+NODE_ENV: <environment> e.g. development
+NODE_HOST: <host> e.g. http://localhost
+NODE_API_PORT: :8000
+NODE_DEV_PORT: :<dev-port> e.g. 8080
 ```
-- Frontend; ```SharingCitiesDashboard/Frontend/fcc.config.js```, update the value "apiRoot" with the **API address and port**:
-```javascript
-apiRoot: "http://<api-address>/"
-```
-- API; Rename the ```SharingCitiesDashboard/Analytics/settings.py.bak``` file to ```SharingCitiesDashboard/Analytics/settings.py``` and update the database parameters below:
-```python
-DB_USERNAME = '<db_user>'
-DB_PASSWORD = '<db_password>'
-DATABASE_NAME = '<db_name>'
-DB_HOST = 'db'
-```
-For the ```DB_HOST``` above we can use '**db**' as this is defined in the docker-compose.yaml file
-
-- API; ```SharingCitiesDashboard/Analytics/manage.py```, update the variable **host** with the **API host** as **api** as below:
-```python
-manager.add_command('runserver', Server(
-    use_debugger=False,
-    use_reloader=True,
-    host='api'
-))
+- **API** & **Database**; Edit the configuration parameters for the Database creation and connection below with their respective values. For the ```db_host``` the correct host should be ```db``` as below. The rest should be entered as per design:
+```yaml
+postgres:
+  SECRET_KEY: <secret-key>
+  db_host: db
+  db_name: <db-name>
+  db_password: <db-password>
+  db_username: <db-username>
 ```
 
-- API; ```SharingCitiesDashboard/Analytics/gunicornserver.py```, update the variable **host** with the **API host** as **api** as below:
-```python
-    def __init__(self, host='api', port=5000, workers=4):
-        self.port = port
-        self.host = host
-        self.workers = workers
-```
-
-- Database; ```SharingCitiesDashboard/Dockerfile-DB```, update the ENV variables as below, replacing the db_x values:
-```dockerfile
-ENV POSTGRES_USER <db-user>
-ENV POSTGRES_PASSWORD <db-password>
-ENV POSTGRES_DB <db-name>
-```
-
-- Database; ```SharingCitiesDashboard/initdb-postgis.sh```, update the "dbname" parameter below with the actual database name:
-```bash
-"${psql[@]}" --dbname=<db_name> <<-'EOSQL'
+- **API**; Edit the configuration parameters below for the API flask server and gunicorn server with the values as below:
+```yaml
+flask_server:
+  host: api
+  port: 5000
+  processes: 1
+gunicorn_server:
+  gunicorn_host: api
+  gunicorn_port: 5000
+  gunicorn_workers: 4
 ```
 #### Deployment
 
