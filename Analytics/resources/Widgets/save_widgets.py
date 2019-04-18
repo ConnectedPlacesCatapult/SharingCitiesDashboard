@@ -128,7 +128,8 @@ class Widgets(Resource):
         """
         Created HTTP Response message
         :param widget: Widget instance that was created or updated
-        :param updated: Layout instance that was created or updated
+        :param updated: was the widget created or updated? True if the widget
+                        was updated. False if the widget was created
         :return: HTTP Response message
         """
         layout = widget.layout
