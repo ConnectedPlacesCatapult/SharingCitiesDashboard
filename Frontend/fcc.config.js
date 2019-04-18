@@ -2,7 +2,6 @@ module.exports = {
 
   // root uri of the API
   apiRoot: `${process.env.NODE_HOST}${process.env.API_PORT}`,
-  //apiRoot: "http://192.168.0.12:5000",
 
   // overrides for MaterialUI default theme
   localeThemeData: {
