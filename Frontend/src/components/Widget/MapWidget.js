@@ -8,21 +8,21 @@ import {
   ListSubheader,
   withStyles,
 } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { darken, lighten } from '@material-ui/core/styles/colorManipulator';
 import {
   CircleMarker,
   FeatureGroup,
-  GeoJSON,
   LayersControl,
   Map,
   Popup,
   TileLayer,
 } from 'react-leaflet';
-import HeatmapLayer from 'react-leaflet-heatmap-layer';
 import axios from 'axios';
-import WidgetWrapper from './WidgetWrapper';
+import { connect } from 'react-redux';
+import ColorScheme from 'color-scheme';
+import rgba from 'rgba-convert';
+import hexConverter from 'color-shorthand-hex-to-six-digit';
 import LoadingIndicator from './LoadingIndicator';
+import WidgetWrapper from './WidgetWrapper';
 
 const FCC_CONFIG = require('./../../../fcc.config');
 
@@ -37,15 +37,23 @@ const styles = (theme) => ({
     height: '90%',
     width: 'auto',
   },
+  map: {
+    width: 'auto',
+    height: '100%',
+  },
   popupList: {
     backgroundColor: theme.palette.background.default,
+    borderRadius: theme.shape.borderRadius,
+    padding: theme.spacing.unit,
+  },
+  popupListItem: {
+
   },
 });
 
 class MapWidget extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    editor: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     width: PropTypes.number.isRequired,
@@ -59,47 +67,59 @@ class MapWidget extends React.Component {
   constructor(props) {
     super(props);
 
+    this.mapRef = React.createRef();
+    this.minValue = 0;
+    this.maxValue = 0;
+
     this.state = {
       loading: null,
+      rawData: null,
       data: null,
       error: null,
-
-      // required here?
-      //attributes: (props.editor.widget.queryParams && props.editor.widget.queryParams['attributedata']) ? props.editor.widget.queryParams['attributedata'].split(',') : [],
-    }
+      attributes: [],
+      markerColors: [],
+      markerOpacity: 1,
+    };
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData();
+    this.updateStateAttributes();
+  }
 
-    const { editor } = this.props;
+  componentDidMount() {
 
-    const attributes = (editor.widget && editor.widget.queryParams && editor.widget.queryParams['attributedata']) ? editor.widget.queryParams['attributedata'].split(',') : [];
-    //console.log(attributes);
+  }
+
+  componentDidUpdate(prevProps) {
+
   }
 
   fetchData = () => {
     const { queryParams } = this.props;
 
-    this.setState({ loading: true });
+    this.setState({ loading: true }, () => {
+      axios({
+        url: FCC_CONFIG.apiRoot + '/data',
+        method: 'get',
+        params: queryParams,
+      })
+        .then((response) => {
+          this.setMinMaxValues(response.data);
 
-    axios({
-      url: FCC_CONFIG.apiRoot + '/data',
-      method: 'get',
-      params: queryParams,
-    })
-      .then((response) => {
-        this.setState({
-          loading: false,
-          data: {
-            type: "FeatureCollection",
-            features: this.formatData(response.data)
-          }
+          this.setState({
+            loading: false,
+            rawData: response.data,
+            data: {
+              type: "FeatureCollection",
+              features: this.formatData(response.data)
+            }
+          })
         })
-      })
-      .catch((err) => {
-        this.setState({ error: err})
-      })
+        .catch((err) => {
+          this.setState({ error: err})
+        })
+    });
   };
 
   formatData = (data) => {
@@ -122,56 +142,63 @@ class MapWidget extends React.Component {
     }));
   };
 
-  setValueLimits = (data) => {
-    const { config } = this.props;
+  updateStateAttributes = () => {
+    const { queryParams } = this.props;
+    const attributes = (!queryParams['attributedata'] || !queryParams['attributedata'].length)
+      ? []
+      : queryParams['attributedata'].split(',')
+    ;
 
-    let min = null;
-    let max = null;
-    let watchedAttribute = config.markerAttribute;
-
-    for (let feature of data.features) {
-      let attributeValue = feature.properties[watchedAttribute];
-
-      if (Number.isInteger(attributeValue) || parseFloat(attributeValue)) {
-        if (attributeValue < min || min === null) min = attributeValue;
-        if (attributeValue > max || max === null) max = attributeValue;
-      }
-    }
-
-    this.minValue = min;
-    this.maxValue = max;
+    this.setState({ attributes }, this.updateColorScheme);
   };
 
-  getMarkerColor = (val) => {
+  updateColorScheme = () => {
     const { config } = this.props;
 
     const baseColor = config.markerColor;
-    const diff = this.maxValue - this.minValue;
-    const step = diff / 5;
+    const baseColorObj = rgba.obj(baseColor);
+    const baseColorOpacity = baseColorObj.a / 255;
 
-    switch(true) {
-      case val > (4 * step) + this.minValue:
-        return lighten(baseColor, 0.5);
-      case val > (3 * step) + this.minValue:
-        return lighten(baseColor, 0.25);
-      case val > (2 * step) + this.minValue:
-        return baseColor;
-      case val > step + this.minValue:
-        return darken(baseColor, 0.25);
-      default:
-        return darken(baseColor, 0.5);
-    }
+    delete baseColorObj.a;
+
+    const baseColorLongHandHex = hexConverter(rgba.hex(baseColorObj)).slice(1);
+
+    const scheme = new ColorScheme();
+    const colors = scheme.from_hex(baseColorLongHandHex).scheme('analogic').variation('default').colors();
+
+    this.setState({
+      markerColors: colors,
+      markerOpacity: baseColorOpacity,
+    })
   };
 
-  getMarkerRadius = (val) => {
-    const { config } = this.props;
+  setMinMaxValues = (data) => {
+    this.minValue = data.reduce((min, record) => record['Value'] < min ? Number(record['Value']) : min, 0);
+    this.maxValue = data.reduce((max, record) => record['Value'] > max ? Number(record['Value']) : max, 0);
+  };
 
-    return config.markerRadius * ((val - this.minValue) / (this.maxValue - this.minValue))
+  getMarkerRadius = (value) => {
+    const { config } = this.props;
+    const pc = (value - this.minValue) / (this.maxValue - this.minValue);
+    return config.markerRadius * (pc + 0.5)
+  };
+
+  getFormattedTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const day = date.getMonth();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    return `${day} ${month} ${year} at ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
   };
 
   render() {
     const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
-    const { loading, error, data } = this.state;
+    const { loading, error, data, attributes, markerColors, markerOpacity } = this.state;
 
     if (!data) {
       return (
@@ -191,48 +218,68 @@ class MapWidget extends React.Component {
       )
     }
 
-    this.setValueLimits(data);
-
     const tileLayer = FCC_CONFIG.leafletTileLayers.find((layer) => layer.name === config.tileLayer);
 
-    const heatmapPoints = data.features.map((feature) => [feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties[config.markerAttribute]]);
+    const rootStyles = {
+      width: `${width}px`,
+      height: `${height}px`,
+      maxWidth: `${width}px`,
+      maxHeight: `${height}px`,
+    };
 
-    const circleFeatures = data.features.map((feature, i) => {
-      const propList = config.tooltipFields.map((key, ii) => {
+    const featureLayers = attributes.map((attribute, i) => {
+      const attributeFeatures = data.features.filter((feature) => feature.properties['Attribute_Name'] === attribute);
+      const markers = attributeFeatures.map((feature, ii) => {
         return (
-          <ListItem key={ii} divider disableGutters>
-            <ListItemText>{key}: {feature.properties[key]}</ListItemText>
-          </ListItem>
+          <CircleMarker
+            key={ii}
+            center={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}
+            stroke={false}
+            radius={this.getMarkerRadius(feature.properties['Value'])}
+            fillColor={`#${markerColors[i]}`}
+            fillOpacity={markerOpacity}
+          >
+            <Popup>
+              <List
+                disablePadding={false}
+                dense
+                className={classes.popupList}
+              >
+                <ListSubheader
+                  disableGutters
+                  disableSticky
+                  inset={false}
+                >
+                  {feature.properties["Name"]}
+                </ListSubheader>
+                <ListItem className={classes.popupListItem} disableGutters alignItems={'flex-start'}>
+                  <ListItemText>{`${feature.geometry.coordinates[1].toFixed(6)}, ${feature.geometry.coordinates[0].toFixed(6)}`}</ListItemText>
+                </ListItem>
+                <ListItem className={classes.popupListItem} disableGutters alignItems={'flex-start'}>
+                  <ListItemText>Attribute: {feature.properties['Attribute_Name']}</ListItemText>
+                </ListItem>
+                <ListItem className={classes.popupListItem} disableGutters alignItems={'flex-start'}>
+                  <ListItemText>Value: {feature.properties['Value']}</ListItemText>
+                </ListItem>
+                <ListItem className={classes.popupListItem} disableGutters alignItems={'flex-start'}>
+                  <ListItemText>Recorded: {this.getFormattedTimestamp(feature.properties['Timestamp'])}</ListItemText>
+                </ListItem>
+              </List>
+            </Popup>
+          </CircleMarker>
         )
       });
 
-      const markerValue = feature.properties[config.markerAttribute];
-
       return (
-        <CircleMarker
+        <LayersControl.Overlay
           key={i}
-          center={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}
-          stroke={false}
-          fillColor={this.getMarkerColor(markerValue)}
-          radius={this.getMarkerRadius(markerValue)}
+          name={attribute}
+          checked
         >
-          <Popup>
-            <List
-              disablePadding={true}
-              dense
-              className={classes.popupList}
-            >
-              <ListSubheader
-                disableGutters
-                disableSticky
-                inset={false}
-              >
-                {feature.properties["Name"]}
-              </ListSubheader>
-              {propList}
-            </List>
-          </Popup>
-        </CircleMarker>
+          <FeatureGroup>
+            {markers}
+          </FeatureGroup>
+        </LayersControl.Overlay>
       )
     });
 
@@ -250,9 +297,14 @@ class MapWidget extends React.Component {
       >
         <Fade in={!loading}>
           <Map
-            className={classes.root}
+            className={classes.map}
             center={config.center}
             zoom={config.zoom}
+            ref={this.mapRef}
+            //onClick={this.handleMapClick}
+            //onLoad={this.handleMapLoad}
+            //onMoveEnd={this.handleMapMoveEnd}
+            //onResize={this.handleMapResize}
           >
             <LayersControl>
               <LayersControl.BaseLayer name="Basemap" checked>
@@ -261,28 +313,7 @@ class MapWidget extends React.Component {
                   url={tileLayer.url}
                 />
               </LayersControl.BaseLayer>
-              <LayersControl.Overlay name="GeoJSON default" checked>
-                <GeoJSON data={data} />
-              </LayersControl.Overlay>
-              <LayersControl.Overlay name="GeoJSON custom" checked>
-                <FeatureGroup>
-                  {circleFeatures}
-                </FeatureGroup>
-              </LayersControl.Overlay>
-              { config.showHeatmap &&
-                <LayersControl.Overlay name="Heatmap" checked>
-                  <FeatureGroup>
-                    <HeatmapLayer
-                      fitBoundsOnLoad
-                      fitBoundsOnUpdate
-                      points={heatmapPoints}
-                      longitudeExtractor={m => m[1]}
-                      latitudeExtractor={m => m[0]}
-                      intensityExtractor={m => parseFloat(m[2])}
-                    />
-                  </FeatureGroup>
-                </LayersControl.Overlay>
-              }
+              {featureLayers}
             </LayersControl>
           </Map>
         </Fade>
@@ -292,10 +323,10 @@ class MapWidget extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  editor: state.editor,
+
 });
 
 MapWidget = withStyles(styles)(MapWidget);
-MapWidget = connect(mapStateToProps, null)(MapWidget);
+MapWidget = connect(null, null)(MapWidget);
 
 export default MapWidget
