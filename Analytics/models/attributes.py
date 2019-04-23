@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from sqlalchemy import desc, func
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, DataError
 from sqlalchemy.sql.expression import cast
 from sqlalchemy import Float
 from typing import Union
@@ -113,7 +113,7 @@ class Attributes(db.Model):
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            logger.error(self.name, 'theme does not exists')
+            logger.error(self.name, 'attribute does not exists')
 
     def commit(self) -> None:
         """ Commit changes to database"""
@@ -189,30 +189,41 @@ class Attributes(db.Model):
         """
         Return the most recent timestamp value from attribute_table
         :param attribute_table: name of attribute data table
-        :return: most recent timestamp
+        :return: most recent timestamp present in table
         """
 
         attribute_data_model = ModelClass(attribute_table.lower())
         timestamp = db.session.query(attribute_data_model).order_by(
             desc(attribute_data_model.api_timestamp)).first()
+        db.metadata.clear()
+
         if timestamp:
             return timestamp.api_timestamp
         else:
             return None
 
     @classmethod
-    def attribute_min_max(cls, attribute_table: str) ->(Union[float, int],
-                                                        Union[float, int]):
+    def attribute_min_max(cls, attribute_table: str)->(Union[float, int, None],
+                                                       Union[float, int, None]):
+        """
+        Retrieve the minimum and maximum value of an attribute
+        :param attribute_table: name of attribute data table
+        :return: minimum and maximum attribute value
+        """
 
         attribute_data_model = ModelClass(attribute_table.lower())
+        attr_min, attr_max = None, None
         try:
             attr_min = db.session.query(func.min(cast(
                 attribute_data_model.value, Float))).scalar()
             attr_max = db.session.query(func.max(cast(
                 attribute_data_model.value, Float))).scalar()
-            return attr_min, attr_max
-        except:
+        except DataError:
             db.session.rollback()
-            return 9999, 9999
+
+        db.metadata.clear()
+        return attr_min, attr_max
+
+
 
 
