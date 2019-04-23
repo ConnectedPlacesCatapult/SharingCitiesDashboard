@@ -15,11 +15,12 @@ class AttributeRange(db.Model):
     Data class for storing information about Attribute Ranges
     """
     __tablename__ = 'attribute_range'
-    id = db.Column(db.Integer,primary_keyr=True)
-    attribute_id = db.Column(db.Integer, db.ForeignKey('attributes.id'),
+
+    id = db.Column(db.Integer, primary_key=True)
+    attribute_id = db.Column(db.Text, db.ForeignKey('attributes.id'),
                              nullable=False)
-    minimum = db.Column(db.Double)
-    maximum = db.Column(db.Double)
+    minimum = db.Column(db.Float)
+    maximum = db.Column(db.Float)
     latest_update = db.Column(db.DateTime)
 
     def __init__(self, attribute_id: int, minimum: float, maximum: float,
@@ -83,11 +84,15 @@ class AttributeRange(db.Model):
             logger.error(str(self.user_id) + ' User Prediction ID does not '
                                              'exists')
 
+    def commit(self) -> None:
+        """ Commit changes to database"""
+        db.session.commit()
+
     @classmethod
     def get_by_attr_id(cls, attr_id: str) -> db.Model:
         """
         Fetch Attribute Range by Attribute id
         :return:    Attribute with id parsed
         """
-        return AttributeRange.query.filter_by(attribute_idid=attr_id).first()
+        return AttributeRange.query.filter_by(attribute_id=attr_id).first()
 
