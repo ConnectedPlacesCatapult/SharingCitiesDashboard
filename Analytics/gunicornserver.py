@@ -1,4 +1,5 @@
 from flask_script import Command, Option
+
 from settings.get_config_decorator import GetConfig
 
 
