@@ -1,8 +1,11 @@
 import logging
 from datetime import datetime
 
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.sql.expression import cast
+from sqlalchemy import Float
+from typing import Union
 
 from db import db
 from models.attribute_data import ModelClass
@@ -107,7 +110,7 @@ class Attributes(db.Model):
         """put object in queue for deletion from database"""
         try:
             db.session.delete(self)
-            # db.session.flush()
+            db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
             logger.error(self.name, 'theme does not exists')
@@ -189,8 +192,27 @@ class Attributes(db.Model):
         :return: most recent timestamp
         """
 
-        attribute_data_model = ModelClass(attribute_table)
-        return db.session.query(attribute_data_model).order_by(
-            desc(attribute_data_model.api_timestamp))
+        attribute_data_model = ModelClass(attribute_table.lower())
+        timestamp = db.session.query(attribute_data_model).order_by(
+            desc(attribute_data_model.api_timestamp)).first()
+        if timestamp:
+            return timestamp.api_timestamp
+        else:
+            return None
+
+    @classmethod
+    def attribute_min_max(cls, attribute_table: str) ->(Union[float, int],
+                                                        Union[float, int]):
+
+        attribute_data_model = ModelClass(attribute_table.lower())
+        try:
+            attr_min = db.session.query(func.min(cast(
+                attribute_data_model.value, Float))).scalar()
+            attr_max = db.session.query(func.max(cast(
+                attribute_data_model.value, Float))).scalar()
+            return attr_min, attr_max
+        except:
+            db.session.rollback()
+            return 9999, 9999
 
 
