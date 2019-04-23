@@ -6,7 +6,6 @@ from sqlalchemy.exc import IntegrityError
 
 from db import db
 
-
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
@@ -32,7 +31,6 @@ class AlertWidgetModel(db.Model):
                  activated: bool = True):
         """
         Create new AlertWidgetModel instance
-
         :param user_id: User Id
         :param widget_id: Alert Widget Id
         :param attribute_id: Attribute Id
@@ -48,7 +46,7 @@ class AlertWidgetModel(db.Model):
         self.activated = activated
 
     @property
-    def json(self) -> dict():
+    def json(self) -> dict:
         """
         Get JSON of AlertWidgetModel
         :return: JSON representation of AlertWidgetModel attributes
@@ -123,7 +121,7 @@ class AlertWidgetModel(db.Model):
 
     @classmethod
     def get_max_alerts(cls, attribute_id: str,
-                       value: Union[float, int, None]) -> list():
+                       value: Union[float, int]) -> [db.Model]:
         """
         Get Maximum Threshold Alerts
         :param value: Maximum Value measured by sensor
@@ -151,7 +149,7 @@ class AlertWidgetModel(db.Model):
 
     @classmethod
     def get_min_alerts(cls, attribute_id: str,
-                       value: Union[float, int, None]) -> list():
+                       value: Union[float, int]) -> [db.Model]:
         """
         Get Minimum Threshold Alerts
         :param value: Minimum Value measured by sensor
