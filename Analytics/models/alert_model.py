@@ -6,19 +6,23 @@ from sqlalchemy.exc import IntegrityError
 
 from db import db
 
+
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
 class AlertWidgetModel(db.Model):
+    """
+    Create AlertWidget database model. Store Maximum and Minimum threshold
+    values for attribute values per user.
+    """
     __tablename__ = 'Alerts'
-
     id = db.Column(db.Integer, primary_key=True)
-    widget_id = db.Column(db.Integer)
+    widget_id = db.Column(db.Integer, nullable=True)
     user_id = db.Column(db.Integer)
     attribute_id = db.Column(db.Text)
-    max_threshold = db.Column(db.Float)
-    min_threshold = db.Column(db.Float)
+    max_threshold = db.Column(db.Float, nullable=True)
+    min_threshold = db.Column(db.Float, nullable=True)
     activated = db.Column(db.Boolean, default=True)
     date_created = db.Column(db.DateTime, default=datetime.now)
 
@@ -57,7 +61,7 @@ class AlertWidgetModel(db.Model):
 
     def save(self) -> NoReturn:
         """
-        Add AlertWidgetModel instance to the database session
+        Save AlertWidgetModel
         """
         try:
             db.session.add(self)
@@ -78,19 +82,18 @@ class AlertWidgetModel(db.Model):
 
     def commit(self) -> NoReturn:
         """
-        Commits session changes to the database
+        Commit session changes to the database
         """
         db.session.commit()
 
-
     @classmethod
-    def get_by_id(cls, id: int) -> Union[db.Model, None]:
+    def get_by_id(cls, alert_id: int) -> Union[db.Model, None]:
         """
         Get AlertWidgetModel by id
-        :param id: AlertWidgetModel Id
+        :param alert_id: AlertWidgetModel Id
         :return: A AlertWidgetModel with matching id otherwise None
         """
-        return cls.query.filter_by(id=id).first()
+        return cls.query.filter_by(id=alert_id).first()
 
     @classmethod
     def get_by_widget_id(cls, widget_id: int) -> Union[db.Model, None]:
@@ -105,8 +108,8 @@ class AlertWidgetModel(db.Model):
     def get_by_kwargs(cls, **kwargs: dict) -> [db.Model]:
         """
         Get AlertWidgetModels by Keyword Arguments
-        :param attribute_id: Attribute Id
-        :return: A List of Alerts filtered by keyword arguments
+        :param kwargs: Keyword arguments to Filter database query by
+        :return: A List of WidgetAlertModels filtered by keyword arguments
         """
         return cls.query.filter_by(**kwargs).all()
 
@@ -120,12 +123,13 @@ class AlertWidgetModel(db.Model):
 
     @classmethod
     def get_max_alerts(cls, attribute_id: str,
-                             value: Union[float, int, None]) -> list():
+                       value: Union[float, int, None]) -> list():
         """
-        Get Max Threshold Alerts
+        Get Maximum Threshold Alerts
         :param value: Maximum Value measured by sensor
         :param attribute_id: Attribute Id
-        :return: Dictionary Of Triggered alert details user_id,Value, Threshold
+        :return: Triggered alert details containing user_id, Value,
+                Threshold value and type
         """
         results = list()
 
@@ -149,10 +153,11 @@ class AlertWidgetModel(db.Model):
     def get_min_alerts(cls, attribute_id: str,
                        value: Union[float, int, None]) -> list():
         """
-        Get Min Threshold Alerts
+        Get Minimum Threshold Alerts
         :param value: Minimum Value measured by sensor
         :param attribute_id: Attribute Id
-        :return: List Of Triggered alert details user_id,Value, Threshold
+        :return: Triggered alert details containing user_id, Value,
+                Threshold value and type
         """
         results = list()
 
@@ -171,7 +176,3 @@ class AlertWidgetModel(db.Model):
             results.append(alerts)
 
         return results
-
-
-
-
