@@ -2,6 +2,7 @@ import http.client
 import logging
 import random
 import sys
+
 import flask
 import sendgrid
 from flask_restful import Resource, reqparse

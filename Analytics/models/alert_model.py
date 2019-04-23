@@ -131,18 +131,18 @@ class AlertWidgetModel(db.Model):
         """
         results = list()
 
-        min_alerts = cls.query.filter(cls.max_threshold <= value).filter(
+        max_alerts = cls.query.filter(cls.max_threshold <= value).filter(
             cls.attribute_id == attribute_id).all()
 
-        if len(min_alerts) <= 0:
+        if len(max_alerts) <= 0:
             return []
 
-        for alert in min_alerts:
+        for alert in max_alerts:
             alerts = dict()
             alerts["user_id"] = alert.user_id
             alerts["type"] = "Maximum Threshold Exceeded"
             alerts["value"] = value
-            alerts["min_threshold"] = alert.max_threshold
+            alerts["max_threshold"] = alert.max_threshold
             results.append(alerts)
 
         return results
