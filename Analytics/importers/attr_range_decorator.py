@@ -37,7 +37,7 @@ def update_attribute_ranges(func: Callable) -> Callable:
                             attribute.table_name)
                         attribute_range.minimum = attr_min
                         attribute_range.maximum = attr_max
-                        attribute_range.last_update = datetime.now()
+                        attribute_range.latest_update = datetime.now()
                         attribute_range.save()
                         attribute_range.commit()
 
