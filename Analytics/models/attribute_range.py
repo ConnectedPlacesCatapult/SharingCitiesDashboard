@@ -89,6 +89,14 @@ class AttributeRange(db.Model):
         db.session.commit()
 
     @classmethod
+    def get_all(cls) -> db.Model:
+        """
+        Fetch all Attribute Range entries
+        :return: All persisted Attribute Range entries
+        """
+        return AttributeRange.query.all()
+
+    @classmethod
     def get_by_attr_id(cls, attr_id: str) -> db.Model:
         """
         Fetch Attribute Range by Attribute id
