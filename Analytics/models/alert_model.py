@@ -45,10 +45,10 @@ class AlertWidgetModel(db.Model):
         self.min_threshold = min_threshold
         self.activated = activated
 
-    def __eq__(self, alert: db.Model) -> bool:
+    def __eq__(self, alert: 'AlertWidgetModel') -> bool:
         """
         Check two AlertWidgetModels are equal
-        :param alert:
+        :param alert: AlertWidgetModel to check for equality against
         :return: If equal return true otherwise return False
         """
         if not isinstance(alert, AlertWidgetModel):
@@ -84,6 +84,12 @@ class AlertWidgetModel(db.Model):
             db.session.rollback()
             logger.error(ie)
 
+    def alert_exists(self, alert: 'AlertWidgetModel') -> 'AlertWidgetModel':
+        matched_alert = self.get_by_kwargs(**alert.json)
+        # TODO: Finish implementing checks for existing Alerts
+
+
+
     def delete(self) -> NoReturn:
         """
         Delete AlertWidgetModel
@@ -94,7 +100,8 @@ class AlertWidgetModel(db.Model):
             db.session.rollback()
             logger.error(ie)
 
-    def commit(self) -> NoReturn:
+    @staticmethod
+    def commit() -> NoReturn:
         """
         Commit session changes to the database
         """
@@ -190,3 +197,5 @@ class AlertWidgetModel(db.Model):
             results.append(alerts)
 
         return results
+
+

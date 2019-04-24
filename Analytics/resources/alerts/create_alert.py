@@ -47,6 +47,8 @@ class CreateAlert(Resource):
             return dict(
                 error="Threshold value required"), HTTPStatus.BAD_REQUEST
 
+
+
         alertModel = AlertWidgetModel(args["user_id"], args["widget_id"],
                                       args["attribute_id"],
                                       args["max_threshold"],
