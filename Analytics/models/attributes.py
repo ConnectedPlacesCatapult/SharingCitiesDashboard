@@ -19,7 +19,6 @@ class Attributes(db.Model):
     Data class for storing information about Attributes
     """
     __tablename__ = 'attributes'
-    # __bind_key__ = 'backend'
 
     id = db.Column(db.Text, unique=True, nullable=False)
     name = db.Column(db.String(255), nullable=False, primary_key=True)
@@ -193,18 +192,19 @@ class Attributes(db.Model):
         """
 
         attribute_data_model = ModelClass(attribute_table.lower())
-        timestamp = db.session.query(attribute_data_model).order_by(
+        most_recent_entry = db.session.query(attribute_data_model).order_by(
             desc(attribute_data_model.api_timestamp)).first()
         db.metadata.clear()
 
-        if timestamp:
-            return timestamp.api_timestamp
+        if most_recent_entry:
+            return most_recent_entry.api_timestamp
         else:
             return None
 
     @classmethod
     def attribute_min_max(cls, attribute_table: str)->(Union[float, int, None],
-                                                       Union[float, int, None]):
+                                                       Union[float, int,
+                                                             None]):
         """
         Retrieve the minimum and maximum value of an attribute
         :param attribute_table: name of attribute data table
