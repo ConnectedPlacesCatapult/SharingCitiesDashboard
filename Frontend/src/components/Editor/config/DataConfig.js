@@ -61,11 +61,15 @@ class DataConfig extends React.Component {
       let allAttributes = [];
 
       for (let theme of editor.themeTree) {
-        for (let subtheme of theme.sub_themes) {
-          allSubthemes = [...allSubthemes, subtheme];
+        if (theme['sub_themes']) {
+          for (let subtheme of theme['sub_themes']) {
+            allSubthemes = [...allSubthemes, subtheme];
 
-          for (let attribute of subtheme.attributes) {
-            allAttributes = [...allAttributes, attribute]
+            if (subtheme.attributes) {
+              for (let attribute of subtheme.attributes) {
+                allAttributes = [...allAttributes, attribute]
+              }
+            }
           }
         }
       }
