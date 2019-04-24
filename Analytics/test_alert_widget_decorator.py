@@ -107,4 +107,3 @@ class AlertWidgetDecoratorTestCase(unittest.TestCase):
         admin_user.commit()
         return {'Authorization': 'Bearer {}'.format(
             response_login_json["access_token"])}
-

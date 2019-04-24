@@ -9,10 +9,10 @@ from db import db
 application = create_app()
 
 
-def update_attribute_ranges(func: Callable) -> Callable:
+def update_attribute_ranges(import_function: Callable) -> Callable:
     """
     Function decorator, track minimum and maximum value of all attributes
-    :param func: Importer function
+    :param import_function: Importer function
     :return: Importer function wrapped with minimum and maximum value
              functionality
     """
@@ -20,10 +20,10 @@ def update_attribute_ranges(func: Callable) -> Callable:
         """
         Execute importer function and then compute minimum and maximum
         values of attributes
-        :param args: Arguments of func parameter
-        :param kwargs: Keyword Arguments of func parameter
+        :param args: Arguments of import_function parameter
+        :param kwargs: Keyword Arguments of import_function parameter
         """
-        func(*args, **kwargs)
+        import_function(*args, **kwargs)
 
         attribute_entries = Attributes.get_all()
         for attribute in attribute_entries:
@@ -50,4 +50,3 @@ def update_attribute_ranges(func: Callable) -> Callable:
                 new_range_entry.commit()
 
     return range_wrapper
-

@@ -39,7 +39,7 @@ class AttributeRange(db.Model):
 
     def __str__(self) -> str:
         """
-        override dunder string method to cast Attribute Range object
+        Override dunder string method to cast Attribute Range object
         attributes to a string
         :return: a JSON string of the Attribute Range object attributes
         """
@@ -101,4 +101,3 @@ class AttributeRange(db.Model):
         :return: Attribute with id parsed
         """
         return AttributeRange.query.filter_by(attribute_id=attr_id).first()
-
