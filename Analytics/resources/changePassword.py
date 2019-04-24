@@ -5,6 +5,7 @@ from flask_jwt_extended import  jwt_refresh_token_required, jwt_required, get_jw
 
 from models.users import Users
 
+
 class ChangePassword(Resource):
 	
 	parser = reqparse.RequestParser()
@@ -14,18 +15,21 @@ class ChangePassword(Resource):
 
 	@jwt_required
 	def patch(self) -> (str,int):
-	"""
-	API that allows a user change their password in the users table 
-	Parameters can be passed using a PATCH request that contains a JSON with the following fields:
-	:param email: users email address
-	:param password_old: users current password
-	:param password_new: users new password that they want to replace password_old
-	:type email: string
-	:type password_old: string
-	:type password_new: string 
-	:return: A message that indicates whether a user's password has been updated. If they have not, the message indicates why not.
-	:rtype: JSON
-	"""
+		"""
+		API that allows a user change their password in the users table
+		Parameters can be passed using a PATCH request that contains a JSON
+		with the following fields:
+		:param email: users email address
+		:param password_old: users current password
+		:param password_new: users new password that they want to replace
+							 password_old
+		:type email: string
+		:type password_old: string
+		:type password_new: string
+		:return: A message that indicates whether a user's password has been
+				updated. If they have not, the message indicates why not.
+		:rtype: JSON
+		"""
 		args = self.parser.parse_args()
 		current_user = Users.find_by_email(args['email']) #t
 

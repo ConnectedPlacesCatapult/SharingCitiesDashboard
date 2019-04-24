@@ -8,6 +8,7 @@ from models import location
 from models.sensor import Sensor
 from .state_decorator import ImporterStatus, Status
 from .token_exception import TokenExpired
+from .attr_range_decorator import update_attribute_ranges
 
 sys.path.append("../..")
 from settings import GetConfig
@@ -160,6 +161,7 @@ class GreenwichMeta(BaseImporter):
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
+    @update_attribute_ranges
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
@@ -202,6 +204,7 @@ class GreenwichOCC(BaseImporter):
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
+    @update_attribute_ranges
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
@@ -277,6 +280,7 @@ class GreenwichMeta_2(BaseImporter):
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
+    @update_attribute_ranges
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
@@ -325,6 +329,7 @@ class GreenwichOCC_2(BaseImporter):
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
+    @update_attribute_ranges
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
@@ -380,7 +385,6 @@ class GreenwichOCC_2(BaseImporter):
 
             self.importer_status.status = Status.success(__class__.__name__)
 
-
         except Exception as e:
 
             self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
@@ -407,6 +411,7 @@ class GreenwichKiwiPump(BaseImporter):
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
+    @update_attribute_ranges
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
@@ -454,6 +459,7 @@ class GreenwichWholeHouse(BaseImporter):
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
+    @update_attribute_ranges
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource
@@ -517,6 +523,7 @@ class GreenwichSiemens(BaseImporter):
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
+    @update_attribute_ranges
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource

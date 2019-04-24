@@ -1,9 +1,14 @@
 import logging
 from datetime import datetime
 
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import desc, func
+from sqlalchemy.exc import IntegrityError, DataError
+from sqlalchemy.sql.expression import cast
+from sqlalchemy import Float
+from typing import Union
 
 from db import db
+from models.attribute_data import ModelClass
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
@@ -14,7 +19,6 @@ class Attributes(db.Model):
     Data class for storing information about Attributes
     """
     __tablename__ = 'attributes'
-    # __bind_key__ = 'backend'
 
     id = db.Column(db.Text, unique=True, nullable=False)
     name = db.Column(db.String(255), nullable=False, primary_key=True)
@@ -105,10 +109,10 @@ class Attributes(db.Model):
         """put object in queue for deletion from database"""
         try:
             db.session.delete(self)
-            # db.session.flush()
+            db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            logger.error(self.name, 'theme does not exists')
+            logger.error(self.name, 'attribute does not exists')
 
     def commit(self) -> None:
         """ Commit changes to database"""
@@ -178,3 +182,44 @@ class Attributes(db.Model):
         :return:    Attribute with id parsed
         """
         return Attributes.query.filter_by(id=attribute_id).first()
+
+    @classmethod
+    def most_recent_timestamp(cls, attribute_table: str):
+        """
+        Return the most recent timestamp value from attribute_table
+        :param attribute_table: name of attribute data table
+        :return: most recent timestamp present in table
+        """
+
+        attribute_data_model = ModelClass(attribute_table.lower())
+        most_recent_entry = db.session.query(attribute_data_model).order_by(
+            desc(attribute_data_model.api_timestamp)).first()
+        db.metadata.clear()
+
+        if most_recent_entry:
+            return most_recent_entry.api_timestamp
+        else:
+            return None
+
+    @classmethod
+    def attribute_min_max(cls, attribute_table: str)->(Union[float, int, None],
+                                                       Union[float, int,
+                                                             None]):
+        """
+        Retrieve the minimum and maximum value of an attribute
+        :param attribute_table: name of attribute data table
+        :return: minimum and maximum attribute value
+        """
+
+        attribute_data_model = ModelClass(attribute_table.lower())
+        attr_min, attr_max = None, None
+        try:
+            attr_min = db.session.query(func.min(cast(
+                attribute_data_model.value, Float))).scalar()
+            attr_max = db.session.query(func.max(cast(
+                attribute_data_model.value, Float))).scalar()
+        except DataError:
+            db.session.rollback()
+
+        db.metadata.clear()
+        return attr_min, attr_max
