@@ -30,8 +30,7 @@ class AttributeRange(db.Model):
         :param attribute_id: An attribute's id in the attributes table
         :param minimum: minimum value for the attribute
         :param maximum: maximum value for the attribute
-        :param timestamp: time stamp of when the prediction was associated
-        with a user
+        :param timestamp: when the Attribute Range entry was last updated
         """
         self.attribute_id = attribute_id
         self.minimum = minimum
@@ -67,9 +66,8 @@ class AttributeRange(db.Model):
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            logger.error(str(self.user_id) +
-                         ' User already is associated with ' + str(
-                self.pred_result_id))
+            logger.error(str(self.id) +
+                         ' attribute range entry already exists ')
 
     def delete(self):
         """
@@ -81,8 +79,8 @@ class AttributeRange(db.Model):
             db.session.flush()
         except IntegrityError as ie:
             db.session.rollback()
-            logger.error(str(self.user_id) + ' User Prediction ID does not '
-                                             'exists')
+            logger.error('Attribute Range id ' + str(self.id) +
+                         ' does not exists')
 
     def commit(self) -> None:
         """ Commit changes to database"""
@@ -99,8 +97,8 @@ class AttributeRange(db.Model):
     @classmethod
     def get_by_attr_id(cls, attr_id: str) -> db.Model:
         """
-        Fetch Attribute Range by Attribute id
-        :return:    Attribute with id parsed
+        Fetch Attribute Range according to Attribute id
+        :return: Attribute with id parsed
         """
         return AttributeRange.query.filter_by(attribute_id=attr_id).first()
 

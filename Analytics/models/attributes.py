@@ -223,7 +223,3 @@ class Attributes(db.Model):
 
         db.metadata.clear()
         return attr_min, attr_max
-
-
-
-
