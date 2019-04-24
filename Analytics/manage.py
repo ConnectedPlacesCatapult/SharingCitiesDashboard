@@ -1,4 +1,6 @@
-import os, sys
+import os
+import sys
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from gunicornserver import GunicornServer
@@ -10,7 +12,7 @@ from drop_datasource import DropDatasource
 from add_datasource import AddDatasource
 from create_celery import make_celery
 from add_startup_admin import AddStartupAdmin
-
+from settings.get_config_decorator import GetConfig
 
 application = create_app()
 celery_task = make_celery(application)
@@ -18,9 +20,7 @@ manager = Manager(app=application)
 manager.add_command('db', MigrateCommand)
 
 manager.add_command('runserver', Server(
-    use_debugger=False,
-    use_reloader=True,
-    host='localhost'
+    **(GetConfig.configure('flask_server'))
 ))
 
 manager.add_command("gunicorn", GunicornServer())

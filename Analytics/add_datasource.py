@@ -2,11 +2,12 @@ import importlib
 import logging
 from typing import Callable
 
+from flask_script import Command, Option
+
+from settings.get_config_decorator import GetConfig
+
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
-
-import yaml
-from flask_script import Command, Option
 
 
 class AddDatasource(Command):
@@ -21,7 +22,8 @@ class AddDatasource(Command):
         python manage.py add -gd True
     """
 
-    def __init__(self, add_datasource: Callable = None, get_datasources: bool = False):
+    def __init__(self, add_datasource: Callable = None,
+                 get_datasources: bool = False):
         """
         Get or Add a DataSource
         :param add_datasource: Importer Callable
@@ -36,24 +38,11 @@ class AddDatasource(Command):
         :return: A list of Options
         """
         return [
-            Option('--get_datasources', '-gd', dest='get_datasources', default=self.get_datasources),
-            Option('--add_datasource', '-ad', dest='add_datasource', default=self.add_datasource),
+            Option('--get_datasources', '-gd', dest='get_datasources',
+                   default=self.get_datasources),
+            Option('--add_datasource', '-ad', dest='add_datasource',
+                   default=self.add_datasource),
         ]
-
-    def get_config(self) -> {str: {str}}:
-        """
-        Get Importer Config
-        :return: Importer Configurations
-        """
-        config = None
-        try:
-            with open("importers/config.yml") as ymlfile:
-                config = yaml.load(ymlfile)
-        except FileNotFoundError as e:
-            logger.critical("No Importer Config File Found", file="importers/config.yml")
-            raise FileNotFoundError
-
-        return config
 
     def run(self, get_datasources: bool, add_datasource: str) -> object:
         """
@@ -62,13 +51,13 @@ class AddDatasource(Command):
         :param add_datasource: Callable Str Name
         :return: A DataSource Object
         """
-        config = self.get_config()
-        config = config[config['environment']]
+        config = GetConfig.configure(category='api_endpoints')
         _importers = {}
         for c in config:
             _importers[config[c]['API_NAME']] = config[c]['API_CLASS']
             if get_datasources and config[c]['API_CLASS'] is not None:
-                # Cannot remove this as the user will not receive any DataSources back as it is a command line util
+                # Cannot remove this as the user will not receive any
+                # DataSources back as it is a command line util
                 print(config[c]['API_NAME'])
 
         if get_datasources:

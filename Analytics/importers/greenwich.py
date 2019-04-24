@@ -1,19 +1,22 @@
 import logging
 import traceback
 from typing import Union
+import sys
 
 from importers.base import BaseImporter, Location
 from models import location
 from models.sensor import Sensor
-from .config_decorator import GetConfig
 from .state_decorator import ImporterStatus, Status
 from .token_exception import TokenExpired
+
+sys.path.append("../..")
+from settings import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
-@GetConfig("GreenwichMeta", 'environment', 'greenwich_meta')
+@GetConfig("GreenwichMeta", 'api_endpoints', 'greenwich_meta')
 class GreenwichMeta(BaseImporter):
     """
     This importer imports data from Greenwich ArcGIS REST API.
@@ -153,8 +156,8 @@ class GreenwichMeta(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -186,7 +189,7 @@ class GreenwichMeta(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichOCC", 'environment', 'greenwich_occ')
+@GetConfig("GreenwichOCC", 'api_endpoints', 'greenwich_occ')
 class GreenwichOCC(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -195,8 +198,8 @@ class GreenwichOCC(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -261,7 +264,7 @@ class GreenwichOCC(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichMeta_2", 'environment', 'greenwich_meta_2')
+@GetConfig("GreenwichMeta_2", 'api_endpoints', 'greenwich_meta_2')
 class GreenwichMeta_2(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -270,8 +273,8 @@ class GreenwichMeta_2(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -309,7 +312,7 @@ class GreenwichMeta_2(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichOCC_2", 'environment', 'greenwich_occ_2')
+@GetConfig("GreenwichOCC_2", 'api_endpoints', 'greenwich_occ_2')
 class GreenwichOCC_2(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -318,8 +321,8 @@ class GreenwichOCC_2(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -390,7 +393,7 @@ class GreenwichOCC_2(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichKiwiPump", 'environment', 'greenwich_kiwi')
+@GetConfig("GreenwichKiwiPump", 'api_endpoints', 'greenwich_kiwi')
 class GreenwichKiwiPump(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -400,8 +403,8 @@ class GreenwichKiwiPump(BaseImporter):
         Instantiate BAseImporter
 
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -438,7 +441,7 @@ class GreenwichKiwiPump(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichWholeHouse", 'environment', 'greenwich_kiwi_house')
+@GetConfig("GreenwichWholeHouse", 'api_endpoints', 'greenwich_kiwi_house')
 class GreenwichWholeHouse(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -447,8 +450,8 @@ class GreenwichWholeHouse(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
@@ -501,7 +504,7 @@ class GreenwichWholeHouse(BaseImporter):
         raise TokenExpired("Token Expired")
 
 
-@GetConfig("GreenwichSiemens", 'environment', 'greenwich_siemens')
+@GetConfig("GreenwichSiemens", 'api_endpoints', 'greenwich_siemens')
 class GreenwichSiemens(BaseImporter):
     importer_status = ImporterStatus.get_importer_status()
 
@@ -510,8 +513,8 @@ class GreenwichSiemens(BaseImporter):
         Get Importer Config
         Instantiate BAseImporter
         """
-        self.get_config()
-        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
