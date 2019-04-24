@@ -13,9 +13,11 @@ import InfoIcon from '@material-ui/icons/Info';
 import OpenWithIcon from '@material-ui/icons/OpenWith';
 import MapIcon from '@material-ui/icons/Map';
 import BarChartIcon from '@material-ui/icons/BarChart';
+import DeleteIcon from '@material-ui/icons/Delete';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import AlarmIcon from '@material-ui/icons/Alarm';
 import { connect } from 'react-redux';
+import { deleteWidget } from './../../actions/dashboardActions';
 import { openEditor } from '../../actions/editorActions';
 
 const styles = (theme) => ({
@@ -66,6 +68,7 @@ class WidgetWrapper extends React.Component {
     config: PropTypes.object.isRequired,
     queryParams: PropTypes.object.isRequired,
     children: PropTypes.node.isRequired,
+    deleteWidget: PropTypes.func.isRequired,
     openEditor: PropTypes.func.isRequired,
   };
 
@@ -77,6 +80,12 @@ class WidgetWrapper extends React.Component {
     this.setState({
       popoverAnchorEl: e.currentTarget,
     });
+  };
+
+  handleDeleteWidgetClick = () => {
+    const { i, deleteWidget } = this.props;
+
+    deleteWidget(parseInt(i));
   };
 
   handlePopoverClose = () => {
@@ -153,6 +162,15 @@ class WidgetWrapper extends React.Component {
                 </IconButton>
               </span>
             </Tooltip>
+            <Tooltip title="Delete Widget" placement="top">
+              <IconButton
+                color="primary"
+                className={classes.smallerButton}
+                onClick={this.handleDeleteWidgetClick}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Edit Widget" placement="top">
               <IconButton
                 color="primary"
@@ -175,6 +193,7 @@ class WidgetWrapper extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
+  deleteWidget: (widgetId) => dispatch(deleteWidget(widgetId)),
   openEditor: (mode, widgetProperties) => dispatch(openEditor(mode, widgetProperties)),
 });
 

@@ -1,14 +1,44 @@
 import { axiosInstance } from './../api/axios';
 import { getUserID } from './../api/session';
 import {
+  DELETE_WIDGET,
+  DELETE_WIDGET_FULFILLED,
+  DELETE_WIDGET_REJECTED,
+  FETCH_WIDGETS,
+  FETCH_WIDGETS_FULFILLED,
+  FETCH_WIDGETS_REJECTED,
   FETCH_LAYOUT,
   FETCH_LAYOUT_FULFILLED,
   FETCH_LAYOUT_REJECTED,
   UPDATE_LAYOUT,
-  FETCH_WIDGETS,
-  FETCH_WIDGETS_FULFILLED,
-  FETCH_WIDGETS_REJECTED,
 } from './../constants';
+
+export const deleteWidget = (widgetId) => {
+  return (dispatch) => {
+    dispatch({
+      type: DELETE_WIDGET,
+    });
+
+    const requestData = {
+      userID: getUserID(),
+      widgetID: widgetId,
+    };
+
+    axiosInstance
+      .post('/widgets/delete_widget', requestData)
+      .then((response) => {
+        dispatch({
+          type: DELETE_WIDGET_FULFILLED,
+        })
+      })
+      .catch((error) => {
+        dispatch({
+          type: DELETE_WIDGET_REJECTED,
+          payload: error,
+        })
+      })
+  }
+};
 
 export const fetchLayout = () => {
   return (dispatch) => {
