@@ -29,7 +29,7 @@ class GetConfig(object):
         self.name = cls_name
         if not config_path:
             self.working_dir = self.get_working_directory()
-            config_path = os.path.join(self.working_dir, 'config.yml')
+            config_path = os.path.join(self.working_dir, 'config.env.yml')
 
         self.config = Configurations.get_configurations(config_path)
         if category:
