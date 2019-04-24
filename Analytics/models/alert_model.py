@@ -45,6 +45,22 @@ class AlertWidgetModel(db.Model):
         self.min_threshold = min_threshold
         self.activated = activated
 
+    def __eq__(self, alert: db.Model) -> bool:
+        """
+        Check two AlertWidgetModels are equal
+        :param alert:
+        :return: If equal return true otherwise return False
+        """
+        if not isinstance(alert, AlertWidgetModel):
+            return False
+
+        if (self.attribute_id == alert.attribute_id
+                and self.min_threshold == alert.min_threshold
+                and self.max_threshold == alert.max_threshold
+                and self.user_id == alert.user_id
+                and self.widget_id == alert.widget_id):
+            return True
+
     @property
     def json(self) -> dict:
         """

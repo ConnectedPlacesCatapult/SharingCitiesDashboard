@@ -12,31 +12,45 @@ class DeleteAlerts(Resource):
 
     def __init__(self) -> None:
         self.reqparser = reqparse.RequestParser()
-        self.reqparser.add_argument('alert_id', required=False, type=int,
-                                    help='User Id missing')
+        self.reqparser.add_argument('id', required=False, type=int,
+                                    store_missing=False)
         self.reqparser.add_argument('user_id', required=False, type=int,
-                                    help='User Id missing')
+                                    store_missing=False)
         self.reqparser.add_argument('attribute_id', required=False, type=str,
-                                    help='Attribute Id missing')
+                                    store_missing=False)
 
     @jwt_required
     def post(self):
         args = self.reqparser.parse_args()
+
+        # Check minimum arguments required for a deletion are present
         if all(arg not in args for arg in
-               ["user_id", "attribute_id", "alert_id"]):
+               ["user_id", "attribute_id", "id"]):
+            # Return error, Not enough arguments to make a deletion
             return (dict(
                 error="Insufficient Arguments",
                 possible_args="user_id, attribute_id, alert_id"),
                     HTTPStatus.BAD_REQUEST)
+
+        # Check if a user_id was supplied, if not get current user_id
         if "user_id" not in args:
             user = Users.find_by_email(get_jwt_identity())
             if user:
                 args["user_id"] = user.id
-        return "",200
-        max_alerts = AlertWidgetModel.get_max_alerts(
-            args["attribute_id"], args["value"])
+            else:
+                # Unable to resolve user_id return error
+                return (dict(error="Cannot resolve user id"),
+                        HTTPStatus.INTERNAL_SERVER_ERROR)
 
-        min_alerts = AlertWidgetModel.get_min_alerts(
-            args["attribute_id"], args["value"])
+        # Get Alerts
+        print(args)
+        alerts = AlertWidgetModel.get_by_kwargs(**args)
 
-        return dict(max=max_alerts, min=min_alerts), 200
+        for alert in alerts:
+            print(alert.json)
+            alert.delete()
+            alert.commit()
+            print(alert.json)
+
+
+        return [alert.json for alert in alerts], 200
