@@ -50,3 +50,4 @@ def update_attribute_ranges(func: Callable) -> Callable:
                 new_range_entry.commit()
 
     return range_wrapper
+
