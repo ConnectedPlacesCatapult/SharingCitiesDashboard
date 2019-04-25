@@ -12,11 +12,15 @@
   margin: 0 19px;
 }
 
+.leaflet-popup-content p {
+  margin: 0;
+}
+
 a.leaflet-popup-close-button {
   right: 19px;
 }
 
 .leaflet-popup-tip {
-  background-color: rgb(129, 207, 199);
+  background-color: #42465a;
   box-shadow: none;
 }
