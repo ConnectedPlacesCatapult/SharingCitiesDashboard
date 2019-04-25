@@ -17,7 +17,8 @@ import {
   WIDGET_TYPE_FORECAST,
   WIDGET_TYPE_MAP,
   WIDGET_TYPE_PLOT,
-} from "../constants";
+} from './../constants';
+import { fetchLayout, fetchWidgets } from './dashboardActions';
 
 export const closeEditor = () => ({
   type: EDITOR_CLOSE,
@@ -88,6 +89,9 @@ export const saveWidget = (mode, widget) => {
     }
 
     axiosInstance.post(endpoint, requestData).then((response) => {
+      dispatch(fetchWidgets());
+      dispatch(fetchLayout());
+
       dispatch({
         type: EDITOR_SAVE_WIDGET_FULFILLED,
         payload: response.data,

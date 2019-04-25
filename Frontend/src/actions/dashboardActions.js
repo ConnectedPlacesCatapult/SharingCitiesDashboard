@@ -21,7 +21,7 @@ export const deleteWidget = (widgetId) => {
 
     const requestData = {
       userID: getUserID(),
-      widgetID: widgetId,
+      widgetID: parseInt(widgetId),
     };
 
     axiosInstance
@@ -29,6 +29,7 @@ export const deleteWidget = (widgetId) => {
       .then((response) => {
         dispatch({
           type: DELETE_WIDGET_FULFILLED,
+          payload: parseInt(widgetId),
         })
       })
       .catch((error) => {
@@ -41,6 +42,8 @@ export const deleteWidget = (widgetId) => {
 };
 
 export const fetchLayout = () => {
+  console.log('fetchLayout called');
+
   return (dispatch) => {
     dispatch({
       type: FETCH_LAYOUT,
@@ -74,11 +77,6 @@ export const fetchLayout = () => {
       })
   }
 };
-
-export const updateLayout = (layout) => ({
-  type: UPDATE_LAYOUT,
-  payload: layout,
-});
 
 export const fetchWidgets = () => {
   return (dispatch) => {
@@ -128,3 +126,8 @@ export const fetchWidgets = () => {
       })
   }
 };
+
+export const updateLayout = (layout) => ({
+  type: UPDATE_LAYOUT,
+  payload: layout,
+});
