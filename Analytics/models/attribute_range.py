@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 import json
+from typing import Union
 
 from sqlalchemy.exc import IntegrityError
 
@@ -23,7 +24,8 @@ class AttributeRange(db.Model):
     maximum = db.Column(db.Float)
     latest_update = db.Column(db.DateTime)
 
-    def __init__(self, attribute_id: int, minimum: float, maximum: float,
+    def __init__(self, attribute_id: int, minimum: Union[float, None],
+                 maximum:Union[float, None],
                  timestamp: datetime = datetime.now()):
         """
         Initialise the Attribute Range object instance
