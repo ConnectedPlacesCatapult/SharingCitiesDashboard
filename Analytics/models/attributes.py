@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import desc, func
 from sqlalchemy.exc import IntegrityError, DataError
 from sqlalchemy.sql.expression import cast
-from sqlalchemy import Float
+from sqlalchemy import Float, desc, asc
 from typing import Union
 
 from db import db
@@ -202,24 +202,45 @@ class Attributes(db.Model):
             return None
 
     @classmethod
-    def attribute_min_max(cls, attribute_table: str)->(Union[float, int, None],
-                                                       Union[float, int,
-                                                             None]):
+    def attribute_max(cls, attribute_table: str)->(Union[db.Model, None]):
         """
-        Retrieve the minimum and maximum value of an attribute
+        Retrieve the maximum value of an attribute
         :param attribute_table: name of attribute data table
-        :return: minimum and maximum attribute value
+        :return: maximum attribute value
         """
 
         attribute_data_model = ModelClass(attribute_table.lower())
-        attr_min, attr_max = None, None
+        attr_max = None
         try:
-            attr_min = db.session.query(func.min(cast(
-                attribute_data_model.value, Float))).scalar()
-            attr_max = db.session.query(func.max(cast(
-                attribute_data_model.value, Float))).scalar()
+            max_attribute_entries = db.session.query(
+                attribute_data_model).order_by(
+                desc(cast(attribute_data_model.value, Float))).first()
+            attr_max = max_attribute_entries
+
         except DataError:
             db.session.rollback()
 
         db.metadata.clear()
-        return attr_min, attr_max
+        return attr_max
+
+    @classmethod
+    def attribute_min(cls, attribute_table: str) -> (Union[db.Model, None]):
+        """
+        Retrieve the minimum value of an attribute
+        :param attribute_table: name of attribute data table
+        :return: minimum attribute value
+        """
+
+        attribute_data_model = ModelClass(attribute_table.lower())
+        attr_min = None
+        try:
+            min_attribute_entries = db.session.query(
+                attribute_data_model).order_by(asc(
+                cast(attribute_data_model.value, Float))).first()
+            attr_min = min_attribute_entries
+
+        except DataError:
+            db.session.rollback()
+
+        db.metadata.clear()
+        return attr_min
