@@ -212,10 +212,10 @@ class Attributes(db.Model):
         attribute_data_model = ModelClass(attribute_table.lower())
         attr_max = None
         try:
-            max_attribute_entries = db.session.query(
+            attr_max = db.session.query(
                 attribute_data_model).order_by(
-                desc(cast(attribute_data_model.value, Float))).first()
-            attr_max = max_attribute_entries
+                desc(cast(attribute_data_model.value, Float))).order_by(
+                asc(attribute_data_model.timestamp)).first()
 
         except DataError:
             db.session.rollback()
@@ -234,10 +234,10 @@ class Attributes(db.Model):
         attribute_data_model = ModelClass(attribute_table.lower())
         attr_min = None
         try:
-            min_attribute_entries = db.session.query(
-                attribute_data_model).order_by(asc(
-                cast(attribute_data_model.value, Float))).first()
-            attr_min = min_attribute_entries
+            attr_min = db.session.query(
+                attribute_data_model).order_by(
+                asc(cast(attribute_data_model.value, Float))).order_by(
+                asc(attribute_data_model.timestamp)).first()
 
         except DataError:
             db.session.rollback()
