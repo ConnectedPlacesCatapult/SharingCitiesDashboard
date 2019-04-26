@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask_jwt_extended import jwt_required, get_jwt_claims, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -11,32 +11,55 @@ from models.users import Users
 class DeleteAlerts(Resource):
 
     def __init__(self) -> None:
+        """
+        Instantiate Reqparer for POST request
+        """
         self.reqparser = reqparse.RequestParser()
-        self.reqparser.add_argument('alert_id', required=False, type=int,
-                                    help='User Id missing')
+        self.reqparser.add_argument('id', required=False, type=int,
+                                    store_missing=False)
         self.reqparser.add_argument('user_id', required=False, type=int,
-                                    help='User Id missing')
+                                    store_missing=False)
         self.reqparser.add_argument('attribute_id', required=False, type=str,
-                                    help='Attribute Id missing')
+                                    store_missing=False)
 
     @jwt_required
-    def post(self):
+    def post(self) -> ({str: str}, int):
+        """
+        Delete Widget Alerts
+        :return: On success, A Tuple containing a JSON with a message and a
+                 list of deleted Alerts and an HTTP status code otherwise an
+                 appropriate error message and HTTP status code
+        """
         args = self.reqparser.parse_args()
+
+        # Check if enough arguments where passed to perform a deletion
         if all(arg not in args for arg in
-               ["user_id", "attribute_id", "alert_id"]):
+               ["user_id", "attribute_id", "id"]):
+            # Return an error responseDid not receive enough
+            # arguments to find an alert accurately
             return (dict(
                 error="Insufficient Arguments",
                 possible_args="user_id, attribute_id, alert_id"),
                     HTTPStatus.BAD_REQUEST)
+
+        # Use current user_id if not user_id was parsed
         if "user_id" not in args:
             user = Users.find_by_email(get_jwt_identity())
             if user:
                 args["user_id"] = user.id
-        return "",200
-        max_alerts = AlertWidgetModel.get_max_alerts(
-            args["attribute_id"], args["value"])
+            else:
+                # Return Error current user id not found
+                return (dict(error="User id not found for Current user, "
+                                   "User session may have timed out"),
+                        HTTPStatus.INTERNAL_SERVER_ERROR)
 
-        min_alerts = AlertWidgetModel.get_min_alerts(
-            args["attribute_id"], args["value"])
+        # Get Alerts using parsed args as filter arguments
+        alerts = AlertWidgetModel.get_by_kwargs(**args)
+        response_data = []
+        for alert in alerts:
+            response_data.append(alert.json)
+            alert.delete()
 
-        return dict(max=max_alerts, min=min_alerts), 200
+        AlertWidgetModel.commit()
+
+        return dict(message="Alert(s) Deleted", alerts=response_data), 200

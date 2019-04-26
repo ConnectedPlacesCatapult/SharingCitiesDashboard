@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_restful import Api
+import redis
 
 from db import db
 from models.revoked_tokens import RevokedTokens
@@ -68,6 +69,8 @@ from resources.alerts.check_alerts import CheckAlerts
 from resources.alerts.get_alerts import GetAlerts
 from resources.alerts.delete_alert import DeleteAlerts
 
+from resources.alerts.push_alert import PushAlert
+
 def create_app(**config_overrides):
 
     app = Flask(__name__)
@@ -75,6 +78,9 @@ def create_app(**config_overrides):
 
     CORS(app)
     api = Api(app)
+    redis_client = redis.StrictRedis()
+
+    app.config.update(redis_client=redis_client)
 
     # # Configure application to store JWTs in cookies. Whenever you make
     # # a request to a protected endpoint, you will need to send in the
@@ -220,6 +226,36 @@ def create_app(**config_overrides):
     api.add_resource(CheckAlerts, '/alert/check_alerts')
     api.add_resource(GetAlerts, '/alert/get_alerts')
     api.add_resource(DeleteAlerts, '/alert/delete_alerts')
+    api.add_resource(PushAlert, '/alerts/triggered')
+
+    # @app.route('/')
+    # def home():
+    #     return """
+    #         <!doctype html>
+    #         <title>chat</title>
+    #         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    #         <style>body { background: black; color: #fff; font: 16px/1.6 menlo, monospace; }</style>
+    #         <p><b>hi!</b></p>
+    #         <p>Message: <input id="in" /></p>
+    #         <pre id="out"></pre>
+    #         <script>
+    #             function sse() {
+    #                 var source = new EventSource('/alerts/triggered');
+    #                 var out = document.getElementById('out');
+    #                 source.onmessage = function(e) {
+    #                     // XSS in chat is fun
+    #                     out.innerHTML =  e.data + '\\n' + out.innerHTML;
+    #                 };
+    #             }
+    #             $('#in').keyup(function(e){
+    #                 if (e.keyCode == 13) {
+    #                     $.post('/alerts/triggered', {'message': $(this).val()});
+    #                     $(this).val('');
+    #                 }
+    #             });
+    #             sse();
+    #         </script>
+    #     """
 
 
     return app

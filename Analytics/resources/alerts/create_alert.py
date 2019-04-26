@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from flask_restful import inputs
 from flask_restful import reqparse
@@ -10,11 +10,18 @@ from models.users import Users
 
 
 class CreateAlert(Resource):
+    """
+    Create an AlertWidget. Takes a minimum and maximum threshold value, An
+    attribute id, widget id and a optional user id
+    """
 
     def __init__(self) -> None:
+        """
+        Instantiate Reparser for POST request
+        """
         self.reqparser = reqparse.RequestParser()
-        self.reqparser.add_argument('user_id', required=True, type=int,
-                                    help='User Id missing',
+        self.reqparser.add_argument('user_id', required=False, type=int,
+                                    store_missing=False,
                                     location=['form', 'json'])
         self.reqparser.add_argument('widget_id', required=True, type=int,
                                     help='User Id missing',
@@ -36,25 +43,41 @@ class CreateAlert(Resource):
                                     location=['form', 'json'])
 
     @jwt_required
-    def post(self):
+    def post(self) -> ({str: str}, HTTPStatus):
+        """
+        Create an Alert
+        :return: On Success Return the new AlertWidget Id and an HTTPStatus 204
+                (Created), Otherwise return an Error with the appropriate
+                HTTPStatus code
+        """
         args = self.reqparser.parse_args()
 
-        if not Users.find_by_id(args["user_id"]):
+        if "user_id" not in args:
+            user = Users.find_by_email(get_jwt_identity())
+            if user:
+                args["user_id"] = user.id
+            else:
+                # Return Error current user id not found
+                return (dict(error="User id not found for Current user, "
+                                   "User session may have timed out"),
+                        HTTPStatus.INTERNAL_SERVER_ERROR)
+
+        elif not Users.find_by_id(args["user_id"]):
             return dict(error="User id {} not found".format(
                 args["user_id"])), HTTPStatus.NOT_FOUND
 
         if "max_threshold" not in args and "min_threshold" not in args:
             return dict(
-                error="Threshold value required"), HTTPStatus.BAD_REQUEST
+                error="Threshold values required"), HTTPStatus.BAD_REQUEST
 
-        alertModel = AlertWidgetModel(args["user_id"], args["widget_id"],
+        alert_model = AlertWidgetModel(args["user_id"], args["widget_id"],
                                       args["attribute_id"],
                                       args["max_threshold"],
                                       args["min_threshold"], args["activated"])
-        if not alertModel:
+        if not alert_model:
             return dict(error="Unable to create Alert", args=args), \
                    HTTPStatus.INTERNAL_SERVER_ERROR
 
-        alertModel.save()
-        alertModel.commit()
-        return dict(id=alertModel.id), HTTPStatus.CREATED
+        alert_model.save()
+        alert_model.commit()
+        return dict(id=alert_model.id), HTTPStatus.CREATED
