@@ -9,6 +9,18 @@ from models.users import Users
 
 
 class DeleteAlerts(Resource):
+    """
+    Delete an Alert
+    Use a Post request to delete an Alert. The following parameters can be
+    parsed as a JSON body content:
+        * id: Alert Id
+        * user_id: User Id
+        * attribute_Id
+
+    All parameters are optional but at least one of the above parameters are
+    required.
+
+    """
 
     def __init__(self) -> None:
         """
@@ -23,12 +35,13 @@ class DeleteAlerts(Resource):
                                     store_missing=False)
 
     @jwt_required
-    def post(self) -> ({str: str}, int):
+    def post(self) -> (dict, HTTPStatus):
         """
         Delete Widget Alerts
-        :return: On success, A Tuple containing a JSON with a message and a
-                 list of deleted Alerts and an HTTP status code otherwise an
-                 appropriate error message and HTTP status code
+        :return: On success, A HTTP response with a a JSON body content
+                 containing  a message, a list of deleted Alerts and an HTTP
+                 status code 200 (OK) otherwise an appropriate error message
+                 and an appropriate HTTP status code
         """
         args = self.reqparser.parse_args()
 

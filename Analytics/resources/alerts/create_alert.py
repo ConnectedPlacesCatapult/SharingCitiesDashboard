@@ -11,7 +11,7 @@ from models.users import Users
 
 class CreateAlert(Resource):
     """
-    Create an AlertWidget. Takes a minimum and maximum threshold value, An
+    Create an Alert. Takes a minimum and maximum threshold value, An
     attribute id, widget id and a optional user id
     """
 
@@ -24,7 +24,7 @@ class CreateAlert(Resource):
                                     store_missing=False,
                                     location=['form', 'json'])
         self.reqparser.add_argument('widget_id', required=True, type=int,
-                                    help='User Id missing',
+                                    help='widget Id missing',
                                     location=['form', 'json'])
         self.reqparser.add_argument('activated', required=False,
                                     type=inputs.boolean,
@@ -43,7 +43,7 @@ class CreateAlert(Resource):
                                     location=['form', 'json'])
 
     @jwt_required
-    def post(self) -> ({str: str}, HTTPStatus):
+    def post(self) -> (dict, HTTPStatus):
         """
         Create an Alert
         :return: On Success Return the new AlertWidget Id and an HTTPStatus 204
@@ -53,6 +53,7 @@ class CreateAlert(Resource):
         args = self.reqparser.parse_args()
 
         if "user_id" not in args:
+            # Not user_id in args get current user_id
             user = Users.find_by_email(get_jwt_identity())
             if user:
                 args["user_id"] = user.id
@@ -63,21 +64,27 @@ class CreateAlert(Resource):
                         HTTPStatus.INTERNAL_SERVER_ERROR)
 
         elif not Users.find_by_id(args["user_id"]):
+            # User not found return an error
             return dict(error="User id {} not found".format(
                 args["user_id"])), HTTPStatus.NOT_FOUND
 
         if "max_threshold" not in args and "min_threshold" not in args:
+            # No Threshold value in args at least one is required return an error
             return dict(
-                error="Threshold values required"), HTTPStatus.BAD_REQUEST
+                error="A Threshold value is required"), HTTPStatus.BAD_REQUEST
 
+        # Create AlertModel
         alert_model = AlertWidgetModel(args["user_id"], args["widget_id"],
                                       args["attribute_id"],
                                       args["max_threshold"],
                                       args["min_threshold"], args["activated"])
+
         if not alert_model:
+            # Unable to create AlertModel return an error
             return dict(error="Unable to create Alert", args=args), \
                    HTTPStatus.INTERNAL_SERVER_ERROR
-
+        # Persist Alert to database
         alert_model.save()
         alert_model.commit()
+
         return dict(id=alert_model.id), HTTPStatus.CREATED
