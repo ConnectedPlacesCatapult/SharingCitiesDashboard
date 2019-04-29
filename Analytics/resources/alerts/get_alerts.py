@@ -8,7 +8,7 @@ from models.alert_model import AlertWidgetModel
 
 
 class GetAlerts(Resource):
-    """ Get Alerts by User Id and/or Attribute Id """
+    """ Get alerts by User Id and/or Attribute Id """
 
     def __init__(self) -> None:
         """ Instantiate Reqparse"""
@@ -23,9 +23,9 @@ class GetAlerts(Resource):
     @jwt_required
     def get(self) -> (dict, HTTPStatus):
         """
-        Get Alerts by User Id and/or Attribute Id
-        :return: An HTTP Response with a JSON Body content containing a list of
-                Alerts matching the parsed Post request arguments on success,
+        Get alerts by User Id and/or Attribute Id
+        :return: An HTTP Response with a JSON body content containing a list of
+                alerts matching the parsed POST request arguments on success,
                 otherwise an empty list is returned
         """
         args = self.reqparser.parse_args()

@@ -14,7 +14,6 @@ class CheckAlerts(Resource):
     """
     Check For Widget Alerts that have been triggered. Using a Get request with
     the following GET params:
-
     * user_id: User Id, If the User Id is not parsed the current User Id  is used
     * attribute_id: Attribute Id
 
@@ -32,7 +31,6 @@ class CheckAlerts(Resource):
     def get(self) -> (dict, HTTPStatus):
         """
         Check for triggered Alerts
-
         :return: On Success, An HTTP Response with a JSON body content
         containing the Maximum and Minimum Alerts that have been  exceeded with
         an HTTPStatus code of 200 (OK), otherwise An HTTP Response with a JSON

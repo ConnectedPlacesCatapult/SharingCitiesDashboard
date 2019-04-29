@@ -13,10 +13,10 @@ from models.attribute_range import AttributeRange
 
 class PushAlert(Resource):
     """
-    Create Push Alert. Use Server Side Event to push Alert Notifications to
-    Client side Alert Widgets
+    Create a push alert. Use a  SSE (Server Side Event) to push alert
+    notifications to the client side
 
-    A Get Request is use to create a socket between server and client. A redis
+    A GET request is use to create a socket between server and client. A redis
     subject is created using the user_id. 'widget_alert/<user_id>'
 
     The following parameters are required in the query string of the GET request
@@ -31,7 +31,7 @@ class PushAlert(Resource):
 
     def event_stream(self, user_id: int) -> str:
         """
-        Create Server Side Event Stream Generator to Push Data to Client
+        Create SSE (Server Side Event) stream generator to push data to Client
         :param user_id: User Id
         :return: Alert Details as a str
         """
@@ -54,8 +54,8 @@ class PushAlert(Resource):
     def check_alerts(cls, attribute_range: AttributeRange) -> Union[
         NoReturn, tuple]:
         """
-        Check if any of the Alert thresholds have been exceeded and publish
-        the Alerts that have been exceeded to the redis subject
+        Check if any of the alert thresholds have been exceeded and publish
+        the alerts that have been exceeded to the redis subject
         :param attribute_range: Attribute range
         :return: None on success, otherwise an error
                message with an HTTP status code 400 (Bad Request)

@@ -11,7 +11,7 @@ from models.users import Users
 
 class CreateAlert(Resource):
     """
-    Create an Alert. Takes a minimum and maximum threshold value, An
+    Create an alert. Takes a minimum and maximum threshold value, an
     attribute id, widget id and a optional user id
     """
 
@@ -45,7 +45,7 @@ class CreateAlert(Resource):
     @jwt_required
     def post(self) -> (dict, HTTPStatus):
         """
-        Create an Alert
+        Create an alert
         :return: On Success Return the new AlertWidget Id and an HTTPStatus 204
                 (Created), Otherwise return an Error with the appropriate
                 HTTPStatus code
