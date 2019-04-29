@@ -41,6 +41,7 @@ def update_attribute_ranges(import_function: Callable) -> Callable:
                         attribute_range.latest_update = datetime.now()
                         attribute_range.save()
                         attribute_range.commit()
+                        PushAlert.check_alerts(attribute_range)
 
             else:
                 attr_min, attr_max = Attributes.attribute_min_max(
@@ -49,5 +50,6 @@ def update_attribute_ranges(import_function: Callable) -> Callable:
                                                  attr_max, datetime.now())
                 new_range_entry.save()
                 new_range_entry.commit()
-        PushAlert.check_alerts()
+                PushAlert.check_alerts(new_range_entry)
+
     return range_wrapper

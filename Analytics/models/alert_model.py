@@ -78,6 +78,7 @@ class AlertWidgetModel(db.Model):
         except IntegrityError as ie:
             db.session.rollback()
             logger.error(ie)
+
     @staticmethod
     def commit() -> NoReturn:
         """
