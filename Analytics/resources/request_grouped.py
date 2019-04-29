@@ -154,7 +154,6 @@ def request_harmonised_data(data, harmonising_method):
 	df = pd.read_json(json.dumps(data), orient = 'records')
 	harm_df = pd.DataFrame(columns=['Attribute_Name','Attribute_Table',
                                         'Sensor_id', 'Timestamp', 'Value'])
-	temp = pd.DataFrame()
     ### Get the attributes
 	for attribute in range(len(df)):
 
@@ -186,39 +185,22 @@ def request_harmonised_data(data, harmonising_method):
 		_lon = []
 
 		for sensor in harm_df.Sensor_id.unique():
-			sens = Sensor.get_by_id(sensor)
-			if not sens:
-				_temp_s = {
-					'id': sensor,
-					'Api id': "Not Found",
-					'Location id': 10000,
-					'Name': "Not Found",
-					'Timestamp': "None"
-				}
-			else:
-				_temp_s = sens.json()
+			_temp_s = (Sensor.get_by_id(sensor)).json()
 			_sensor_names.append(_temp_s["Name"])
 			_l_id.append(_temp_s["Location id"])
 
 		for l in _l_id:
-			location = Location.get_by_id(l)
-			if not location:
-				_temp_l["Latitude"] = 0.0
-				_temp_l["Longitude"] = 0.0
-
-			else:
-				_temp_l = location.json()
+			_temp_l = (Location.get_by_id(l)).json()
 			_lat.append(_temp_l["Latitude"])
 			_lon.append(_temp_l["Longitude"])
 		
 		temp = pd.DataFrame(data = harm_df.Sensor_id.unique(),
-			columns=['Sensor'
-					 '_id'])
+			columns=['Sensor_id'])
 
 		temp['Name'] = _sensor_names
 		temp['Latitude'] = _lat
 		temp['Longitude'] = _lon
-	print(temp.to_string())
+
 	if per_sensor:
 		harm_df = pd.merge(harm_df.reset_index(drop=True),temp, 
 		                           on ='Sensor_id', how='left')
