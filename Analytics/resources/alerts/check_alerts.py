@@ -16,7 +16,6 @@ class CheckAlerts(Resource):
     the following GET params:
     * user_id: User Id, If the User Id is not parsed the current User Id  is used
     * attribute_id: Attribute Id
-
     """
 
     def __init__(self) -> None:

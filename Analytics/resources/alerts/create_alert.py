@@ -46,9 +46,9 @@ class CreateAlert(Resource):
     def post(self) -> (dict, HTTPStatus):
         """
         Create an alert
-        :return: On Success Return the new AlertWidget Id and an HTTPStatus 204
-                (Created), Otherwise return an Error with the appropriate
-                HTTPStatus code
+        :return: On success return the new alert Id and an HTTP status code 201
+                (Created), Otherwise return an error with the appropriate
+                HTTP status code
         """
         args = self.reqparser.parse_args()
 
