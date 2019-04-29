@@ -43,14 +43,14 @@ class AttributeRange(db.Model):
         :param minimum: minimum value for the attribute
         :param minimum_recorded_date: Timestamp of when the minimum
                                       attribute value was recorded
-        :param minimum_sensor_id: ID of the sensor that sensed the maximum
+        :param maximum_sensor_id: ID of the sensor that sensed the maximum
                                   attribute value
         :param maximum: maximum value for the attribute
         :param maximum_recorded_date: Timestamp of when the maximum
                                       attribute value was recorded
         :param timestamp: when the Attribute Range entry was last updated
         """
-        
+
         self.attribute_id = attribute_id
         self.minimum_sensor_id = minimum_sensor_id
         self.minimum = minimum
