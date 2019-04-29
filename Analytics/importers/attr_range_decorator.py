@@ -97,7 +97,7 @@ def update_attribute_ranges(import_function: Callable) -> Callable:
 
 def check_min_and_max_alert_widgets(attribute_range_entry: db.Model):
     """
-    Check whether emails need to be sent to users for their alert widgets
+    Send emails to users for alert widgets that have been triggered
     :param attribute_range_entry: Entry in the attribute range table
     """
 
