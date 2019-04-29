@@ -193,7 +193,7 @@ def send_alert_email(email: str, username: str, attribute: str,
             sensor_lat = loc.lat
             sensor_lon = loc.lon
     else:
-        logger.error("Could not include sensor information in alert "
+        logger.info("Could not include sensor information in alert "
                      "email as sensor with ID {} does not "
                      "exist".format(sensor_id))
 
