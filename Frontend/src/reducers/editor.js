@@ -1,5 +1,8 @@
 import {
   EDITOR_CLOSE,
+  EDITOR_GET_THEME_TREE,
+  EDITOR_GET_THEME_TREE_FULFILLED,
+  EDITOR_GET_THEME_TREE_REJECTED,
   EDITOR_OPEN,
   EDITOR_SET_WIDGET_PROPERTY,
   EDITOR_SET_WIDGET_CONFIG_PROPERTY,
@@ -16,6 +19,10 @@ const initialState = {
   open: false,
   mode: null,
   widget: null,
+  themeTree: [],
+  fetching: false,
+  fetched: false,
+  error: null,
 };
 
 const getWidgetDefaultProperties = (currentProperties) => {
@@ -101,6 +108,31 @@ export default (state=initialState, action={}) => {
       return {
         ...state,
         open: false,
+      }
+    }
+
+    case EDITOR_GET_THEME_TREE: {
+      return {
+        ...state,
+        fetching: true,
+      }
+    }
+
+    case EDITOR_GET_THEME_TREE_FULFILLED: {
+      return {
+        ...state,
+        fetching: false,
+        fetched: true,
+        themeTree: action.payload,
+      }
+    }
+
+    case EDITOR_GET_THEME_TREE_REJECTED: {
+      return  {
+        ...state,
+        fetching: false,
+        fetched: false,
+        error: action.payload,
       }
     }
 

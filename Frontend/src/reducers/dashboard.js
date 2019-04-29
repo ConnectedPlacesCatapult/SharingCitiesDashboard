@@ -1,4 +1,6 @@
 import {
+  DELETE_WIDGET_FULFILLED,
+  DELETE_WIDGET_REJECTED,
   FETCH_LAYOUT,
   FETCH_LAYOUT_FULFILLED,
   FETCH_LAYOUT_REJECTED,
@@ -18,6 +20,21 @@ const initialState = {
 
 export default (state=initialState, action={}) => {
   switch (action.type) {
+
+    case DELETE_WIDGET_FULFILLED: {
+      return {
+        ...state,
+        layout: state.layout.filter((item) => parseInt(item.i) !== action.payload),
+        widgets: state.widgets.filter((widget) => parseInt(widget.i) !== action.payload),
+      }
+    }
+
+    case DELETE_WIDGET_REJECTED: {
+      return {
+        ...state,
+        error: action.payload,
+      }
+    }
 
     case FETCH_LAYOUT: {
       return {

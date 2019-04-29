@@ -108,18 +108,15 @@ class MapPreview extends React.Component {
   }
 
   componentDidMount() {
-    //this.element = this.mapRef.getLeafletElement();
 
-    //console.log(this.mapRef);
-    //console.log(element);
   }
 
   componentDidUpdate(prevProps) {
     const { editor } = this.props;
 
-    /*if (this.mapRef.current) {
+    if (this.mapRef.current) {
       this.mapRef.current.leafletElement.invalidateSize();
-    }*/
+    }
 
     /*if (editor.widget.width !== prevProps.editor.widget.width || editor.widget.height !== prevProps.editor.widget.height) {
       console.log('width or height updated');
@@ -137,13 +134,15 @@ class MapPreview extends React.Component {
     if (this.mapRef.current && editor.widget.config.bounds) {
       const map = this.mapRef.current.leafletElement;
 
-      map.fitBounds(editor.widget.config.bounds);
+      // ToDo :: figure out why this triggers a recursion crash :/
+
+      //console.log(this.mapRef.current, editor.widget.config.bounds);
+
+      //map.fitBounds(editor.widget.config.bounds);
 
       // console.log(this.mapRef.current.leafletElement);
       // const bounds = this.mapRef.current.leafletElement.getBounds();
       // console.log(bounds);
-
-
     }
   }
 
@@ -294,9 +293,6 @@ class MapPreview extends React.Component {
     const featureLayers = attributes.map((attribute, i) => {
       const attributeFeatures = data.features.filter((feature) => feature.properties['Attribute_Name'] === attribute);
       const markers = attributeFeatures.map((feature, ii) => {
-
-        console.log(feature);
-
         return (
           <CircleMarker
             key={ii}
@@ -308,7 +304,7 @@ class MapPreview extends React.Component {
           >
             <Popup>
               <Paper
-              className={classes.popupList}>
+                className={classes.popupList}>
                 <Typography variant="h6" className={classes.popupTitle}>
                   {feature.properties["Name"]}
                 </Typography>

@@ -39,6 +39,9 @@ class Configurations(object):
         new instance.
         :param config_path: Absolute path to configurations file
         """
+        # if Configurations.__instance is not None:
+        #     raise Exception("Configurations have already been loaded")
+        # else:
         Configurations.__instance = self
 
         if config_path:
