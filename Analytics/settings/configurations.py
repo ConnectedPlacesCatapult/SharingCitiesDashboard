@@ -44,9 +44,9 @@ class Configurations(object):
         # else:
         Configurations.__instance = self
 
-        if config_path:
-            Configurations.__config_lib[
-                config_path] = self.get_config_from_file(config_path)
+            if config_path:
+                Configurations.__config_lib[
+                    config_path] = self.get_config_from_file(config_path)
 
     @staticmethod
     def extract_sub_config(config: {str: Any}, category: str,
