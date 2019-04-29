@@ -166,10 +166,9 @@ def check_min_and_max_alert_widgets(attribute_range_entry: db.Model):
 
 
 def send_alert_email(email: str, username: str, attribute: str,
-                         value: Union[int,float],
-                         recorded_date: datetime, sensor_id: str,
-                         threshold: Union[int, float],
-                         alert_description: str) -> bool:
+                     value: Union[int,float], recorded_date: datetime,
+                     sensor_id: str, threshold: Union[int, float], 
+                     alert_description: str) -> bool:
 
     """
     Send attribute alert email to a user
