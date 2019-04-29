@@ -6,7 +6,6 @@ from flask_restful import Api
 
 from db import db
 from models.revoked_tokens import RevokedTokens
-from models.attribute_range import AttributeRange
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -69,13 +68,8 @@ from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
 from settings.get_config_decorator import GetConfig
 
-from resources.alerts.create_alert import CreateAlert
-from resources.alerts.check_alerts import CheckAlerts
-from resources.alerts.get_alerts import GetAlerts
-from resources.alerts.delete_alert import DeleteAlerts
 
 def create_app(**config_overrides):
-
     app = Flask(__name__)
     app.config.update(GetConfig.configure('postgres'))
 
@@ -222,6 +216,7 @@ def create_app(**config_overrides):
     api.add_resource(TestKeyValidity, "/sendgrid/test_key_validity")
     api.add_resource(ReplaceKey, "/sendgrid/replace_key")
 
+    # Alert Enpoints
     api.add_resource(CreateAlert, '/alert/create_alert')
     api.add_resource(CheckAlerts, '/alert/check_alerts')
     api.add_resource(GetAlerts, '/alert/get_alerts')
