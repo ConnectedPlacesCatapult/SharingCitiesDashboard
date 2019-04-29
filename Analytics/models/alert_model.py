@@ -139,13 +139,12 @@ class AlertWidgetModel(db.Model):
 
     @classmethod
     def get_max_alerts(cls, attribute_range: AttributeRange,
-                       user_id: Union[int, None] = None) -> [db.Model]:
+                       user_id: Union[int, None] = None) -> [dict]:
         """
         Get Maximum Threshold Alerts
         :param user_id: User Id
         :param attribute_range: AttributeRange object
-        :return: Triggered alert details containing user_id, Value,
-                Threshold value and type
+        :return: A list of Alerts that have exceeded the maximum threshold
         """
         results = list()
 
@@ -177,13 +176,12 @@ class AlertWidgetModel(db.Model):
 
     @classmethod
     def get_min_alerts(cls, attribute_range: AttributeRange,
-                       user_id: Union[int, None] = None) -> [db.Model]:
+                       user_id: Union[int, None] = None) -> [dict]:
         """
         Get Minimum Threshold Alerts
         :param user_id: User Id
         :param attribute_range: AttributeRange object
-        :return: Triggered alert details containing user_id, Value,
-                Threshold value and type
+        :return: A list of Alerts that have exceeded the minimum threshold
         """
         results = list()
         if not attribute_range.minimum:
