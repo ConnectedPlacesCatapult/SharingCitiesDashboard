@@ -184,7 +184,8 @@ class Attributes(db.Model):
         return Attributes.query.filter_by(id=attribute_id).first()
 
     @classmethod
-    def most_recent_timestamp(cls, attribute_table: str):
+    def most_recent_timestamp(cls, attribute_table: str) -> Union[datetime,
+                                                                  None]:
         """
         Return the most recent timestamp value from attribute_table
         :param attribute_table: name of attribute data table
@@ -202,7 +203,7 @@ class Attributes(db.Model):
             return None
 
     @classmethod
-    def attribute_max(cls, attribute_table: str)->(Union[db.Model, None]):
+    def attribute_max(cls, attribute_table: str) -> (Union[db.Model, None]):
         """
         Retrieve the maximum value of an attribute
         :param attribute_table: name of attribute data table
