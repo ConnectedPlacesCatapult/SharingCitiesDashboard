@@ -16,7 +16,7 @@ class AlertWidgetModel(db.Model):
     Create AlertWidget database model. Store Maximum and Minimum threshold
     values for attribute values per user.
     """
-    __tablename__ = 'Alerts'
+    __tablename__ = 'alerts'
     id = db.Column(db.Integer, primary_key=True)
     widget_id = db.Column(db.Integer, nullable=True)
     user_id = db.Column(db.Integer)
@@ -121,9 +121,11 @@ class AlertWidgetModel(db.Model):
         return cls.query.filter_by(activated=True).all()
 
     @classmethod
-    def get_max_alerts(cls, attribute_range: AttributeRange) -> [db.Model]:
+    def get_max_alerts(cls, attribute_range: AttributeRange,
+                       user_id: Union[int, None] = None) -> [db.Model]:
         """
         Get Maximum Threshold Alerts
+        :param user_id: User Id
         :param attribute_range: AttributeRange object
         :return: Triggered alert details containing user_id, Value,
                 Threshold value and type
@@ -133,7 +135,7 @@ class AlertWidgetModel(db.Model):
         if not attribute_range.maximum:
             return results
 
-        max_alerts = cls.query.filter(
+        max_alerts = not not cls.query.filter(
             cls.max_threshold <= attribute_range.maximum).filter(
             cls.attribute_id == attribute_range.attribute_id).all()
 
@@ -141,23 +143,27 @@ class AlertWidgetModel(db.Model):
             return []
 
         for alert in max_alerts:
-            alerts = dict()
-            alerts["id"] = alert.id
-            alerts["user_id"] = alert.user_id
-            alerts["widget_id"] = alert.widget_id
-            alerts["attribute_id"] = attribute_range.attribute_id
-            alerts["type"] = "Maximum Threshold Exceeded"
-            alerts["value"] = attribute_range.maximum
-            alerts["max_threshold"] = alert.max_threshold
-            alerts["timestamp"] = str(attribute_range.latest_update)
-            results.append(alerts)
+            if alert.activated is True:
+                if alert.user_id == user_id or not user_id:
+                    alerts = dict()
+                    alerts["id"] = alert.id
+                    alerts["user_id"] = alert.user_id
+                    alerts["widget_id"] = alert.widget_id
+                    alerts["attribute_id"] = attribute_range.attribute_id
+                    alerts["type"] = "Maximum Threshold Exceeded"
+                    alerts["value"] = attribute_range.maximum
+                    alerts["max_threshold"] = alert.max_threshold
+                    alerts["timestamp"] = str(attribute_range.latest_update)
+                    results.append(alerts)
 
         return results
 
     @classmethod
-    def get_min_alerts(cls, attribute_range: AttributeRange) -> [db.Model]:
+    def get_min_alerts(cls, attribute_range: AttributeRange,
+                       user_id: Union[int, None] = None) -> [db.Model]:
         """
         Get Minimum Threshold Alerts
+        :param user_id: User Id
         :param attribute_range: AttributeRange object
         :return: Triggered alert details containing user_id, Value,
                 Threshold value and type
@@ -174,15 +180,17 @@ class AlertWidgetModel(db.Model):
             return []
 
         for alert in min_alerts:
-            alerts = dict()
-            alerts["id"] = alert.id
-            alerts["user_id"] = alert.user_id
-            alerts["widget_id"] = alert.widget_id
-            alerts["attribute_id"] = attribute_range.attribute_id
-            alerts["type"] = "Minimum Threshold Exceeded"
-            alerts["value"] = attribute_range.minimum
-            alerts["min_threshold"] = alert.min_threshold
-            alerts["timestamp"] = str(attribute_range.latest_update)
-            results.append(alerts)
+            if alert.activated is True:
+                if alert.user_id == user_id or not user_id:
+                    alerts = dict()
+                    alerts["id"] = alert.id
+                    alerts["user_id"] = alert.user_id
+                    alerts["widget_id"] = alert.widget_id
+                    alerts["attribute_id"] = attribute_range.attribute_id
+                    alerts["type"] = "Minimum Threshold Exceeded"
+                    alerts["value"] = attribute_range.minimum
+                    alerts["min_threshold"] = alert.min_threshold
+                    alerts["timestamp"] = str(attribute_range.latest_update)
+                    results.append(alerts)
 
         return results
