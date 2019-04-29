@@ -48,7 +48,7 @@ class AlertWidgetModel(db.Model):
 
     def __eq__(self, alert: 'AlertWidgetModel') -> bool:
         """
-        Check two AlertWidgetModels are equal
+        Check two AlertWidgetModels are equal.
         :param alert: AlertWidgetModel to check for equality against
         :return: If equal return true otherwise return False
         """
