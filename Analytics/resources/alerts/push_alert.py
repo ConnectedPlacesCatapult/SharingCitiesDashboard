@@ -31,9 +31,9 @@ class PushAlert(Resource):
 
     def event_stream(self, user_id: int) -> str:
         """
-        Create SSE (Server Side Event) stream generator to push data to Client
-        :param user_id: User Id
-        :return: Alert Details as a str
+        Create SSE (Server Side Event) stream generator to push data to client
+        :param user_id: user Id
+        :return: alert details as a str
         """
         pubsub = self.red.pubsub()
         pubsub.subscribe('widget_alert/{}'.format(user_id))
@@ -82,7 +82,7 @@ class PushAlert(Resource):
     def get(self) -> flask.Response:
         """
         Create Socket for SSE (Server Side Event)
-        :return: SSE (Server Side Event) Socket data Generator
+        :return: SSE (Server Side Event) Socket data generator
         """
         args = self.reqparser.parse_args()
         return flask.Response(self.event_stream(args["user_id"]),
