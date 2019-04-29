@@ -5,6 +5,7 @@ from typing import Union, NoReturn
 from sqlalchemy.exc import IntegrityError
 
 from db import db
+from .attribute_range import AttributeRange
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
@@ -15,7 +16,7 @@ class AlertWidgetModel(db.Model):
     Create AlertWidget database model. Store Maximum and Minimum threshold
     values for attribute values per user.
     """
-    __tablename__ = 'Alerts'
+    __tablename__ = 'alerts'
     id = db.Column(db.Integer, primary_key=True)
     widget_id = db.Column(db.Integer, nullable=True)
     user_id = db.Column(db.Integer)
@@ -84,12 +85,6 @@ class AlertWidgetModel(db.Model):
             db.session.rollback()
             logger.error(ie)
 
-    def alert_exists(self, alert: 'AlertWidgetModel') -> 'AlertWidgetModel':
-        matched_alert = self.get_by_kwargs(**alert.json)
-        # TODO: Finish implementing checks for existing Alerts
-
-
-
     def delete(self) -> NoReturn:
         """
         Delete AlertWidgetModel
@@ -143,59 +138,76 @@ class AlertWidgetModel(db.Model):
         return cls.query.filter_by(activated=True).all()
 
     @classmethod
-    def get_max_alerts(cls, attribute_id: str,
-                       value: Union[float, int]) -> [db.Model]:
+    def get_max_alerts(cls, attribute_range: AttributeRange,
+                       user_id: Union[int, None] = None) -> [db.Model]:
         """
         Get Maximum Threshold Alerts
-        :param value: Maximum Value measured by sensor
-        :param attribute_id: Attribute Id
+        :param user_id: User Id
+        :param attribute_range: AttributeRange object
         :return: Triggered alert details containing user_id, Value,
                 Threshold value and type
         """
         results = list()
 
-        max_alerts = cls.query.filter(cls.max_threshold <= value).filter(
-            cls.attribute_id == attribute_id).all()
+        if not attribute_range.maximum:
+            return results
+
+        max_alerts = not not cls.query.filter(
+            cls.max_threshold <= attribute_range.maximum).filter(
+            cls.attribute_id == attribute_range.attribute_id).all()
 
         if len(max_alerts) <= 0:
             return []
 
         for alert in max_alerts:
-            alerts = dict()
-            alerts["user_id"] = alert.user_id
-            alerts["type"] = "Maximum Threshold Exceeded"
-            alerts["value"] = value
-            alerts["max_threshold"] = alert.max_threshold
-            results.append(alerts)
+            if alert.activated is True:
+                if alert.user_id == user_id or not user_id:
+                    alerts = dict()
+                    alerts["id"] = alert.id
+                    alerts["user_id"] = alert.user_id
+                    alerts["widget_id"] = alert.widget_id
+                    alerts["attribute_id"] = attribute_range.attribute_id
+                    alerts["type"] = "Maximum Threshold Exceeded"
+                    alerts["value"] = attribute_range.maximum
+                    alerts["max_threshold"] = alert.max_threshold
+                    alerts["timestamp"] = str(attribute_range.latest_update)
+                    results.append(alerts)
 
         return results
 
     @classmethod
-    def get_min_alerts(cls, attribute_id: str,
-                       value: Union[float, int]) -> [db.Model]:
+    def get_min_alerts(cls, attribute_range: AttributeRange,
+                       user_id: Union[int, None] = None) -> [db.Model]:
         """
         Get Minimum Threshold Alerts
-        :param value: Minimum Value measured by sensor
-        :param attribute_id: Attribute Id
+        :param user_id: User Id
+        :param attribute_range: AttributeRange object
         :return: Triggered alert details containing user_id, Value,
                 Threshold value and type
         """
         results = list()
+        if not attribute_range.minimum:
+            return results
 
-        min_alerts = cls.query.filter(cls.min_threshold >= value).filter(
-            cls.attribute_id == attribute_id).all()
+        min_alerts = cls.query.filter(
+            cls.min_threshold >= attribute_range.minimum).filter(
+            cls.attribute_id == attribute_range.attribute_id).all()
 
         if len(min_alerts) <= 0:
             return []
 
         for alert in min_alerts:
-            alerts = dict()
-            alerts["user_id"] = alert.user_id
-            alerts["type"] = "Minimum Threshold Exceeded"
-            alerts["value"] = value
-            alerts["min_threshold"] = alert.min_threshold
-            results.append(alerts)
+            if alert.activated is True:
+                if alert.user_id == user_id or not user_id:
+                    alerts = dict()
+                    alerts["id"] = alert.id
+                    alerts["user_id"] = alert.user_id
+                    alerts["widget_id"] = alert.widget_id
+                    alerts["attribute_id"] = attribute_range.attribute_id
+                    alerts["type"] = "Minimum Threshold Exceeded"
+                    alerts["value"] = attribute_range.minimum
+                    alerts["min_threshold"] = alert.min_threshold
+                    alerts["timestamp"] = str(attribute_range.latest_update)
+                    results.append(alerts)
 
         return results
-
-
