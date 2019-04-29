@@ -12,12 +12,12 @@ from models.users import Users
 class CreateAlert(Resource):
     """
     Create an alert. Takes a minimum and maximum threshold value, an
-    attribute id, widget id and a optional user id
+    attribute id, widget id and a optional user id.
     """
 
     def __init__(self) -> None:
         """
-        Instantiate Reparser for POST request
+        Instantiate reparse for POST request.
         """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('user_id', required=False, type=int,
@@ -45,7 +45,7 @@ class CreateAlert(Resource):
     @jwt_required
     def post(self) -> (dict, HTTPStatus):
         """
-        Create an alert
+        Create an alert.
         :return: On success return the new alert Id and an HTTP status code 201
                 (Created), Otherwise return an error with the appropriate
                 HTTP status code

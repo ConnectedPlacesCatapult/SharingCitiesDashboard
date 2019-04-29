@@ -12,14 +12,14 @@ from models.users import Users
 
 class CheckAlerts(Resource):
     """
-    Check For Widget Alerts that have been triggered. Using a Get request with
-    the following GET params:
-    * user_id: User Id, If the User Id is not parsed the current User Id  is used
-    * attribute_id: Attribute Id
+    Check for alerts that have been triggered. Using a GET request with
+    the following GET query string parameters:
+    * user_id: User Id, If the user Id is not parsed the current user Id is used.
+    * attribute_id: Attribute Id.
     """
 
     def __init__(self) -> None:
-        """ Instantiate Reqpase """
+        """ Instantiate reqpase. """
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('user_id', required=False, type=int,
                                     store_missing=False)
@@ -29,10 +29,10 @@ class CheckAlerts(Resource):
     @jwt_required
     def get(self) -> (dict, HTTPStatus):
         """
-        Check for triggered Alerts
-        :return: On Success, An HTTP Response with a JSON body content
-        containing the Maximum and Minimum Alerts that have been  exceeded with
-        an HTTPStatus code of 200 (OK), otherwise An HTTP Response with a JSON
+        Check for triggered alerts.
+        :return: On success, an HTTP response with a JSON body content
+        containing the maximum and minimum alerts that have been exceeded with
+        an HTTP status code of 200 (OK), otherwise an HTTP response with a JSON
         body content containing an appropriate error message and appropriate an
         HTTP status code
         """

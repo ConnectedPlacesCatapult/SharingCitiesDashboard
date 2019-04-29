@@ -14,13 +14,14 @@ from models.attribute_range import AttributeRange
 class PushAlert(Resource):
     """
     Create a push alert. Use a  SSE (Server Side Event) to push alert
-    notifications to the client side
+    notifications to the client side.
 
     A GET request is use to create a socket between server and client. A redis
-    subject is created using the user_id. 'widget_alert/<user_id>'
+    subject is created using the user_id. 'widget_alert/<user_id>'.
 
-    The following parameters are required in the query string of the GET request
-     * user_id:  The user Id
+    The following parameters are required in the query string of the GET
+    request.
+     * user_id:  The user Id.
     """
     red = redis.StrictRedis()
 
@@ -31,9 +32,9 @@ class PushAlert(Resource):
 
     def event_stream(self, user_id: int) -> str:
         """
-        Create SSE (Server Side Event) stream generator to push data to client
-        :param user_id: user Id
-        :return: alert details as a str
+        Create SSE (Server Side Event) stream generator to push data to client.
+        :param user_id: User Id
+        :return: Alert details as a str
         """
         pubsub = self.red.pubsub()
         pubsub.subscribe('widget_alert/{}'.format(user_id))
@@ -55,7 +56,7 @@ class PushAlert(Resource):
         NoReturn, tuple]:
         """
         Check if any of the alert thresholds have been exceeded and publish
-        the alerts that have been exceeded to the redis subject
+        the alerts that have been exceeded to the redis subject.
         :param attribute_range: Attribute range
         :return: None on success, otherwise an error
                message with an HTTP status code 400 (Bad Request)
@@ -81,7 +82,7 @@ class PushAlert(Resource):
 
     def get(self) -> flask.Response:
         """
-        Create Socket for SSE (Server Side Event)
+        Create socket for SSE (Server Side Event).
         :return: SSE (Server Side Event) Socket data generator
         """
         args = self.reqparser.parse_args()
