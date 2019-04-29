@@ -151,7 +151,7 @@ class AlertWidgetModel(db.Model):
         if not attribute_range.maximum:
             return results
 
-        max_alerts = not not cls.query.filter(
+        max_alerts = cls.query.filter(
             cls.max_threshold <= attribute_range.maximum).filter(
             cls.attribute_id == attribute_range.attribute_id).all()
 
