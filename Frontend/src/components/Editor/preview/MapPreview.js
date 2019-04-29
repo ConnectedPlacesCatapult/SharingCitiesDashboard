@@ -2,11 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Fade,
-  List,
-  ListItem,
-  ListItemText,
-  ListSubheader,
   withStyles,
+  Paper,
+  Typography
 } from '@material-ui/core';
 import {
   CircleMarker,
