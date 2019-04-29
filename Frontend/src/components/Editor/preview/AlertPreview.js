@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import LoadingIndicator from './../../Widget/LoadingIndicator';
+import axios from "axios/index";
 
 const FCC_CONFIG = require('./../../../../fcc.config');
 
@@ -45,10 +46,27 @@ class AlertPreview extends React.Component {
   }
 
   fetchData() {
-    this.setState({
-      data: [1, 2, 3, 4, 5],
-      loading: false,
+    const { editor, setWidgetConfigProperty } = this.props;
+
+    this.setState({ loading: true });
+
+    axios({
+      url: FCC_CONFIG.apiRoot + '/data',
+      method: 'get',
+      params: editor.widget.queryParams,
     })
+      .then((response) => {
+        // also store in editor state so PlotConfig can access it?
+        setWidgetConfigProperty('data', response.data);
+
+        this.setState({
+          loading: false,
+          data: response.data,
+        })
+      })
+      .catch((err) => {
+        this.setState({ error: err})
+      })
   }
 
   render() {

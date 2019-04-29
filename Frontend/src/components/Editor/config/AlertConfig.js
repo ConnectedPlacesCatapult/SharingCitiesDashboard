@@ -103,7 +103,7 @@ class AlertConfig extends React.Component {
   };
 
   setAlertAttributeData = (e) => {
-    this.setAlertQueryProperty('attributedata', [e.target.value])
+    this.setAlertQueryProperty('attributedata', e.target.value)
   };
 
   setAlertMethod = (e) => {
@@ -115,7 +115,6 @@ class AlertConfig extends React.Component {
     const { attributes } = this.state;
 
     const attributeMenuItems = attributes.map((attribute, i) => <MenuItem key={i} value={attribute.name}>{attribute.name}</MenuItem>);
-    const selectedAttribute = (!editor.widget.queryParams.attributedata.length) ? '' : editor.widget.queryParams.attributedata[0];
 
     return (
       <FormGroup className={classes.root}>
@@ -124,7 +123,7 @@ class AlertConfig extends React.Component {
           <InputLabel htmlFor="alert-attribute">Attribute to track</InputLabel>
           <Select
             aria-label="Alert attribute"
-            value={selectedAttribute}
+            value={editor.widget.queryParams.attributedata}
             onChange={this.setAlertAttributeData}
             inputProps={{
               name: 'alertAttribute',

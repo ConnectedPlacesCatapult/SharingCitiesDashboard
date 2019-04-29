@@ -48,10 +48,11 @@ const getWidgetDefaultProperties = (currentProperties) => {
           ...defaultProperties.config,
           value: 0,
           sendEmail: true,
+          data: [],
         },
         queryParams: {
           ...defaultProperties.queryParams,
-          attributedata: [],
+          attributedata: '',
           method: 'max',
           limit: 1,
         },
