@@ -64,6 +64,10 @@ from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
 from settings.get_config_decorator import GetConfig
 
+from resources.alerts.create_alert import CreateAlert
+from resources.alerts.check_alerts import CheckAlerts
+from resources.alerts.get_alerts import GetAlerts
+from resources.alerts.delete_alert import DeleteAlerts
 
 def create_app(**config_overrides):
 
@@ -212,5 +216,11 @@ def create_app(**config_overrides):
 
     api.add_resource(TestKeyValidity, "/sendgrid/test_key_validity")
     api.add_resource(ReplaceKey, "/sendgrid/replace_key")
+
+    api.add_resource(CreateAlert, '/alert/create_alert')
+    api.add_resource(CheckAlerts, '/alert/check_alerts')
+    api.add_resource(GetAlerts, '/alert/get_alerts')
+    api.add_resource(DeleteAlerts, '/alert/delete_alerts')
+
 
     return app
