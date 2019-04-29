@@ -17,6 +17,8 @@ class GetAlerts(Resource):
                                     store_missing=False)
         self.reqparser.add_argument('attribute_id', required=False, type=str,
                                     store_missing=False)
+        self.reqparser.add_argument('widget_id', required=False, type=int,
+                                    store_missing=False)
 
     @jwt_required
     def get(self) -> (dict, HTTPStatus):
