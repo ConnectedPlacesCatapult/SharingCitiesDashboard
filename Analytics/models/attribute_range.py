@@ -20,31 +20,42 @@ class AttributeRange(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     attribute_id = db.Column(db.Text, db.ForeignKey('attributes.id'),
                              nullable=False)
+    minimum_sensor_id = db.Column(db.Text, db.ForeignKey('sensor.id'))
     minimum = db.Column(db.Float)
     minimum_recorded_date = db.Column(db.DateTime)
+    maximum_sensor_id = db.Column(db.Text, db.ForeignKey('sensor.id'))
     maximum = db.Column(db.Float)
     maximum_recorded_date = db.Column(db.DateTime)
     latest_update = db.Column(db.DateTime)
 
-    def __init__(self, attribute_id: int, minimum: Union[float, None],
+    def __init__(self, attribute_id: str, minimum_sensor_id: Union[str, None],
+                 minimum: Union[float, None],
                  minimum_recorded_date: Union[datetime, None],
+                 maximum_sensor_id: Union[str, None],
                  maximum: Union[float, None],
                  maximum_recorded_date: Union[datetime, None],
                  timestamp: datetime = datetime.now()):
         """
         Initialise the Attribute Range object instance
         :param attribute_id: An attribute's id in the attributes table
+        :param minimum_sensor_id: ID of the sensor that sensed the minimum
+                                  attribute value
         :param minimum: minimum value for the attribute
         :param minimum_recorded_date: Timestamp of when the minimum
                                       attribute value was recorded
+        :param minimum_sensor_id: ID of the sensor that sensed the maximum
+                                  attribute value
         :param maximum: maximum value for the attribute
         :param maximum_recorded_date: Timestamp of when the maximum
                                       attribute value was recorded
         :param timestamp: when the Attribute Range entry was last updated
         """
+        
         self.attribute_id = attribute_id
+        self.minimum_sensor_id = minimum_sensor_id
         self.minimum = minimum
         self.minimum_recorded_date = minimum_recorded_date
+        self.maximum_sensor_id = maximum_sensor_id
         self.maximum = maximum
         self.maximum_recorded_date = maximum_recorded_date
         self.latest_update = timestamp
@@ -64,8 +75,10 @@ class AttributeRange(db.Model):
         """
         return {
             'attribute_id': self.attribute_id,
+            'minimum_sensor_id': self.minimum_sensor_id,
             'minimum': self.minimum,
             'minimum_recorded_date': str(self.minimum_recorded_date),
+            'maximum_sensor_id': self.maximum_sensor_id,
             'maximum': self.maximum,
             'maximum_recorded_date': str(self.maximum_recorded_date),
             'latest_update': str(self.latest_update)
