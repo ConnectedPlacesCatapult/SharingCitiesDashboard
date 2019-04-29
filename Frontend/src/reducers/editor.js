@@ -46,14 +46,30 @@ const getWidgetDefaultProperties = (currentProperties) => {
         ...defaultProperties,
         config: {
           ...defaultProperties.config,
-          something: "dlkfjslkjsdn",
-        }
+          value: 0,
+          sendEmail: true,
+        },
+        queryParams: {
+          ...defaultProperties.queryParams,
+          attributedata: [],
+          method: 'max',
+          limit: 1,
+        },
       }
     }
 
     case WIDGET_TYPE_FORECAST: {
       return {
         ...defaultProperties,
+        config: {
+          ...defaultProperties.config,
+        },
+        queryParams: {
+          ...defaultProperties.queryParams,
+          attributeData: [],
+          predictions: true,
+          n_predictions: 10,
+        },
       }
     }
 
