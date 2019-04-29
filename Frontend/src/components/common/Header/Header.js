@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom'
+
 import {
   AppBar,
   ClickAwayListener,
@@ -166,23 +168,7 @@ class Header extends React.Component {
   showModal() {
     const {classes, user} = this.props;
     if (!user) {
-      return (
-        <Modal
-          open={true}>
-          <Paper className={classes.paper}>
-            <div className={classes.centerAlign}>
-              <img className={classes.logoImageModal} src={BG_IMAGE_SRC} width="220px" height="auto" style={{marginBottom: 20}}/>
-              <Typography variant="h6" className={classes.loginPrompt} >
-                Your session has expired
-              </Typography>
-              <Typography variant="h6">
-                Please sign in again
-              </Typography>
-            </div>
-            <LoginForm />
-          </Paper>
-        </Modal>
-      )
+      return <Redirect to='/login' />
     }
   }
 
