@@ -32,8 +32,8 @@ class PushAlert(Resource):
     def event_stream(self, user_id: int) -> str:
         """
         Create Server Side Event Stream Generator to Push Data to Client
-        :param user_id: User Int
-        :return: AlertWidgetModel JSON Data as a str
+        :param user_id: User Id
+        :return: Alert Details as a str
         """
         pubsub = self.red.pubsub()
         pubsub.subscribe('widget_alert/{}'.format(user_id))
