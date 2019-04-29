@@ -1,44 +1,46 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import LoginForm from '../../LoginPage/LoginForm';
-
-// material-ui
-import { withStyles } from '@material-ui/core/styles';
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from '@material-ui/core/Typography';
-import Button from "@material-ui/core/Button";
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
-import Modal from '@material-ui/core/Modal';
-import { Logout as LogoutIcon } from 'mdi-material-ui'
+import {
+  AppBar,
+  ClickAwayListener,
+  Button,
+  CircularProgress,
+  FormControlLabel,
+  FormGroup,
+  Grow,
+  MenuItem,
+  MenuList,
+  Modal,
+  Paper,
+  Popper,
+  Switch,
+  Toolbar,
+  Typography,
+  withStyles,
+} from '@material-ui/core';
 import AccountIcon from '@material-ui/icons/AccountCircle';
-
-// router
-import { NavLink, withRouter } from "react-router-dom";
-
-// redux
+import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import { Logout as LogoutIcon } from 'mdi-material-ui';
 import { connect } from 'react-redux';
-import { logout, getUser } from "../../../actions/userActions";
+import { logout, getUser } from './../../../actions/userActions';
+import { NavLink, withRouter } from 'react-router-dom';
+import LoginForm from './../../LoginPage/LoginForm';
 
 const FCC_CONFIG = require('./../../../../fcc.config');
-
-const bgImage = require('./../../../images/Lisbon-logo-med.png');
+const BG_IMAGE_SRC = require('./../../../images/Lisbon-logo-med.png');
 
 const styles = (theme) => ({
   root: {
     zIndex: theme.zIndex.drawer + 1,
     margin: '30px 0',
-    //backgroundColor: theme.palette.primary.light,
     boxShadow: "none",
+  },
+  themeToggle: {
+    position: 'absolute',
+    top: `-${theme.spacing.unit}px`,
+    left: 264,
+    zIndex: theme.zIndex.drawer + 1,
   },
   logoImage: {
     position: 'absolute',
@@ -88,7 +90,6 @@ const styles = (theme) => ({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: theme.spacing.unit * 50,
-    //backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing.unit * 4,
   },
@@ -170,7 +171,7 @@ class Header extends React.Component {
           open={true}>
           <Paper className={classes.paper}>
             <div className={classes.centerAlign}>
-              <img className={classes.logoImageModal} src={bgImage} width="220px" height="auto" style={{marginBottom: 20}}/>
+              <img className={classes.logoImageModal} src={BG_IMAGE_SRC} width="220px" height="auto" style={{marginBottom: 20}}/>
               <Typography variant="h6" className={classes.loginPrompt} >
                 Your session has expired
               </Typography>
@@ -227,37 +228,51 @@ class Header extends React.Component {
     const { open } = this.state;
 
     return (
-      <AppBar position="absolute" color="default" className={classes.root}>
-        <Toolbar className={classes.toolbar} disableGutters>
-          <img className={classes.logoImage} src={bgImage} width="220px" height="auto"/>
-          <Typography className={classes.toolbarTitle} variant="h4">
-            &nbsp;
-          </Typography>
-          <div>
-            {this.renderPageLinks()}
-          </div>
-          {this.userMenu()}
-          <Popper open={open} anchorEl={this.headerList} transition disablePortal>
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                id="menu-list-grow"
-                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-              >
-                <Paper>
-                  <ClickAwayListener onClickAway={this.handleClose}>
-                    <MenuList>
-                      <MenuItem disabled onClick={this.handleClose}><AccountIcon className={classes.menuIcon} />Profile</MenuItem>
-                      <MenuItem onClick={() => this.props.logout(this.props)}><LogoutIcon className={classes.menuIcon} />Logout</MenuItem>
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
-          {this.showModal()}
-        </Toolbar>
-      </AppBar>
+      <React.Fragment>
+        {/*<FormGroup className={classes.themeToggle} row>
+          <FormControlLabel
+            control={
+              <Switch
+                //checked={this.state.checkedA}
+                //onChange={this.handleChange('checkedA')}
+                value="checkedA"
+              />
+            }
+            label="Toggle light/dark"
+          />
+        </FormGroup>*/}
+        <AppBar position="absolute" color="default" className={classes.root}>
+          <Toolbar className={classes.toolbar} disableGutters>
+            <img className={classes.logoImage} src={BG_IMAGE_SRC} width="220px" height="auto"/>
+            <Typography className={classes.toolbarTitle} variant="h4">
+              &nbsp;
+            </Typography>
+            <div>
+              {this.renderPageLinks()}
+            </div>
+            {this.userMenu()}
+            <Popper open={open} anchorEl={this.headerList} transition disablePortal>
+              {({ TransitionProps, placement }) => (
+                <Grow
+                  {...TransitionProps}
+                  id="menu-list-grow"
+                  style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                >
+                  <Paper>
+                    <ClickAwayListener onClickAway={this.handleClose}>
+                      <MenuList>
+                        <MenuItem disabled onClick={this.handleClose}><AccountIcon className={classes.menuIcon} />Profile</MenuItem>
+                        <MenuItem onClick={() => this.props.logout(this.props)}><LogoutIcon className={classes.menuIcon} />Logout</MenuItem>
+                      </MenuList>
+                    </ClickAwayListener>
+                  </Paper>
+                </Grow>
+              )}
+            </Popper>
+            {this.showModal()}
+          </Toolbar>
+        </AppBar>
+      </React.Fragment>
     )
   }
 }

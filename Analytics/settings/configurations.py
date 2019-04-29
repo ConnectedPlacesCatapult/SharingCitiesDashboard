@@ -39,11 +39,15 @@ class Configurations(object):
         new instance.
         :param config_path: Absolute path to configurations file
         """
-        Configurations.__instance = self
+        # Configurations.__instance = self
+        if Configurations.__instance is not None:
+            raise Exception("Configurations have already been loaded")
+        else:
+            Configurations.__instance = self
 
-        if config_path:
-            Configurations.__config_lib[
-                config_path] = self.get_config_from_file(config_path)
+            if config_path:
+                Configurations.__config_lib[
+                    config_path] = self.get_config_from_file(config_path)
 
     @staticmethod
     def extract_sub_config(config: {str: Any}, category: str,

@@ -4,8 +4,8 @@ import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import {
   fetchLayout,
-  updateLayout,
   fetchWidgets,
+  updateLayout,
 } from './../../actions/dashboardActions';
 import RGL from 'react-grid-layout';
 import AlertWidget from './../Widget/AlertWidget';
@@ -29,8 +29,8 @@ class GridLayout extends React.Component {
   static propTypes = {
     dashboard: PropTypes.object.isRequired,
     fetchLayout: PropTypes.func.isRequired,
-    updateLayout: PropTypes.func.isRequired,
     fetchWidgets: PropTypes.func.isRequired,
+    updateLayout: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -38,33 +38,55 @@ class GridLayout extends React.Component {
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
 
-    this.props.fetchLayout();
-    this.props.fetchWidgets();
+    this.state = {
+      layout: props.dashboard.layout,
+      widgets: props.dashboard.widgets,
+    };
+
+    props.fetchWidgets();
+    props.fetchLayout();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.dashboard.layout !== this.state.layout) {
+      this.setState({ layout: nextProps.dashboard.layout })
+    }
+
+    if (nextProps.dashboard.widgets !== this.state.widgets) {
+      this.setState({ widgets: nextProps.dashboard.widgets })
+    }
   }
 
   onLayoutChange(layout) {
-    this.props.updateLayout(layout);
+    const { updateLayout } = this.props;
+
+    updateLayout(layout);
   }
 
   render() {
-    const { classes, dashboard } = this.props;
+    const { classes } = this.props;
+    const { layout, widgets } = this.state;
 
-    const gridItems = dashboard.layout.map((gridItem) => {
-      let gridItemWidget = dashboard.widgets.find((widget) => gridItem.i === widget.i);
+    const gridItems = layout.map((gridItem) => {
+      let gridItemWidget = widgets.find((widget) => gridItem.i === widget.i);
 
-      return (
-        <div key={gridItem.i}>
-          {gridItemWidget.type === 'alert' && <AlertWidget {...gridItemWidget} />}
-          {gridItemWidget.type === 'forecast' && <ForecastWidget {...gridItemWidget} />}
-          {gridItemWidget.type === 'map' && <MapWidget {...gridItemWidget} />}
-          {gridItemWidget.type === 'plot' && <PlotWidget {...gridItemWidget} />}
-        </div>
-      )
+      if (gridItemWidget) {
+        return (
+          <div key={gridItem.i}>
+            {gridItemWidget.type === 'alert' && <AlertWidget {...gridItemWidget} />}
+            {gridItemWidget.type === 'forecast' && <ForecastWidget {...gridItemWidget} />}
+            {gridItemWidget.type === 'map' && <MapWidget {...gridItemWidget} />}
+            {gridItemWidget.type === 'plot' && <PlotWidget {...gridItemWidget} />}
+          </div>
+        )
+      }
+
+      return []
     });
 
     return (
       <ReactGridLayout
-        layout={dashboard.layout}
+        layout={layout}
         cols={12}
         rowHeight={30}
         width={1200}
@@ -84,8 +106,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchLayout: () => dispatch(fetchLayout()),
-  updateLayout: (layout) => dispatch(updateLayout(layout)),
   fetchWidgets: () => dispatch(fetchWidgets()),
+  updateLayout: (layout) => dispatch(updateLayout(layout)),
 });
 
 GridLayout = withStyles(styles)(GridLayout);
