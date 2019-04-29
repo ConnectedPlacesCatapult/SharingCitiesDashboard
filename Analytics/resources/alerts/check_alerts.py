@@ -1,12 +1,13 @@
+from http import HTTPStatus
+
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from flask_restful import reqparse
-from http import HTTPStatus
 
 from models.alert_model import AlertWidgetModel
-from models.users import Users
 from models.attribute_range import AttributeRange
 from models.attributes import Attributes
+from models.users import Users
 
 
 class CheckAlerts(Resource):
@@ -18,6 +19,7 @@ class CheckAlerts(Resource):
     * attribute_id: Attribute Id
 
     """
+
     def __init__(self) -> None:
         """ Instantiate Reqpase """
         self.reqparser = reqparse.RequestParser()
@@ -25,7 +27,6 @@ class CheckAlerts(Resource):
                                     store_missing=False)
         self.reqparser.add_argument('attribute_id', required=True, type=str,
                                     help='Attribute Id missing')
-
 
     @jwt_required
     def get(self) -> (dict, HTTPStatus):
@@ -72,12 +73,9 @@ class CheckAlerts(Resource):
                     HTTPStatus.NOT_FOUND)
 
         # Check Alerts
-        max_alerts = AlertWidgetModel.get_max_alerts(attribute_range, user_id=user.id)
-        min_alerts = AlertWidgetModel.get_min_alerts(attribute_range, user_id=user.id)
+        max_alerts = AlertWidgetModel.get_max_alerts(attribute_range,
+                                                     user_id=user.id)
+        min_alerts = AlertWidgetModel.get_min_alerts(attribute_range,
+                                                     user_id=user.id)
 
         return dict(max=max_alerts, min=min_alerts), 200
-
-
-
-
-

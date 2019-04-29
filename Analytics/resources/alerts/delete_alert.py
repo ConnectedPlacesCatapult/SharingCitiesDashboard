@@ -19,7 +19,6 @@ class DeleteAlerts(Resource):
 
     All parameters are optional but at least one of the above parameters are
     required.
-
     """
 
     def __init__(self) -> None:

@@ -75,9 +75,10 @@ class CreateAlert(Resource):
 
         # Create AlertModel
         alert_model = AlertWidgetModel(args["user_id"], args["widget_id"],
-                                      args["attribute_id"],
-                                      args["max_threshold"],
-                                      args["min_threshold"], args["activated"])
+                                       args["attribute_id"],
+                                       args["max_threshold"],
+                                       args["min_threshold"],
+                                       args["activated"])
 
         if not alert_model:
             # Unable to create AlertModel return an error

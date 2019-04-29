@@ -1,8 +1,8 @@
+from http import HTTPStatus
+
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
-from http import HTTPStatus
-
 
 from models.alert_model import AlertWidgetModel
 
@@ -17,8 +17,6 @@ class GetAlerts(Resource):
                                     store_missing=False)
         self.reqparser.add_argument('attribute_id', required=False, type=str,
                                     store_missing=False)
-
-
 
     @jwt_required
     def get(self) -> (dict, HTTPStatus):
@@ -37,4 +35,3 @@ class GetAlerts(Resource):
             response_models.append(alert.json)
 
         return response_models, HTTPStatus.OK
-
