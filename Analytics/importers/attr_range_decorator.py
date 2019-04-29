@@ -9,6 +9,7 @@ import flask
 
 from models.attributes import Attributes
 from models.attribute_range import AttributeRange
+from resources.alerts.push_alert import PushAlert
 from models.alert_model import AlertWidgetModel
 from models.users import Users
 from models.sensor import Sensor
@@ -67,6 +68,8 @@ def update_attribute_ranges(import_function: Callable) -> Callable:
 
                         attribute_range.save()
                         attribute_range.commit()
+
+                        PushAlert.check_alerts(attribute_range)
                         check_min_and_max_alert_widgets(attribute_range)
 
             else:
@@ -85,6 +88,7 @@ def update_attribute_ranges(import_function: Callable) -> Callable:
                     new_range_entry.save()
                     new_range_entry.commit()
                     check_min_and_max_alert_widgets(new_range_entry)
+                    PushAlert.check_alerts(new_range_entry)
                 except AttributeError:
                     new_range_entry = AttributeRange(attribute.id, None, None,
                                                      None, None, None, None,

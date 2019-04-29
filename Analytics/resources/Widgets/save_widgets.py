@@ -138,4 +138,4 @@ class Widgets(Resource):
 
         return dict(
             msg="Widget Created." if updated is False else "Widget Updated.",
-            widget=widget_no_data, layout=layout.json())
+            widget=widget_no_data)
