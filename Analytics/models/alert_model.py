@@ -15,7 +15,7 @@ class AlertWidgetModel(db.Model):
     Create AlertWidget database model. Store Maximum and Minimum threshold
     values for attribute values per user.
     """
-    __tablename__ = 'Alerts'
+    __tablename__ = 'alerts'
     id = db.Column(db.Integer, primary_key=True)
     widget_id = db.Column(db.Integer, nullable=True)
     user_id = db.Column(db.Integer)
