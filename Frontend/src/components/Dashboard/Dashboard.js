@@ -61,7 +61,7 @@ class Dashboard extends React.Component {
 
   noWidgetsPrompt() {
     const { dashboard } = this.props;
-    if (dashboard && dashboard.widgets && dashboard.widgets.length === 0) {
+    if (dashboard && dashboard.fetched === true && dashboard.widgets && dashboard.widgets.length === 0) {
       return <NoWidgets/>
     }
   }
