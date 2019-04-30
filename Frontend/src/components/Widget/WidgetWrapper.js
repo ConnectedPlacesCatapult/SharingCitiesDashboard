@@ -25,6 +25,7 @@ const styles = (theme) => ({
     borderRadius: '3px',
     padding: theme.spacing.unit,
     height: '100%',
+    overflow: 'hidden',
   },
   widgetHeader: {
     display: 'flex',

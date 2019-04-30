@@ -1,19 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import {
-  Typography,
+  Fade,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
   withStyles,
 } from '@material-ui/core';
+import axios from 'axios';
 import { connect } from 'react-redux';
+import { setWidgetConfigProperty } from './../../../actions/editorActions';
 import LoadingIndicator from './../../Widget/LoadingIndicator';
-import axios from "axios/index";
 
 const FCC_CONFIG = require('./../../../../fcc.config');
 
 const styles = (theme) => ({
   root: {
-
+    transition: 'all 0.2s ease',
+    width: 'auto',
+    height: '100%',
+    maxWidth: 0,
+    maxHeight: 0,
+    overflow: 'hidden',
   },
 });
 
@@ -21,6 +30,7 @@ class AlertPreview extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
+    setWidgetConfigProperty: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -30,6 +40,8 @@ class AlertPreview extends React.Component {
       data: null,
       error: null,
       loading: true,
+      width: props.editor.widget.width,
+      height: props.editor.widget.height,
     }
   }
 
@@ -46,7 +58,7 @@ class AlertPreview extends React.Component {
   }
 
   fetchData() {
-    const { editor, setWidgetConfigProperty } = this.props;
+    const { editor } = this.props;
 
     this.setState({ loading: true });
 
@@ -56,13 +68,16 @@ class AlertPreview extends React.Component {
       params: editor.widget.queryParams,
     })
       .then((response) => {
-        // also store in editor state so PlotConfig can access it?
-        setWidgetConfigProperty('data', response.data);
-
-        this.setState({
-          loading: false,
-          data: response.data,
-        })
+        if (response.data.length) {
+          this.setState({
+            loading: false,
+            data: response.data[0]['Attribute_Values'],
+          })
+        } else {
+          this.setState({
+            loading: false,
+          })
+        }
       })
       .catch((err) => {
         this.setState({ error: err})
@@ -81,9 +96,47 @@ class AlertPreview extends React.Component {
       )
     }
 
+    const rootStyles = {
+      width: `${editor.widget.width}px`,
+      height: `${editor.widget.height}px`,
+      maxWidth: `${editor.widget.width}px`,
+      maxHeight: `${editor.widget.height}px`,
+    };
+
     return (
-      <div className={classes.root}>
-        <Typography variant="subtitle2">Alert Preview</Typography>
+      <div className={classes.root} style={rootStyles}>
+        <Fade in={!loading} mountOnEnter>
+          <Table padding="none">
+            <TableBody>
+
+              <TableRow>
+                <TableCell component="th" scope="row">Attribute</TableCell>
+                <TableCell>{editor.widget.queryParams.attributedata}</TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell component="th" scope="row">Type</TableCell>
+                <TableCell>{editor.widget.queryParams.method}</TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell component="th" scope="row">Value</TableCell>
+                <TableCell align="right">{editor.widget.config.value}</TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell component="th" scope="row">Current value</TableCell>
+                <TableCell align="right">{data && data.length ? data[0]['Value'] : '?'}</TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell component="th" scope="row">Email alert</TableCell>
+                <TableCell >{editor.widget.config.sendEmail ? 'yes' : 'no'}</TableCell>
+              </TableRow>
+
+            </TableBody>
+          </Table>
+        </Fade>
       </div>
     )
   }
@@ -93,7 +146,11 @@ const mapStateToProps = (state) => ({
   editor: state.editor,
 });
 
+const mapDispatchToProps = (dispatch) => ({
+  setWidgetConfigProperty: (property, value) => dispatch(setWidgetConfigProperty(property, value)),
+});
+
 AlertPreview = withStyles(styles)(AlertPreview);
-AlertPreview = connect(mapStateToProps, null)(AlertPreview);
+AlertPreview = connect(mapStateToProps, mapDispatchToProps)(AlertPreview);
 
 export default AlertPreview

@@ -44,11 +44,12 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_ALERT: {
       return {
         ...defaultProperties,
+        width: 300,
+        height: 240,
         config: {
           ...defaultProperties.config,
           value: 0,
           sendEmail: true,
-          data: [],
         },
         queryParams: {
           ...defaultProperties.queryParams,
@@ -77,6 +78,8 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_MAP: {
       return {
         ...defaultProperties,
+        width: 400,
+        height: 240,
         config: {
           ...defaultProperties.config,
           center: FCC_CONFIG.widgetEditorDefaults.mapCenter,
@@ -102,6 +105,8 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_PLOT: {
       return {
         ...defaultProperties,
+        width: 400,
+        height: 200,
         config: {
           ...defaultProperties.config,
           ...FCC_CONFIG.editorDefaultConfig.plot,
