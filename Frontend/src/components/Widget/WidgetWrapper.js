@@ -141,16 +141,19 @@ class WidgetWrapper extends React.Component {
           </Popover>
 
           <div>
-            {!isStatic &&
-              <Tooltip title="Drag me!" placement="top">
+
+            <Tooltip title="Drag me" placement="top">
+              <span>
                 <IconButton
                   color="primary"
                   className={classes.smallerButton}
+                  disabled={isStatic}
                 >
                   <OpenWithIcon fontSize="small" className="draggableHandle" />
                 </IconButton>
-              </Tooltip>
-            }
+              </span>
+            </Tooltip>
+
             <Tooltip title="Widget info" placement="top">
               <span>
                 <IconButton

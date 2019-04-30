@@ -13,8 +13,6 @@ import ForecastPreview from './ForecastPreview';
 import MapPreview from './MapPreview';
 import PlotPreview from './PlotPreview';
 
-
-
 const styles = (theme) => {
   const globalFontSize = getComputedStyle(document.documentElement).fontSize;
   const captionLineHeight = theme.typography.caption.lineHeight;

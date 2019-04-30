@@ -16,7 +16,16 @@ const FCC_CONFIG = require('./../../../fcc.config');
 
 const styles = (theme) => ({
   root: {
-
+    display: 'table',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 'inherit',
+    width: 'inherit',
+    //marginTop: -theme.spacing.unit * 3,
+  },
+  cellValue: {
+    color: theme.palette.primary.main,
+    textAlign: 'right',
   },
 });
 
@@ -76,7 +85,7 @@ class AlertWidget extends React.Component {
   }
 
   render() {
-    const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
+    const { classes, theme, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
     const { loading, error, data } = this.state;
 
     if (!data) {
@@ -120,27 +129,27 @@ class AlertWidget extends React.Component {
 
               <TableRow>
                 <TableCell component="th" scope="row">Attribute</TableCell>
-                <TableCell>{queryParams.attributedata}</TableCell>
+                <TableCell className={classes.cellValue}>{queryParams.attributedata}</TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell component="th" scope="row">Type</TableCell>
-                <TableCell>{queryParams.method}</TableCell>
+                <TableCell className={classes.cellValue}>{queryParams.method}</TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell component="th" scope="row">Value</TableCell>
-                <TableCell align="right">{config.value}</TableCell>
+                <TableCell align="right" className={classes.cellValue}>{config.value}</TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell component="th" scope="row">Current value</TableCell>
-                <TableCell align="right">{data && data.length ? data[0]['Value'] : '?'}</TableCell>
+                <TableCell align="right" className={classes.cellValue}>{data && data.length ? data[0]['Value'] : '?'}</TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell component="th" scope="row">Email alert</TableCell>
-                <TableCell >{config.sendEmail ? 'yes' : 'no'}</TableCell>
+                <TableCell className={classes.cellValue}>{config.sendEmail ? 'yes' : 'no'}</TableCell>
               </TableRow>
 
             </TableBody>
