@@ -214,11 +214,3 @@ class AlertWidgetModel(db.Model):
 
         return results
 
-# self.attribute_id = attribute_id
-#         self.minimum_sensor_id = minimum_sensor_id
-#         self.minimum = minimum
-#         self.minimum_recorded_date = minimum_recorded_date
-#         self.maximum_sensor_id = maximum_sensor_id
-#         self.maximum = maximum
-#         self.maximum_recorded_date = maximum_recorded_date
-#         self.latest_update = timestamp
