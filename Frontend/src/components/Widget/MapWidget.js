@@ -173,22 +173,6 @@ class MapWidget extends React.Component {
     }));
   };
 
-<<<<<<< HEAD
-  getFormattedTimestamp = (timestamp) => {
-    const date = new Date(timestamp);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    const day = date.getMonth();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    return `${day} ${month} ${year} at ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
-  };
-
-  setValueLimits = (data) => {
-=======
   updateStateAttributes = () => {
     const { queryParams } = this.props;
     const attributes = (!queryParams['attributedata'] || !queryParams['attributedata'].length)
@@ -200,7 +184,6 @@ class MapWidget extends React.Component {
   };
 
   updateColorScheme = () => {
->>>>>>> origin/ui-dev-merged-fixed
     const { config } = this.props;
 
     const baseColor = config.markerColor;
@@ -319,36 +302,10 @@ class MapWidget extends React.Component {
           name={attribute}
           checked
         >
-<<<<<<< HEAD
-          <Popup>
-            <Paper
-              className={classes.popupList}>
-              <Typography variant="h6" className={classes.popupTitle}>
-                {feature.properties["Name"]}
-              </Typography>
-              <div className={classes.popupData}>
-                <Typography className={classes.popupValue} gutterBottom>
-                  {feature.properties['Value']}
-                </Typography>
-                <Typography className={classes.popupAttribute} gutterBottom>
-                  {feature.properties['Attribute_Name']}
-                </Typography>
-              </div>
-              <Typography className={classes.popupLocation} gutterBottom>
-                {this.getFormattedTimestamp(feature.properties['Timestamp'])}
-              </Typography>
-              <Typography className={classes.popupTimeStamp} gutterBottom>
-                {`${feature.geometry.coordinates[1].toFixed(6)}, ${feature.geometry.coordinates[0].toFixed(6)}`}
-              </Typography>
-            </Paper>
-          </Popup>
-        </CircleMarker>
-=======
           <FeatureGroup>
             {markers}
           </FeatureGroup>
         </LayersControl.Overlay>
->>>>>>> origin/ui-dev-merged-fixed
       )
     });
 

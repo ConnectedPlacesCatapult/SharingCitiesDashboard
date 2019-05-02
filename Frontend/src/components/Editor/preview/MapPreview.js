@@ -53,7 +53,6 @@ const styles = (theme) => ({
     fontWeight: 600,
     fontSize: 22,
     margin: 0
-<<<<<<< HEAD
   },
   popupLocation: {
     color: theme.palette.primary.main,
@@ -61,15 +60,6 @@ const styles = (theme) => ({
     fontWeight: 600,
     margin: 0
   },
-=======
-  },
-  popupLocation: {
-    color: theme.palette.primary.main,
-    fontSize: 12,
-    fontWeight: 600,
-    margin: 0
-  },
->>>>>>> origin/ui-dev-merged-fixed
   popupTimeStamp: {
     color: theme.palette.primary.main,
     fontSize: 12,
@@ -310,11 +300,7 @@ class MapPreview extends React.Component {
           >
             <Popup>
               <Paper
-<<<<<<< HEAD
-              className={classes.popupList}>
-=======
                 className={classes.popupList}>
->>>>>>> origin/ui-dev-merged-fixed
                 <Typography variant="h6" className={classes.popupTitle}>
                   {feature.properties["Name"]}
                 </Typography>
