@@ -6,7 +6,6 @@ from flask_restful import Api
 
 from db import db
 from models.revoked_tokens import RevokedTokens
-from models.attribute_range import AttributeRange
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -70,10 +69,7 @@ from resources.units.update_unit import UpdateUnitOfMeasure
 from settings.get_config_decorator import GetConfig
 
 
-
-
 def create_app(**config_overrides):
-
     app = Flask(__name__)
     app.config.update(GetConfig.configure('postgres'))
 
