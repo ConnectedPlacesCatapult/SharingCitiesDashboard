@@ -5,25 +5,27 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-DB
+    restart: on-failure
   api:
     build:
       context: .
       dockerfile: Dockerfile-API
-    command: ["python3", "manage.py", "gunicorn"]
+    command: bash -c "sleep 7; python manage.py gunicorn & service redis-server start & celery -A manage.celery_task worker -l info"
     volumes:
-      - ./Analytics/:/code
+      - ./Analytics/:/Analytics
     ports:
       - "8000:5000"
+      - "6379:6379"
     depends_on:
       - db
+    restart: on-failure
   ui:
     build:
       context: .
       dockerfile: Dockerfile-UI
     command: serve -s build -l 8080
-    volumes:
-      - ./Frontend/:/code/Frontend
     ports:
       - "8080:8080"
     depends_on:
       - api
+    restart: on-failure

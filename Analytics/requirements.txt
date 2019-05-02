@@ -23,6 +23,7 @@ gunicorn
 celery==v4.3.0rc1
 apscheduler
 redis
+requests
 retrying
 pyyaml
 simplekml
