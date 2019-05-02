@@ -5,11 +5,15 @@ import {
   Modal,
   withStyles,
 } from '@material-ui/core';
+import BarChartIcon from '@material-ui/icons/BarChart';
+import MapIcon from '@material-ui/icons/Map';
+import AlertIcon from '@material-ui/icons/Notifications';
 import { connect } from 'react-redux';
 import { closeEditor } from '../../actions/editorActions';
 import CreateWidgetMenu from './../common/CreateWidgetMenu';
 import Editor from './../Editor';
 import GridLayout from './GridLayout';
+import NoWidgets from './NoWidgets';
 import Header from './../common/Header';
 
 const styles = (theme) => ({
@@ -23,6 +27,11 @@ const styles = (theme) => ({
     overflow: 'auto'
   },
   appBarSpacer: theme.mixins.toolbar,
+  createWidgetContainer: {
+    margin: '2em 1em',
+    position: 'fixed',
+    bottom: 0
+  }
 });
 
 class Dashboard extends React.Component {
@@ -50,28 +59,38 @@ class Dashboard extends React.Component {
     this.setState({ createWidgetMenuAnchorEl: null })
   };
 
+  noWidgetsPrompt() {
+    const { dashboard } = this.props;
+    if (dashboard && dashboard.fetched === true && dashboard.widgets && dashboard.widgets.length === 0) {
+      return <NoWidgets/>
+    }
+  }
+
   render() {
-    const { classes, editor } = this.props;
+    const { classes, editor, dashboard } = this.props;
     const { createWidgetMenuAnchorEl } = this.state;
 
     return (
       <div className={classes.root}>
         <Header />
         <main className={classes.content}>
-          <div className={classes.appBarSpacer} />
+          <div className={classes.appBarSpacer}/>
+          {this.noWidgetsPrompt()}
           <GridLayout />
-          <CreateWidgetMenu
-            mode="add"
-            anchorEl={createWidgetMenuAnchorEl}
-            onClose={this.handleCloseCreateWidgetMenu}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleCreateWidgetClicked}
-          >
-            Create Widget
-          </Button>
+          <div className={classes.createWidgetContainer}>
+            <CreateWidgetMenu
+              mode="add"
+              anchorEl={createWidgetMenuAnchorEl}
+              onClose={this.handleCloseCreateWidgetMenu}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleCreateWidgetClicked}
+            >
+              Create Widget
+            </Button>
+          </div>
         </main>
         <Modal
           open={editor.open}
@@ -87,6 +106,7 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = (state) => ({
   editor: state.editor,
+  dashboard: state.dashboard,
 });
 
 const mapDispatchToProps = (dispatch) => ({

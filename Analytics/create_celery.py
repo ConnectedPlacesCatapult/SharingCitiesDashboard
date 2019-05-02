@@ -6,7 +6,6 @@ import logging
 
 import flask
 from celery import Celery
-
 from settings.get_config_decorator import GetConfig
 # import celeryconfig
 

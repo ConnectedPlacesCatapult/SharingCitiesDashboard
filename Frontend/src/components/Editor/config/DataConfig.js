@@ -40,7 +40,6 @@ class DataConfig extends React.Component {
     this.state = {
       selectedThemes: [],
       selectedSubtheme: null,
-      themeTree: props.editor.themeTree,
       allSubthemes: [],
       allAttributes: [],
     };
