@@ -6,6 +6,7 @@ from flask_restful import Api
 
 from db import db
 from models.revoked_tokens import RevokedTokens
+from models.attribute_range import AttributeRange
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -21,6 +22,11 @@ from resources.admin.edit_user import EditUser
 from resources.admin.get_user import GetUserByEmail
 from resources.admin.user_list import UsersList
 from resources.admin.user_permissions import UserPermissions
+from resources.alerts.check_alerts import CheckAlerts
+from resources.alerts.create_alert import CreateAlert
+from resources.alerts.delete_alert import DeleteAlerts
+from resources.alerts.get_alerts import GetAlerts
+from resources.alerts.push_alert import PushAlert
 from resources.analytics import Analytics
 from resources.attributes import AttributeAlias
 from resources.attributes import DeleteAttributeAlias
@@ -62,10 +68,10 @@ from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
 from settings.get_config_decorator import GetConfig
+from resources.alerts.update_alert import UpdateAlert
 
 
 def create_app(**config_overrides):
-
     app = Flask(__name__)
     app.config.update(GetConfig.configure('postgres'))
 
@@ -91,6 +97,10 @@ def create_app(**config_overrides):
     # app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 
     app.config.update(GetConfig.configure('jwt_auth'))
+
+    if config_overrides:
+        app.config.update(config_overrides)
+
     db.init_app(app)
     db.app = app
 
@@ -212,4 +222,11 @@ def create_app(**config_overrides):
     api.add_resource(TestKeyValidity, "/sendgrid/test_key_validity")
     api.add_resource(ReplaceKey, "/sendgrid/replace_key")
 
+    # Alert Enpoints
+    api.add_resource(CreateAlert, '/alert/create_alert')
+    api.add_resource(CheckAlerts, '/alert/check_alerts')
+    api.add_resource(GetAlerts, '/alert/get_alerts')
+    api.add_resource(DeleteAlerts, '/alert/delete_alerts')
+    api.add_resource(PushAlert, '/alert/triggered')
+    api.add_resource(UpdateAlert, '/alert/update_alert')
     return app

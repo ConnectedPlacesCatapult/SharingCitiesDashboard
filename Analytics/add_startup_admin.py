@@ -27,7 +27,7 @@ class AddStartupAdmin(Command):
     def __init__(self):
         """
         Create a local sqlalchemy engine that connects to the database
-        defined in settings.py
+        defined in settings.py.bak
         """
 
         db_uri = '%s://%s:%s@%s/%s' % (self.db_psql_base_uri, self.db_username,

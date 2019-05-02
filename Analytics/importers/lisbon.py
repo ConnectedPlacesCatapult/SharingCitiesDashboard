@@ -11,6 +11,7 @@ from requests.auth import HTTPBasicAuth
 from importers.base import BaseImporter
 from importers.json_reader import JsonReader
 from .state_decorator import ImporterStatus, Status
+from .attr_range_decorator import update_attribute_ranges
 
 sys.path.append("../..")
 from settings import GetConfig
@@ -35,6 +36,7 @@ class LisbonAPI(BaseImporter):
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
                          self.API_KEY, self.API_CLASS, self.TOKEN_EXPIRY)
 
+    @update_attribute_ranges
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource

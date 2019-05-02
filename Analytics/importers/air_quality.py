@@ -11,9 +11,11 @@ import requests
 from importers.base import BaseImporter
 from importers.json_reader import JsonReader
 from .state_decorator import Status, ImporterStatus
+from .attr_range_decorator import update_attribute_ranges
 
 sys.path.append("../..")
 from settings import GetConfig
+
 
 @GetConfig("KCLAirQuality", 'api_endpoints', 'air_quality')
 class KCLAirQuality(BaseImporter):
@@ -48,6 +50,7 @@ class KCLAirQuality(BaseImporter):
                          self.API_KEY, self.API_CLASS,
                          self.TOKEN_EXPIRY)
 
+    @update_attribute_ranges
     def _create_datasource(self, headers: Union[str, None] = None) -> None:
         """
         Create DataSource

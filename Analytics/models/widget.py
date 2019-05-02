@@ -1,5 +1,5 @@
 import logging
-from typing import NoReturn
+from typing import NoReturn, Union
 
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.exc import IntegrityError
@@ -12,17 +12,7 @@ logger = logging.getLogger(__name__)
 
 class WidgetModel(db.Model):
     """
-    Database model for the widget table used to persist widget data
-    :param _WIDGET_DB_TABLE_NAME: table name
-    :param  id:         primary key
-    :param  user_id:    users unique identification number
-    :param  data:       widget data to be persisted in table
-
-    :type _WIDGET_DB_TABLE_NAME: str
-    :type id:       int
-    :type user_id:  int
-    :type data:     str
-
+    Create Widget Database Model
     """
     _WIDGET_DB_TABLE_NAME = 'widgets'
     __tablename__ = _WIDGET_DB_TABLE_NAME
@@ -30,17 +20,15 @@ class WidgetModel(db.Model):
     user_id = db.Column('user_id', db.Integer, nullable=False)
     data = db.Column('data', JSON, nullable=False)
     layout_id = db.Column(db.Integer, db.ForeignKey('layouts.id'))
-    layout = db.relationship('Layouts', backref=db.backref('layouts', lazy=True))
+    layout = db.relationship('Layouts',
+                             backref=db.backref('layouts', lazy=True))
 
     def __init__(self, user_id: int, layout: object, data: str) -> None:
         """
-        Initiates the new widget instance
+        Create new Widget model instance
         :param user_id: The users identification number the widget belongs to
-        :type user_id: int
-        :param layout: Layout for the widget
-        :type layout: <class 'Layouts'>
-        :param data:  widgets JSON data
-        :type data:   str
+        :param layout: Layout db model for the widget
+        :param data:  Widget JSON data
         """
         self.user_id = user_id
         self.data = data
@@ -51,30 +39,24 @@ class WidgetModel(db.Model):
 
     def __str__(self) -> str:
         """
-        returns the layout instance as a string
+        Return the Widget Id and  User id and  as a string
         :return:  JSONified string of the layouts attributes
         """
         return "UserID: {} \t\tWidgetID: {}".format(self.user_id, self.id)
 
     def json(self) -> dict:
         """
-        formats response to be sent to user
-        :return:  a Dictionary of the response data
-        :param  id:      widgetID
-        :param  userID:  users identification number
-        :param  data:    widget JSON data
-        :type:   int
-        :type:   int
-        :type:   dict
+        Create JSON of Widget Attributes
+        :return:  JSON serialized Widget attributes
         """
         # format response
-        response_data = {"id": str(self.id), "userID": self.user_id, "data": self.data}
+        response_data = {"id": str(self.id), "userID": self.user_id,
+                         "data": self.data, "layout": self.layout.json()}
         return response_data
 
     def save(self) -> NoReturn:
         """
-        Adds widget entry to the database session to be committed
-        :raises IntegrityError: performs a database session rollback
+        Add Widget instance to the database session
         """
         try:
             db.session.add(self)
@@ -85,8 +67,7 @@ class WidgetModel(db.Model):
 
     def delete(self) -> NoReturn:
         """
-        Deletes a widget entry and its related layout entry from the database session to be committed
-        :raises IntegrityError: performs a database session rollback
+        Delete Widget entry and its related layout entry from the database
         """
         try:
             db.session.delete(self.layout)
@@ -103,16 +84,7 @@ class WidgetModel(db.Model):
 
     def create_table(self) -> NoReturn:
         """
-        Creates the widget table used to persist widget data in the database if it does not exist
-        :param _WIDGET_DB_TABLE_NAME: table name
-        :param  id:         primary key
-        :param  user_id:    users unique identification number
-        :param  data:       widget data to be persisted in table
-
-        :type _WIDGET_DB_TABLE_NAME: str
-        :type id:       int
-        :type user_id:  int
-        :type data:     dict
+        Create the widget table if it does not exist
         """
         # If table don't exist, Create.
         if not self.table_exists():
@@ -121,8 +93,10 @@ class WidgetModel(db.Model):
                      db.Column('id', db.Integer, primary_key=True),
                      db.Column('user_id', db.Integer, nullable=False),
                      db.Column('data', JSON, nullable=False),
-                     db.Column('layout_id', db.Integer, db.ForeignKey('layouts.id')),
-                     db.relationship('Layouts', backref=db.backref('layouts', lazy=True)),
+                     db.Column('layout_id', db.Integer,
+                               db.ForeignKey('layouts.id')),
+                     db.relationship('Layouts',
+                                     backref=db.backref('layouts', lazy=True)),
                      schema=None).create()
 
     def table_exists(self) -> bool:
@@ -131,15 +105,28 @@ class WidgetModel(db.Model):
         :return: True if the table exists in the database otherwise False
         """
         # Does the table exist?
-        has_table = db.engine.dialect.has_table(db.engine, self._WIDGET_DB_TABLE_NAME)
+        has_table = db.engine.dialect.has_table(db.engine,
+                                                self._WIDGET_DB_TABLE_NAME)
         return has_table
 
     @classmethod
-    def get_widget_by_id(cls, widgetID: int) -> db.Model:
+    def get_widget_by_id(cls, widget_id: int) -> db.Model:
         """
         Fetches a widget by its id
-        :param widgetID: the widgets identification number to fetch
+        :param widget_id: the widgets identification number to fetch
         :return: Widget instance if found otherwise None
         """
         # find widget by its id  and return it
-        return cls.query.filter_by(id=widgetID).first()
+        return cls.query.filter_by(id=widget_id).first()
+
+    @classmethod
+    def get_widget_by_id_and_user_id(cls, widget_id: int, user_id: int) -> \
+            Union[db.Model, None]:
+        """
+        Fetches a widget by its id and user_id
+        :param widget_id: the widgets identification number to fetch
+        :param user_id: User Id
+        :return: Widget instance if found otherwise None
+        """
+        # find widget by its id  and return it
+        return cls.query.filter_by(id=widget_id, user_id=user_id).first()
