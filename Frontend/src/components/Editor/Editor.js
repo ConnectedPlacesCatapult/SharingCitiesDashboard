@@ -1,21 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  Button,
   withStyles,
 } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { saveWidget } from './../../actions/editorActions';
 import ConfigWrapper from './config/ConfigWrapper';
 import PreviewWrapper from './preview/PreviewWrapper';
 
 
 const styles = (theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
+  },
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionButton: {
+
   },
 });
 
@@ -24,18 +32,43 @@ class Editor extends React.Component {
     classes: PropTypes.object.isRequired,
   };
 
+  handleSaveWidgetClicked = () => {
+    const { editor, saveWidget } = this.props;
+
+    saveWidget(editor.mode, editor.widget);
+  };
+
   render() {
     const { classes } = this.props;
 
     return (
       <div className={classes.root}>
-        <ConfigWrapper/>
-        <PreviewWrapper/>
+        <div className={classes.row}>
+          <ConfigWrapper/>
+          <PreviewWrapper/>
+        </div>
+        <Button
+          className={classes.actionButton}
+          variant="contained"
+          color="secondary"
+          onClick={this.handleSaveWidgetClicked}
+        >
+          Save Widget
+        </Button>
       </div>
     )
   }
 }
 
+const mapStateToProps = (state) => ({
+  editor: state.editor,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  saveWidget: (mode, widget) => dispatch(saveWidget(mode, widget)),
+});
+
 Editor = withStyles(styles)(Editor);
+Editor = connect(mapStateToProps, mapDispatchToProps)(Editor);
 
 export default Editor

@@ -1,5 +1,8 @@
 import {
   EDITOR_CLOSE,
+  EDITOR_GET_THEME_TREE,
+  EDITOR_GET_THEME_TREE_FULFILLED,
+  EDITOR_GET_THEME_TREE_REJECTED,
   EDITOR_OPEN,
   EDITOR_SET_WIDGET_PROPERTY,
   EDITOR_SET_WIDGET_CONFIG_PROPERTY,
@@ -16,6 +19,10 @@ const initialState = {
   open: false,
   mode: null,
   widget: null,
+  themeTree: [],
+  fetching: false,
+  fetched: false,
+  error: null,
 };
 
 const getWidgetDefaultProperties = (currentProperties) => {
@@ -37,22 +44,42 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_ALERT: {
       return {
         ...defaultProperties,
+        width: 300,
+        height: 240,
         config: {
           ...defaultProperties.config,
-          something: "dlkfjslkjsdn",
-        }
+          value: 0,
+          sendEmail: true,
+        },
+        queryParams: {
+          ...defaultProperties.queryParams,
+          attributedata: '',
+          method: 'max',
+          limit: 1,
+        },
       }
     }
 
     case WIDGET_TYPE_FORECAST: {
       return {
         ...defaultProperties,
+        config: {
+          ...defaultProperties.config,
+        },
+        queryParams: {
+          ...defaultProperties.queryParams,
+          attributeData: [],
+          predictions: true,
+          n_predictions: 10,
+        },
       }
     }
 
     case WIDGET_TYPE_MAP: {
       return {
         ...defaultProperties,
+        width: 400,
+        height: 240,
         config: {
           ...defaultProperties.config,
           center: FCC_CONFIG.widgetEditorDefaults.mapCenter,
@@ -78,6 +105,8 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_PLOT: {
       return {
         ...defaultProperties,
+        width: 400,
+        height: 200,
         config: {
           ...defaultProperties.config,
           ...FCC_CONFIG.editorDefaultConfig.plot,
@@ -101,6 +130,31 @@ export default (state=initialState, action={}) => {
       return {
         ...state,
         open: false,
+      }
+    }
+
+    case EDITOR_GET_THEME_TREE: {
+      return {
+        ...state,
+        fetching: true,
+      }
+    }
+
+    case EDITOR_GET_THEME_TREE_FULFILLED: {
+      return {
+        ...state,
+        fetching: false,
+        fetched: true,
+        themeTree: action.payload,
+      }
+    }
+
+    case EDITOR_GET_THEME_TREE_REJECTED: {
+      return  {
+        ...state,
+        fetching: false,
+        fetched: false,
+        error: action.payload,
       }
     }
 

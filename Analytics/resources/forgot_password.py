@@ -10,6 +10,9 @@ from models.users import Users
 sys.path.append("../..")
 from settings import GetConfig
 
+sys.path.append("../..")
+from settings import GetConfig
+
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 

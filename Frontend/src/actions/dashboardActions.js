@@ -1,33 +1,127 @@
+import { axiosInstance } from './../api/axios';
+import { getUserID } from './../api/session';
 import {
+  DELETE_WIDGET,
+  DELETE_WIDGET_FULFILLED,
+  DELETE_WIDGET_REJECTED,
+  FETCH_WIDGETS,
+  FETCH_WIDGETS_FULFILLED,
+  FETCH_WIDGETS_REJECTED,
   FETCH_LAYOUT,
   FETCH_LAYOUT_FULFILLED,
   FETCH_LAYOUT_REJECTED,
   UPDATE_LAYOUT,
-  FETCH_WIDGETS,
-  FETCH_WIDGETS_FULFILLED,
-  FETCH_WIDGETS_REJECTED,
-} from "./../constants";
+} from './../constants';
+
+export const deleteWidget = (widgetId) => {
+  return (dispatch) => {
+    dispatch({
+      type: DELETE_WIDGET,
+    });
+
+    const requestData = {
+      userID: getUserID(),
+      widgetID: parseInt(widgetId),
+    };
+
+    axiosInstance
+      .post('/widgets/delete_widget', requestData)
+      .then((response) => {
+        dispatch({
+          type: DELETE_WIDGET_FULFILLED,
+          payload: parseInt(widgetId),
+        })
+      })
+      .catch((error) => {
+        dispatch({
+          type: DELETE_WIDGET_REJECTED,
+          payload: error,
+        })
+      })
+  }
+};
 
 export const fetchLayout = () => {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
       type: FETCH_LAYOUT,
     });
 
-    try {
-      const STATIC_LAYOUT_DATA = require('./../data/layout');
+    const requestData = {
+      userID: getUserID(),
+    };
 
-      dispatch({
-        type: FETCH_LAYOUT_FULFILLED,
-        payload: STATIC_LAYOUT_DATA,
+    axiosInstance
+      .post('/widgets/get_layouts', requestData)
+      .then((response) => {
+        const layout = response.data.map((widget) => ({
+          i: widget.id,
+          x: widget.x,
+          y: widget.y,
+          w: widget.w,
+          h: widget.h,
+        }));
+
+        dispatch({
+          type: FETCH_LAYOUT_FULFILLED,
+          payload: layout,
+        })
       })
-    }
-    catch (err) {
-      dispatch({
-        type: FETCH_LAYOUT_REJECTED,
-        payload: err,
+      .catch((error) => {
+        dispatch({
+          type: FETCH_LAYOUT_REJECTED,
+          payload: error,
+        })
       })
-    }
+  }
+};
+
+export const fetchWidgets = () => {
+  return (dispatch) => {
+    dispatch({
+      type: FETCH_WIDGETS,
+    });
+
+    const requestData = {
+      userID: getUserID(),
+      limit: 10,
+    };
+
+    axiosInstance
+      .post('widgets/load_widgets', requestData)
+      .then((response) => {
+        const parsed = response.data.map((widget) => {
+
+          // ToDo :: needs further sanitizing to handle apostrophes within text fields
+          const sanitizedString = widget.data
+            .replace(/'/g, '"')
+            .replace(/False/g, '"false"')
+            .replace(/True/g, '"true"')
+            .replace(/None/g, '"null"')
+            .toString()
+          ;
+          const widgetData = JSON.parse(sanitizedString);
+
+          return {
+            ...widgetData,
+            i: widget.id,
+            width: parseInt(widgetData.width),
+            height: parseInt(widgetData.height),
+            isStatic: (widgetData.isStatic === 'true'),
+          }
+        });
+
+        dispatch({
+          type: FETCH_WIDGETS_FULFILLED,
+          payload: parsed,
+        })
+      })
+      .catch((error) => {
+        dispatch({
+          type: FETCH_WIDGETS_REJECTED,
+          payload: error,
+        })
+      })
   }
 };
 
@@ -35,26 +129,3 @@ export const updateLayout = (layout) => ({
   type: UPDATE_LAYOUT,
   payload: layout,
 });
-
-export const fetchWidgets = () => {
-  return (dispatch, getState) => {
-    dispatch({
-      type: FETCH_WIDGETS,
-    });
-
-    try {
-      const STATIC_WIDGET_DATA = require('./../data/widgets');
-
-      dispatch({
-        type: FETCH_WIDGETS_FULFILLED,
-        payload: STATIC_WIDGET_DATA,
-      })
-    }
-    catch (err) {
-      dispatch({
-        type: FETCH_WIDGETS_REJECTED,
-        payload: err,
-      })
-    }
-  }
-};

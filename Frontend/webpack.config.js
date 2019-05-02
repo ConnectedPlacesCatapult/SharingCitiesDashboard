@@ -66,7 +66,7 @@ module.exports = (env) => {
         template: "./src/template.html",
         filename: "./index.html"
       }),
-      new webpack.DefinePlugin({ 
+      new webpack.DefinePlugin({
         'process.env.NODE_HOST': JSON.stringify(`${process.env.NODE_HOST}`),
         'process.env.API_PORT': JSON.stringify(`${process.env.NODE_API_PORT}`),
         'process.env.HOST_PORT': JSON.stringify(`${process.env.NODE_DEV_PORT}`)
