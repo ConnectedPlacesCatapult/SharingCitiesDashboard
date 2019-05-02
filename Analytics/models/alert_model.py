@@ -166,10 +166,12 @@ class AlertWidgetModel(db.Model):
                     alerts["user_id"] = alert.user_id
                     alerts["widget_id"] = alert.widget_id
                     alerts["attribute_id"] = attribute_range.attribute_id
+                    alerts["sensor_id"] = attribute_range.maximum_sensor_id
                     alerts["type"] = "Maximum Threshold Exceeded"
                     alerts["value"] = attribute_range.maximum
                     alerts["max_threshold"] = alert.max_threshold
-                    alerts["timestamp"] = str(attribute_range.latest_update)
+                    alerts["timestamp"] = str(
+                        attribute_range.maximum_recorded_date)
                     results.append(alerts)
 
         return results
@@ -202,10 +204,13 @@ class AlertWidgetModel(db.Model):
                     alerts["user_id"] = alert.user_id
                     alerts["widget_id"] = alert.widget_id
                     alerts["attribute_id"] = attribute_range.attribute_id
+                    alerts["sensor_id"] = attribute_range.minimum_sensor_id
                     alerts["type"] = "Minimum Threshold Exceeded"
                     alerts["value"] = attribute_range.minimum
                     alerts["min_threshold"] = alert.min_threshold
-                    alerts["timestamp"] = str(attribute_range.latest_update)
+                    alerts["timestamp"] = str(
+                        attribute_range.minimum_recorded_date)
                     results.append(alerts)
 
         return results
+

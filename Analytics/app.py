@@ -71,7 +71,6 @@ from settings.get_config_decorator import GetConfig
 
 
 def create_app(**config_overrides):
-
     app = Flask(__name__)
     app.config.update(GetConfig.configure('postgres'))
 
@@ -223,5 +222,5 @@ def create_app(**config_overrides):
     api.add_resource(CheckAlerts, '/alert/check_alerts')
     api.add_resource(GetAlerts, '/alert/get_alerts')
     api.add_resource(DeleteAlerts, '/alert/delete_alerts')
-    api.add_resource(PushAlert, '/alerts/triggered')
+    api.add_resource(PushAlert, '/alert/triggered')
     return app
