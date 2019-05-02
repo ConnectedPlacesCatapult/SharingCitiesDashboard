@@ -3,8 +3,13 @@
 unset DEBUG
 PREFIX="   -"
 
+# Set install flags
+if [ ! $PYREQ_INSTALLED ]; then
+    export PYREQ_INSTALLED=False
+fi
+
 # Initialize script
-echo "-- FCC DB Setup Script --"
+echo "-- FCC DB Setup --"
 
 # Check if postgres is installed
 echo "$PREFIX Checking for postgres"
@@ -13,7 +18,7 @@ if [ -z "$(which psql)" ]; then
     echo "   $PREFIX Installing postgresql"
     sudo apt update
     sudo apt install postgresql postgresql-contrib
-    sudo apt-get install postgis
+    sudo apt-get install postgis libpq-dev
 fi
 echo "   $PREFIX Postgres installed!"
 
@@ -32,21 +37,6 @@ sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE analytics to sharingc
 # Install PostGIS extension on analytics DB
 echo "$PREFIX Creating postgis extension"
 sudo -u postgres psql -d analytics -c "CREATE EXTENSION postgis"
-
-# Move to Analytics directory
-cd ~/SharingCitiesDashboard/Analytics
-
-# Install python requirements
-echo "$PREFIX Installing python requirements"
-pip3 install -r requirements.txt
-
-# Setup DB structure
-echo "$PREFIX Initialize DB structure"
-python3 db_setup.py
-
-# Create SuperUser account
-echo "$PREFIX Setup SuperUser account"
-python3 manage.py add_superuser
 
 # Return to root directory
 cd

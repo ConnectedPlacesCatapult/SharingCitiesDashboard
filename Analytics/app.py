@@ -6,6 +6,7 @@ from flask_restful import Api
 
 from db import db
 from models.revoked_tokens import RevokedTokens
+from models.attribute_range import AttributeRange
 from resources.Widgets.create_widget_layout import CreateWidgetLayout
 from resources.Widgets.delete_widget import DeleteWidgets
 from resources.Widgets.get_layouts import GetLayouts
@@ -21,6 +22,11 @@ from resources.admin.edit_user import EditUser
 from resources.admin.get_user import GetUserByEmail
 from resources.admin.user_list import UsersList
 from resources.admin.user_permissions import UserPermissions
+from resources.alerts.check_alerts import CheckAlerts
+from resources.alerts.create_alert import CreateAlert
+from resources.alerts.delete_alert import DeleteAlerts
+from resources.alerts.get_alerts import GetAlerts
+from resources.alerts.push_alert import PushAlert
 from resources.analytics import Analytics
 from resources.attributes import AttributeAlias
 from resources.attributes import DeleteAttributeAlias
@@ -212,4 +218,10 @@ def create_app(**config_overrides):
     api.add_resource(TestKeyValidity, "/sendgrid/test_key_validity")
     api.add_resource(ReplaceKey, "/sendgrid/replace_key")
 
+    # Alert Enpoints
+    api.add_resource(CreateAlert, '/alert/create_alert')
+    api.add_resource(CheckAlerts, '/alert/check_alerts')
+    api.add_resource(GetAlerts, '/alert/get_alerts')
+    api.add_resource(DeleteAlerts, '/alert/delete_alerts')
+    api.add_resource(PushAlert, '/alerts/triggered')
     return app

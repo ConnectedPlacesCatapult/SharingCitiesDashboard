@@ -7,7 +7,7 @@ module.exports = (env) => {
   return {
     devServer: {
     historyApiFallback: true,
-    host:process.env.NODE_HOST,
+    host:process.env.NODE_DEV_HOST,
     port:process.env.NODE_DEV_PORT,
     },
     entry: "./src/index.js",
@@ -69,12 +69,10 @@ module.exports = (env) => {
       new webpack.DefinePlugin({
         'process.env.NODE_HOST': JSON.stringify(`${process.env.NODE_HOST}`),
         'process.env.API_PORT': JSON.stringify(`${process.env.NODE_API_PORT}`),
+        'process.env.NODE_DEV_HOST': JSON.stringify(`${process.env.NODE_DEV_HOST}`),
         'process.env.HOST_PORT': JSON.stringify(`${process.env.NODE_DEV_PORT}`)
       })
     ],
-    devServer: {
-      historyApiFallback: true,
-    },
     node: { fs: 'empty' }
-  }
+  };
 };
