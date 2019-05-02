@@ -98,7 +98,7 @@ class Widgets(Resource):
                   error="exc.SQLAlchemyError: create_widget")
         response = self.get_reponse_template(curr_widget,
                                              updated="widget_id" in args)
-        return response, HTTPStatus.CREATED
+        return response, HTTPStatus.OK
 
     def update_layout(self, widget: db.Model, parsed_args: dict()) -> None:
         """
