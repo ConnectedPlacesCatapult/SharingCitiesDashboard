@@ -68,7 +68,7 @@ class AlertWidgetModel(db.Model):
         Get JSON of AlertWidgetModel
         :return: JSON representation of AlertWidgetModel attributes
         """
-        return dict(user_id=self.user_id, widget_id=self.widget_id,
+        return dict(id=self.id, user_id=self.user_id, widget_id=self.widget_id,
                     attribute_id=self.attribute_id,
                     max_threshold=self.max_threshold,
                     min_threshold=self.min_threshold,
