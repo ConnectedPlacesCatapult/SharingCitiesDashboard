@@ -150,15 +150,11 @@ RegisterForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-
-});
-
-const madDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({
   doRegister: (userCredentials, props) => dispatch(doRegister(userCredentials, props)),
 });
 
 RegisterForm = withStyles(styles)(RegisterForm);
-RegisterForm = connect(mapStateToProps, madDispatchToProps)(RegisterForm);
+RegisterForm = connect(null, mapDispatchToProps)(RegisterForm);
 
 export default RegisterForm

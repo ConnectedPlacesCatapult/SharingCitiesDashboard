@@ -4,15 +4,24 @@ import {
   FETCH_USERS_REJECTED,
   PROMPT_USER_DELETE,
   CANCEL_USER_DELETE,
-  DELETE_USER_FULFILLED
+  DELETE_USER_FULFILLED,
+  FETCH_IMPORTER_STATUSES,
+  FETCH_IMPORTER_STATUSES_FULFILLED,
+  FETCH_IMPORTER_STATUSES_REJECTED,
+  NOT_AUTHORISED_TO_VIEW_USERS,
+  NOT_AUTHORISED_TO_VIEW_IMPORTERS,
+  RESET_STATE
 } from "./../constants";
 
 const initialState = {
   users: [],
+  importers: [],
   fetching: false,
   fetched: false,
   deleteUserDialogOpen: false,
   error: null,
+  hideUsers: false,
+  hideImporters: false
 };
 
 export default (state=initialState, action={}) => {
@@ -43,6 +52,31 @@ export default (state=initialState, action={}) => {
       }
     }
 
+    case FETCH_IMPORTER_STATUSES: {
+      return {
+        ...state,
+        fetching: true,
+      }
+    }
+
+    case FETCH_IMPORTER_STATUSES_FULFILLED: {
+      return {
+        ...state,
+        fetching: false,
+        fetched: true,
+        importers: action.payload,
+      }
+    }
+
+    case FETCH_IMPORTER_STATUSES_REJECTED: {
+      return {
+        ...state,
+        fetching: false,
+        fetched: false,
+        error: action.payload,
+      }
+    }
+
     case PROMPT_USER_DELETE: {
       return {
         ...state,
@@ -64,6 +98,24 @@ export default (state=initialState, action={}) => {
         ...state,
         deleteUserDialogOpen: false,
       }
+    }
+
+    case NOT_AUTHORISED_TO_VIEW_USERS: {
+      return {
+        ...state,
+        hideUsers: true,
+      }
+    }
+
+    case NOT_AUTHORISED_TO_VIEW_IMPORTERS: {
+      return {
+        ...state,
+        hideImporters: true,
+      }
+    }
+
+    case RESET_STATE: {
+      return initialState
     }
 
   }

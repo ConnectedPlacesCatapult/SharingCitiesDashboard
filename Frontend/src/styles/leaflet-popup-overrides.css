@@ -1,0 +1,26 @@
+.leaflet-popup-content-wrapper {
+  background: inherit;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  text-align: inherit;
+  color: inherit;
+}
+
+.leaflet-popup-content {
+  line-height: inherit;
+  margin: 0 19px;
+}
+
+.leaflet-popup-content p {
+  margin: 0;
+}
+
+a.leaflet-popup-close-button {
+  right: 19px;
+}
+
+.leaflet-popup-tip {
+  background-color: #42465a;
+  box-shadow: none;
+}

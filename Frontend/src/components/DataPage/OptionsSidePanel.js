@@ -7,15 +7,10 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import ShowChartIcon from '@material-ui/icons/ShowChart';
 import BarChartIcon from '@material-ui/icons/BarChart';
-
-import {
-  FunctionFilter,
-  TimestampFilter,
-  SensorFilter,
-} from './../common/Filters';
+import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import ExportDataMenu from './../common/ExportDataMenu';
+import CreateWidgetMenu from './../common/CreateWidgetMenu';
 
 const styles = (theme) => ({
   root: {
@@ -47,49 +42,68 @@ class OptionsSidePanel extends React.Component {
     classes: PropTypes.object.isRequired,
   };
 
+  state = {
+    exportDataMenuAnchorEl: null,
+    createWidgetMenuAnchorEl: null,
+  };
+
+  handleExportDataClicked = (e) => {
+    this.setState({ exportDataMenuAnchorEl: e.currentTarget })
+  };
+
+  handleCreateWidgetClicked = (e) => {
+    this.setState({ createWidgetMenuAnchorEl: e.currentTarget })
+  };
+
+  handleCloseExportDataMenu = () => {
+    this.setState({ exportDataMenuAnchorEl: null })
+  };
+
+  handleCloseCreateWidgetMenu = () => {
+    this.setState({ createWidgetMenuAnchorEl: null })
+  };
+
   render() {
     const { classes } = this.props;
+    const { exportDataMenuAnchorEl, createWidgetMenuAnchorEl } = this.state;
 
     return (
       <div className={classes.root}>
         <Paper className={classes.paper}>
-          <SensorFilter
-            heading="Filter by sensor"
-            subheading="Limit the data for all selected attributes by sensor name"
-          />
-          <Divider
-            className={classes.divider}
-            light={true}
-          />
-          <TimestampFilter
-            heading="Filter by time"
-            subheading="Specify 'from' and 'to' timestamps"
-          />
-          <Divider
-            className={classes.divider}
-            light={true}
-          />
-          <FunctionFilter
-            heading="Function"
-            subheading="Apply aggregate functions to the data"
-          />
-          <Divider
-            className={classes.divider}
-            light={true}
-          />
           <Typography variant="h6" className={classes.heading}>
             Actions
           </Typography>
+          <Divider
+            className={classes.divider}
+            light={true}
+          />
           <div className={classes.actionButtons}>
-            <Button variant="contained" color="primary" className={classes.actionButton}>
+            <ExportDataMenu
+              anchorEl={exportDataMenuAnchorEl}
+              onClose={this.handleCloseExportDataMenu}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.actionButton}
+              onClick={this.handleExportDataClicked}
+            >
               <SaveAltIcon className={classes.actionButtonIcon} />
               Export Data
             </Button>
-            <Button variant="contained" color="primary" className={classes.actionButton}>
-              <ShowChartIcon className={classes.actionButtonIcon} />
-              Forecast Data
-            </Button>
-            <Button variant="contained" color="primary" className={classes.actionButton} onClick={this.props.openWidgetMaker}>
+            <CreateWidgetMenu
+              mode="add"
+              anchorEl={createWidgetMenuAnchorEl}
+              onClose={this.handleCloseCreateWidgetMenu}
+              enableAlert={false}
+              enableForecast={false}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.actionButton}
+              onClick={this.handleCreateWidgetClicked}
+            >
               <BarChartIcon className={classes.actionButtonIcon} />
               Create Widget
             </Button>

@@ -2,7 +2,7 @@ flask
 flask-restful
 flask_wtf
 pymysql
-psycopg2
+psycopg2-binary
 flask-sqlalchemy
 flask-migrate
 flask-script
@@ -18,5 +18,13 @@ shapely
 bcrypt
 flask-jwt-extended
 pytest
-logging
 sendgrid
+gunicorn
+celery==v4.3.0rc1
+apscheduler
+redis
+requests
+retrying
+pyyaml
+simplekml
+simplejson

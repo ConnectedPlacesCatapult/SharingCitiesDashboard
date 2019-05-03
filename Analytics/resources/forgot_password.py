@@ -1,19 +1,20 @@
-import random
 import http.client
-
 import logging
+import random
+import sys
 import flask
-from flask_restful import Resource, reqparse
 import sendgrid
-import os
+from flask_restful import Resource, reqparse
 from sendgrid.helpers.mail import Email, Content, Mail
-
 from models.users import Users
+sys.path.append("../..")
+from settings import GetConfig
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
 
 
+@GetConfig('ForgotPassword', 'sendgrid')
 class ForgotPassword(Resource):
     """
     API resource class. Allow user to reset their password to a system
@@ -31,7 +32,6 @@ class ForgotPassword(Resource):
     : source ./sendgrid.env
     """
 
-    SYSTEM_PASSWORD_LENGTH = 15
     parser = reqparse.RequestParser()
     parser.add_argument("email")
 
@@ -46,7 +46,7 @@ class ForgotPassword(Resource):
 
         if current_user:
             system_password = self.generate_random_password(
-                self.SYSTEM_PASSWORD_LENGTH)
+                self.system_password_length)
 
             if self.send_forgot_password_email(current_user.fullname,
                                                current_user.email,
@@ -73,34 +73,25 @@ class ForgotPassword(Resource):
             ">/{{}}[]()*&^%$#@"
         return ''.join(random.choice(charset) for _ in range(length))
 
-    @staticmethod
-    def send_forgot_password_email(name: str, email: str,
+    def send_forgot_password_email(self, name: str, email: str,
                                    new_password: str) -> bool:
 
         """
         Send email to a user containing their new system generated password
         """
 
-        text_version = """\n
-            Hi {username}
-            
-            You requested for your password to be reset. \n
-            Your new system generated password is : {password}\n
-            You can now login to the Sharing Cities Dashboard with this 
-            password.\n
-            It is recommended you change your password once logged in.
-            \n
-            """.format(username=name, password=new_password)
+        text_version = self.text_template.format(username=name,
+                                                 password=new_password)
         html_version = flask.render_template(
-            "forgot_password_email.html", username=name,
+            self.html_template, username=name,
             password=new_password)
 
         sg = sendgrid.SendGridAPIClient(
-            apikey=os.environ.get("SENDGRID_API_KEY"))
+            apikey=self.api_key)
 
-        from_email = Email("sharedcitiestesting@gmail.com")
+        from_email = Email(self.sender_email)
         to_email = Email(email)
-        subject = "Sharing Cities - Forgot Password"
+        subject = self.email_subject
         content_text = Content("text/plain", text_version)
         send_new_password_email = Mail(from_email, subject, to_email,
                                        content_text)

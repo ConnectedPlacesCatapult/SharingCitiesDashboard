@@ -1,0 +1,21 @@
+#vg-tooltip-element {
+  background-color: #313443;
+  font-family: 'BrandonText', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  border-color: rgb(129, 207, 199);
+  z-index: 3000;
+}
+
+#vg-tooltip-element td {
+  font-size: 14px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#vg-tooltip-element td.key {
+  color: #fff;
+}
+
+#vg-tooltip-element td.value {
+  color: #81cfc7;
+}

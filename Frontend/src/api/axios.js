@@ -1,9 +1,9 @@
-import { LOCAL_URL } from './urls'
 import { getAuthToken } from './session'
 import axios from 'axios'
 
+
 export const axiosInstance = axios.create({
-  baseURL: LOCAL_URL
+  baseURL: `${process.env.NODE_HOST}${process.env.API_PORT}`
 })
 
 axiosInstance.interceptors.request.use(function (config) {

@@ -1,1 +1,1 @@
-export const LOCAL_URL = 'http://localhost:5000/'
+export const LOCAL_URL = `${process.env.NODE_HOST}${process.env.API_PORT}`;

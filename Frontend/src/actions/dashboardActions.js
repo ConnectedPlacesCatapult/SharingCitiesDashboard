@@ -1,258 +1,131 @@
-import _ from 'lodash'
-import {axiosInstance} from "../api/axios";
-import {getUserID} from "../api/session";
-
+import { axiosInstance } from './../api/axios';
+import { getUserID } from './../api/session';
 import {
-  FETCH_LAYOUT,
-  FETCH_LAYOUT_FULFILLED,
-  FETCH_LAYOUT_REJECTED,
-  SAVE_LAYOUT,
-  SAVE_LAYOUT_FULFILLED,
-  SAVE_LAYOUT_REJECTED,
-  SAVE_LAYOUT_DISMISSED,
-  UPDATE_LAYOUT,
-  FETCH_WIDGETS,
-  FETCH_WIDGETS_FULFILLED,
-  FETCH_WIDGETS_REJECTED,
-  ADD_WIDGET,
-  UPDATE_WIDGET,
   DELETE_WIDGET,
   DELETE_WIDGET_FULFILLED,
   DELETE_WIDGET_REJECTED,
-  PROMPT_WIDGET_DELETE,
-  CANCEL_WIDGET_DELETE,
-  FETCH_USERS,
-  FETCH_USERS_FULFILLED,
-  FETCH_USERS_REJECTED,
-  SAVE_WIDGET_FULFILLED,
-  SAVE_WIDGET_REJECTED,
-  HIDE_NOTIFICATION
-} from "./../constants";
+  FETCH_WIDGETS,
+  FETCH_WIDGETS_FULFILLED,
+  FETCH_WIDGETS_REJECTED,
+  FETCH_LAYOUT,
+  FETCH_LAYOUT_FULFILLED,
+  FETCH_LAYOUT_REJECTED,
+  UPDATE_LAYOUT,
+} from './../constants';
 
-export const updateLayout = (layout) => ({
-  type: UPDATE_LAYOUT,
-  payload: layout,
-});
-
-export const promptDeleteWidget = (widgetID) => {
+export const deleteWidget = (widgetId) => {
   return (dispatch) => {
     dispatch({
-      type: PROMPT_WIDGET_DELETE,
-      widgetToDelete: widgetID
+      type: DELETE_WIDGET,
     });
-  };
-};
 
-export const fetchWidgets = () => {
-  const userID = getUserID()
-
-  return (dispatch, getState) => {
-    dispatch({
-      type: FETCH_WIDGETS,
-    });
     const requestData = {
-      userID: userID,
-      limit: 10
+      userID: getUserID(),
+      widgetID: parseInt(widgetId),
     };
 
-    axiosInstance.post('/widgets/load_widgets', requestData).then((response) => {
-      const widgetsAsJSON = []
-      const widgetArrayAsString = response.data
-
-      for (let i = 0; i < widgetArrayAsString.length; i++) {
-        const widgetData = JSON.parse(widgetArrayAsString[i].data.replace(/'/g, '"').replace(/False/g, '"false"').replace(/True/g, '"true"').toString())
-        if (widgetData.type === 'plot') {
-          const widgetAsJSON = {
-            i: widgetArrayAsString[i].id,
-            userID: widgetArrayAsString[i].userID,
-            type: widgetData.type,
-            title: widgetData.name,
-            ...widgetData.plotConfig
-          }
-          widgetsAsJSON.push(widgetAsJSON)
-        }
-        if (widgetData.type === 'map') {
-          const widgetAsJSON = {
-            i: widgetArrayAsString[i].id,
-            userID: widgetArrayAsString[i].userID,
-            type: widgetData.type,
-            title: widgetData.name,
-            ...widgetData.mapConfig
-          }
-          widgetsAsJSON.push(widgetAsJSON)
-        }
-        if (widgetData.type === 'alert') {
-          const widgetAsJSON = {
-            i: widgetArrayAsString[i].id,
-            userID: widgetArrayAsString[i].userID,
-            type: widgetData.type,
-            title: widgetData.name,
-            ...widgetData.alertConfig
-          }
-          widgetsAsJSON.push(widgetAsJSON)
-        }
-      }
-
-      dispatch({
-        type: FETCH_WIDGETS_FULFILLED,
-        payload: widgetsAsJSON,
+    axiosInstance
+      .post('/widgets/delete_widget', requestData)
+      .then((response) => {
+        dispatch({
+          type: DELETE_WIDGET_FULFILLED,
+          payload: parseInt(widgetId),
+        })
       })
-    })
-    .catch((err) => {
-      dispatch({
-        type: FETCH_WIDGETS_REJECTED,
-        payload: err,
+      .catch((error) => {
+        dispatch({
+          type: DELETE_WIDGET_REJECTED,
+          payload: error,
+        })
       })
-    })
-  };
+  }
 };
 
 export const fetchLayout = () => {
-  const userID = getUserID()
-
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
       type: FETCH_LAYOUT,
     });
 
     const requestData = {
-      userID: userID
+      userID: getUserID(),
     };
-    axiosInstance.post('/widgets/get_layouts', requestData).then((response) => {
-      const layoutReceived = response.data
-      const layoutFixed = []
-      for (let i = 0; i < layoutReceived.length; i++) {
-        const layoutItem = {
-          i: layoutReceived[i].id,
-          x: layoutReceived[i].x,
-          y: layoutReceived[i].y,
-          w: layoutReceived[i].w,
-          h: layoutReceived[i].h,
-        }
-        layoutFixed.push(layoutItem)
-      }
-      dispatch({
-        type: FETCH_LAYOUT_FULFILLED,
-        payload: layoutFixed,
+
+    axiosInstance
+      .post('/widgets/get_layouts', requestData)
+      .then((response) => {
+        const layout = response.data.map((widget) => ({
+          i: widget.id,
+          x: widget.x,
+          y: widget.y,
+          w: widget.w,
+          h: widget.h,
+        }));
+
+        dispatch({
+          type: FETCH_LAYOUT_FULFILLED,
+          payload: layout,
+        })
       })
-    })
-      .catch((err) => {
+      .catch((error) => {
         dispatch({
           type: FETCH_LAYOUT_REJECTED,
-          payload: err,
+          payload: error,
         })
       })
-  };
-};
-
-export const saveLayout = () => {
-  const userID = getUserID()
-
-  return (dispatch, getState) => {
-    const state = getState()
-    const newLayout = _.get(state, 'dashboard.layout')
-
-    const cleanedLayout = []
-
-    for (let i = 0; i < newLayout.length; i++) {
-      const layoutItem = {
-        id: newLayout[i].i,
-        x: newLayout[i].x,
-        y: newLayout[i].y,
-        h: newLayout[i].h,
-        w: newLayout[i].w,
-        static: "false"
-      }
-      cleanedLayout.push(layoutItem)
-    }
-
-    const newLayoutObject = {
-      layouts: cleanedLayout
-    }
-
-    console.log("newLayout", newLayoutObject)
-
-    dispatch({
-      type: SAVE_LAYOUT,
-    });
-
-    const requestData = {
-      userID: userID
-    };
-    axiosInstance.post('/widgets/save_layouts', newLayoutObject).then((response) => {
-
-      dispatch({
-        type: SAVE_LAYOUT_FULFILLED
-      })
-
-      setTimeout(() => {
-        dispatch({
-          type: HIDE_NOTIFICATION,
-        })
-      }, 2000)
-
-    .catch((error) => {
-        dispatch({
-          type: SAVE_LAYOUT_REJECTED,
-          payload: error.statusText,
-        })
-      })
-      setTimeout(() => {
-        dispatch({
-          type: HIDE_NOTIFICATION,
-        })
-      }, 5000)
-    })
   }
 };
 
-export const dismissSaveLayout = () => {
+export const fetchWidgets = () => {
   return (dispatch) => {
     dispatch({
-      type: SAVE_LAYOUT_DISMISSED,
+      type: FETCH_WIDGETS,
     });
-  };
-};
-
-export const deleteWidget = () => {
-  const userID = getUserID()
-
-  return (dispatch, getState) => {
-
-    const currentState = getState();
-    const widgetID = currentState.dashboard.widgetToDelete
 
     const requestData = {
-      limit: '10',
-      userID: userID,
-      widgetID: widgetID
+      userID: getUserID(),
+      limit: 10,
     };
-    axiosInstance.post('/widgets/delete_widget', requestData).then((response) => {
-      fetchWidgets()(
-        dispatch, getState
-      );
-      fetchLayout()(
-        dispatch, getState
-      );
-      dispatch({
-        type: DELETE_WIDGET_FULFILLED,
-        payload: response.data,
+
+    axiosInstance
+      .post('widgets/load_widgets', requestData)
+      .then((response) => {
+        const parsed = response.data.map((widget) => {
+
+          // ToDo :: needs further sanitizing to handle apostrophes within text fields
+          const sanitizedString = widget.data
+            .replace(/'/g, '"')
+            .replace(/False/g, '"false"')
+            .replace(/True/g, '"true"')
+            .replace(/None/g, '"null"')
+            .toString()
+          ;
+          const widgetData = JSON.parse(sanitizedString);
+
+          return {
+            ...widgetData,
+            i: widget.id,
+            width: parseInt(widgetData.width),
+            height: parseInt(widgetData.height),
+            isStatic: (widgetData.isStatic === 'true'),
+          }
+        });
+
+        dispatch({
+          type: FETCH_WIDGETS_FULFILLED,
+          payload: parsed,
+        })
       })
-    })
-    .catch((err) => {
-      dispatch({
-        type: DELETE_WIDGET_REJECTED,
-        payload: err,
+      .catch((error) => {
+        dispatch({
+          type: FETCH_WIDGETS_REJECTED,
+          payload: error,
+        })
       })
-    })
-  };
+  }
 };
 
-export const cancelDeleteWidget = () => {
-  return (dispatch) => {
-    dispatch({
-      type: CANCEL_WIDGET_DELETE,
-      widgetToDelete: null
-    });
-  };
-};
+export const updateLayout = (layout) => ({
+  type: UPDATE_LAYOUT,
+  payload: layout,
+});
