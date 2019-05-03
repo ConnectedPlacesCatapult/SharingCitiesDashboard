@@ -3,7 +3,7 @@ version: '3'
 services:
   db:
     build:
-      context: .
+      context: ../../
       dockerfile: Dockerfile-DB
     restart: on-failure
   api:
