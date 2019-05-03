@@ -42,8 +42,6 @@ export const deleteWidget = (widgetId) => {
 };
 
 export const fetchLayout = () => {
-  console.log('fetchLayout called');
-
   return (dispatch) => {
     dispatch({
       type: FETCH_LAYOUT,
@@ -109,7 +107,7 @@ export const fetchWidgets = () => {
             i: widget.id,
             width: parseInt(widgetData.width),
             height: parseInt(widgetData.height),
-            isStatic: Boolean(widgetData.isStatic),
+            isStatic: (widgetData.isStatic === 'true'),
           }
         });
 

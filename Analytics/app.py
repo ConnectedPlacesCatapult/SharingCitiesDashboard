@@ -68,10 +68,10 @@ from resources.units.get_all_units import GetAllUnitsOfMeasure
 from resources.units.get_unit import GetUnitOfMeasure
 from resources.units.update_unit import UpdateUnitOfMeasure
 from settings.get_config_decorator import GetConfig
+from resources.alerts.update_alert import UpdateAlert
 
 
 def create_app(**config_overrides):
-
     app = Flask(__name__)
     app.config.update(GetConfig.configure('postgres'))
 
@@ -97,6 +97,10 @@ def create_app(**config_overrides):
     # app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 
     app.config.update(GetConfig.configure('jwt_auth'))
+
+    if config_overrides:
+        app.config.update(config_overrides)
+
     db.init_app(app)
     db.app = app
 
@@ -223,5 +227,6 @@ def create_app(**config_overrides):
     api.add_resource(CheckAlerts, '/alert/check_alerts')
     api.add_resource(GetAlerts, '/alert/get_alerts')
     api.add_resource(DeleteAlerts, '/alert/delete_alerts')
-    api.add_resource(PushAlert, '/alerts/triggered')
+    api.add_resource(PushAlert, '/alert/triggered')
+    api.add_resource(UpdateAlert, '/alert/update_alert')
     return app

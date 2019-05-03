@@ -44,22 +44,42 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_ALERT: {
       return {
         ...defaultProperties,
+        width: 300,
+        height: 240,
         config: {
           ...defaultProperties.config,
-          something: "dlkfjslkjsdn",
-        }
+          value: 0,
+          sendEmail: true,
+        },
+        queryParams: {
+          ...defaultProperties.queryParams,
+          attributedata: '',
+          method: 'max',
+          limit: 1,
+        },
       }
     }
 
     case WIDGET_TYPE_FORECAST: {
       return {
         ...defaultProperties,
+        config: {
+          ...defaultProperties.config,
+        },
+        queryParams: {
+          ...defaultProperties.queryParams,
+          attributeData: [],
+          predictions: true,
+          n_predictions: 10,
+        },
       }
     }
 
     case WIDGET_TYPE_MAP: {
       return {
         ...defaultProperties,
+        width: 400,
+        height: 240,
         config: {
           ...defaultProperties.config,
           center: FCC_CONFIG.widgetEditorDefaults.mapCenter,
@@ -85,6 +105,8 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_PLOT: {
       return {
         ...defaultProperties,
+        width: 400,
+        height: 200,
         config: {
           ...defaultProperties.config,
           ...FCC_CONFIG.editorDefaultConfig.plot,

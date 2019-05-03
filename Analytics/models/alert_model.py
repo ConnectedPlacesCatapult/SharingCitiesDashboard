@@ -68,7 +68,7 @@ class AlertWidgetModel(db.Model):
         Get JSON of AlertWidgetModel
         :return: JSON representation of AlertWidgetModel attributes
         """
-        return dict(user_id=self.user_id, widget_id=self.widget_id,
+        return dict(id=self.id, user_id=self.user_id, widget_id=self.widget_id,
                     attribute_id=self.attribute_id,
                     max_threshold=self.max_threshold,
                     min_threshold=self.min_threshold,
@@ -166,10 +166,12 @@ class AlertWidgetModel(db.Model):
                     alerts["user_id"] = alert.user_id
                     alerts["widget_id"] = alert.widget_id
                     alerts["attribute_id"] = attribute_range.attribute_id
+                    alerts["sensor_id"] = attribute_range.maximum_sensor_id
                     alerts["type"] = "Maximum Threshold Exceeded"
                     alerts["value"] = attribute_range.maximum
                     alerts["max_threshold"] = alert.max_threshold
-                    alerts["timestamp"] = str(attribute_range.latest_update)
+                    alerts["timestamp"] = str(
+                        attribute_range.maximum_recorded_date)
                     results.append(alerts)
 
         return results
@@ -202,10 +204,13 @@ class AlertWidgetModel(db.Model):
                     alerts["user_id"] = alert.user_id
                     alerts["widget_id"] = alert.widget_id
                     alerts["attribute_id"] = attribute_range.attribute_id
+                    alerts["sensor_id"] = attribute_range.minimum_sensor_id
                     alerts["type"] = "Minimum Threshold Exceeded"
                     alerts["value"] = attribute_range.minimum
                     alerts["min_threshold"] = alert.min_threshold
-                    alerts["timestamp"] = str(attribute_range.latest_update)
+                    alerts["timestamp"] = str(
+                        attribute_range.minimum_recorded_date)
                     results.append(alerts)
 
         return results
+
