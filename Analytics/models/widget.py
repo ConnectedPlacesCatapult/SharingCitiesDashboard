@@ -85,18 +85,17 @@ class WidgetModel(db.Model):
         db.session.commit()
 
     def delete_alerts(self) -> None:
-        """ Delete all child alerts """
-        # Get Alerts related to the widget
+        """
+        Delete all widget alerts
+        """
         alerts = AlertWidgetModel.get_by_kwargs(widget_id=self.id)
 
-        # did we get alerts?
         if not alerts:
-            # No related Alerts found
             return
-        #  Got mark alerts deletion the alerts
+
         for alert in alerts:
             alert.delete()
-        # Commit alert deletions
+
         alert.commit()
 
     def create_table(self) -> NoReturn:
