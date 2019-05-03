@@ -58,7 +58,7 @@ def update_attribute_ranges(import_function: Callable) -> Callable:
                             attribute_range.minimum_recorded_date = \
                                 attr_min.timestamp
                             attribute_range.maximum_sensor_id = \
-                                attr_min.s_id
+                                attr_max.s_id
                             attribute_range.maximum = attr_max.value
                             attribute_range.maximum_recorded_date = \
                                 attr_max.timestamp
