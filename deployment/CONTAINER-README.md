@@ -48,7 +48,7 @@ gunicorn_server:
 
 As explained above, Docker files were used thus a working Docker instance is needed to run the containers and subsequently the application. The following steps/commands are needed are needed to deploy the application:
 
-In the terminal/command-line interface, with the folder set to the root of the application, type in:
+In the terminal/command-line interface go to the docker folder; ```$ cd ~/SharingCitiesDashboard/deployment/docker/```. With the folder set to ```/SharingCitiesDashboard/deployment/docker/```, type in:
 
 ```bash
 docker-compose build
