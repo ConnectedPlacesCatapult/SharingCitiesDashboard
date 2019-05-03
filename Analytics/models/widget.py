@@ -99,7 +99,6 @@ class WidgetModel(db.Model):
         # Commit alert deletions
         alert.commit()
 
-
     def create_table(self) -> NoReturn:
         """
         Create the widget table if it does not exist
