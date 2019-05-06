@@ -1,3 +1,5 @@
+
+
 import {
   FETCH_ATTRIBUTE_DATA,
   FETCH_ATTRIBUTE_DATA_FULFILLED,
@@ -17,8 +19,13 @@ import {
   TOGGLE_ATTRIBUTE_SELECTED,
   TOGGLE_SUBTHEME_SELECTED,
   TOGGLE_THEME_SELECTED,
+  EXPORT_DATA,
+  EXPORT_DATA_FULFILLED,
+  EXPORT_DATA_REJECTED
 } from "../constants";
+
 import axios from 'axios';
+import { axiosInstance } from './../api/axios';
 
 const FCC_CONFIG = require('./../../fcc.config');
 
@@ -177,3 +184,46 @@ export const removeAttributeData = (attributeId) => ({
   type: REMOVE_ATTRIBUTE_DATA,
   payload: attributeId,
 });
+
+//export
+export const exportData = (tableName) => {
+
+  var fileDownload = require('js-file-download');
+  var json2csv = require('json2csv');
+
+  return (dispatch) => {
+    dispatch({
+      type: EXPORT_DATA,
+    });
+
+    const requestData = {
+      "file_name": `export-${tableName}`,
+      "table_name": tableName,
+      "format": "geojson"
+    };
+
+    axiosInstance
+      .post('/export_data', requestData)
+      .then((response) => {
+
+        console.log('response.data', response.data.features)
+
+        const fields = ["id", "type", "geometry.type"]
+
+        const features = json2csv.parse(response.data.features, {fields})
+
+        fileDownload(features, 'report.csv');
+
+        dispatch({
+          type: EXPORT_DATA_FULFILLED,
+          payload: response.data,
+        })
+      })
+      .catch((error) => {
+        dispatch({
+          type: EXPORT_DATA_REJECTED,
+          payload: error,
+        })
+      })
+  }
+};

@@ -8,6 +8,8 @@ import {
   withStyles,
 } from '@material-ui/core';
 import BarChartIcon from '@material-ui/icons/BarChart';
+import { exportData } from "../../../actions/dataTableActions";
+import {connect} from "react-redux";
 
 const styles = (theme) => ({
   root: {
@@ -19,6 +21,7 @@ class ExportDataMenu extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     onClose: PropTypes.func.isRequired,
+    exportData: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -26,12 +29,12 @@ class ExportDataMenu extends React.Component {
   };
 
   handleFormatClicked = (format) => {
-    // do some async stuff
+    const { exportData, dataTable } = this.props;
+    exportData(dataTable.data[0].Attribute_Table)
   };
 
   handleClose = () => {
     const { onClose } = this.props;
-
     onClose()
   };
 
@@ -56,6 +59,16 @@ class ExportDataMenu extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  dataTable: state.dataTable,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  exportData: (tables) => dispatch(exportData(tables)),
+});
+
 ExportDataMenu = withStyles(styles)(ExportDataMenu);
+ExportDataMenu = connect(null, mapDispatchToProps)(ExportDataMenu);
+ExportDataMenu = connect(mapStateToProps, null)(ExportDataMenu);
 
 export default ExportDataMenu
