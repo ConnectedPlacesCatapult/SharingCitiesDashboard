@@ -14,7 +14,7 @@ The following components are needed to run the application:
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - **Config File** (/Analytics/settings/config.env.yml)
 
-The ```config.env.yml``` configuration file, located in ```/Analytics/settings/```, will need to be edited with the settings for the 3 services as below:
+The ```config.env.yml``` configuration file, located in ```/Analytics/settings/```, will need to be edited with the settings for the 3 services. If the file is not in the directory, copy a sample of the file into the directory. Edit the parameters as below:
 
 - **UI**; Edit the configuration parameters below with their respective values for the dev port, the host and the environment. For the ```NODE_API_PORT``` the value should be as below:
 ```yaml
@@ -82,5 +82,25 @@ api_1  | [2019-04-01 09:58:59 +0000] [13] [INFO] Booting worker with pid: 4
 ```
 
 Once running successfully, the UI can be accessed from clicking on the URL from above ```ui_1   | INFO: Accepting connections at <ui_url>:8080``` system message.
+
+#### Getting Started
+Once the containers are running, the Database needs to be initialised and a super user needs to be created.
+
+**DB Initialisation**; Open another terminal/command-line instance and run the following command:
+```bash
+docker exec -it docker_api_1 python db_setup.py
+```
+**Super User Creation**; After running the above command, in the terminal/command-line interface run the following command:
+```bash
+docker exec -it docker_api_1 python manage.py add_superuser
+```
+After you run the code above you'll be prompted to enter details as below:
+```
+Fullname:
+Email:
+Password:
+```
+Enter the details and once done login to the application dashboard: http://<api-url>/8080 for example, **http://localhost:8080** and proceed to register the user and log in to use the system.
+
 
 
