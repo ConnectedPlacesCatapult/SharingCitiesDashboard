@@ -82,7 +82,7 @@ export const saveWidget = (mode, widget) => {
 
     // include a widgetId if we are updating a widget
     if (mode === EDITOR_MODE_EDIT) {
-      requestData.widgetID = widget.i;
+      requestData.widget_id = widget.i;
     }
 
     axiosInstance.post("widgets/create_widget", requestData).then((response) => {
@@ -129,8 +129,6 @@ export const saveWidget = (mode, widget) => {
 
             // if the alert widget was newly created it needs to be updated with the new alertId
             if (mode === EDITOR_MODE_ADD) {
-
-              console.log("doing the update call. widgetID = ", alertPayload.widget_id);
               axiosInstance
                 .post("widgets/create_widget", {
                   userID: currentState.user.user.id,

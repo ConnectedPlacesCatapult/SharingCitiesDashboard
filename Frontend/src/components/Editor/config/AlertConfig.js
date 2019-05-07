@@ -3,15 +3,10 @@ import PropTypes from 'prop-types';
 import {
   Divider,
   FormControl,
-  FormControlLabel,
   FormGroup,
-  FormLabel,
   InputLabel,
   MenuItem,
-  Radio,
-  RadioGroup,
   Select,
-  Switch,
   TextField,
   withStyles,
 } from '@material-ui/core';
@@ -20,6 +15,8 @@ import {
   getThemeTree,
   setWidgetConfigProperty,
 } from './../../../actions/editorActions';
+import { axiosInstance } from './../../../api/axios';
+import { getUserID } from './../../../api/session';
 
 const styles = (theme) => ({
   root: {
@@ -48,10 +45,15 @@ class AlertConfig extends React.Component {
     super(props);
 
     this.state = {
+      alert: null,
       attributes: [],
     };
 
     props.getThemeTree();
+  }
+
+  componentWillMount() {
+    this.fetchAlert()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -81,14 +83,53 @@ class AlertConfig extends React.Component {
     }
   }
 
+  fetchAlert() {
+    const { editor } = this.props;
+
+    editor.fetching = true;
+
+    const requestData = {
+      user_id: getUserID(),
+      attribute_id: editor.widget.config.attributeId,
+      widget_id: editor.widget.i,
+    };
+
+    axiosInstance
+      .get('/alert/get_alerts', { params: requestData })
+      .then((response) => {
+        editor.fetching = false;
+
+        // check for differences between widget alert and actual alert
+        // update editor.widget.config if so
+        if (response.data[0].attribute_id !== editor.widget.config.attributeId) {
+          editor.widget.config.attributeId = response.data[0].attribute_id
+        }
+
+        if (response.data[0].min_threshold.toString() !== editor.widget.config.minThreshold.toString()) {
+          editor.widget.config.minThreshold = response.data[0].min_threshold
+        }
+
+        if (response.data[0].max_threshold.toString() !== editor.widget.config.maxThreshold.toString()) {
+          editor.widget.config.maxThreshold = response.data[0].max_threshold
+        }
+
+        if (response.data[0].activated.toString() !== editor.widget.config.activated.toString()) {
+          editor.widget.config.activated = response.data[0].activated
+        }
+
+        this.setState({
+          alert: response.data[0],
+        })
+      })
+      .catch((error) => {
+        this.setState({ error})
+      })
+  }
+
   setAlertConfigProperty = (property) => (e) => {
     const { setWidgetConfigProperty } = this.props;
 
     setWidgetConfigProperty(property, e.target.value)
-  };
-
-  handleChange = (name) => (e) => {
-    console.log(name, e.target.checked)
   };
 
   render() {
