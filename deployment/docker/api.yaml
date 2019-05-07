@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: fcc-api
-        image: gcr.io/dotmodus/fcc/api:v0.1
+        image: gcr.io/dotmodus/fcc/api:v0.2
         # imagePullPolicy: Never
         ports:
           - containerPort: 5000
