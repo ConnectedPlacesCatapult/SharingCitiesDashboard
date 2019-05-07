@@ -7,8 +7,8 @@ import {
   RERUN_IMPORTER_REJECTED,
   SAVE_LAYOUT_FULFILLED,
   SAVE_LAYOUT_REJECTED,
-  SAVE_WIDGET_FULFILLED,
-  SAVE_WIDGET_REJECTED,
+  EDITOR_SAVE_WIDGET_FULFILLED,
+  EDITOR_SAVE_WIDGET_REJECTED,
 } from './../constants';
 
 const initialState = {
@@ -56,7 +56,7 @@ export default (state=initialState, action={}) => {
       }
     }
 
-    case SAVE_WIDGET_FULFILLED: {
+    case EDITOR_SAVE_WIDGET_FULFILLED: {
       return {
         ...state,
         message: 'Widget Saved and Added to Dashboard',
@@ -65,7 +65,7 @@ export default (state=initialState, action={}) => {
       }
     }
 
-    case SAVE_WIDGET_REJECTED: {
+    case EDITOR_SAVE_WIDGET_REJECTED: {
       return {
         ...state,
         message: 'Problem Saving Widget',
