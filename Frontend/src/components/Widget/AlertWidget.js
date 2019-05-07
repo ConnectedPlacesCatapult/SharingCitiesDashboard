@@ -14,8 +14,8 @@ import WidgetWrapper from './WidgetWrapper';
 const styles = (theme) => ({
   root: {
     transition: 'all 0.2s ease',
-    width: 'auto',
-    height: '100%',
+    //width: 'auto',
+    //height: '100%',
     //maxWidth: 0,
     //maxHeight: 0,
     overflow: 'hidden',
@@ -81,8 +81,8 @@ class AlertWidget extends React.Component {
     const { loading, error } = this.state;
 
     const tableStyles = {
-      width: `${width}px`,
-      height: `${height}px`,
+      //width: `${width}px`,
+      //height: `${height}px`,
     };
 
     const getAttributeNameFromId = (attributeId) => {
