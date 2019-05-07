@@ -9,10 +9,7 @@ import {
   withStyles,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import {
-  getThemeTree,
-  setWidgetConfigProperty,
-} from './../../../actions/editorActions';
+import { getThemeTree } from './../../../actions/editorActions';
 import LoadingIndicator from './../../Widget/LoadingIndicator';
 
 const styles = (theme) => ({
@@ -31,7 +28,6 @@ class AlertPreview extends React.Component {
     classes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
     getThemeTree: PropTypes.func.isRequired,
-    setWidgetConfigProperty: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -141,7 +137,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getThemeTree: () => dispatch(getThemeTree()),
-  setWidgetConfigProperty: (property, value) => dispatch(setWidgetConfigProperty(property, value)),
 });
 
 AlertPreview = withStyles(styles)(AlertPreview);
