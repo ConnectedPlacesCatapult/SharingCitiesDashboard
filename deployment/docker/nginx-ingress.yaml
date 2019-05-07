@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: fcc-ingress
+  annotations:
+    # ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Access-Control-Allow-Origin: $http_origin";
+spec:
+  rules:
+  - http:
+      paths:
+        - path: /
+          backend:
+            serviceName: ui-svc
+            servicePort: 8080
+        - path: /api
+          backend:
+            serviceName: api-svc
+            servicePort: 5000

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fcc-db
+spec:
+  selector:
+    matchLabels:
+      component: fcc-db
+  template:
+    metadata:
+      labels:
+        component: fcc-db
+    spec:
+      volumes:
+        - name: pg-claim-mount
+          persistentVolumeClaim:
+            claimName: pg-claim
+      containers:
+      - name: fcc-db
+        image: fcc-db
+        imagePullPolicy: Never
+        volumeMounts:
+          - name: pg-claim-mount
+            mountPath: /var/lib/postgresql/data
+        # restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-svc
+spec:
+  type: ClusterIP
+  selector:
+    component: fcc-db
+  ports:
+    - port: 5432
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi

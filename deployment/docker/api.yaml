@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fcc-api
+spec:
+  selector:
+    matchLabels:
+      component: fcc-api
+  template:
+    metadata:
+      labels:
+        component: fcc-api
+    spec:
+      containers:
+      - name: fcc-api
+        image: fcc-api
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 5000
+          - containerPort: 6379
+        args:
+        - bash
+        - -c
+        - sleep 7; python manage.py gunicorn & service redis-server start & celery -A
+          manage.celery_task worker -l info
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-svc
+spec:
+  selector:
+    component: fcc-api
+  ports:
+    - name: "api"
+      port: 5000
+      targetPort: 5000
+    - name: "redis"
+      port: 6379
+      targetPort: 6379
