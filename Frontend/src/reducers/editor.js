@@ -48,14 +48,11 @@ const getWidgetDefaultProperties = (currentProperties) => {
         height: 240,
         config: {
           ...defaultProperties.config,
-          value: 0,
-          sendEmail: true,
-        },
-        queryParams: {
-          ...defaultProperties.queryParams,
-          attributedata: '',
-          method: 'max',
-          limit: 1,
+          alertId: null,
+          attributeId: null,
+          activated: false,
+          maxThreshold: null,
+          minThreshold: null,
         },
       }
     }

@@ -44,7 +44,6 @@ class Configurations(object):
         #     raise Exception("Configurations have already been loaded")
         # else:
         Configurations.__instance = self
-
         if config_path:
             Configurations.__config_lib[
                 config_path] = self.get_config_from_file(config_path)

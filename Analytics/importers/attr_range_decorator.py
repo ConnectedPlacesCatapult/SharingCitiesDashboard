@@ -70,7 +70,6 @@ def update_attribute_ranges(import_function: Callable) -> Callable:
                             check_min_and_max_alert_widgets(attribute_range)
                         except AttributeError:
                             pass
-
             else:
                 attr_min = Attributes.attribute_min(attribute.table_name)
                 attr_max = Attributes.attribute_max(attribute.table_name)

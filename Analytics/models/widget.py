@@ -88,6 +88,7 @@ class WidgetModel(db.Model):
         """
         Delete all widget alerts
         """
+
         alerts = AlertWidgetModel.get_by_kwargs(widget_id=self.id)
 
         if not alerts:
