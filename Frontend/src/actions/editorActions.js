@@ -5,6 +5,8 @@ import {
   EDITOR_GET_THEME_TREE,
   EDITOR_GET_THEME_TREE_FULFILLED,
   EDITOR_GET_THEME_TREE_REJECTED,
+  EDITOR_MODE_ADD,
+  EDITOR_MODE_EDIT,
   EDITOR_OPEN,
   EDITOR_SAVE_WIDGET,
   EDITOR_SAVE_WIDGET_FULFILLED,
@@ -66,6 +68,18 @@ export const saveWidget = (mode, widget) => {
       type: EDITOR_SAVE_WIDGET,
     });
 
+    // check we're not submitting spaces or invalid numbers if it's an alert
+    if (widget.type === WIDGET_TYPE_ALERT) {
+      if (mode === EDITOR_MODE_ADD) {
+        // ToDo :: also need to save the alert along with the widget here first
+      } else {
+        // ToDo :: need to update the alert here first
+      }
+
+      console.log(widget);
+      return;
+    }
+
     // remove data if it's a plot
     if (widget.type === WIDGET_TYPE_PLOT) {
       widget.config.data = { values: [] };
@@ -78,17 +92,11 @@ export const saveWidget = (mode, widget) => {
       data: widget,
     };
 
-    let endpoint = "";
-    if (mode === "edit") {
-      // include widgetID and call update_widget endpoint if updating
+    if (mode === EDITOR_MODE_EDIT) {
       requestData.widgetID = widget.i;
-      endpoint = "widgets/update_widget";
-    } else {
-      // call create_widget for add widget mode
-      endpoint = "widgets/create_widget";
     }
 
-    axiosInstance.post(endpoint, requestData).then((response) => {
+    axiosInstance.post("widgets/create_widget", requestData).then((response) => {
       dispatch(fetchWidgets());
       dispatch(fetchLayout());
 
@@ -107,14 +115,14 @@ export const saveWidget = (mode, widget) => {
         dispatch({
           type: EDITOR_SAVE_WIDGET_REJECTED,
           payload: error,
-        })
-      });
+        });
 
-      setTimeout(() => {
-        dispatch({
-          type: HIDE_NOTIFICATION,
-        })
-      }, 5000)
+        setTimeout(() => {
+          dispatch({
+            type: HIDE_NOTIFICATION,
+          })
+        }, 5000)
+      });
   };
 };
 

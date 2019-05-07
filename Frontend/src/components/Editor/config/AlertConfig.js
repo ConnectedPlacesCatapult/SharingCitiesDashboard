@@ -11,15 +11,14 @@ import {
   Radio,
   RadioGroup,
   Select,
+  Switch,
   TextField,
   withStyles,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import {
   getThemeTree,
-  setWidgetProperty,
   setWidgetConfigProperty,
-  setWidgetQueryProperty
 } from './../../../actions/editorActions';
 
 const styles = (theme) => ({
@@ -42,9 +41,7 @@ class AlertConfig extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     getThemeTree: PropTypes.func.isRequired,
-    setWidgetProperty: PropTypes.func.isRequired,
     setWidgetConfigProperty: PropTypes.func.isRequired,
-    setWidgetQueryProperty: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -84,47 +81,33 @@ class AlertConfig extends React.Component {
     }
   }
 
-  setAlertProperty = (property) => (e) => {
-    const { setWidgetProperty } = this.props;
-
-    setWidgetProperty(property, e.target.value)
-  };
-
   setAlertConfigProperty = (property) => (e) => {
     const { setWidgetConfigProperty } = this.props;
 
     setWidgetConfigProperty(property, e.target.value)
   };
 
-  setAlertQueryProperty = (property, value) => {
-    const { setWidgetQueryProperty } = this.props;
-
-    setWidgetQueryProperty(property, value)
-  };
-
-  setAlertAttributeData = (e) => {
-    this.setAlertQueryProperty('attributedata', e.target.value)
-  };
-
-  setAlertMethod = (e) => {
-    this.setAlertQueryProperty('method', e.target.value)
+  handleChange = (name) => (e) => {
+    console.log(name, e.target.checked)
   };
 
   render() {
     const { classes, editor } = this.props;
     const { attributes } = this.state;
 
-    const attributeMenuItems = attributes.map((attribute, i) => <MenuItem key={i} value={attribute.name}>{attribute.name}</MenuItem>);
+    const attributeMenuItems = attributes.map((attribute, i) => <MenuItem key={i} value={attribute.id}>{attribute.name}</MenuItem>);
 
     return (
       <FormGroup className={classes.root}>
+
         <Divider className={classes.divider} />
+
         <FormControl className={classes.formControl} htmlFor="alert-attribute">
           <InputLabel htmlFor="alert-attribute">Attribute to track</InputLabel>
           <Select
             aria-label="Alert attribute"
-            value={editor.widget.queryParams.attributedata}
-            onChange={this.setAlertAttributeData}
+            value={editor.widget.config.attributeId ? editor.widget.config.attributeId : ''}
+            onChange={this.setAlertConfigProperty('attributeId')}
             inputProps={{
               name: 'alertAttribute',
               id: 'alert-attribute',
@@ -133,38 +116,24 @@ class AlertConfig extends React.Component {
             {attributeMenuItems}
           </Select>
         </FormControl>
+
         <Divider className={classes.divider} />
-        <FormControl className={classes.formControl}>
-          <FormLabel>Alert type</FormLabel>
-          <RadioGroup
-            className={classes.group}
-            aria-label="Alert type"
-            value={editor.widget.queryParams.method}
-            onChange={this.setAlertMethod}
-            name='alertType'
-          >
-            <FormControlLabel
-              value="min"
-              control={<Radio />}
-              label="min"
-            />
-            <FormControlLabel
-              value="max"
-              control={<Radio />}
-              label="max"
-            />
-          </RadioGroup>
-        </FormControl>
+
+        <TextField
+          label="Minimum threshold"
+          value={editor.widget.config.minThreshold ? editor.widget.config.minThreshold: ''}
+          onChange={this.setAlertConfigProperty('minThreshold')}
+          margin="normal"
+        />
+
         <Divider className={classes.divider} />
-        <FormControl htmlFor="alert-value">
-          <TextField
-            id="alert-value"
-            label="Value"
-            value={editor.widget.config.value}
-            onChange={this.setAlertConfigProperty('value')}
-            margin="normal"
-          />
-        </FormControl>
+
+        <TextField
+          label="Maximum threshold"
+          value={editor.widget.config.maxThreshold ? editor.widget.config.maxThreshold: ''}
+          onChange={this.setAlertConfigProperty('maxThreshold')}
+          margin="normal"
+        />
       </FormGroup>
     )
   }
@@ -176,9 +145,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getThemeTree: () => dispatch(getThemeTree()),
-  setWidgetProperty: () => (property, value) => dispatch(setWidgetProperty(property, value)),
   setWidgetConfigProperty: (property, value) => dispatch(setWidgetConfigProperty(property, value)),
-  setWidgetQueryProperty: (property, value) => dispatch(setWidgetQueryProperty(property, value)),
 });
 
 AlertConfig = withStyles(styles)(AlertConfig);

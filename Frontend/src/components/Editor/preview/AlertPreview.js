@@ -8,6 +8,8 @@ import {
   TableRow,
   withStyles,
 } from '@material-ui/core';
+import { axiosInstance } from './../../../api/axios';
+import { getUserID } from './../../../api/session';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { setWidgetConfigProperty } from './../../../actions/editorActions';
@@ -57,7 +59,7 @@ class AlertPreview extends React.Component {
     }
   }
 
-  fetchData() {
+  fetchDataOld() {
     const { editor } = this.props;
 
     this.setState({ loading: true });
@@ -82,6 +84,56 @@ class AlertPreview extends React.Component {
       .catch((err) => {
         this.setState({ error: err})
       })
+  }
+
+  fetchDataold2() {
+    this.setState({ loading: true });
+
+    const requestData = {
+      user_id: getUserID(),
+      //attribute_id:
+    };
+
+    axiosInstance
+      .post('/alert/get_alerts', requestData)
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  fetchData() {
+    this.setState({ loading: true });
+
+    const requestData = {
+      user_id: getUserID(),
+      //attribute_id:
+    };
+
+    axiosInstance
+      .get('/alert/get_alerts', requestData)
+      .then((response) => {
+        console.log(response)
+
+        this.setState({ loading: false })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+
+    /*axios({
+      url: FCC_CONFIG.apiRoot + '/alert/get_alerts',
+      method: 'get',
+      params: requestData,
+    })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err)
+      })*/
   }
 
   render() {
@@ -111,28 +163,28 @@ class AlertPreview extends React.Component {
 
               <TableRow>
                 <TableCell component="th" scope="row">Attribute</TableCell>
-                <TableCell>{editor.widget.queryParams.attributedata}</TableCell>
+                <TableCell>{editor.widget.config.attributeId}</TableCell>
               </TableRow>
 
-              <TableRow>
+              {/*<TableRow>
                 <TableCell component="th" scope="row">Type</TableCell>
                 <TableCell>{editor.widget.queryParams.method}</TableCell>
-              </TableRow>
+              </TableRow>*/}
 
-              <TableRow>
+              {/*<TableRow>
                 <TableCell component="th" scope="row">Value</TableCell>
                 <TableCell align="right">{editor.widget.config.value}</TableCell>
-              </TableRow>
+              </TableRow>*/}
 
-              <TableRow>
+              {/*<TableRow>
                 <TableCell component="th" scope="row">Current value</TableCell>
                 <TableCell align="right">{data && data.length ? data[0]['Value'] : '?'}</TableCell>
-              </TableRow>
+              </TableRow>*/}
 
-              <TableRow>
+              {/*<TableRow>
                 <TableCell component="th" scope="row">Email alert</TableCell>
                 <TableCell >{editor.widget.config.sendEmail ? 'yes' : 'no'}</TableCell>
-              </TableRow>
+              </TableRow>*/}
 
             </TableBody>
           </Table>
