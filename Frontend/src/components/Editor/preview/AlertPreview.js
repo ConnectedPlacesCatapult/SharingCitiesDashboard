@@ -42,6 +42,7 @@ class AlertPreview extends React.Component {
       data: null,
       error: null,
       loading: true,
+      attributes: [],
       width: props.editor.widget.width,
       height: props.editor.widget.height,
     }
@@ -49,6 +50,33 @@ class AlertPreview extends React.Component {
 
   componentWillMount() {
     this.fetchData()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { editor } = this.props;
+
+    if (nextProps.editor.themeTree !== editor.themeTree) {
+      const attributes = nextProps.editor.themeTree.reduce((arr, theme) => {
+        theme['sub_themes'].map((subtheme) => {
+          subtheme.attributes.map((attribute) => {
+            arr = [...arr, {
+              id: attribute['id'],
+              themeId: attribute['theme_id'],
+              subthemeId: attribute['sub_theme_id'],
+              name: attribute['name'],
+              description: attribute['Description'],
+              unit: attribute['Unit'],
+              unitValue: attribute['Unit Value'],
+
+            }];
+          })
+        });
+
+        return arr
+      }, []);
+
+      this.setState({ attributes })
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -136,6 +164,14 @@ class AlertPreview extends React.Component {
       })*/
   }
 
+  getAttributeNameFromId = (attributeId) => {
+    const { attributes } = this.state;
+
+    const found = attributes.find((attribute) => attribute.id === attributeId);
+
+    return found ? found.name : '';
+  };
+
   render() {
     const { classes, editor } = this.props;
     const { data, error, loading } = this.state;
@@ -163,7 +199,22 @@ class AlertPreview extends React.Component {
 
               <TableRow>
                 <TableCell component="th" scope="row">Attribute</TableCell>
-                <TableCell>{editor.widget.config.attributeId}</TableCell>
+                <TableCell>{this.getAttributeNameFromId(editor.widget.config.attributeId)}</TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell component="th" scope="row">Minimum threshold</TableCell>
+                <TableCell>{editor.widget.config.minThreshold}</TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell component="th" scope="row">Maximum threshold</TableCell>
+                <TableCell>{editor.widget.config.maxThreshold}</TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell component="th" scope="row">Activated</TableCell>
+                <TableCell>{editor.widget.config.activated.toString()}</TableCell>
               </TableRow>
 
               {/*<TableRow>
