@@ -73,6 +73,7 @@ class ConfigWrapper extends React.Component {
             <Tab value={1} label={`${editor.widget.type.charAt(0).toUpperCase() + editor.widget.type.slice(1)} options`} />
             {editor.widget.type === "map" && <Tab value={2} label="Data set" />}
             {editor.widget.type === "plot" && <Tab value={2} label="Data set" />}
+            {editor.widget.type === "forecast" && <Tab value={2} label="Data set" />}
           </Tabs>
         </AppBar>
         {selectedTabIndex === 0 && <WidgetConfig />}
@@ -82,6 +83,7 @@ class ConfigWrapper extends React.Component {
         {selectedTabIndex === 1 && editor.widget.type === "plot" && <PlotConfig />}
         {selectedTabIndex === 2 && editor.widget.type === "map" && <DataConfig />}
         {selectedTabIndex === 2 && editor.widget.type === "plot" && <DataConfig />}
+        {selectedTabIndex === 2 && editor.widget.type === "forecast" && <DataConfig />}
       </Paper>
     )
   }

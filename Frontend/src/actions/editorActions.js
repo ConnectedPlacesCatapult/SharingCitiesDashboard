@@ -87,6 +87,8 @@ export const saveWidget = (mode, widget) => {
 
     axiosInstance.post("widgets/create_widget", requestData).then((response) => {
 
+      console.log('requestData', requestData)
+
       // hold off on updating dashboard if this is an alert widget - there's more to be done
       if (widget.type !== WIDGET_TYPE_ALERT) {
         dispatch(fetchWidgets());

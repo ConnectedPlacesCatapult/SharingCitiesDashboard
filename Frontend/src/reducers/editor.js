@@ -58,17 +58,33 @@ const getWidgetDefaultProperties = (currentProperties) => {
     }
 
     case WIDGET_TYPE_FORECAST: {
+      // return {
+      //   ...defaultProperties,
+      //   config: {
+      //     ...defaultProperties.config,
+      //   },
+      //   queryParams: {
+      //     ...defaultProperties.queryParams,
+      //     attributeData: [],
+      //     predictions: true,
+      //     n_predictions: 10,
+      //   },
+      // }
       return {
         ...defaultProperties,
+        width: 400,
+        height: 200,
         config: {
           ...defaultProperties.config,
+          ...FCC_CONFIG.editorDefaultConfig.plot,
         },
         queryParams: {
           ...defaultProperties.queryParams,
-          attributeData: [],
-          predictions: true,
-          n_predictions: 10,
-        },
+          grouped: true,
+          harmonising_method: "long",
+          limit: 100,
+          per_sensor: true,
+        }
       }
     }
 

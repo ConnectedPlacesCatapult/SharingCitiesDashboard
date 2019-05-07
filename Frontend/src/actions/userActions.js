@@ -34,8 +34,6 @@ export const login = (userCredentials, props) => {
       localStorage.setItem('userName', userName);
       localStorage.setItem('userID', userID);
       localStorage.setItem('userEmail', userEmail);
-      // Redirects to data first to force DOM refresh
-      props.history.push('/data');
       props.history.push('/');
     })
       .catch((err) => {
@@ -45,6 +43,7 @@ export const login = (userCredentials, props) => {
           payload: err,
         })
       })
+    return true
   };
 };
 
