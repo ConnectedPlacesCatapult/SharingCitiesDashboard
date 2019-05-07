@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "webpack-dev-server --mode development --open",
     "dev": "webpack-dev-server --mode development --open",
     "dev-hot": "webpack-dev-server --mode development --open --hot",
     "build": "webpack --mode production"
@@ -16,6 +17,7 @@
     "@material-ui/core": "^3.3.2",
     "@material-ui/icons": "^3.0.1",
     "axios": "^0.18.0",
+    "dotenv-webpack": "^1.7.0",
     "classnames": "^2.2.6",
     "color-scheme": "^1.0.1",
     "color-shorthand-hex-to-six-digit": "^2.10.19",

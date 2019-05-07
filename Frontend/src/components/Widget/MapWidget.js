@@ -211,7 +211,7 @@ class MapWidget extends React.Component {
   getMarkerRadius = (value) => {
     const { config } = this.props;
     const pc = (value - this.minValue) / (this.maxValue - this.minValue);
-    return config.markerRadius * (pc + 0.5)
+    return config.markerRadius * (pc + 1)
   };
 
   getFormattedTimestamp = (timestamp) => {
@@ -327,10 +327,10 @@ class MapWidget extends React.Component {
             center={config.center}
             zoom={config.zoom}
             ref={this.mapRef}
-            //onClick={this.handleMapClick}
-            //onLoad={this.handleMapLoad}
-            //onMoveEnd={this.handleMapMoveEnd}
-            //onResize={this.handleMapResize}
+            onClick={this.handleMapClick}
+            onLoad={this.handleMapLoad}
+            onMoveEnd={this.handleMapMoveEnd}
+            onResize={this.handleMapResize}
           >
             <LayersControl>
               <LayersControl.BaseLayer name="Basemap" checked>
