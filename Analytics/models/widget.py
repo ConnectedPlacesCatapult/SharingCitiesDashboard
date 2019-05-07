@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.exc import IntegrityError
 
 from db import db
+from .alert_model import AlertWidgetModel
 
 logging.basicConfig(level='INFO')
 logger = logging.getLogger(__name__)
@@ -72,6 +73,7 @@ class WidgetModel(db.Model):
         try:
             db.session.delete(self.layout)
             db.session.delete(self)
+            self.delete_alerts()
         except IntegrityError as ie:
             db.session.rollback()
             logger.error(ie)
@@ -81,6 +83,21 @@ class WidgetModel(db.Model):
         Commits session changes to the database
         """
         db.session.commit()
+
+    def delete_alerts(self) -> None:
+        """
+        Delete all widget alerts
+        """
+
+        alerts = AlertWidgetModel.get_by_kwargs(widget_id=self.id)
+
+        if not alerts:
+            return
+
+        for alert in alerts:
+            alert.delete()
+
+        alert.commit()
 
     def create_table(self) -> NoReturn:
         """
