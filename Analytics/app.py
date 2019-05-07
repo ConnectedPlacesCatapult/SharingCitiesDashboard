@@ -34,6 +34,7 @@ from resources.attributes import GetAttributes
 from resources.attributes import UpdateAttributeSubTheme
 from resources.export_data import ExportData
 from resources.forgot_password import ForgotPassword
+from resources.healthcheck import HealthCheck
 from resources.import_retry import ImportRetry
 from resources.import_status import ImportStatus
 from resources.login import Login, SecretResource
@@ -229,4 +230,7 @@ def create_app(**config_overrides):
     api.add_resource(DeleteAlerts, '/alert/delete_alerts')
     api.add_resource(PushAlert, '/alert/triggered')
     api.add_resource(UpdateAlert, '/alert/update_alert')
+
+    # HealthCheck Endpoints
+    api.add_resource(HealthCheck, '/')
     return app
