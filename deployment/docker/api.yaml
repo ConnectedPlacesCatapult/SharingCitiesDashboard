@@ -13,8 +13,8 @@ spec:
     spec:
       containers:
       - name: fcc-api
-        image: fcc-api
-        imagePullPolicy: Never
+        image: gcr.io/dotmodus/fcc/api:v0.1
+        # imagePullPolicy: Never
         ports:
           - containerPort: 5000
           - containerPort: 6379
@@ -29,6 +29,7 @@ kind: Service
 metadata:
   name: api-svc
 spec:
+  # type: LoadBalancer
   selector:
     component: fcc-api
   ports:

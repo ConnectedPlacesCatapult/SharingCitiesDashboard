@@ -9,20 +9,20 @@ spec:
   template:
     metadata:
       labels:
+        app: fcc-db
         component: fcc-db
     spec:
+      containers:
+        - name: fcc-db
+          image: gcr.io/dotmodus/fcc/db:v0.1
+          # imagePullPolicy: Never
+          volumeMounts:
+            - name: pg-claim-mount
+              mountPath: /var/lib/postgresql
       volumes:
         - name: pg-claim-mount
           persistentVolumeClaim:
-            claimName: pg-claim
-      containers:
-      - name: fcc-db
-        image: fcc-db
-        imagePullPolicy: Never
-        volumeMounts:
-          - name: pg-claim-mount
-            mountPath: /var/lib/postgresql/data
-        # restartPolicy: OnFailure
+            claimName: pg-pv-claim
 ---
 apiVersion: v1
 kind: Service
@@ -36,9 +36,26 @@ spec:
     - port: 5432
 ---
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pg-pv
+  labels:
+    type: local
+    app: fcc-db
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pg-claim
+  name: pg-pv-claim
+  labels:
+    app: fcc-db
 spec:
   accessModes:
     - ReadWriteOnce

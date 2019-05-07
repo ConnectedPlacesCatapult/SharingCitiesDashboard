@@ -13,8 +13,8 @@ spec:
     spec:
       containers:
       - name: fcc-ui
-        image: fcc-ui
-        imagePullPolicy: Never
+        image: gcr.io/dotmodus/fcc/ui:v0.1
+        # imagePullPolicy: Never
         args:
         - serve
         - -s
