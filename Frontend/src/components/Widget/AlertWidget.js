@@ -51,20 +51,16 @@ class AlertWidget extends React.Component {
   }
 
   componentDidMount() {
-    this.getAttributes()
+    this.getAllAttributes()
   }
 
-  getAttributes = () => {
+  getAllAttributes = () => {
     const { config } = this.props;
 
     this.setState({ loading: true });
 
-    const requestData = {
-      attribute_id: config.attributeId,
-    };
-
     axiosInstance
-      .get('/admin/attributes/get_attributes', { params: requestData })
+      .get('/admin/attributes/get_attributes')
       .then((response) => {
         this.setState({
           attributes: response.data,
@@ -72,22 +68,12 @@ class AlertWidget extends React.Component {
         })
       })
       .catch((error) => {
-        console.log(error);
-
         this.setState({
           loading: false,
           error,
         })
       })
     ;
-  };
-
-  getAttributeNameFromId = (attributeId) => {
-    const { attributes } = this.state;
-
-    const found = attributes.find((attribute) => attribute.id === attributeId);
-
-    return found ? found.name : '';
   };
 
   render() {
@@ -97,6 +83,14 @@ class AlertWidget extends React.Component {
     const tableStyles = {
       width: `${width}px`,
       height: `${height}px`,
+    };
+
+    const getAttributeNameFromId = (attributeId) => {
+      const { attributes } = this.state;
+
+      const found = attributes.find((attribute) => attribute.id === attributeId);
+
+      return found ? found.name : '';
     };
 
     return (
@@ -116,7 +110,7 @@ class AlertWidget extends React.Component {
             <TableBody>
               <TableRow>
                 <TableCell component="th" scope="row">Attribute</TableCell>
-                <TableCell className={classes.cellValue}>{this.getAttributeNameFromId(config.attributeId)}</TableCell>
+                <TableCell className={classes.cellValue}>{getAttributeNameFromId(config.attributeId)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell component="th" scope="row">Minimum threshold</TableCell>
