@@ -1,8 +1,13 @@
 FROM python:3.7
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y redis-server
+
+# Install python dependencies
+COPY Analytics/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
 # Create a Work Directory for the Code
 RUN mkdir /Analytics
 WORKDIR /Analytics
 COPY Analytics .
-RUN pip install -r requirements.txt
-RUN apt-get update && apt-get install -y redis-server

@@ -1,14 +1,21 @@
 FROM node:10
 
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install -y xsel \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN mkdir /Frontend /Analytics
 RUN mkdir /Analytics/settings
-# Install dependencies
+
+# Install node dependencies
 # package*.json used to copy files package.json and package-lock.json
-COPY ./Frontend /Frontend
-COPY ./Analytics/settings/config.env.yml /Analytics/settings/config.env.yml
+COPY /Frontend/package*.json /Frontend
 WORKDIR /Frontend
-RUN apt-get update
-RUN apt-get install -y xsel
 RUN npm i --save
 RUN npm install -g serve
+
+# Build the Node app
+COPY /Frontend /Frontend
+COPY /Analytics/settings/config.env.yml /Analytics/settings/config.env.yml
 RUN npm run build
