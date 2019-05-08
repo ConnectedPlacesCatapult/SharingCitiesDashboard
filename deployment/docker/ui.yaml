@@ -28,7 +28,7 @@ kind: Service
 metadata:
   name: ui-svc
 spec:
-  # type: LoadBalancer
+  type: NodePort
   selector:
     component: fcc-ui
   ports:
