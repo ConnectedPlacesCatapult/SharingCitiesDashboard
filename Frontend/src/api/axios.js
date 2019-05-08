@@ -6,7 +6,18 @@ export const axiosInstance = axios.create({
   baseURL: `${process.env.NODE_HOST}${process.env.API_PORT}`
 })
 
+export const axiosLoginInstance = axios.create({
+  baseURL: `${process.env.API_HOST}${process.env.API_PORT}`
+})
+
 axiosInstance.interceptors.request.use(function (config) {
+  // Do something before request is sent
+  const authToken = getAuthToken()
+  config.headers.Authorization = 'Bearer ' + authToken
+  return config
+})
+
+axiosLoginInstance.interceptors.request.use(function (config) {
   // Do something before request is sent
   const authToken = getAuthToken()
   config.headers.Authorization = 'Bearer ' + authToken
