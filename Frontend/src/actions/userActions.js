@@ -56,7 +56,7 @@ export const getUser = () => {
         email: localStorage.getItem('userEmail')
       };
 
-      axiosInstance.post('/admin/get_user_by_email', user).then((response) => {
+      axiosLoginInstance.post('/admin/get_user_by_email', user).then((response) => {
         dispatch({
           type: SET_CURRENT_USER,
           payload: response.data,
