@@ -7,7 +7,7 @@ export const axiosInstance = axios.create({
 })
 
 export const axiosLoginInstance = axios.create({
-  baseURL: `${process.env.API_HOST}${process.env.API_PORT}`
+  baseURL: `${process.env.API_HOST}`
 })
 
 axiosInstance.interceptors.request.use(function (config) {
