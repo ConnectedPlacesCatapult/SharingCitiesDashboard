@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: fcc-api
-        image: gcr.io/dotmodus/fcc/api:v0.2
+        image: gcr.io/dotmodus/fcc/api:v1.0
         # imagePullPolicy: IfNotPresent
         args:
         - python
@@ -23,7 +23,7 @@ spec:
         - containerPort: 5000
           protocol: TCP
       - name: redis
-        image: gcr.io/dotmodus/fcc/api:v0.2
+        image: gcr.io/dotmodus/fcc/api:v1.0
         # imagePullPolicy: IfNotPresent
         args:
         - redis-server
@@ -31,7 +31,7 @@ spec:
         - containerPort: 6379
           protocol: TCP
       - name: celery
-        image: gcr.io/dotmodus/fcc/api:v0.2
+        image: gcr.io/dotmodus/fcc/api:v1.0
         # imagePullPolicy: IfNotPresent
         args:
         - celery
@@ -46,12 +46,12 @@ kind: Service
 metadata:
   name: api-svc
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     component: fcc-api
   ports:
     - name: "api"
-      port: 5000
+      port: 80
       targetPort: 5000
     - name: "redis"
       port: 6379

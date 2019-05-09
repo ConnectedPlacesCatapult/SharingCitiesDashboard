@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: fcc-ui
-        image: gcr.io/dotmodus/fcc/ui:v0.1
+        image: gcr.io/dotmodus/fcc/ui:v1.1
         # imagePullPolicy: Never
         args:
         - serve
@@ -28,10 +28,10 @@ kind: Service
 metadata:
   name: ui-svc
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     component: fcc-ui
   ports:
     - name: "ui"
-      port: 8080
+      port: 80
       targetPort: 8080
