@@ -16,23 +16,6 @@ The following components are needed to run the application:
 
 The ```config.env.yml``` configuration file, located in ```/Analytics/settings/```, will need to be edited with the settings for the 3 services. If the file is not in the directory, copy a sample of the file into the directory. Edit the parameters as below:
 
-- **UI**; Edit the configuration parameters below with their respective values for the dev port, the host and the environment. For the ```NODE_API_PORT``` the value should be as below:
-```yaml
-NODE_ENV: <environment> e.g. development
-NODE_HOST: <host> e.g. http://localhost
-NODE_API_PORT: :8000
-NODE_DEV_PORT: :<dev-port> e.g. 8080
-```
-- **API** & **Database**; Edit the configuration parameters for the Database creation and connection below with their respective values. For the ```db_host``` the correct host should be ```db``` as below. The rest should be entered as per design:
-```yaml
-postgres:
-  SECRET_KEY: <secret-key>
-  db_host: db
-  db_name: <db-name>
-  db_password: <db-password>
-  db_username: <db-username>
-```
-
 - **API**; Edit the configuration parameters below for the API flask server and gunicorn server with the values as below:
 ```yaml
 flask_server:
@@ -43,6 +26,22 @@ gunicorn_server:
   gunicorn_host: api
   gunicorn_port: 5000
   gunicorn_workers: 4
+```
+- **API** & **Database**; Edit the configuration parameters for the Database creation and connection below with their respective values. For the ```db_host``` the correct host should be ```db``` as below. The rest should be entered as per design:
+```yaml
+postgres:
+  SECRET_KEY: <secret-key>
+  db_host: db
+  db_name: <db-name>
+  db_password: <db-password>
+  db_username: <db-username>
+```
+- **UI**; Edit the configuration parameters below with their respective values for the dev port, the host and the environment. For the ```NODE_API_PORT``` the value should be as below:
+```yaml
+NODE_ENV: <environment> e.g. development
+NODE_HOST: <host> e.g. http://localhost
+NODE_API_PORT: :8000
+NODE_DEV_PORT: :<dev-port> e.g. 8080
 ```
 #### Deployment
 
@@ -102,5 +101,12 @@ Password:
 ```
 Enter the details and once done login to the application dashboard: http://<api-url>/8080 for example, **http://localhost:8080** and proceed to register the user and log in to use the system.
 
+**Importers Commands**; In general to run the importers the following commands can be used:
+```bash
+docker exec -it docker_api_1 python manage.py -ad <importer name> 
+e.g. docker exec -it docker_api_1 -ad Air_Quality_KCL
+```
+
+**Register User**; To register the user newly created, on the login page, click on the Register button at the bottom of the login page. Once that is done a user can successfully login to the Dashboard.
 
 
