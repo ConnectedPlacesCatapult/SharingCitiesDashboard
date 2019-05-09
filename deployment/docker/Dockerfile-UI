@@ -10,7 +10,7 @@ RUN mkdir /Analytics/settings
 
 # Install node dependencies
 # package*.json used to copy files package.json and package-lock.json
-COPY /Frontend/package*.json /Frontend
+COPY /Frontend/package*.json /Frontend/
 WORKDIR /Frontend
 RUN npm i --save
 RUN npm install -g serve
