@@ -6,6 +6,9 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { saveWidget } from './../../actions/editorActions';
+import {
+  EDITOR_MODE_ADD
+} from './../../constants';
 import ConfigWrapper from './config/ConfigWrapper';
 import PreviewWrapper from './preview/PreviewWrapper';
 
@@ -39,7 +42,7 @@ class Editor extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, editor } = this.props;
 
     return (
       <div className={classes.root}>
@@ -53,7 +56,7 @@ class Editor extends React.Component {
           color="secondary"
           onClick={this.handleSaveWidgetClicked}
         >
-          Save Widget
+          {editor.mode === EDITOR_MODE_ADD ? "Save Widget" : "Update Widget"}
         </Button>
       </div>
     )

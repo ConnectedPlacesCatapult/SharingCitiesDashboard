@@ -58,20 +58,18 @@ def update_attribute_ranges(import_function: Callable) -> Callable:
                             attribute_range.minimum_recorded_date = \
                                 attr_min.timestamp
                             attribute_range.maximum_sensor_id = \
-                                attr_min.s_id
+                                attr_max.s_id
                             attribute_range.maximum = attr_max.value
                             attribute_range.maximum_recorded_date = \
                                 attr_max.timestamp
                             attribute_range.latest_update = datetime.now()
+                            attribute_range.save()
+                            attribute_range.commit()
+
+                            PushAlert.check_alerts(attribute_range)
+                            check_min_and_max_alert_widgets(attribute_range)
                         except AttributeError:
                             pass
-
-                        attribute_range.save()
-                        attribute_range.commit()
-
-                        PushAlert.check_alerts(attribute_range)
-                        check_min_and_max_alert_widgets(attribute_range)
-
             else:
                 attr_min = Attributes.attribute_min(attribute.table_name)
                 attr_max = Attributes.attribute_max(attribute.table_name)
@@ -106,8 +104,7 @@ def check_min_and_max_alert_widgets(attribute_range_entry: db.Model):
     """
 
     if attribute_range_entry.maximum:
-        max_alerts = AlertWidgetModel.get_max_alerts(
-            attribute_range_entry.attribute_id, attribute_range_entry.maximum)
+        max_alerts = AlertWidgetModel.get_max_alerts(attribute_range_entry)
         for alert in max_alerts:
             user_details = Users.find_by_id(alert["user_id"])
             if user_details:
@@ -138,8 +135,7 @@ def check_min_and_max_alert_widgets(attribute_range_entry: db.Model):
                              "not exist ".format(alert["user_id"]))
 
     if attribute_range_entry.minimum:
-        min_alerts = AlertWidgetModel.get_min_alerts(
-            attribute_range_entry.attribute_id, attribute_range_entry.minimum)
+        min_alerts = AlertWidgetModel.get_min_alerts(attribute_range_entry)
         for alert in min_alerts:
             user_details = Users.find_by_id(alert["user_id"])
             if user_details:

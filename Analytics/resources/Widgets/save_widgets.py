@@ -82,8 +82,8 @@ class Widgets(Resource):
 
         else:
             # Create a layout for the new widget
-            layout = Layouts(1, 0, 0, 50,
-                             50, False)
+            layout = Layouts(1, 0, 0, 10,
+                             5, False)
             curr_widget = WidgetModel(current_user.id, layout, args["data"])
 
         try:

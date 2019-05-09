@@ -1,6 +1,6 @@
 # !/usr/bin/env python
 from http import HTTPStatus
-from typing import Union, NoReturn
+from typing import Union
 
 import flask
 import redis
@@ -53,7 +53,7 @@ class PushAlert(Resource):
 
     @classmethod
     def check_alerts(cls, attribute_range: AttributeRange) -> Union[
-        NoReturn, tuple]:
+        None, tuple]:
         """
         Check if any of the alert thresholds have been exceeded and publish
         the alerts that have been exceeded to the redis subject.
