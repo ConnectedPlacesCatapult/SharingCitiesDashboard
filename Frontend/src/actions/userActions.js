@@ -1,4 +1,5 @@
 import { axiosInstance } from '../api/axios'
+import { axiosLoginInstance } from '../api/axios'
 import {
   SET_CURRENT_USER,
   SET_CURRENT_USER_REJECTED,
@@ -20,7 +21,7 @@ export const login = (userCredentials, props) => {
       remember: userCredentials.remember
     };
 
-    axiosInstance.post('/login', credentials).then((response) => {
+    axiosLoginInstance.post('/login', credentials).then((response) => {
       dispatch({
         type: SET_CURRENT_USER,
         payload: response.data,
@@ -55,7 +56,7 @@ export const getUser = () => {
         email: localStorage.getItem('userEmail')
       };
 
-      axiosInstance.post('/admin/get_user_by_email', user).then((response) => {
+      axiosLoginInstance.post('/admin/get_user_by_email', user).then((response) => {
         dispatch({
           type: SET_CURRENT_USER,
           payload: response.data,

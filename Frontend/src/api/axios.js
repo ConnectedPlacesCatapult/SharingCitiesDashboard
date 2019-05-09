@@ -3,10 +3,21 @@ import axios from 'axios'
 
 
 export const axiosInstance = axios.create({
-  baseURL: `${process.env.NODE_HOST}${process.env.API_PORT}`
+  baseURL: '<<api-address>>'
+})
+
+export const axiosLoginInstance = axios.create({
+  baseURL: '<<api-address>>'
 })
 
 axiosInstance.interceptors.request.use(function (config) {
+  // Do something before request is sent
+  const authToken = getAuthToken()
+  config.headers.Authorization = 'Bearer ' + authToken
+  return config
+})
+
+axiosLoginInstance.interceptors.request.use(function (config) {
   // Do something before request is sent
   const authToken = getAuthToken()
   config.headers.Authorization = 'Bearer ' + authToken
