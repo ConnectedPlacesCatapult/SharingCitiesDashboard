@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import {
   getThemeTree,
   setWidgetConfigProperty,
+  setWidgetQueryProperty
 } from './../../../actions/editorActions';
 import { axiosInstance } from './../../../api/axios';
 import { getUserID } from './../../../api/session';
@@ -39,6 +40,7 @@ class ForecastConfig extends React.Component {
     classes: PropTypes.object.isRequired,
     getThemeTree: PropTypes.func.isRequired,
     setWidgetConfigProperty: PropTypes.func.isRequired,
+    setWidgetQueryProperty: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -52,8 +54,7 @@ class ForecastConfig extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { editor } = this.props;
-
+    const { editor} = this.props;
     if (nextProps.editor.themeTree !== editor.themeTree) {
       const attributes = nextProps.editor.themeTree.reduce((arr, theme) => {
         theme['sub_themes'].map((subtheme) => {
@@ -78,17 +79,27 @@ class ForecastConfig extends React.Component {
     }
   }
 
+  componentDidMount () {
+    // Set User ID
+    const { user, setWidgetQueryProperty } = this.props;
+    setWidgetQueryProperty('user_id', user.user.id)
+  }
+
   setForecastConfigProperty = (property) => (e) => {
     const { setWidgetConfigProperty } = this.props;
     setWidgetConfigProperty(property, e.target.value)
-    setWidgetConfigProperty('predictions', true)
+  };
+
+  setForecastQueryProperty = (property) => (e) => {
+    const { setWidgetQueryProperty } = this.props;
+    setWidgetQueryProperty(property, e.target.value)
   };
 
   render() {
     const { classes, editor } = this.props;
     const { attributes } = this.state;
 
-    const attributeMenuItems = attributes.map((attribute, i) => <MenuItem key={i} value={attribute.id}>{attribute.name}</MenuItem>);
+    const attributeMenuItems = attributes.map((attribute, i) => <MenuItem key={i} value={attribute.name}>{attribute.name}</MenuItem>);
 
     return (
       <FormGroup className={classes.root}>
@@ -99,8 +110,8 @@ class ForecastConfig extends React.Component {
           <InputLabel htmlFor="forecast-attribute">Attribute to track</InputLabel>
           <Select
             aria-label="Forecast attribute"
-            value={editor.widget.config.attributeId ? editor.widget.config.attributeId : ''}
-            onChange={this.setForecastConfigProperty('attributeId')}
+            value={editor.widget.queryParams.attributedata ? editor.widget.queryParams.attributedata : ''}
+            onChange={this.setForecastQueryProperty('attributedata')}
             inputProps={{
               name: 'forecastAttribute',
               id: 'forecast-attribute',
@@ -114,8 +125,8 @@ class ForecastConfig extends React.Component {
 
         <TextField
           label="Number of Predictions"
-          value={editor.widget.config.nPredictions ? editor.widget.config.nPredictions: ''}
-          onChange={this.setForecastConfigProperty('nPredictions')}
+          value={editor.widget.queryParams.n_predictions ? editor.widget.queryParams.n_predictions: ''}
+          onChange={this.setForecastQueryProperty('n_predictions')}
           margin="normal"
         />
 
@@ -125,12 +136,14 @@ class ForecastConfig extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  user: state.user,
   editor: state.editor,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getThemeTree: () => dispatch(getThemeTree()),
   setWidgetConfigProperty: (property, value) => dispatch(setWidgetConfigProperty(property, value)),
+  setWidgetQueryProperty: (property, value) => dispatch(setWidgetQueryProperty(property, value)),
 });
 
 ForecastConfig = withStyles(styles)(ForecastConfig);

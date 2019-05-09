@@ -133,6 +133,30 @@ class ForecastWidget extends React.Component {
       })
   };
 
+  fetchStatus = () => {
+    const { queryParams } = this.props;
+
+    this.setState({ loading: true });
+
+    axios({
+      url: FCC_CONFIG.apiRoot + '/data',
+      method: 'get',
+      params: queryParams,
+    })
+      .then((response) => {
+        this.setState({
+          loading: false,
+          data: {
+            values: response.data,
+          }
+        })
+      })
+      .catch((err) => {
+        this.setState({ error: err})
+      })
+  };
+
+
   render() {
     const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
     const { spec, loading, error, data } = this.state;
