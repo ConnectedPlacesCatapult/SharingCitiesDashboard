@@ -3,6 +3,6 @@ FROM python:3.7
 # Create a Work Directory for the Code
 RUN mkdir /Analytics
 WORKDIR /Analytics
-COPY Analytics/requirements.txt requirements.txt
+COPY ./Analytics/requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 RUN apt-get update && apt-get install -y redis-server
