@@ -18,25 +18,27 @@ if [ -z "$(which psql)" ]; then
     echo "   $PREFIX Installing postgresql"
     sudo apt update
     sudo apt install postgresql postgresql-contrib
-    sudo apt-get install postgis libpq-dev
+    sudo apt-get install postgis* libpq-dev
 fi
 echo "   $PREFIX Postgres installed!"
 
-# Create SharingCities user
+# Create SharingCities system user
+echo "$PREFIX Creating SharingCities DB user"
+sudo useradd -p $(openssl passwd -1 SharingCities) sharingcities
+sudo usermod -aG sudo sharingcities
+
+# Create SharingCities DB user
 echo "$PREFIX Creating SharingCities DB user"
 sudo -u postgres psql -c "CREATE USER sharingcities WITH PASSWORD 'sharingcities'"
+sudo -u postgres psql -c "ALTER USER sharingcities WITH superuser"
 
 # Create analytics DB
 echo "$PREFIX Creating analytics DB"
-sudo -u postgres psql -c "CREATE DATABASE analytics"
-
-# Grant DB privileges to SharingCities user
-echo "$PREFIX Granting privileges to SharingCities user"
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE analytics to sharingcities"
+sudo -u sharingcities psql -d postgres -c "CREATE DATABASE analytics"
 
 # Install PostGIS extension on analytics DB
 echo "$PREFIX Creating postgis extension"
-sudo -u postgres psql -d analytics -c "CREATE EXTENSION postgis"
+sudo -u sharingcities psql -d analytics -c "CREATE EXTENSION postgis"
 
 # Return to root directory
 cd
