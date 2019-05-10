@@ -9,6 +9,7 @@ import {
   withStyles,
 } from '@material-ui/core';
 import { axiosInstance } from './../../api/axios';
+import { getUserID } from './../../api/session';
 import WidgetWrapper from './WidgetWrapper';
 
 const styles = (theme) => ({
@@ -48,15 +49,23 @@ class AlertWidget extends React.Component {
       loading: true,
       attributes: [],
     };
+
+    this.eventSource = null;
   }
 
   componentDidMount() {
-    this.getAllAttributes()
+    this.getAllAttributes();
+    this.connectToSSE();
+  }
+
+  componentWillUnmount() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
   }
 
   getAllAttributes = () => {
-    const { config } = this.props;
-
     this.setState({ loading: true });
 
     axiosInstance
@@ -74,6 +83,25 @@ class AlertWidget extends React.Component {
         })
       })
     ;
+  };
+
+  connectToSSE() {
+    if (this.eventSource === null) {
+      const apiUrl = `${process.env.NODE_HOST}${process.env.API_PORT}`;
+      const path = '/alert/triggered';
+      const userID = getUserID();
+      const args = `?user_id=${userID}`;
+
+      this.eventSource = new EventSource(`${apiUrl}${path}${args}`);
+      this.eventSource.onerror = (err) => {
+        console.log(err);
+      };
+      this.eventSource.onmessage = (e) => {
+        console.log(e);
+
+        // ToDo :: handle the updated widget state here. Currently I'm not aware of the response format
+      }
+    }
   };
 
   render() {
