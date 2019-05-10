@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: fcc-ui
-        image: <<registry-address>>ui:v0.1
+        image: <<ui-image-details>>
         args:
         - serve
         - -s
