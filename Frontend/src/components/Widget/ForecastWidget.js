@@ -9,6 +9,7 @@ import { Handler } from 'vega-tooltip';
 import axios from 'axios';
 import WidgetWrapper from './WidgetWrapper';
 import LoadingIndicator from './LoadingIndicator';
+import ForecastStatus from './ForecastStatus';
 
 const FCC_CONFIG = require('./../../../fcc.config');
 
@@ -53,6 +54,7 @@ class ForecastWidget extends React.Component {
     this.state = {
       loading: null,
       error: null,
+      forecastStatus: null,
       data: null,
       spec: {
         ...config.spec,
@@ -121,34 +123,28 @@ class ForecastWidget extends React.Component {
       params: queryParams,
     })
       .then((response) => {
-        this.setState({
-          loading: false,
-          data: {
-            values: response.data,
-          }
-        })
+        const taskId = response.data[1].task_id
+        this.fetchStatus(taskId)
       })
       .catch((err) => {
         this.setState({ error: err})
       })
   };
 
-  fetchStatus = () => {
-    const { queryParams } = this.props;
-
+  fetchStatus = (taskId) => {
     this.setState({ loading: true });
 
     axios({
-      url: FCC_CONFIG.apiRoot + '/data',
+      url: FCC_CONFIG.apiRoot + '/pred_status?task_id=',
       method: 'get',
-      params: queryParams,
+      params: {
+        task_id: taskId
+      },
     })
       .then((response) => {
         this.setState({
           loading: false,
-          data: {
-            values: response.data,
-          }
+          forecastStatus: response.data
         })
       })
       .catch((err) => {
@@ -159,9 +155,9 @@ class ForecastWidget extends React.Component {
 
   render() {
     const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
-    const { spec, loading, error, data } = this.state;
+    const { spec, loading, error, data, forecastStatus } = this.state;
 
-    if (!data) {
+    if (!forecastStatus) {
       return (
         <WidgetWrapper
           i={i}
@@ -179,28 +175,47 @@ class ForecastWidget extends React.Component {
       )
     }
 
-    return (
-      <WidgetWrapper
-        i={i}
-        type={type}
-        name={name}
-        description={description}
-        isStatic={isStatic}
-        width={width}
-        height={height}
-        config={config}
-        queryParams={queryParams}
-      >
-        <Fade in={!loading} mountOnEnter>
-          <VegaLite
-            className={classes.root}
-            spec={spec}
-            data={data}
-            tooltip={this.tooltipHandler.call}
-          />
-        </Fade>
-      </WidgetWrapper>
-    )
+    else if (forecastStatus) {
+      return (
+        <WidgetWrapper
+          i={i}
+          type={type}
+          name={name}
+          description={description}
+          isStatic={isStatic}
+          width={width}
+          height={height}
+          config={config}
+          queryParams={queryParams}
+        >
+          <ForecastStatus status={forecastStatus} />
+        </WidgetWrapper>
+      )
+    }
+
+    //
+    // return (
+    //   <WidgetWrapper
+    //     i={i}
+    //     type={type}
+    //     name={name}
+    //     description={description}
+    //     isStatic={isStatic}
+    //     width={width}
+    //     height={height}
+    //     config={config}
+    //     queryParams={queryParams}
+    //   >
+    //     <Fade in={!loading} mountOnEnter>
+    //       <VegaLite
+    //         className={classes.root}
+    //         spec={spec}
+    //         data={data}
+    //         tooltip={this.tooltipHandler.call}
+    //       />
+    //     </Fade>
+    //   </WidgetWrapper>
+    // )
   }
 }
 
