@@ -6,9 +6,9 @@ export const axiosInstance = axios.create({
   baseURL: '<<api-address>>'
 })
 
-export const axiosLoginInstance = axios.create({
-  baseURL: '<<api-address>>'
-})
+// export const axiosLoginInstance = axios.create({
+//   baseURL: '<<api-address>>'
+// })
 
 axiosInstance.interceptors.request.use(function (config) {
   // Do something before request is sent
@@ -17,12 +17,12 @@ axiosInstance.interceptors.request.use(function (config) {
   return config
 })
 
-axiosLoginInstance.interceptors.request.use(function (config) {
-  // Do something before request is sent
-  const authToken = getAuthToken()
-  config.headers.Authorization = 'Bearer ' + authToken
-  return config
-})
+// axiosLoginInstance.interceptors.request.use(function (config) {
+//   // Do something before request is sent
+//   const authToken = getAuthToken()
+//   config.headers.Authorization = 'Bearer ' + authToken
+//   return config
+// })
 
 // const cachedInstance = axiosInstance
 
