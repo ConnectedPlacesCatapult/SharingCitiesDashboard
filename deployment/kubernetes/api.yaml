@@ -13,8 +13,7 @@ spec:
     spec:
       containers:
       - name: fcc-api
-        image: gcr.io/dotmodus/fcc/api:v1.0
-        # imagePullPolicy: IfNotPresent
+        image: <<registry-address>>api:v0.1
         args:
         - python
         - manage.py
@@ -23,16 +22,14 @@ spec:
         - containerPort: 5000
           protocol: TCP
       - name: redis
-        image: gcr.io/dotmodus/fcc/api:v1.0
-        # imagePullPolicy: IfNotPresent
+        image: <<registry-address>>api:v0.1
         args:
         - redis-server
         ports:
         - containerPort: 6379
           protocol: TCP
       - name: celery
-        image: gcr.io/dotmodus/fcc/api:v1.0
-        # imagePullPolicy: IfNotPresent
+        image: <<registry-address>>api:v0.1
         args:
         - celery
         - -A

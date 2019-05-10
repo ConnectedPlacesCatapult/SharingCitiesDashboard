@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: fcc-db
-          image: gcr.io/dotmodus/fcc/db:v0.1
-          # imagePullPolicy: Never
+          image: <<registry-address>>db:v0.1
           volumeMounts:
             - name: pg-claim-mount
               mountPath: /var/lib/postgresql

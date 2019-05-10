@@ -13,15 +13,13 @@ spec:
     spec:
       containers:
       - name: fcc-ui
-        image: gcr.io/dotmodus/fcc/ui:v1.1
-        # imagePullPolicy: Never
+        image: <<registry-address>>ui:v0.1
         args:
         - serve
         - -s
         - build
         - -l
         - "8080"
-      # restartPolicy: OnFailure
 ---
 apiVersion: v1
 kind: Service
