@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Fade,
   withStyles,
+  Button
 } from '@material-ui/core';
 import VegaLite from 'react-vega-lite';
 import { Handler } from 'vega-tooltip';
@@ -54,7 +55,8 @@ class ForecastWidget extends React.Component {
     this.state = {
       loading: null,
       error: null,
-      forecastStatus: null,
+      storedTaskId: null,
+      forecast: null,
       data: null,
       spec: {
         ...config.spec,
@@ -124,6 +126,7 @@ class ForecastWidget extends React.Component {
     })
       .then((response) => {
         const taskId = response.data[1].task_id
+        this.setState({ storedTaskId: taskId });
         this.fetchStatus(taskId)
       })
       .catch((err) => {
@@ -135,7 +138,7 @@ class ForecastWidget extends React.Component {
     this.setState({ loading: true });
 
     axios({
-      url: FCC_CONFIG.apiRoot + '/pred_status?task_id=',
+      url: FCC_CONFIG.apiRoot + '/pred_status',
       method: 'get',
       params: {
         task_id: taskId
@@ -144,7 +147,7 @@ class ForecastWidget extends React.Component {
       .then((response) => {
         this.setState({
           loading: false,
-          forecastStatus: response.data
+          forecast: response.data
         })
       })
       .catch((err) => {
@@ -155,9 +158,9 @@ class ForecastWidget extends React.Component {
 
   render() {
     const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
-    const { spec, loading, error, data, forecastStatus } = this.state;
+    const { spec, loading, error, data, forecast, storedTaskId } = this.state;
 
-    if (!forecastStatus) {
+    if (!forecast) {
       return (
         <WidgetWrapper
           i={i}
@@ -175,7 +178,7 @@ class ForecastWidget extends React.Component {
       )
     }
 
-    else if (forecastStatus) {
+    else if (forecast &&  forecast.state === 'SUCCESS') {
       return (
         <WidgetWrapper
           i={i}
@@ -188,34 +191,40 @@ class ForecastWidget extends React.Component {
           config={config}
           queryParams={queryParams}
         >
-          <ForecastStatus status={forecastStatus} />
+          <Fade in={!loading} mountOnEnter>
+            <VegaLite
+              className={classes.root}
+              spec={spec}
+              data={forecast.result.Predictions}
+              tooltip={this.tooltipHandler.call}
+            />
+          </Fade>
         </WidgetWrapper>
       )
     }
 
-    //
-    // return (
-    //   <WidgetWrapper
-    //     i={i}
-    //     type={type}
-    //     name={name}
-    //     description={description}
-    //     isStatic={isStatic}
-    //     width={width}
-    //     height={height}
-    //     config={config}
-    //     queryParams={queryParams}
-    //   >
-    //     <Fade in={!loading} mountOnEnter>
-    //       <VegaLite
-    //         className={classes.root}
-    //         spec={spec}
-    //         data={data}
-    //         tooltip={this.tooltipHandler.call}
-    //       />
-    //     </Fade>
-    //   </WidgetWrapper>
-    // )
+    else if (forecast) {
+      return (
+        <WidgetWrapper
+          i={i}
+          type={type}
+          name={name}
+          description={description}
+          isStatic={isStatic}
+          width={width}
+          height={height}
+          config={config}
+          queryParams={queryParams}
+        >
+
+          <ForecastStatus forecast={forecast} />
+
+          <Button fullWidth variant="text" color="primary" onClick={() => this.fetchStatus(storedTaskId)}>Refresh</Button>
+
+        </WidgetWrapper>
+      )
+    }
+
   }
 }
 

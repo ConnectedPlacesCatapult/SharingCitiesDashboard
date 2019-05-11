@@ -26,16 +26,16 @@ const styles = (theme) => ({
 });
 
 const ForecastStatus = (props) => {
-  const { classes } = props;
+  const { classes, forecast } = props;
 
   return (
     <div className={classes.root}>
       <TimeIcon className={classes.pendingIcon}/>
       <Typography variant="subtitle1" color="primary">
-        Forecast Pending
+        Status: { forecast.state }
       </Typography>
       <Typography variant="caption" color="primary">
-        your forecast is still being calculated
+        {forecast.status}
       </Typography>
     </div>
   );
@@ -43,6 +43,7 @@ const ForecastStatus = (props) => {
 
 ForecastStatus.propTypes = {
   classes: PropTypes.object.isRequired,
+  forecast: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(ForecastStatus)
