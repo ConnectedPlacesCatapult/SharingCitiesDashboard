@@ -1,4 +1,3 @@
-
 import logging
 import statistics
 import subprocess
@@ -10,7 +9,6 @@ import sqlalchemy
 from celery.exceptions import Ignore
 from celery.utils.log import get_task_logger
 from flask_restful import Resource, reqparse, inputs
-from flask import abort, jsonify
 
 from db import db
 from models.attribute_data import ModelClass
@@ -122,8 +120,12 @@ class RequestForData(Resource):
     parser.add_argument('moving', type=inputs.boolean, required=False,
                         store_missing=False)
 
-    def get(self) -> {str: Any}:
-        """ Handle HTTP GET request """
+    def get(self) -> ({str: Any}, int):
+        """
+        Get requested attribute data or forecast prediction
+        :return: Requested attribute data or Forecast predictions and an HTTP
+                status code
+        """
 
         args = self.parser.parse_args()
         status_code = 200
@@ -403,26 +405,26 @@ class RequestForData(Resource):
             else:
                 if grouped:
                     if harmonising_method:
-                        data, status_code = self.get_attribute_data(attribute_data,
-                                                       LIMIT, OFFSET,
-                                                       operation=operation)
+                        data, status_code = self.get_attribute_data(
+                            attribute_data,
+                            LIMIT, OFFSET,
+                            operation=operation)
                         if status_code != 422:
                             data, status_code = request_harmonised_data(
                                 data, harmonising_method=harmonising_method)
-                        else:
-                            print("Got 422")
                     else:
-                        data, status_code = self.get_attribute_data(attribute_data,
-                                                       LIMIT, OFFSET,
-                                                       operation=operation)
+                        data, status_code = self.get_attribute_data(
+                            attribute_data,
+                            LIMIT, OFFSET,
+                            operation=operation)
                         if status_code != 422:
                             data, status_code = request_grouped_data(
                                 data, per_sensor=per_sensor, freq=freq,
                                 method=method)
                 else:
                     data, status_code = self.get_attribute_data(attribute_data,
-                                                   LIMIT, OFFSET,
-                                                   operation=operation)
+                                                                LIMIT, OFFSET,
+                                                                operation=operation)
 
                 if predictions:
                     if not Attributes.get_by_name(attribute_data):
@@ -483,13 +485,14 @@ class RequestForData(Resource):
             return [a.json() for a in subthemes], 200
 
         return {
-                   "error": "error occured while processing request"
+                   "error": "An error occurred while processing the request"
                }, 400
 
-    def get_attribute_data(self, attribute_name: str, limit: int = 30,
+    def get_attribute_data(self, attribute_name: str, limit: int, offset: int,
                            fromdate: Union[None, datetime] = None,
                            todate: Union[None, datetime] = None,
-                           operation: Union[None, str] = None) -> {str: Any}:
+                           operation: Union[None, str] = None) -> (
+            {str: Any}, int):
         """
         Get attribute data
         :param attribute_name: Attribute name
@@ -499,7 +502,7 @@ class RequestForData(Resource):
         :param operation: Mathematical operations that can be performed on data
                     accepted values are: 'mean', 'median', 'sum'
                     (More to be added)
-        :return: Attribute data
+        :return: Attribute data and an HTTP status code
         """
         # clearing previous metadata
         db.metadata.clear()
@@ -553,9 +556,6 @@ class RequestForData(Resource):
                     if s:
                         got_sensor = True
                     try:
-                        #TODO create dict then append to temp
-                        #TODO handle None sensor so data is displayed on front end data page
-
                         temp.append({
                             'Attribute_Name': attribute.name,
                             'Attribute_id': attribute.id,
@@ -568,16 +568,19 @@ class RequestForData(Resource):
 
                         })
                     except Exception as e:
-                        logger.log(logging.DEBUG,"Possible missing db entries:"
-                                                 "{} , {}".format(s, e))
+                        logger.log(logging.DEBUG,
+                                   "Possible missing db entries:"
+                                   "{} , {}".format(s, e))
                         pass
                 if temp:
                     _common['Attribute_Values'] = temp
 
                 if not got_sensor:
                     logger.log(logging.DEBUG, "No sensor id found for data:"
-                                              "request {}".format([value.s_id for value in values]))
-                    return {"No sensor found for ids": "{}".format([value.s_id for value in values])}, 422
+                                              "request {}".format(
+                        [value.s_id for value in values]))
+                    return {"No sensor found for ids": "{}".format(
+                        [value.s_id for value in values])}, 422
 
             else:
                 _values = [v.value for v in values]
@@ -593,13 +596,6 @@ class RequestForData(Resource):
             data.append(_common)
 
         return data, 200
-
-    '''
-        @Params
-            attribute_table: is string passed as parameter with the URL
-            sensor_id: is string passed as parameter with the URL
-            
-    '''
 
     @celery.task(bind=True)
     def get_predictions(self, attribute_table: str, sensor_id: str, n_pred:

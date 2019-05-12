@@ -10,7 +10,7 @@ class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
 
-    def __init__(self, host = "localhost",
+    def __init__(self, host: str = "localhost",
                  port: int = 5000,
                  workers: int = 4, override: bool = False):
         """
