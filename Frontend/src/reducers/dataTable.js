@@ -14,6 +14,7 @@ import {
   QUERY_PARAMS,
   REMOVE_ATTRIBUTE_DATA,
   RESET_STATE,
+  SET_ACTIVE_TAB_ATTRIBUTE,
   TOGGLE_ATTRIBUTE_SELECTED,
   TOGGLE_SUBTHEME_SELECTED,
   TOGGLE_THEME_SELECTED,
@@ -27,13 +28,13 @@ const FCC_CONFIG = require('./../../fcc.config');
 const initialState = {
   themes: [],
   queryParams: {
-    attributeData: [],
     grouped: null,
     per_sensor: null,
     harmonising_method: QUERY_PARAMS.HARMONISING_METHOD_LONG,
     limit: 100,
   },
   data: [],
+  activeTabAttribute: null,
   fetching: false,
   fetched: false,
   error: null,
@@ -225,6 +226,11 @@ export default (state=initialState, action={}) => {
     case RESET_STATE: {
       return initialState
     }
+
+    case SET_ACTIVE_TAB_ATTRIBUTE: return ({
+      ...state,
+      activeTabAttribute: action.payload,
+    })
 
   }
 
