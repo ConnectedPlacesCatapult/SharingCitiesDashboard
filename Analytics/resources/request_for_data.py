@@ -554,6 +554,9 @@ class RequestForData(Resource):
                 for i in range(len(values) - 1, -1, -1):
                     s = Sensor.get_by_id(values[i].s_id)
                     if s:
+                        # Ensure the data set has at least one sensor
+                        # If no sensor is present the data source page loads
+                        # incorrectly
                         got_sensor = True
                     try:
                         temp.append({
