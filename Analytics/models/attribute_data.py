@@ -1,7 +1,7 @@
 from db import db
 
 
-def ModelClass(tablename):
+def ModelClass(tablename) -> db.Model:
     """
     Decoratively define the schema for an attribute data table and extend
     if the table exists.
@@ -13,5 +13,4 @@ def ModelClass(tablename):
         'timestamp': db.Column(db.DateTime),
         '__table_args__': {'extend_existing': True}
     }
-
     return type(tablename, (db.Model,), table)
