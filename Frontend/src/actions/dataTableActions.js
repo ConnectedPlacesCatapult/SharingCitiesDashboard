@@ -222,7 +222,11 @@ export const removeAttributeData = (attributeId) => ({
 export const exportDataByFormat = (format) => {
   return (dispatch, getState) => {
     const currentState = getState();
-    const selectedAttribute = currentState.dataTable.activeTabAttribute;
+    const selectedAttribute = (currentState.dataTable.activeTabAttribute) ? currentState.dataTable.activeTabAttribute : {
+      id: currentState.dataTable.data[0]['Attribute_id'],
+      name: currentState.dataTable.data[0]['Attribute_Name'],
+      table: currentState.dataTable.data[0]['Attribute_Table'],
+    };
 
     dispatch({
       type: EXPORT_DATA,
