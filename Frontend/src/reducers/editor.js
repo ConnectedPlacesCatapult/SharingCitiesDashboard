@@ -76,11 +76,11 @@ const getWidgetDefaultProperties = (currentProperties) => {
         height: 200,
         config: {
           ...defaultProperties.config,
-          ...FCC_CONFIG.editorDefaultConfig.plot,
+          ...FCC_CONFIG.editorDefaultConfig.forecast,
         },
         queryParams: {
           ...defaultProperties.queryParams,
-          predictions: true
+          predictions: true,
         }
       }
     }

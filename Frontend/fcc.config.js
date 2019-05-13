@@ -123,6 +123,37 @@ module.exports = {
     },
   },
   editorDefaultConfig: {
+    forecast: {
+      data: {
+        values: [],
+      },
+      spec: {
+        "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+        "autosize": {
+          "type": "fit",
+          "resize": true,
+          "contains": "content"
+        },
+        "data": {
+          "values": []
+        },
+        "mark": "point",
+        "encoding": {
+          "x": {
+            "field": "Timestamp",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "Value",
+            "type": "quantitative",
+          },
+          "color": {
+            "field": "Attribute",
+            "type": "nominal"
+          }
+        }
+      },
+    },
     plot: {
       data: {
         values: [],

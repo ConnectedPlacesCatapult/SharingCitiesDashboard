@@ -7,6 +7,7 @@ import {
 import VegaLite from 'react-vega-lite';
 import { Handler } from 'vega-tooltip';
 import axios from 'axios';
+import { axiosInstance } from './../../api/axios';
 import WidgetWrapper from './WidgetWrapper';
 import LoadingIndicator from './LoadingIndicator';
 
@@ -103,11 +104,19 @@ class ForecastWidget extends React.Component {
       },
     };
 
-    this.tooltipHandler = new Handler(tooltipOptions)
+    this.tooltipHandler = new Handler(tooltipOptions);
+    this.eventSource = null;
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData();
+  }
+
+  componentWillUnmount() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
   }
 
   fetchData = () => {
@@ -115,18 +124,42 @@ class ForecastWidget extends React.Component {
 
     this.setState({ loading: true });
 
-    axios({
-      url: FCC_CONFIG.apiRoot + '/data',
-      method: 'get',
-      params: queryParams,
-    })
+    axiosInstance
+      .get('/data', { params: { ...queryParams }})
       .then((response) => {
+
+        // parse original data
+        const formattedData = response.data[0]['Attribute_Values'].map((record) => ({
+          Attribute: record['Attribute_Name'],
+          Timestamp: record['Timestamp'],
+          Value: record['Value'],
+        }));
+
+        const taskID = response.data[1]['task_id'];
+
         this.setState({
           loading: false,
           data: {
-            values: response.data,
+            values: formattedData,
+          },
+        });
+
+        // now connect to SSEs
+        if (this.eventSource === null) {
+          const apiUrl = `${process.env.NODE_HOST}${process.env.API_PORT}`;
+          const path = '/pred_status';
+          const args = `?task_id=${taskID}`;
+
+          this.eventSource = new EventSource(`${apiUrl}${path}${args}`);
+          this.eventSource.onerror = (err) => {
+            console.log(err);
+          };
+          this.eventSource.onmessage = (e) => {
+            console.log(e);
+
+            // ToDo :: handle the updated widget state here. Currently I'm not aware of the response format
           }
-        })
+        }
       })
       .catch((err) => {
         this.setState({ error: err})

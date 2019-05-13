@@ -68,8 +68,8 @@ export const saveWidget = (mode, widget) => {
       type: EDITOR_SAVE_WIDGET,
     });
 
-    // remove data if it's a plot
-    if (widget.type === WIDGET_TYPE_PLOT) {
+    // remove data if it's a forecast or a plot
+    if (widget.type === WIDGET_TYPE_FORECAST || widget.type === WIDGET_TYPE_PLOT) {
       widget.config.data = { values: [] };
     }
 
