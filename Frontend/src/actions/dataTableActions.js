@@ -14,13 +14,17 @@ import {
   QUERY_PARAMS,
   REMOVE_ATTRIBUTE_DATA,
   RESET_STATE,
+  SET_ACTIVE_TAB_ATTRIBUTE,
   TOGGLE_ATTRIBUTE_SELECTED,
   TOGGLE_SUBTHEME_SELECTED,
   TOGGLE_THEME_SELECTED,
-} from "../constants";
-import axios from 'axios';
+  EXPORT_DATA,
+  EXPORT_DATA_FULFILLED,
+  EXPORT_DATA_REJECTED
+} from './../constants';
 
-const FCC_CONFIG = require('./../../fcc.config');
+import fileDownload from 'js-file-download';
+import { axiosInstance } from './../api/axios';
 
 // Themes
 export const fetchThemes = () => {
@@ -29,11 +33,8 @@ export const fetchThemes = () => {
       type: FETCH_THEMES,
     });
 
-    axios({
-      url: FCC_CONFIG.apiRoot + '/data',
-      method: 'get',
-      params: {},
-    })
+    axiosInstance
+      .get('/data')
       .then((response) => {
         dispatch({
           type: FETCH_THEMES_FULFILLED,
@@ -62,13 +63,12 @@ export const fetchSubthemes = (themeId) => {
       type: FETCH_SUBTHEMES,
     });
 
-    axios({
-      url: FCC_CONFIG.apiRoot + '/data',
-      method: 'get',
-      params: {
-        [QUERY_PARAMS.THEME_ID]: themeId,
-      },
-    })
+    axiosInstance
+      .get('/data', {
+        params: {
+          [QUERY_PARAMS.THEME_ID]: themeId,
+        },
+      })
       .then((response) => {
         dispatch({
           type: FETCH_SUBTHEMES_FULFILLED,
@@ -102,13 +102,12 @@ export const fetchAttributes = (themeId, subthemeId) => {
       type: FETCH_ATTRIBUTES,
     });
 
-    axios({
-      url: FCC_CONFIG.apiRoot + '/data',
-      method: 'get',
-      params: {
-        [QUERY_PARAMS.SUBTHEME_ID]: subthemeId,
-      },
-    })
+    axiosInstance
+      .get('/data', {
+        params: {
+          [QUERY_PARAMS.SUBTHEME_ID]: subthemeId,
+        },
+      })
       .then((response) => {
         dispatch({
           type: FETCH_ATTRIBUTES_FULFILLED,
@@ -144,14 +143,13 @@ export const fetchAttributeData = (attributeName, queryParams = {}) => {
       type: FETCH_ATTRIBUTE_DATA,
     });
 
-    axios({
-      url: FCC_CONFIG.apiRoot + '/data',
-      method: 'get',
-      params: {
-        ...queryParams,
-        ['attributedata']: attributeName,
-      },
-    })
+    axiosInstance
+      .get('/data', {
+        params: {
+          ...queryParams,
+          ['attributedata']: attributeName,
+        },
+      })
       .then((response) => {
         dispatch({
           type: FETCH_ATTRIBUTE_DATA_FULFILLED,
@@ -177,3 +175,113 @@ export const removeAttributeData = (attributeId) => ({
   type: REMOVE_ATTRIBUTE_DATA,
   payload: attributeId,
 });
+
+//export
+/*export const exportData = (tableName) => {
+
+  var fileDownload = require('js-file-download');
+  var json2csv = require('json2csv');
+
+  return (dispatch) => {
+    dispatch({
+      type: EXPORT_DATA,
+    });
+
+    const requestData = {
+      "file_name": `export-${tableName}`,
+      "table_name": tableName,
+      "format": "geojson"
+    };
+
+    axiosInstance
+      .post('/export_data', requestData)
+      .then((response) => {
+
+        console.log('response.data', response.data.features)
+
+        const fields = ["id", "type", "geometry.type"]
+
+        const features = json2csv.parse(response.data.features, {fields})
+
+        fileDownload(features, 'report.csv');
+
+        dispatch({
+          type: EXPORT_DATA_FULFILLED,
+          payload: response.data,
+        })
+      })
+      .catch((error) => {
+        dispatch({
+          type: EXPORT_DATA_REJECTED,
+          payload: error,
+        })
+      })
+  }
+};*/
+
+export const exportDataByFormat = (format) => {
+  return (dispatch, getState) => {
+    const currentState = getState();
+    const selectedAttribute = (currentState.dataTable.activeTabAttribute) ? currentState.dataTable.activeTabAttribute : {
+      id: currentState.dataTable.data[0]['Attribute_id'],
+      name: currentState.dataTable.data[0]['Attribute_Name'],
+      table: currentState.dataTable.data[0]['Attribute_Table'],
+    };
+
+    dispatch({
+      type: EXPORT_DATA,
+    });
+
+    const requestData = {
+      file_name: `${selectedAttribute.name}-${Date.now()}.${format}`,
+      table_name: selectedAttribute.table,
+      format: format,
+      //directory: '',
+      //limit: 100,
+    };
+
+    axiosInstance
+      .post('/export_data', requestData)
+      .then((response) => {
+
+        switch(format) {
+          case 'csv':
+            fileDownload(response.data, requestData.file_name);
+
+            break;
+
+          default:
+          case 'geojson':
+          case 'json':
+            fileDownload(JSON.stringify(response.data), requestData.file_name);
+
+            break;
+        }
+
+        dispatch({
+          type: EXPORT_DATA_FULFILLED,
+          payload: response.data,
+        })
+      })
+      .catch((error) => {
+        dispatch({
+          type: EXPORT_DATA_REJECTED,
+          payload: error,
+        })
+      })
+  }
+};
+
+// ToDo :: this needs to be called once before any tab is clicked
+export const setActiveTabAttribute = (id, name, table) => {
+  return (dispatch) => {
+    dispatch({
+      type: SET_ACTIVE_TAB_ATTRIBUTE,
+      payload: {
+        id,
+        name,
+        table,
+      },
+    })
+  }
+};

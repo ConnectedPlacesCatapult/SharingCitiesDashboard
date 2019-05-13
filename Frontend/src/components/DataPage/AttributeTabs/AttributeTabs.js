@@ -25,7 +25,7 @@ class AttributeTabs extends React.Component {
     classes: PropTypes.object.isRequired,
   };
 
-  // catch situation where the active tab's attribute has been deselected from the sde panel
+  // catch situation where the active tab's attribute has been deselected from the side panel
   static getDerivedStateFromProps(props, state) {
     if (state.activeTab >= props.dataTable.data.length) {
       state.activeTab = props.dataTable.data.length - 1
@@ -34,7 +34,7 @@ class AttributeTabs extends React.Component {
     return state;
   }
 
-  handleChange = (e, value) => {
+  handleChange = (value) => {
     this.setState({ activeTab: value })
   };
 
@@ -42,7 +42,18 @@ class AttributeTabs extends React.Component {
     const { classes, dataTable } = this.props;
     const { activeTab } = this.state;
 
-    const tabs = dataTable.data.map((attr, i) => <TabHeader key={i} value={i} onChange={this.handleChange} attributeId={attr["Attribute_id"]} attributeName={attr["Attribute_Name"]} />);
+    const tabs = dataTable.data.map((attr, i) => {
+      return (
+        <TabHeader
+          key={i}
+          value={i}
+          onChange={this.handleChange}
+          attributeId={attr["Attribute_id"]}
+          attributeName={attr["Attribute_Name"]}
+          attributeTable={attr["Attribute_Table"]}
+        />
+      )
+    });
     const contents = dataTable.data.map((attr, i) => <TabContent key={i} isActive={activeTab === i} {...attr} />);
 
     return (
