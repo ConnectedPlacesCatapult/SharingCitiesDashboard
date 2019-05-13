@@ -158,7 +158,7 @@ class ForecastWidget extends React.Component {
             if (e.state === "SUCCESS") {
               console.log("success");
 
-              const formattedPredictions = e.result.Predictions.map((record) => ({
+              const formattedPredictions = e.result['Predictions'].map((record) => ({
                 Attribute: `${queryParams.attributedata}-predicted`,
                 Timestamp: record['Timestamp'],
                 Value: record['Value'],
@@ -166,7 +166,7 @@ class ForecastWidget extends React.Component {
 
               this.setState(prevState => ({
                 data: {
-                  values: [...prevState.values, formattedPredictions]
+                  values: [...prevState.data.values, formattedPredictions]
                 }
               }));
             }
