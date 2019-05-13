@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Union
+from typing import Any
 
 import geojson
 import numpy as np
@@ -139,7 +139,7 @@ def request_grouped_data(data: {str: Any}, per_sensor: bool, freq: str,
             for i in harm_df.Sensor_id.unique():
                 for j in harm_df.Attribute_Name.unique():
                     temp = harm_df[(harm_df.Sensor_id == i) & (
-                                harm_df.Attribute_Name == j)]
+                            harm_df.Attribute_Name == j)]
                     temp['Timestamp'] = pd.to_datetime(temp['Timestamp'])
                     temp = temp.set_index('Timestamp')
                     temp = temp.resample(freq).ffill()
@@ -179,12 +179,14 @@ def request_grouped_data(data: {str: Any}, per_sensor: bool, freq: str,
 
         return data, 200
     except Exception as e:
-        logger.log(logging.WARNING, "Unexpected Exception raise during grouping"
-                                   "of attribute data: {}".format(e))
+        logger.log(logging.WARNING,
+                   "Unexpected Exception raise during grouping"
+                   "of attribute data: {}".format(e))
         return [], 422
 
 
-def request_harmonised_data(data: {str: Any}, harmonising_method: str) -> [Any]:
+def request_harmonised_data(data: {str: Any}, harmonising_method: str) -> [
+    Any]:
     """
     Harmonize requested data with parsed harmonising method
     :param data: Attribute data
@@ -237,11 +239,9 @@ def request_harmonised_data(data: {str: Any}, harmonising_method: str) -> [Any]:
         _lon = []
 
         for sensor in harm_df.Sensor_id.unique():
-
             _temp_s = (Sensor.get_by_id(sensor)).json()
             _sensor_names.append(_temp_s["Name"])
             _l_id.append(_temp_s["Location id"])
-
 
         for l in _l_id:
             _temp_l = (Location.get_by_id(l)).json()
@@ -286,7 +286,7 @@ def request_harmonised_data(data: {str: Any}, harmonising_method: str) -> [Any]:
                                harm_df.Attribute_Name.unique() == _benchmark_attr)):
             for sensor in harm_df.Sensor_id.unique():
                 _temp_df = harm_df[(harm_df.Attribute_Name == i) & (
-                            harm_df.Sensor_id == sensor)]
+                        harm_df.Sensor_id == sensor)]
 
                 ### relate _temp_df to the benchmarking index (it gets the closest value by default)
                 _temp_df = _temp_df.asof(_benchmark_attr_index)
