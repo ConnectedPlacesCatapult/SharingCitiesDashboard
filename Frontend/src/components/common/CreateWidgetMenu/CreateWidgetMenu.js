@@ -32,7 +32,7 @@ class CreateWidgetMenu extends React.Component {
     anchorEl: null,
     enablePlot: true,
     enableMap: true,
-    enableForecast: true,
+    enableForecast: false,
     enableAlert: true,
   };
 
