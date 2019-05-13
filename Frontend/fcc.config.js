@@ -137,7 +137,7 @@ module.exports = {
         "data": {
           "values": []
         },
-        "mark": "point",
+        "mark": "line",
         "encoding": {
           "x": {
             "field": "Timestamp",
@@ -146,6 +146,7 @@ module.exports = {
           "y": {
             "field": "Value",
             "type": "quantitative",
+            "aggregate": "mean"
           },
           "color": {
             "field": "Attribute",
