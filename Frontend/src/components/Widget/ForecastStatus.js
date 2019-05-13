@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  CircularProgress,
   Typography,
   withStyles,
 } from '@material-ui/core';
+import TimeIcon from '@material-ui/icons/AccessTime';
 
 const styles = (theme) => ({
   root: {
@@ -18,26 +18,32 @@ const styles = (theme) => ({
   progress: {
     margin: theme.spacing.unit * 2,
   },
+  pendingIcon: {
+    margin: theme.spacing.unit * 2,
+    color: theme.palette.secondary.main,
+    fontSize: 46
+  }
 });
 
-const LoadingIndicator = (props) => {
-  const { classes } = props;
+const ForecastStatus = (props) => {
+  const { classes, forecast } = props;
 
   return (
     <div className={classes.root}>
-      <CircularProgress color="secondary" className={classes.progress} />
+      <TimeIcon className={classes.pendingIcon}/>
       <Typography variant="subtitle1" color="primary">
-        Please Wait
+        Status: { forecast.state }
       </Typography>
       <Typography variant="caption" color="primary">
-        fetching widget data
+        {forecast.status}
       </Typography>
     </div>
   );
 };
 
-LoadingIndicator.propTypes = {
+ForecastStatus.propTypes = {
   classes: PropTypes.object.isRequired,
+  forecast: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(LoadingIndicator)
+export default withStyles(styles)(ForecastStatus)

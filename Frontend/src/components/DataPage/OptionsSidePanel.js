@@ -96,7 +96,7 @@ class OptionsSidePanel extends React.Component {
               anchorEl={createWidgetMenuAnchorEl}
               onClose={this.handleCloseCreateWidgetMenu}
               enableAlert={false}
-              enableForecast={false}
+              enableForecast={true}
             />
             <Button
               variant="contained"

@@ -8,6 +8,8 @@ import {
   withStyles,
 } from '@material-ui/core';
 import BarChartIcon from '@material-ui/icons/BarChart';
+import { exportDataByFormat } from "../../../actions/dataTableActions";
+import {connect} from "react-redux";
 
 const styles = (theme) => ({
   root: {
@@ -19,6 +21,7 @@ class ExportDataMenu extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     onClose: PropTypes.func.isRequired,
+    exportData: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -26,7 +29,10 @@ class ExportDataMenu extends React.Component {
   };
 
   handleFormatClicked = (format) => {
-    // do some async stuff
+    const { exportDataByFormat, onClose } = this.props;
+
+    exportDataByFormat(format);
+    onClose();
   };
 
   handleClose = () => {
@@ -51,11 +57,33 @@ class ExportDataMenu extends React.Component {
           </ListItemIcon>
           <ListItemText primary="JSON" />
         </MenuItem>
+        <MenuItem onClick={() => this.handleFormatClicked('geojson')}>
+          <ListItemIcon>
+            <BarChartIcon />
+          </ListItemIcon>
+          <ListItemText primary="GeoJSON" />
+        </MenuItem>
+        <MenuItem onClick={() => this.handleFormatClicked('csv')}>
+          <ListItemIcon>
+            <BarChartIcon />
+          </ListItemIcon>
+          <ListItemText primary="CSV" />
+        </MenuItem>
       </Menu>
     )
   }
 }
 
+const mapStateToProps = (state) => ({
+  dataTable: state.dataTable,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  exportData: (tables) => dispatch(exportData(tables)),
+  exportDataByFormat: (format) => dispatch(exportDataByFormat(format)),
+});
+
 ExportDataMenu = withStyles(styles)(ExportDataMenu);
+ExportDataMenu = connect(mapStateToProps, mapDispatchToProps)(ExportDataMenu);
 
 export default ExportDataMenu

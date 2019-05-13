@@ -26,7 +26,7 @@ const styles = (theme) => ({
     alignItems: 'center',
   },
   actionButton: {
-
+    marginTop: '1em'
   },
 });
 
@@ -37,7 +37,6 @@ class Editor extends React.Component {
 
   handleSaveWidgetClicked = () => {
     const { editor, saveWidget } = this.props;
-
     saveWidget(editor.mode, editor.widget);
   };
 

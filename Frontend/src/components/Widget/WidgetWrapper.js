@@ -18,14 +18,18 @@ import TimelineIcon from '@material-ui/icons/Timeline';
 import AlarmIcon from '@material-ui/icons/Alarm';
 import { connect } from 'react-redux';
 import { deleteWidget } from './../../actions/dashboardActions';
+import { promptDeleteWidget } from './../../actions/dashboardActions';
 import { openEditor } from '../../actions/editorActions';
 
 const styles = (theme) => ({
   widget: {
     borderRadius: '3px',
-    padding: theme.spacing.unit,
+    paddingTop: theme.spacing.unit,
+    paddingLeft: theme.spacing.unit,
+    paddingRight: theme.spacing.unit,
+    paddingBottom: theme.spacing.unit * 6,
     height: '100%',
-    overflow: 'hidden',
+    // overflow: 'hidden',
   },
   widgetHeader: {
     display: 'flex',
@@ -85,7 +89,6 @@ class WidgetWrapper extends React.Component {
 
   handleDeleteWidgetClick = () => {
     const { i, deleteWidget } = this.props;
-
     deleteWidget(parseInt(i));
   };
 
