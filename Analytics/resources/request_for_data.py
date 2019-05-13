@@ -583,7 +583,8 @@ class RequestForData(Resource):
                             'Longitude': Location.get_by_id(s.l_id).lon
 
                         })
-                    except Exception as e:
+                    except (TypeError, ValueError, AttributeError) as e:
+                        # missing/ incorrect data entry found in requested data
                         logger.log(logging.DEBUG,
                                    "Possible missing db entries:"
                                    "{} , {}".format(s, e))

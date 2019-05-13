@@ -179,6 +179,11 @@ def request_grouped_data(data: {str: Any}, per_sensor: bool, freq: str,
 
         return data, 200
     except Exception as e:
+        # Broad exception case used to catch unexpected exceptions. This is the
+        # end of the line to stop the frontend from hanging when loading widget
+        # data and provides logs for unexpected exception being raised during
+        # the formatting of the data due to incorrect / missing database
+        # entries
         logger.log(logging.WARNING,
                    "Unexpected Exception raise during grouping"
                    "of attribute data: {}".format(e))
