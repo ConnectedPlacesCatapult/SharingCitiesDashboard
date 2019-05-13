@@ -10,8 +10,6 @@ import { axiosInstance } from './../../api/axios';
 import WidgetWrapper from './WidgetWrapper';
 import LoadingIndicator from './LoadingIndicator';
 
-const FCC_CONFIG = require('./../../../fcc.config');
-
 const styles = (theme) => ({
   root: {
     display: 'flex',
