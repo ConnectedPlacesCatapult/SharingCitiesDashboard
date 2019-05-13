@@ -27,10 +27,10 @@ const LoadingIndicator = (props) => {
     <div className={classes.root}>
       <CircularProgress color="secondary" className={classes.progress} />
       <Typography variant="subtitle1" color="primary">
-        ...Please Wait...
+        Please Wait
       </Typography>
       <Typography variant="caption" color="primary">
-        loading data from the mainframe
+        fetching widget data
       </Typography>
     </div>
   );

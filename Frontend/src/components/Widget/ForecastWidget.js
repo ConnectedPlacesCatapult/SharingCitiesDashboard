@@ -6,7 +6,6 @@ import {
 } from '@material-ui/core';
 import VegaLite from 'react-vega-lite';
 import { Handler } from 'vega-tooltip';
-import axios from 'axios';
 import { axiosInstance } from './../../api/axios';
 import WidgetWrapper from './WidgetWrapper';
 import LoadingIndicator from './LoadingIndicator';
@@ -165,30 +164,6 @@ class ForecastWidget extends React.Component {
         this.setState({ error: err})
       })
   };
-
-  fetchStatus = () => {
-    const { queryParams } = this.props;
-
-    this.setState({ loading: true });
-
-    axios({
-      url: FCC_CONFIG.apiRoot + '/data',
-      method: 'get',
-      params: queryParams,
-    })
-      .then((response) => {
-        this.setState({
-          loading: false,
-          data: {
-            values: response.data,
-          }
-        })
-      })
-      .catch((err) => {
-        this.setState({ error: err})
-      })
-  };
-
 
   render() {
     const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
