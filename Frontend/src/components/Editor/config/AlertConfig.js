@@ -3,13 +3,9 @@ import PropTypes from 'prop-types';
 import {
   Divider,
   FormControl,
-  FormControlLabel,
   FormGroup,
-  FormLabel,
   InputLabel,
   MenuItem,
-  Radio,
-  RadioGroup,
   Select,
   TextField,
   withStyles,
@@ -17,10 +13,10 @@ import {
 import { connect } from 'react-redux';
 import {
   getThemeTree,
-  setWidgetProperty,
   setWidgetConfigProperty,
-  setWidgetQueryProperty
 } from './../../../actions/editorActions';
+import { axiosInstance } from './../../../api/axios';
+import { getUserID } from './../../../api/session';
 
 const styles = (theme) => ({
   root: {
@@ -42,19 +38,22 @@ class AlertConfig extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     getThemeTree: PropTypes.func.isRequired,
-    setWidgetProperty: PropTypes.func.isRequired,
     setWidgetConfigProperty: PropTypes.func.isRequired,
-    setWidgetQueryProperty: PropTypes.func.isRequired,
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
+      alert: null,
       attributes: [],
     };
 
     props.getThemeTree();
+  }
+
+  componentWillMount() {
+    this.fetchAlert()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -84,11 +83,48 @@ class AlertConfig extends React.Component {
     }
   }
 
-  setAlertProperty = (property) => (e) => {
-    const { setWidgetProperty } = this.props;
+  fetchAlert() {
+    const { editor } = this.props;
 
-    setWidgetProperty(property, e.target.value)
-  };
+    editor.fetching = true;
+
+    const requestData = {
+      user_id: getUserID(),
+      attribute_id: editor.widget.config.attributeId,
+      widget_id: editor.widget.i,
+    };
+
+    axiosInstance
+      .get('/alert/get_alerts', { params: requestData })
+      .then((response) => {
+        editor.fetching = false;
+
+        // check for differences between widget alert and actual alert
+        // update editor.widget.config if so
+        if (response.data[0].attribute_id !== editor.widget.config.attributeId) {
+          editor.widget.config.attributeId = response.data[0].attribute_id
+        }
+
+        if (response.data[0].min_threshold.toString() !== editor.widget.config.minThreshold.toString()) {
+          editor.widget.config.minThreshold = response.data[0].min_threshold
+        }
+
+        if (response.data[0].max_threshold.toString() !== editor.widget.config.maxThreshold.toString()) {
+          editor.widget.config.maxThreshold = response.data[0].max_threshold
+        }
+
+        if (response.data[0].activated.toString() !== editor.widget.config.activated.toString()) {
+          editor.widget.config.activated = response.data[0].activated
+        }
+
+        this.setState({
+          alert: response.data[0],
+        })
+      })
+      .catch((error) => {
+        this.setState({ error})
+      })
+  }
 
   setAlertConfigProperty = (property) => (e) => {
     const { setWidgetConfigProperty } = this.props;
@@ -96,35 +132,23 @@ class AlertConfig extends React.Component {
     setWidgetConfigProperty(property, e.target.value)
   };
 
-  setAlertQueryProperty = (property, value) => {
-    const { setWidgetQueryProperty } = this.props;
-
-    setWidgetQueryProperty(property, value)
-  };
-
-  setAlertAttributeData = (e) => {
-    this.setAlertQueryProperty('attributedata', e.target.value)
-  };
-
-  setAlertMethod = (e) => {
-    this.setAlertQueryProperty('method', e.target.value)
-  };
-
   render() {
     const { classes, editor } = this.props;
     const { attributes } = this.state;
 
-    const attributeMenuItems = attributes.map((attribute, i) => <MenuItem key={i} value={attribute.name}>{attribute.name}</MenuItem>);
+    const attributeMenuItems = attributes.map((attribute, i) => <MenuItem key={i} value={attribute.id}>{attribute.name}</MenuItem>);
 
     return (
       <FormGroup className={classes.root}>
+
         <Divider className={classes.divider} />
+
         <FormControl className={classes.formControl} htmlFor="alert-attribute">
           <InputLabel htmlFor="alert-attribute">Attribute to track</InputLabel>
           <Select
             aria-label="Alert attribute"
-            value={editor.widget.queryParams.attributedata}
-            onChange={this.setAlertAttributeData}
+            value={editor.widget.config.attributeId ? editor.widget.config.attributeId : ''}
+            onChange={this.setAlertConfigProperty('attributeId')}
             inputProps={{
               name: 'alertAttribute',
               id: 'alert-attribute',
@@ -133,38 +157,24 @@ class AlertConfig extends React.Component {
             {attributeMenuItems}
           </Select>
         </FormControl>
+
         <Divider className={classes.divider} />
-        <FormControl className={classes.formControl}>
-          <FormLabel>Alert type</FormLabel>
-          <RadioGroup
-            className={classes.group}
-            aria-label="Alert type"
-            value={editor.widget.queryParams.method}
-            onChange={this.setAlertMethod}
-            name='alertType'
-          >
-            <FormControlLabel
-              value="min"
-              control={<Radio />}
-              label="min"
-            />
-            <FormControlLabel
-              value="max"
-              control={<Radio />}
-              label="max"
-            />
-          </RadioGroup>
-        </FormControl>
+
+        <TextField
+          label="Minimum threshold"
+          value={editor.widget.config.minThreshold ? editor.widget.config.minThreshold: ''}
+          onChange={this.setAlertConfigProperty('minThreshold')}
+          margin="normal"
+        />
+
         <Divider className={classes.divider} />
-        <FormControl htmlFor="alert-value">
-          <TextField
-            id="alert-value"
-            label="Value"
-            value={editor.widget.config.value}
-            onChange={this.setAlertConfigProperty('value')}
-            margin="normal"
-          />
-        </FormControl>
+
+        <TextField
+          label="Maximum threshold"
+          value={editor.widget.config.maxThreshold ? editor.widget.config.maxThreshold: ''}
+          onChange={this.setAlertConfigProperty('maxThreshold')}
+          margin="normal"
+        />
       </FormGroup>
     )
   }
@@ -176,9 +186,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getThemeTree: () => dispatch(getThemeTree()),
-  setWidgetProperty: () => (property, value) => dispatch(setWidgetProperty(property, value)),
   setWidgetConfigProperty: (property, value) => dispatch(setWidgetConfigProperty(property, value)),
-  setWidgetQueryProperty: (property, value) => dispatch(setWidgetQueryProperty(property, value)),
 });
 
 AlertConfig = withStyles(styles)(AlertConfig);

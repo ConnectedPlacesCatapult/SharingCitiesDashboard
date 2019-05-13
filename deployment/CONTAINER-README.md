@@ -14,24 +14,7 @@ The following components are needed to run the application:
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - **Config File** (/Analytics/settings/config.env.yml)
 
-The ```config.env.yml``` configuration file, located in ```/Analytics/settings/```, will need to be edited with the settings for the 3 services as below:
-
-- **UI**; Edit the configuration parameters below with their respective values for the dev port, the host and the environment. For the ```NODE_API_PORT``` the value should be as below:
-```yaml
-NODE_ENV: <environment> e.g. development
-NODE_HOST: <host> e.g. http://localhost
-NODE_API_PORT: :8000
-NODE_DEV_PORT: :<dev-port> e.g. 8080
-```
-- **API** & **Database**; Edit the configuration parameters for the Database creation and connection below with their respective values. For the ```db_host``` the correct host should be ```db``` as below. The rest should be entered as per design:
-```yaml
-postgres:
-  SECRET_KEY: <secret-key>
-  db_host: db
-  db_name: <db-name>
-  db_password: <db-password>
-  db_username: <db-username>
-```
+The ```config.env.yml``` configuration file, located in ```/Analytics/settings/```, will need to be edited with the settings for the 3 services. If the file is not in the directory, copy a sample of the file into the directory. Edit the parameters as below:
 
 - **API**; Edit the configuration parameters below for the API flask server and gunicorn server with the values as below:
 ```yaml
@@ -44,11 +27,27 @@ gunicorn_server:
   gunicorn_port: 5000
   gunicorn_workers: 4
 ```
+- **API** & **Database**; Edit the configuration parameters for the Database creation and connection below with their respective values. For the ```db_host``` the correct host should be ```db``` as below. The rest should be entered as per design:
+```yaml
+postgres:
+  SECRET_KEY: <secret-key>
+  db_host: db
+  db_name: <db-name>
+  db_password: <db-password>
+  db_username: <db-username>
+```
+- **UI**; Edit the configuration parameters below with their respective values for the dev port, the host and the environment. For the ```NODE_API_PORT``` the value should be as below:
+```yaml
+NODE_ENV: <environment> e.g. development
+NODE_HOST: <host> e.g. http://localhost
+NODE_API_PORT: :8000
+NODE_DEV_PORT: :<dev-port> e.g. 8080
+```
 #### Deployment
 
 As explained above, Docker files were used thus a working Docker instance is needed to run the containers and subsequently the application. The following steps/commands are needed are needed to deploy the application:
 
-In the terminal/command-line interface, with the folder set to the root of the application, type in:
+In the terminal/command-line interface go to the docker folder; ```$ cd ~/SharingCitiesDashboard/deployment/docker/```. With the folder set to ```/SharingCitiesDashboard/deployment/docker/```, type in:
 
 ```bash
 docker-compose build
@@ -82,5 +81,32 @@ api_1  | [2019-04-01 09:58:59 +0000] [13] [INFO] Booting worker with pid: 4
 ```
 
 Once running successfully, the UI can be accessed from clicking on the URL from above ```ui_1   | INFO: Accepting connections at <ui_url>:8080``` system message.
+
+#### Getting Started
+Once the containers are running, the Database needs to be initialised and a super user needs to be created.
+
+**DB Initialisation**; Open another terminal/command-line instance and run the following command:
+```bash
+docker exec -it docker_api_1 python db_setup.py
+```
+**Super User Creation**; After running the above command, in the terminal/command-line interface run the following command:
+```bash
+docker exec -it docker_api_1 python manage.py add_superuser
+```
+After you run the code above you'll be prompted to enter details as below:
+```
+Fullname:
+Email:
+Password:
+```
+Enter the details and once done login to the application dashboard: http://<api-url>/8080 for example, **http://localhost:8080** and proceed to register the user and log in to use the system.
+
+**Importers Commands**; In general to run the importers the following commands can be used:
+```bash
+docker exec -it docker_api_1 python manage.py -ad <importer name> 
+e.g. docker exec -it docker_api_1 -ad Air_Quality_KCL
+```
+
+**Register User**; To register the user newly created, on the login page, click on the Register button at the bottom of the login page. Once that is done a user can successfully login to the Dashboard.
 
 
