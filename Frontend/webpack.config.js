@@ -71,7 +71,7 @@ module.exports = (env) => {
         // 'process.env.API_PORT': JSON.stringify(`${process.env.NODE_API_PORT}`),
         // 'process.env.NODE_DEV_HOST': JSON.stringify(`${process.env.NODE_DEV_HOST}`),
         // 'process.env.HOST_PORT': JSON.stringify(`${process.env.NODE_DEV_PORT}`),
-        // 'process.env.API_HOST': JSON.stringify(`${process.env.API_HOST}`)
+        'process.env.API_HOST': JSON.stringify(`${process.env.API_HOST}`)
       })
     ],
     node: { fs: 'empty' }
