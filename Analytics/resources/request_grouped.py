@@ -14,27 +14,6 @@ from models.sensor import Sensor
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-"""
-This function groups sensor data having different temporal frequencies by 
-grouping at hourly intervals. The grouping is based on the median of all sensor 
-values that fall within the hourly interval for three reasons: 
-
-a) The purpose of this function is to provide the frontend with a convenient 
-form of visualising the data. as such, it is not used in any subsequent 
-analytics 
-b) Median is more robust to outliers and c) Median preserves the original 
-datatype format.
-
-@params:
-	data: a json object from request_for_data.get_attribute_data. 
-	per_sensor: A boolean flag of whether the reformormatted request returns 
-	data per individual sensor or per attribute
-	freq: temporal frequency of aggregation 'W', '1D', '1H', '1Min'
-	harmonising_method: harmonises attributes relative to the one with the 
-	higher frequency and delivers the data either on a long/wide format or a 
-	geojson 
-"""
-
 
 def data_geojson(df: pd.DataFrame) -> geojson.FeatureCollection:
     """
@@ -56,8 +35,16 @@ def request_grouped_data(data: {str: Any}, per_sensor: bool, freq: str,
                          method: str) -> {str: Any}:
     """
     Get grouped sensor data with different temporal frequencies by grouping at
-    parsed intervals (freq).
-    :param data: Attribute data
+    at hourly intervals. The grouping is based on the median of all sensor
+    values that fall within the hourly interval for the following reasons:
+
+    a) The purpose of this function is to provide the frontend with a convenient
+       form of visualising the data. as such, it is not used in any subsequent
+       analytics
+    b) Median is more robust to outliers and Median preserves the original
+       data type format.
+
+    :param data: Attribute data in json format
     :param per_sensor: A boolean flag of whether the reformatted request
                        returns data per individual sensor or per attribute
     :param freq: temporal frequency of aggregation 'W', '1D', '1H', '1Min'

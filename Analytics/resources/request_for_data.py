@@ -47,7 +47,7 @@ class RequestForData(Resource):
                     associated with the subtheme
         attribute: accepts name of attributes, more then one attribute names
                     can be passed as comma separated values
-        attributedata: works in similar way to attribute but instead of returing
+        attributedata: works in similar way to attribute but instead of returning
                         attribute details it return data associated with the
                         attribute
         sensor: accepts an id of the sensor and return its details, also accept a
@@ -55,33 +55,46 @@ class RequestForData(Resource):
         sensorname: accepts the name of the sensor, works same as attribute can
                     return information about multiple sensor names when passed as
                     comma separated string
-        sensorattribute: accepts the id(s) of the sensor and returns the attributes
-                        associated with the sensor
+        sensorattribute: accepts the id(s) of the sensor and returns the
+                         attributes associated with the sensor
         limit: accepts an integer and would return only those number of records
                 default is 30
-        offset: accepts an integer and default is 30, used when one would want to
-                skip few records, useful in pagination
+        offset: accepts an integer and default is 30, used when one would want
+        to skip few records, useful in pagination
         fromdate: accepts a date in YYYY-MM-DD format, start date of the records
-        todate: accepts a date in YYYY-MM-DD formart, end date of the records
-        operation: when mathematical calculation needs to be perfomed
-        grouped: boolean specifying whether the sensor records are to be grouped at hourly intervals
-            per_sensor: boolean specifying whether the sensor records are to be grouped at hourly intervals and
+        todate: accepts a date in YYYY-MM-DD format, end date of the records
+        operation: when mathematical calculation needs to be performed
+        grouped: boolean specifying whether the sensor records are to be
+                grouped at hourly intervals
+            per_sensor: boolean specifying whether the sensor records are to be
+            grouped at hourly intervals and
                         per individual sensor. Defaults to False
-        moving: boolean specifying whether data related to moving sensors is to be
-                returned
+        moving: boolean specifying whether data related to moving sensors is to
+                be returned
 
-        Note: fromdate and todate both needs to be present in order for date filtering to work
+        Note: fromdate and todate both needs to be present in order for date
+        filtering to work
 
         Few example queries:
-            {URL}?sensor='<id-of-sensor>' // Retriving a single sensor
-            {URL}?sensor=all               // Retriving all the sensors
-            {URL}?sensorname='<name-of-sensor>' // Retriving by name
-            {URL}?sensor='<name1>,<name2>' // To retrieve multiple records
-            {URL}?attributedata='<name-of-attribute>&limit=60&offset=60' // Retrieve records but increase limit and skip 60
+        - Retrieving a single sensor
+            {URL}?sensor='<id-of-sensor>'
+        - Retrieving all the sensors
+            {URL}?sensor=all
+        - Retrieving by name
+            {URL}?sensorname='<name-of-sensor>'
+        - To retrieve multiple records
+            {URL}?sensor='<name1>,<name2>'
+        - Retrieve records but increase limit and skip 60
+            {URL}?attributedata='<name-of-attribute>&limit=60&offset=60'
             {URL}?attributedata='<name1><name2>&limit=60&offset=60&fromdate=2018-11-22&todate=2018-11-24'
-            {URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=True&freq='1H' // Retrieves records and groups the data at hourly intervals
-            {URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=False&freq='1H' // Retrieves records and groups the data from all sensors of same attribute at hourly intervals
-            {URL}?attributedata='<name1><name2>&limit=1000&grouped=True&harmonising_method=long // Harmonisies all attributes in the query to match the attribute with the most records. It also reformats the data to be structured as long (row stacked) or wide (column stacked)
+        - Retrieves records and groups the data at hourly intervals
+            {URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=True&freq='1H'
+        - Retrieves records and groups the data from all sensors of same attribute at hourly intervals
+            {URL}?attributedata='<name1><name2>&limit=1000&grouped=True&per_sensor=False&freq='1H'
+        - Harmonises all attributes in the query to match the attribute with
+          the most records. It also reformats the data to be structured as long
+          (row stacked) or wide (column stacked)
+            {URL}?attributedata='<name1><name2>&limit=1000&grouped=True&harmonising_method=long
 
     """
     parser = reqparse.RequestParser()
