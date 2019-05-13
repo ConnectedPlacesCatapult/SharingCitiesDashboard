@@ -68,8 +68,8 @@ export const saveWidget = (mode, widget) => {
       type: EDITOR_SAVE_WIDGET,
     });
 
-    // remove data if it's a plot
-    if (widget.type === WIDGET_TYPE_PLOT) {
+    // remove data if it's a forecast or a plot
+    if (widget.type === WIDGET_TYPE_FORECAST || widget.type === WIDGET_TYPE_PLOT) {
       widget.config.data = { values: [] };
     }
 
@@ -86,6 +86,8 @@ export const saveWidget = (mode, widget) => {
     }
 
     axiosInstance.post("widgets/create_widget", requestData).then((response) => {
+
+      console.log('requestData', requestData)
 
       // hold off on updating dashboard if this is an alert widget - there's more to be done
       if (widget.type !== WIDGET_TYPE_ALERT) {
