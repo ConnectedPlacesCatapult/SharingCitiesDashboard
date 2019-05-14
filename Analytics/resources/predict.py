@@ -28,6 +28,7 @@ def predict(values, timestamp, n_pred):
     if not pred_freq:
         pred_freq = '1H'
 
+    #print(pred_freq)
 
     #### try prophet forecasting engine
 
@@ -70,9 +71,10 @@ def predict(values, timestamp, n_pred):
     #### Gather the forecasted values
 
     temp = []
-    pred_timestamps = forecast.ds.values[len(df)-n_pred:len(df)]
+    num_results = len(forecast.ds)
+    pred_timestamps = forecast.ds.values[num_results-n_pred:num_results]
 
-    for i, j in enumerate(range(len(df)-n_pred,len(df))):
+    for i, j in enumerate(range(num_results-n_pred,num_results)):
         temp.append({
             'Value': np.round(forecast.yhat.values[j],3),
             'Value_Upper':  np.round(forecast.yhat_upper.values[j],3),
