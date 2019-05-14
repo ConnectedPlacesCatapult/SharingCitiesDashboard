@@ -8,20 +8,18 @@ import {
   TableRow,
   withStyles,
 } from '@material-ui/core';
-import axios from 'axios';
+import { axiosInstance } from './../../api/axios';
+import { getUserID } from './../../api/session';
 import WidgetWrapper from './WidgetWrapper';
-import LoadingIndicator from './LoadingIndicator';
-
-const FCC_CONFIG = require('./../../../fcc.config');
 
 const styles = (theme) => ({
   root: {
-    display: 'table',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 'inherit',
-    width: 'inherit',
-    //marginTop: -theme.spacing.unit * 3,
+    transition: 'all 0.2s ease',
+    //width: 'auto',
+    //height: '100%',
+    //maxWidth: 0,
+    //maxHeight: 0,
+    overflow: 'hidden',
   },
   cellValue: {
     color: theme.palette.primary.main,
@@ -47,68 +45,80 @@ class AlertWidget extends React.Component {
     super(props);
 
     this.state = {
-      loading: false,
       error: null,
-      data: null,
+      loading: true,
+      attributes: [],
+    };
+
+    this.eventSource = null;
+  }
+
+  componentDidMount() {
+    this.getAllAttributes();
+    this.connectToSSE();
+  }
+
+  componentWillUnmount() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
     }
   }
 
-  componentWillMount() {
-    this.fetchData()
-  }
-
-  fetchData() {
-    const { queryParams } = this.props;
-
+  getAllAttributes = () => {
     this.setState({ loading: true });
 
-    axios({
-      url: FCC_CONFIG.apiRoot + '/data',
-      method: 'get',
-      params: queryParams,
-    })
+    axiosInstance
+      .get('/admin/attributes/get_attributes')
       .then((response) => {
-        if (response.data.length) {
-          this.setState({
-            loading: false,
-            data: response.data[0]['Attribute_Values'],
-          })
-        } else {
-          this.setState({
-            loading: false,
-          })
-        }
+        this.setState({
+          attributes: response.data,
+          loading: false,
+        })
       })
-      .catch((err) => {
-        this.setState({ error: err})
+      .catch((error) => {
+        this.setState({
+          loading: false,
+          error,
+        })
       })
-  }
+    ;
+  };
+
+  connectToSSE() {
+    if (this.eventSource === null) {
+      const apiUrl = `${process.env.NODE_HOST}${process.env.API_PORT}`;
+      const path = '/alert/triggered';
+      const userID = getUserID();
+      const args = `?user_id=${userID}`;
+
+      this.eventSource = new EventSource(`${apiUrl}${path}${args}`);
+      this.eventSource.onerror = (err) => {
+        console.log(err);
+      };
+      this.eventSource.onmessage = (e) => {
+        console.log(e);
+
+        // ToDo :: handle the updated widget state here. Currently I'm not aware of the response format
+      }
+    }
+  };
 
   render() {
     const { classes, theme, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
-    const { loading, error, data } = this.state;
-
-    if (!data) {
-      return (
-        <WidgetWrapper
-          i={i}
-          type={type}
-          name={name}
-          description={description}
-          isStatic={isStatic}
-          width={width}
-          height={height}
-          config={config}
-          queryParams={queryParams}
-        >
-          <LoadingIndicator />
-        </WidgetWrapper>
-      )
-    }
+    const { loading, error } = this.state;
 
     const tableStyles = {
-      width: `${width}px`,
-      height: `${height}px`,
+      //width: `${width}px`,
+      //height: `${height}px`,
+    };
+
+    const getAttributeNameFromId = (attributeId) => {
+      const { attributes } = this.state;
+
+      const found = attributes.find((attribute) => attribute.id === attributeId);
+
+      return found ? found.name : '';
     };
 
     return (
@@ -124,34 +134,24 @@ class AlertWidget extends React.Component {
         queryParams={queryParams}
       >
         <Fade in={!loading} mountOnEnter>
-          <Table padding="none" className={classes.root} style={tableStyles}>
+          <Table className={classes.root} padding="none" style={tableStyles}>
             <TableBody>
-
               <TableRow>
                 <TableCell component="th" scope="row">Attribute</TableCell>
-                <TableCell className={classes.cellValue}>{queryParams.attributedata}</TableCell>
+                <TableCell className={classes.cellValue}>{getAttributeNameFromId(config.attributeId)}</TableCell>
               </TableRow>
-
               <TableRow>
-                <TableCell component="th" scope="row">Type</TableCell>
-                <TableCell className={classes.cellValue}>{queryParams.method}</TableCell>
+                <TableCell component="th" scope="row">Minimum threshold</TableCell>
+                <TableCell className={classes.cellValue}>{config.minThreshold}</TableCell>
               </TableRow>
-
               <TableRow>
-                <TableCell component="th" scope="row">Value</TableCell>
-                <TableCell align="right" className={classes.cellValue}>{config.value}</TableCell>
+                <TableCell component="th" scope="row">Maximum threshold</TableCell>
+                <TableCell className={classes.cellValue}>{config.maxThreshold}</TableCell>
               </TableRow>
-
               <TableRow>
-                <TableCell component="th" scope="row">Current value</TableCell>
-                <TableCell align="right" className={classes.cellValue}>{data && data.length ? data[0]['Value'] : '?'}</TableCell>
+                <TableCell component="th" scope="row">Activated</TableCell>
+                <TableCell className={classes.cellValue}>{config.activated.toString()}</TableCell>
               </TableRow>
-
-              <TableRow>
-                <TableCell component="th" scope="row">Email alert</TableCell>
-                <TableCell className={classes.cellValue}>{config.sendEmail ? 'yes' : 'no'}</TableCell>
-              </TableRow>
-
             </TableBody>
           </Table>
         </Fade>
@@ -159,8 +159,6 @@ class AlertWidget extends React.Component {
     )
   }
 }
-
-
 
 AlertWidget = withStyles(styles, { withTheme: true })(AlertWidget);
 
