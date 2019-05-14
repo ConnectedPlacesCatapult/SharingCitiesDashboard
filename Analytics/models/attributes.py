@@ -191,7 +191,7 @@ class Attributes(db.Model):
         :param attribute_table: name of attribute data table
         :return: most recent timestamp present in table
         """
-        
+
         db.metadata.clear()
         attribute_data_model = ModelClass(attribute_table.lower())
         most_recent_entry = db.session.query(attribute_data_model).order_by(
@@ -210,7 +210,7 @@ class Attributes(db.Model):
         :param attribute_table: name of attribute data table
         :return: maximum attribute value
         """
-        
+
         db.metadata.clear()
         attribute_data_model = ModelClass(attribute_table.lower())
         attr_max = None
