@@ -82,5 +82,5 @@ def predict(values, timestamp, n_pred):
             'Timestamp': datetime.strftime(pd.to_datetime(pred_timestamps[i]), '%Y-%m-%d %H:%M:%S')
         })
 
-    return temp, mape, forecasting_engine
+    return temp, mape, forecasting_engine, pred_freq
 

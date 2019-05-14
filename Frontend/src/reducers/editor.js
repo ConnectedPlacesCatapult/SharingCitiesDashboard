@@ -65,6 +65,7 @@ const getWidgetDefaultProperties = (currentProperties) => {
         config: {
           ...defaultProperties.config,
           ...FCC_CONFIG.editorDefaultConfig.forecast,
+          mape: null,
         },
         queryParams: {
           ...defaultProperties.queryParams,

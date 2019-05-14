@@ -1,23 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Fade,
+  Typography,
   withStyles,
 } from '@material-ui/core';
 import VegaLite from 'react-vega-lite';
 import { Handler } from 'vega-tooltip';
 import { axiosInstance } from './../../api/axios';
 import WidgetWrapper from './WidgetWrapper';
-import LoadingIndicator from './LoadingIndicator';
+import ForecastStatus from './ForecastStatus';
 
 const styles = (theme) => ({
   root: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     height: 'inherit',
     width: 'inherit',
-    marginTop: -theme.spacing.unit * 3,
+  },
+  disclaimer: {
+    marginTop: theme.spacing.unit,
   },
 });
 
@@ -50,6 +53,8 @@ class ForecastWidget extends React.Component {
 
     this.state = {
       loading: null,
+      loadState: "LOADING",
+      loadStatus: "initializing widget",
       error: null,
       taskID: null,
       mape: 0,
@@ -104,8 +109,9 @@ class ForecastWidget extends React.Component {
     };
 
     this.tooltipHandler = new Handler(tooltipOptions);
-    //this.eventSource = null;
-    this.timer = null;
+
+    this.intervalTimer = null;
+    this.timeoutTimer = null;
   }
 
   componentWillMount() {
@@ -113,19 +119,16 @@ class ForecastWidget extends React.Component {
   }
 
   componentWillUnmount() {
-    /*if (this.eventSource) {
-      this.eventSource.close();
-      this.eventSource = null;
-    }*/
-
-    this.killTimer()
+    this.killTimer(this.intervalTimer)
+    this.killTimer(this.timeoutTimer)
   }
 
-  killTimer = () => {
-    if (this.timer) {
-      clearInterval(this.timer);
+  killTimer = (timer) => {
+    if (timer) {
+      clearInterval(timer);
+      clearTimeout(timer);
 
-      this.timer = null;
+      timer = null;
     }
   };
 
@@ -146,73 +149,16 @@ class ForecastWidget extends React.Component {
         }));
 
         this.setState({
-          loading: false,
+          //loading: false,
           taskID: response.data[1]['task_id'],
+          loadStatus: "checking for prediction",
           data: {
             values: formattedData,
           },
         });
 
         // set a timer to check status until it's "SUCCESS"
-        this.timer = setInterval(this.checkPredictionStatus, 5000);
-
-        // now connect to SSEs
-        /*if (this.eventSource === null) {
-          const apiUrl = `${process.env.NODE_HOST}${process.env.API_PORT}`;
-          const path = '/pred_status';
-          const args = `?task_id=${taskID}`;
-
-          this.eventSource = new EventSource(`${apiUrl}${path}${args}`);
-          this.eventSource.onerror = (err) => {
-            console.log(err);
-          };
-          this.eventSource.onmessage = (e) => {
-
-            console.log(e);
-
-            if (e.state === "SUCCESS") {
-              console.log("success");
-
-              const formattedPredictions = e.result['Predictions'].map((record) => ({
-                Attribute: `${queryParams.attributedata}-predicted`,
-                Timestamp: record['Timestamp'],
-                Value: record['Value'],
-              }));
-
-              this.setState(prevState => ({
-                data: {
-                  values: [...prevState.data.values, formattedPredictions],
-                },
-              }));
-            }
-
-
-            /!**
-             *
-             * {
-  "state": "SUCCESS",
-  "status": "task complete",
-  "result": {
-    "Sensor_id": "All sensors",
-    "Forcasting_engine": "Prophet",
-    "Mean_Absolute_Percentage_Error": 2534.819,
-    "Prediction_id": 3,
-    "Predictions": [
-      {
-        "Value": 5.834,
-        "Value_Upper": 6.417,
-        "Value_Lower": 5.259,
-        "Timestamp": "2019-05-06 09:00:00"
-      },
-      {
-        "Value": 6.321,
-        "Value_Upper": 6.869,
-        "Value_Lower": 5.744,
-        "Timestamp": "2019-05-06 10:00:00"
-      },
-      *!/
-          }
-        }*/
+        this.intervalTimer = setInterval(this.checkPredictionStatus, 5000);
       })
       .catch((err) => {
         this.setState({ error: err})
@@ -230,33 +176,56 @@ class ForecastWidget extends React.Component {
         },
       })
       .then((response) => {
-        if (response.data.state === "SUCCESS") {
-          this.killTimer();
+        switch (response.data.state) {
+          case "PROGRESS":
+            this.setState({
+              loadState: "WORKING",
+              loadStatus: response.data.status,
+            });
 
-          const formattedPredictions = response.data.result['Predictions'].map((record) => ({
-            Attribute: `${queryParams.attributedata}-predicted`,
-            Timestamp: record['Timestamp'],
-            Value: record['Value'],
-          }));
+            break;
 
-          this.setState(prevState => ({
-            mape: response.data.result['Mean_Absolute_Percentage_Error'],
-            data: {
-              values: [...prevState.data.values, ...formattedPredictions],
-            },
-          }));
+          case "SUCCESS":
+            this.killTimer(this.intervalTimer);
+
+            const formattedPredictions = response.data.result['Predictions'].map((record) => ({
+              Attribute: `${queryParams.attributedata}-predicted`,
+              Timestamp: record['Timestamp'],
+              Value: record['Value'],
+            }));
+
+            this.setState(prevState => ({
+              loadState: response.data.state,
+              loadStatus: "prediction completed",
+              mape: response.data.result['Mean_Absolute_Percentage_Error'],
+              data: {
+                values: [...prevState.data.values, ...formattedPredictions],
+              },
+            }), () => {
+              this.timeoutTimer = setTimeout(() => {
+                this.setState({ loading: false })
+              }, 3000)
+            });
+
+            break
         }
       })
       .catch((err) => {
-        this.setState({ error: err})
+        this.killTimer(this.intervalTimer);
+
+        this.setState({
+          loadState: "ERROR",
+          loadStatus: err.response.data.status,
+          error: err,
+        })
       })
   };
 
   render() {
     const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
-    const { spec, loading, error, data } = this.state;
+    const { spec, loading, data, loadState, loadStatus } = this.state;
 
-    if (!data) {
+    if (loading) {
       return (
         <WidgetWrapper
           i={i}
@@ -269,7 +238,7 @@ class ForecastWidget extends React.Component {
           config={config}
           queryParams={queryParams}
         >
-          <LoadingIndicator />
+          <ForecastStatus loadState={loadState} loadStatus={loadStatus} />
         </WidgetWrapper>
       )
     }
@@ -286,14 +255,17 @@ class ForecastWidget extends React.Component {
         config={config}
         queryParams={queryParams}
       >
-        <Fade in={!loading} mountOnEnter>
+        <div className={classes.root}>
           <VegaLite
-            className={classes.root}
             spec={spec}
             data={data}
             tooltip={this.tooltipHandler.call}
           />
-        </Fade>
+          <div className={classes.disclaimer}>
+            <Typography variant="subtitle2" align="center" color="secondary">* An important note *</Typography>
+            <Typography variant="body2" align="center">This univariate time series forecast feature is generic, and hence makes some assumptions about the data. We provide an indication of the confidence you can place in the forecast values. More accurate forecasts will likely come from a bespoke analysis.</Typography>
+          </div>
+        </div>
       </WidgetWrapper>
     )
   }
