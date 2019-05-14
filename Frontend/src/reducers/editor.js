@@ -58,18 +58,6 @@ const getWidgetDefaultProperties = (currentProperties) => {
     }
 
     case WIDGET_TYPE_FORECAST: {
-      // return {
-      //   ...defaultProperties,
-      //   config: {
-      //     ...defaultProperties.config,
-      //   },
-      //   queryParams: {
-      //     ...defaultProperties.queryParams,
-      //     attributeData: [],
-      //     predictions: true,
-      //     n_predictions: 10,
-      //   },
-      // }
       return {
         ...defaultProperties,
         width: 400,
@@ -81,6 +69,7 @@ const getWidgetDefaultProperties = (currentProperties) => {
         queryParams: {
           ...defaultProperties.queryParams,
           predictions: true,
+          limit: 100,
         }
       }
     }
