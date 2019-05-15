@@ -91,6 +91,11 @@ export const CLEAR_LOGIN_ERRORS = "CLEAR_LOGIN_ERRORS";
 export const REGISTER_FULFILLED = "REGISTER_FULFILLED";
 export const REGISTER_REJECTED = "REGISTER_REJECTED";
 
+// forecasts
+export const MAPE_RATING_BAD = "extremely unreliable";
+export const MAPE_RATING_FAIR = "fairly reliable";
+export const MAPE_RATING_GOOD = "quite reliable";
+
 // query params
 export const QUERY_PARAMS = {
   ATTRIBUTE: "attribute",

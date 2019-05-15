@@ -9,6 +9,11 @@ import { Handler } from 'vega-tooltip';
 import { axiosInstance } from './../../api/axios';
 import WidgetWrapper from './WidgetWrapper';
 import ForecastStatus from './ForecastStatus';
+import {
+  MAPE_RATING_BAD,
+  MAPE_RATING_FAIR,
+  MAPE_RATING_GOOD,
+} from './../../constants';
 
 const styles = (theme) => ({
   root: {
@@ -19,8 +24,14 @@ const styles = (theme) => ({
     height: 'inherit',
     width: 'inherit',
   },
-  disclaimer: {
-    marginTop: theme.spacing.unit,
+  mape: {
+    margin: theme.spacing.unit * 2,
+  },
+  mapeValue: {
+    color: theme.palette.primary.main,
+  },
+  mapeRating: {
+
   },
 });
 
@@ -57,7 +68,8 @@ class ForecastWidget extends React.Component {
       loadStatus: "initializing widget",
       error: null,
       taskID: null,
-      mape: 0,
+      mape: "unknown",
+      mapeRating: "unknown",
       data: null,
       spec: {
         ...config.spec,
@@ -198,6 +210,7 @@ class ForecastWidget extends React.Component {
               loadState: response.data.state,
               loadStatus: "prediction completed",
               mape: response.data.result['Mean_Absolute_Percentage_Error'],
+              mapeRating: this.getMAPERating(response.data.result['Mean_Absolute_Percentage_Error']),
               data: {
                 values: [...prevState.data.values, ...formattedPredictions],
               },
@@ -219,6 +232,13 @@ class ForecastWidget extends React.Component {
           error: err,
         })
       })
+  };
+
+  getMAPERating = (mape) => {
+    if (mape < 50) return MAPE_RATING_GOOD;
+    if (mape <= 100) return MAPE_RATING_FAIR;
+
+    return MAPE_RATING_BAD
   };
 
   render() {
@@ -256,15 +276,18 @@ class ForecastWidget extends React.Component {
         queryParams={queryParams}
       >
         <div className={classes.root}>
-          <VegaLite
-            spec={spec}
-            data={data}
-            tooltip={this.tooltipHandler.call}
-          />
-          <div className={classes.disclaimer}>
-            <Typography variant="subtitle2" align="center" color="secondary">* An important note *</Typography>
-            <Typography variant="body2" align="center">This univariate time series forecast feature is generic, and hence makes some assumptions about the data. We provide an indication of the confidence you can place in the forecast values. More accurate forecasts will likely come from a bespoke analysis.</Typography>
-          </div>
+          {/*<div>*/}
+            <Typography variant="body2" className={classes.mape}>
+              M.A.P.E.:
+              <span className={classes.mapeValue}> {this.state.mape.toFixed(3)}</span>
+              <span className={classes.mapeRating}> ({this.state.mapeRating})</span>
+            </Typography>
+            <VegaLite
+              spec={spec}
+              data={data}
+              tooltip={this.tooltipHandler.call}
+            />
+          {/*</div>*/}
         </div>
       </WidgetWrapper>
     )

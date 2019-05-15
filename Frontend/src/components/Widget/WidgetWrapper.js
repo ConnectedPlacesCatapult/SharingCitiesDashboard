@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Paper,
   Popover,
@@ -8,6 +12,7 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
+import ErrorIcon from '@material-ui/icons/Error';
 import SettingsIcon from '@material-ui/icons/Settings';
 import InfoIcon from '@material-ui/icons/Info';
 import OpenWithIcon from '@material-ui/icons/OpenWith';
@@ -79,6 +84,15 @@ class WidgetWrapper extends React.Component {
 
   state = {
     popoverAnchorEl: null,
+    forecastDisclaimerOpen: false,
+  };
+
+  handleForecastDisclaimerOpen = () => {
+    this.setState({ forecastDisclaimerOpen: true })
+  };
+
+  handleForecastDisclaimerClose = () => {
+    this.setState({ forecastDisclaimerOpen: false })
   };
 
   handleShowInfoClick = (e) => {
@@ -106,10 +120,23 @@ class WidgetWrapper extends React.Component {
 
   render() {
     const { classes, type, name, description, isStatic, children } = this.props;
-    const { popoverAnchorEl } = this.state;
+    const { popoverAnchorEl, forecastDisclaimerOpen } = this.state;
 
     return (
       <Paper className={classes.widget}>
+
+        <Dialog
+          open={forecastDisclaimerOpen}
+          onClose={this.handleForecastDisclaimerClose}
+        >
+          <DialogTitle>
+            A note on these forecasts
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText color="primary">This univariate time series forecast feature is generic, and hence makes some assumptions about the data. We provide an indication of the confidence you can place in the forecast values. More accurate forecasts will likely come from a bespoke analysis.</DialogContentText>
+          </DialogContent>
+        </Dialog>
+
         <div className={classes.widgetHeader}>
           {type === 'plot' && <BarChartIcon className={classes.widgetHeaderIcon} fontSize="small" />}
           {type === 'map' && <MapIcon className={classes.widgetHeaderIcon} fontSize="small" />}
@@ -145,6 +172,20 @@ class WidgetWrapper extends React.Component {
 
           <div>
 
+            {type === 'forecast' &&
+              <Tooltip title="Important information about forecasts" placement="top">
+                <span>
+                  <IconButton
+                    color="secondary"
+                    className={classes.smallerButton}
+                    onClick={this.handleForecastDisclaimerOpen}
+                  >
+                    <ErrorIcon fontSize="small" />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            }
+
             <Tooltip title="Drag me" placement="top">
               <span>
                 <IconButton
@@ -157,7 +198,7 @@ class WidgetWrapper extends React.Component {
               </span>
             </Tooltip>
 
-            <Tooltip title="Widget info" placement="top">
+            <Tooltip title="Widget description" placement="top">
               <span>
                 <IconButton
                   color="primary"
