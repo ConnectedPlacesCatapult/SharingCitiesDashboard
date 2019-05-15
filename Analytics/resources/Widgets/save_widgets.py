@@ -1,4 +1,5 @@
 import logging
+import json
 from http import HTTPStatus
 
 from flask_jwt_extended import get_jwt_identity
@@ -40,6 +41,12 @@ class Widgets(Resource):
         self.reqparse_post.add_argument("h", required=False,
                                         store_missing=False,
                                         location=['form', 'json'])
+        self.reqparse_post.add_argument("height", required=False,
+                                        store_missing=False,
+                                        location=['form', 'json'])
+        self.reqparse_post.add_argument("width", required=False,
+                                        store_missing=False,
+                                        location=['form', 'json'])
         self.reqparse_post.add_argument("w", required=False,
                                         store_missing=False,
                                         location=['form', 'json'])
@@ -66,6 +73,7 @@ class Widgets(Resource):
         :returns : A response message and an appropriate HTTP status code
         """
         args = self.reqparse_post.parse_args()
+
         current_user = Users.find_by_email(get_jwt_identity())
         curr_widget = None
 
@@ -82,8 +90,7 @@ class Widgets(Resource):
 
         else:
             # Create a layout for the new widget
-            layout = Layouts(1, 0, 0, 10,
-                             5, False)
+            layout = Layouts(1, 0, 0, args['height'], args['width'], False)
             curr_widget = WidgetModel(current_user.id, layout, args["data"])
 
         try:

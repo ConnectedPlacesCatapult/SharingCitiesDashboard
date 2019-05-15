@@ -50,7 +50,7 @@ const getWidgetDefaultProperties = (currentProperties) => {
           ...defaultProperties.config,
           alertId: null,
           attributeId: null,
-          activated: false,
+          activated: true,
           maxThreshold: null,
           minThreshold: null,
         },
@@ -104,8 +104,8 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_PLOT: {
       return {
         ...defaultProperties,
-        width: 400,
-        height: 200,
+        w: 10,
+        h: 5,
         config: {
           ...defaultProperties.config,
           ...FCC_CONFIG.editorDefaultConfig.plot,

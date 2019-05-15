@@ -10,7 +10,7 @@ import {
   FETCH_LAYOUT,
   FETCH_LAYOUT_FULFILLED,
   FETCH_LAYOUT_REJECTED,
-  UPDATE_LAYOUT,
+  UPDATE_LAYOUT
 } from './../constants';
 
 export const deleteWidget = (widgetId) => {
@@ -54,6 +54,7 @@ export const fetchLayout = () => {
     axiosInstance
       .post('/widgets/get_layouts', requestData)
       .then((response) => {
+        console.log('widget response', response)
         const layout = response.data.map((widget) => ({
           i: widget.id,
           x: widget.x,

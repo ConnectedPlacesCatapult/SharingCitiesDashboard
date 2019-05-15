@@ -7,10 +7,11 @@ import {
   UPDATE_LAYOUT,
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
-  FETCH_WIDGETS_REJECTED,
+  FETCH_WIDGETS_REJECTED
 } from "./../constants";
 
 const initialState = {
+  alertsActive: false,
   layout: [],
   widgets: [],
   fetching: false,

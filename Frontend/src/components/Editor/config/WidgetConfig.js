@@ -9,6 +9,7 @@ import {
   Switch,
   TextField,
   withStyles,
+  Typography
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { setWidgetProperty } from './../../../actions/editorActions';
@@ -63,20 +64,22 @@ class WidgetConfig extends React.Component {
         <FormControl htmlFor="widget-width">
           <TextField
             id="widget-width"
-            label="Width"
-            value={editor.widget.width}
-            onChange={this.setWidgetProperty('width')}
+            label="Width (columns)"
+            value={editor.widget.w}
+            onChange={this.setWidgetProperty('w')}
             margin="normal"
           />
+          {editor.widget.w > 12 ? <Typography color="error">Please select a value below or equal to 12</Typography> : null}
         </FormControl>
         <FormControl htmlFor="widget-height">
           <TextField
             id="widget-height"
-            label="Height"
-            value={editor.widget.height}
-            onChange={this.setWidgetProperty('height')}
+            label="Height (rows)"
+            value={editor.widget.h}
+            onChange={this.setWidgetProperty('h')}
             margin="normal"
           />
+          {editor.widget.h > 6 ? <Typography color="error">Please select a value below or equal to 6</Typography> : null}
         </FormControl>
         <FormGroup row>
           <FormControlLabel
