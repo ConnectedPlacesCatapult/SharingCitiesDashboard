@@ -171,6 +171,9 @@ class ForecastWidget extends React.Component {
 
         // set a timer to check status until it's "SUCCESS"
         this.intervalTimer = setInterval(this.checkPredictionStatus, 5000);
+
+        // also check status right away
+        this.checkPredictionStatus();
       })
       .catch((err) => {
         this.setState({ error: err})
