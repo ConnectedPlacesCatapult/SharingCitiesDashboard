@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Fade,
   Table,
   TableBody,
   TableCell,
@@ -21,6 +20,14 @@ const styles = (theme) => ({
     maxHeight: 0,
     overflow: 'hidden',
   },
+  cellValue: {
+    color: theme.palette.primary.main,
+    textAlign: 'right',
+  },
+  cellTriggered: {
+    color: theme.palette.secondary.main,
+    textAlign: 'right',
+  },
 });
 
 class AlertPreview extends React.Component {
@@ -35,7 +42,7 @@ class AlertPreview extends React.Component {
 
     this.state = {
       error: null,
-      loading: true,
+      loading: false,
       attributes: [],
       width: props.editor.widget.width,
       height: props.editor.widget.height,
@@ -46,10 +53,6 @@ class AlertPreview extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { editor } = this.props;
-
-    if (nextProps.editor.fetching !== editor.fetching) {
-      this.setState({ loading: nextProps.editor.fetching })
-    }
 
     if (nextProps.editor.themeTree !== editor.themeTree) {
       const attributes = nextProps.editor.themeTree.reduce((arr, theme) => {
@@ -85,7 +88,7 @@ class AlertPreview extends React.Component {
 
   render() {
     const { classes, editor } = this.props;
-    const { error, loading } = this.state;
+    const { loading } = this.state;
 
     if (loading) {
       return (
@@ -103,29 +106,30 @@ class AlertPreview extends React.Component {
     };
 
     return (
-      <div className={classes.root} style={rootStyles}>
-        <Fade in={!loading} mountOnEnter>
-          <Table padding="none">
-            <TableBody>
-              <TableRow>
-                <TableCell component="th" scope="row">Attribute</TableCell>
-                <TableCell>{this.getAttributeNameFromId(editor.widget.config.attributeId)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell component="th" scope="row">Minimum threshold</TableCell>
-                <TableCell>{editor.widget.config.minThreshold}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell component="th" scope="row">Maximum threshold</TableCell>
-                <TableCell>{editor.widget.config.maxThreshold}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell component="th" scope="row">Activated</TableCell>
-                <TableCell>{editor.widget.config.activated.toString()}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </Fade>
+      <div className={classes.root}  style={rootStyles}>
+        <Table padding="none">
+          <TableBody>
+            <TableRow>
+              <TableCell component="th" scope="row">Attribute</TableCell>
+              <TableCell className={classes.cellValue}>{this.getAttributeNameFromId(editor.widget.config.attributeId)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row">Alert type</TableCell>
+              <TableCell className={classes.cellValue}>{editor.widget.config.type} threshold</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row">Threshold value</TableCell>
+              <TableCell className={classes.cellValue}>{editor.widget.config.value}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row">Status</TableCell>
+              {editor.widget.config.triggered.toString() === 'true'
+                ? <TableCell className={classes.cellTriggered}>{editor.widget.config.triggerEvent.message}<br />at {editor.widget.config.triggerEvent.timestamp}</TableCell>
+                : <TableCell className={classes.cellValue}>alert active</TableCell>
+              }
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     )
   }

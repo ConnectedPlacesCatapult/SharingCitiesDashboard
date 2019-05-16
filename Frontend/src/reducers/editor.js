@@ -50,9 +50,14 @@ const getWidgetDefaultProperties = (currentProperties) => {
           ...defaultProperties.config,
           alertId: null,
           attributeId: null,
-          activated: true,
-          maxThreshold: null,
-          minThreshold: null,
+          triggered: false,
+          triggerEvent: {
+            message: "",
+            value: null,
+            timestamp: null,
+          },
+          type: "max",
+          value: 0,
         },
       }
     }
