@@ -9,6 +9,7 @@ import { Handler } from 'vega-tooltip';
 import axios from 'axios';
 import WidgetWrapper from './WidgetWrapper';
 import LoadingIndicator from './LoadingIndicator';
+import ContainerDimensions from 'react-container-dimensions'
 
 const FCC_CONFIG = require('./../../../fcc.config');
 
@@ -176,12 +177,17 @@ class PlotWidget extends React.Component {
         queryParams={queryParams}
       >
         <Fade in={!loading} mountOnEnter>
-          <VegaLite
-            className={classes.root}
-            spec={spec}
-            data={data}
-            tooltip={this.tooltipHandler.call}
-          />
+          <ContainerDimensions>
+            {({ width }) => {
+              const responsiveSpec = { ...spec, width: Math.floor(width) }
+              return <VegaLite
+                className={classes.root}
+                spec={responsiveSpec}
+                data={data}
+                tooltip={this.tooltipHandler.call}
+              />
+            }}
+          </ContainerDimensions>
         </Fade>
       </WidgetWrapper>
     )

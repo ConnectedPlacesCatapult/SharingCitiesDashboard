@@ -9,6 +9,7 @@ import { Handler } from 'vega-tooltip';
 import { axiosInstance } from './../../api/axios';
 import WidgetWrapper from './WidgetWrapper';
 import LoadingIndicator from './LoadingIndicator';
+import ContainerDimensions from 'react-container-dimensions'
 
 const styles = (theme) => ({
   root: {
@@ -58,8 +59,8 @@ class ForecastWidget extends React.Component {
       data: null,
       spec: {
         ...config.spec,
-        width: width,
-        height: height,
+        width: 400,
+        height: 200,
         w: w,
         h: h,
         config: {
@@ -295,12 +296,17 @@ class ForecastWidget extends React.Component {
         queryParams={queryParams}
       >
         <Fade in={!loading} mountOnEnter>
-          <VegaLite
-            className={classes.root}
-            spec={spec}
-            data={data}
-            tooltip={this.tooltipHandler.call}
-          />
+          <ContainerDimensions>
+            {({ width }) => {
+              const responsiveSpec = { ...spec, width: Math.floor(width) }
+              return <VegaLite
+                className={classes.root}
+                spec={responsiveSpec}
+                data={data}
+                tooltip={this.tooltipHandler.call}
+              />
+            }}
+          </ContainerDimensions>
         </Fade>
       </WidgetWrapper>
     )
