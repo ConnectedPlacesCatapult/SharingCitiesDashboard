@@ -63,7 +63,7 @@ class SimpleSnackbar extends React.Component {
           variant="primary"
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'left',
+            horizontal: 'right',
           }}
           open={this.props.notification.showAlert}
           onClose={this.handleClose}

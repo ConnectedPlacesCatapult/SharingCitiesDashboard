@@ -4,6 +4,7 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
+import ErrorIcon from '@material-ui/icons/Error';
 import TimeIcon from '@material-ui/icons/AccessTime';
 
 const styles = (theme) => ({
@@ -26,16 +27,20 @@ const styles = (theme) => ({
 });
 
 const ForecastStatus = (props) => {
-  const { classes, forecast } = props;
+  const { classes, loadState, loadStatus } = props;
 
   return (
     <div className={classes.root}>
-      <TimeIcon className={classes.pendingIcon}/>
+      {loadState === "ERROR" ? (
+        <ErrorIcon className={classes.pendingIcon} />
+      ) : (
+        <TimeIcon className={classes.pendingIcon} />
+      )}
       <Typography variant="subtitle1" color="primary">
-        Status: { forecast.state }
+        Status: {loadState}
       </Typography>
       <Typography variant="caption" color="primary">
-        {forecast.status}
+        {loadStatus}
       </Typography>
     </div>
   );
@@ -43,7 +48,8 @@ const ForecastStatus = (props) => {
 
 ForecastStatus.propTypes = {
   classes: PropTypes.object.isRequired,
-  forecast: PropTypes.object.isRequired,
+  loadState: PropTypes.string.isRequired,
+  loadStatus: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(ForecastStatus)

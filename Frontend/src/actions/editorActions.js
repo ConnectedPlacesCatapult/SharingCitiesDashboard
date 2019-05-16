@@ -78,6 +78,8 @@ export const saveWidget = (mode, widget) => {
     const requestData = {
       userID: currentState.user.user.id,
       data: widget,
+      height: widget.h,
+      width: widget.w,
     };
 
     // include a widgetId if we are updating a widget

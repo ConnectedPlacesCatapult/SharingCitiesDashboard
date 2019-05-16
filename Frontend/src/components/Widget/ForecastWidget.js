@@ -1,23 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Fade,
+  Typography,
   withStyles,
 } from '@material-ui/core';
 import VegaLite from 'react-vega-lite';
 import { Handler } from 'vega-tooltip';
 import { axiosInstance } from './../../api/axios';
 import WidgetWrapper from './WidgetWrapper';
+import ForecastStatus from './ForecastStatus';
+import {
+  MAPE_RATING_BAD,
+  MAPE_RATING_FAIR,
+  MAPE_RATING_GOOD,
+} from './../../constants';
 import LoadingIndicator from './LoadingIndicator';
+import ContainerDimensions from 'react-container-dimensions'
 
 const styles = (theme) => ({
   root: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     height: 'inherit',
     width: 'inherit',
-    marginTop: -theme.spacing.unit * 3,
+  },
+  mape: {
+    margin: theme.spacing.unit * 2,
+  },
+  mapeValue: {
+    color: theme.palette.primary.main,
+  },
+  mapeRating: {
+
   },
 });
 
@@ -34,6 +50,8 @@ class ForecastWidget extends React.Component {
     description: PropTypes.string.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
+    w: PropTypes.number.isRequired,
+    h: PropTypes.number.isRequired,
     isStatic: PropTypes.bool.isRequired,
     type: PropTypes.string.isRequired,
     config: PropTypes.object.isRequired,
@@ -43,21 +61,26 @@ class ForecastWidget extends React.Component {
   constructor(props) {
     super(props);
 
-    const { theme, config, width, height } = this.props;
+    const { theme, config, width, height, w, h } = this.props;
 
     const titleTypography = theme.typography.body1;
     const labelTypography = theme.typography.body2;
 
     this.state = {
       loading: null,
+      loadState: "LOADING",
+      loadStatus: "initializing widget",
       error: null,
       taskID: null,
-      mape: 0,
+      mape: "unknown",
+      mapeRating: "unknown",
       data: null,
       spec: {
         ...config.spec,
-        width: width,
-        height: height,
+        width: 400,
+        height: 200,
+        w: w,
+        h: h,
         config: {
           axis: {
             // x & y axis lines
@@ -104,8 +127,9 @@ class ForecastWidget extends React.Component {
     };
 
     this.tooltipHandler = new Handler(tooltipOptions);
-    //this.eventSource = null;
-    this.timer = null;
+
+    this.intervalTimer = null;
+    this.timeoutTimer = null;
   }
 
   componentWillMount() {
@@ -113,19 +137,16 @@ class ForecastWidget extends React.Component {
   }
 
   componentWillUnmount() {
-    /*if (this.eventSource) {
-      this.eventSource.close();
-      this.eventSource = null;
-    }*/
-
-    this.killTimer()
+    this.killTimer(this.intervalTimer)
+    this.killTimer(this.timeoutTimer)
   }
 
-  killTimer = () => {
-    if (this.timer) {
-      clearInterval(this.timer);
+  killTimer = (timer) => {
+    if (timer) {
+      clearInterval(timer);
+      clearTimeout(timer);
 
-      this.timer = null;
+      timer = null;
     }
   };
 
@@ -146,73 +167,19 @@ class ForecastWidget extends React.Component {
         }));
 
         this.setState({
-          loading: false,
+          //loading: false,
           taskID: response.data[1]['task_id'],
+          loadStatus: "checking for prediction",
           data: {
             values: formattedData,
           },
         });
 
         // set a timer to check status until it's "SUCCESS"
-        this.timer = setInterval(this.checkPredictionStatus, 5000);
+        this.intervalTimer = setInterval(this.checkPredictionStatus, 5000);
 
-        // now connect to SSEs
-        /*if (this.eventSource === null) {
-          const apiUrl = `${process.env.NODE_HOST}${process.env.API_PORT}`;
-          const path = '/pred_status';
-          const args = `?task_id=${taskID}`;
-
-          this.eventSource = new EventSource(`${apiUrl}${path}${args}`);
-          this.eventSource.onerror = (err) => {
-            console.log(err);
-          };
-          this.eventSource.onmessage = (e) => {
-
-            console.log(e);
-
-            if (e.state === "SUCCESS") {
-              console.log("success");
-
-              const formattedPredictions = e.result['Predictions'].map((record) => ({
-                Attribute: `${queryParams.attributedata}-predicted`,
-                Timestamp: record['Timestamp'],
-                Value: record['Value'],
-              }));
-
-              this.setState(prevState => ({
-                data: {
-                  values: [...prevState.data.values, formattedPredictions],
-                },
-              }));
-            }
-
-
-            /!**
-             *
-             * {
-  "state": "SUCCESS",
-  "status": "task complete",
-  "result": {
-    "Sensor_id": "All sensors",
-    "Forcasting_engine": "Prophet",
-    "Mean_Absolute_Percentage_Error": 2534.819,
-    "Prediction_id": 3,
-    "Predictions": [
-      {
-        "Value": 5.834,
-        "Value_Upper": 6.417,
-        "Value_Lower": 5.259,
-        "Timestamp": "2019-05-06 09:00:00"
-      },
-      {
-        "Value": 6.321,
-        "Value_Upper": 6.869,
-        "Value_Lower": 5.744,
-        "Timestamp": "2019-05-06 10:00:00"
-      },
-      *!/
-          }
-        }*/
+        // also check status right away
+        this.checkPredictionStatus();
       })
       .catch((err) => {
         this.setState({ error: err})
@@ -230,33 +197,64 @@ class ForecastWidget extends React.Component {
         },
       })
       .then((response) => {
-        if (response.data.state === "SUCCESS") {
-          this.killTimer();
+        switch (response.data.state) {
+          case "PROGRESS":
+            this.setState({
+              loadState: "WORKING",
+              loadStatus: response.data.status,
+            });
 
-          const formattedPredictions = response.data.result['Predictions'].map((record) => ({
-            Attribute: `${queryParams.attributedata}-predicted`,
-            Timestamp: record['Timestamp'],
-            Value: record['Value'],
-          }));
+            break;
 
-          this.setState(prevState => ({
-            mape: response.data.result['Mean_Absolute_Percentage_Error'],
-            data: {
-              values: [...prevState.data.values, ...formattedPredictions],
-            },
-          }));
+          case "SUCCESS":
+            this.killTimer(this.intervalTimer);
+
+            const formattedPredictions = response.data.result['Predictions'].map((record) => ({
+              Attribute: `${queryParams.attributedata}-predicted`,
+              Timestamp: record['Timestamp'],
+              Value: record['Value'],
+            }));
+
+            this.setState(prevState => ({
+              loadState: response.data.state,
+              loadStatus: "prediction completed",
+              mape: response.data.result['Mean_Absolute_Percentage_Error'],
+              mapeRating: this.getMAPERating(response.data.result['Mean_Absolute_Percentage_Error']),
+              data: {
+                values: [...prevState.data.values, ...formattedPredictions],
+              },
+            }), () => {
+              this.timeoutTimer = setTimeout(() => {
+                this.setState({ loading: false })
+              }, 3000)
+            });
+
+            break
         }
       })
       .catch((err) => {
-        this.setState({ error: err})
+        this.killTimer(this.intervalTimer);
+
+        this.setState({
+          loadState: "ERROR",
+          loadStatus: err.response.data.status,
+          error: err,
+        })
       })
   };
 
-  render() {
-    const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
-    const { spec, loading, error, data } = this.state;
+  getMAPERating = (mape) => {
+    if (mape < 50) return MAPE_RATING_GOOD;
+    if (mape <= 100) return MAPE_RATING_FAIR;
 
-    if (!data) {
+    return MAPE_RATING_BAD
+  };
+
+  render() {
+    const { classes, i, type, name, description, isStatic, width, height, config, queryParams, w, h } = this.props;
+    const { spec, loading, data, loadState, loadStatus } = this.state;
+
+    if (loading) {
       return (
         <WidgetWrapper
           i={i}
@@ -266,10 +264,12 @@ class ForecastWidget extends React.Component {
           isStatic={isStatic}
           width={width}
           height={height}
+          w={w}
+          h={h}
           config={config}
           queryParams={queryParams}
         >
-          <LoadingIndicator />
+          <ForecastStatus loadState={loadState} loadStatus={loadStatus} />
         </WidgetWrapper>
       )
     }
@@ -283,17 +283,31 @@ class ForecastWidget extends React.Component {
         isStatic={isStatic}
         width={width}
         height={height}
+        w={w}
+        h={h}
         config={config}
         queryParams={queryParams}
       >
-        <Fade in={!loading} mountOnEnter>
-          <VegaLite
-            className={classes.root}
-            spec={spec}
-            data={data}
-            tooltip={this.tooltipHandler.call}
-          />
-        </Fade>
+        <div className={classes.root}>
+          {/*<div>*/}
+            <Typography variant="body2" className={classes.mape}>
+              M.A.P.E.:
+              <span className={classes.mapeValue}> {this.state.mape.toFixed(3)}</span>
+              <span className={classes.mapeRating}> ({this.state.mapeRating})</span>
+            </Typography>
+            <ContainerDimensions>
+            {({ width, height }) => {
+              const responsiveSpec = { ...spec, width: Math.floor(width), height: Math.floor(height) - 100 }
+              return <VegaLite
+                className={classes.root}
+                spec={responsiveSpec}
+                data={data}
+                tooltip={this.tooltipHandler.call}
+              />
+            }}
+          </ContainerDimensions>
+          {/*</div>*/}
+        </div>
       </WidgetWrapper>
     )
   }

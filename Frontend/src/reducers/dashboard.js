@@ -7,15 +7,18 @@ import {
   UPDATE_LAYOUT,
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
-  FETCH_WIDGETS_REJECTED,
+  FETCH_WIDGETS_REJECTED
 } from "./../constants";
 
 const initialState = {
+  alertsActive: false,
   layout: [],
+  newLayout: [],
   widgets: [],
   fetching: false,
   fetched: false,
   error: null,
+  layoutChanged: false
 };
 
 export default (state=initialState, action={}) => {
@@ -64,7 +67,8 @@ export default (state=initialState, action={}) => {
     case UPDATE_LAYOUT: {
       return {
         ...state,
-        layout: action.payload,
+        newLayout: action.payload,
+        layoutChanged: true
       }
     }
 

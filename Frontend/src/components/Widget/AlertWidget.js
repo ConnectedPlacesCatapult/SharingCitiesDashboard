@@ -87,7 +87,7 @@ class AlertWidget extends React.Component {
 
   connectToSSE() {
     if (this.eventSource === null) {
-      const apiUrl = `${process.env.NODE_HOST}${process.env.API_PORT}`;
+      const apiUrl = `${process.env.API_HOST}`;
       const path = '/alert/triggered';
       const userID = getUserID();
       const args = `?user_id=${userID}`;
