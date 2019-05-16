@@ -36,6 +36,8 @@ class PlotWidget extends React.Component {
     description: PropTypes.string.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
+    w: PropTypes.number.isRequired,
+    h: PropTypes.number.isRequired,
     isStatic: PropTypes.bool.isRequired,
     type: PropTypes.string.isRequired,
     config: PropTypes.object.isRequired,
@@ -45,7 +47,7 @@ class PlotWidget extends React.Component {
   constructor(props) {
     super(props);
 
-    const { theme, config, width, height } = this.props;
+    const { theme, config, width, height, w, h } = this.props;
 
     const titleTypography = theme.typography.body1;
     const labelTypography = theme.typography.body2;
@@ -58,6 +60,8 @@ class PlotWidget extends React.Component {
         ...config.spec,
         width: width,
         height: height,
+        w: w,
+        h: h,
         config: {
           axis: {
             // x & y axis lines
@@ -134,7 +138,7 @@ class PlotWidget extends React.Component {
   };
 
   render() {
-    const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
+    const { classes, i, type, name, description, isStatic, width, height, w, h, config, queryParams } = this.props;
     const { spec, loading, error, data } = this.state;
 
     if (!data) {
@@ -147,6 +151,8 @@ class PlotWidget extends React.Component {
           isStatic={isStatic}
           width={width}
           height={height}
+          w={w}
+          h={h}
           config={config}
           queryParams={queryParams}
         >
@@ -164,6 +170,8 @@ class PlotWidget extends React.Component {
         isStatic={isStatic}
         width={width}
         height={height}
+        w={w}
+        h={h}
         config={config}
         queryParams={queryParams}
       >

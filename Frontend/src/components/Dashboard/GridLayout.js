@@ -59,7 +59,6 @@ class GridLayout extends React.Component {
 
   onLayoutChange(layout) {
     const { updateLayout } = this.props;
-
     updateLayout(layout);
   }
 

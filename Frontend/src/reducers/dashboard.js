@@ -17,6 +17,7 @@ const initialState = {
   fetching: false,
   fetched: false,
   error: null,
+  layoutChanged: false
 };
 
 export default (state=initialState, action={}) => {
@@ -66,6 +67,7 @@ export default (state=initialState, action={}) => {
       return {
         ...state,
         layout: action.payload,
+        layoutChanged: true
       }
     }
 

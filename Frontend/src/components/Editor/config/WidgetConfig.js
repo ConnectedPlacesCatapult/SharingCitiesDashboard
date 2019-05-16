@@ -61,7 +61,8 @@ class WidgetConfig extends React.Component {
             rows={3}
           />
         </FormControl>
-        <FormControl htmlFor="widget-width">
+        {/*Hide width option on edit mode*/}
+        {editor.mode === 'add' ? <FormControl htmlFor="widget-width">
           <TextField
             id="widget-width"
             label="Width (columns)"
@@ -70,17 +71,18 @@ class WidgetConfig extends React.Component {
             margin="normal"
           />
           {editor.widget.w > 12 ? <Typography color="error">Please select a value below or equal to 12</Typography> : null}
-        </FormControl>
-        <FormControl htmlFor="widget-height">
-          <TextField
-            id="widget-height"
-            label="Height (rows)"
-            value={editor.widget.h}
-            onChange={this.setWidgetProperty('h')}
-            margin="normal"
-          />
-          {editor.widget.h > 6 ? <Typography color="error">Please select a value below or equal to 6</Typography> : null}
-        </FormControl>
+        </FormControl> : null}
+        {/*Hide height option on edit mode*/}
+        {editor.mode === 'add' ? <FormControl htmlFor="widget-height">
+            <TextField
+              id="widget-height"
+              label="Height (rows)"
+              value={editor.widget.h}
+              onChange={this.setWidgetProperty('h')}
+              margin="normal"
+            />
+            {editor.widget.h > 6 ? <Typography color="error">Please select a value below or equal to 6</Typography> : null}
+        </FormControl> : null}
         <FormGroup row>
           <FormControlLabel
             label="Static"

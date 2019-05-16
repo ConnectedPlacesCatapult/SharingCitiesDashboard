@@ -70,6 +70,8 @@ class WidgetWrapper extends React.Component {
     isStatic: PropTypes.bool.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
+    w: PropTypes.number.isRequired,
+    h: PropTypes.number.isRequired,
     config: PropTypes.object.isRequired,
     queryParams: PropTypes.object.isRequired,
     children: PropTypes.node.isRequired,
@@ -99,9 +101,9 @@ class WidgetWrapper extends React.Component {
   };
 
   handleEditWidgetClick = () => {
-    const { i, type, name, description, isStatic, width, height, config, queryParams, openEditor } = this.props;
+    const { i, type, name, description, isStatic, width, height, w, h, config, queryParams, openEditor } = this.props;
 
-    openEditor('edit', { i, type, name, description, isStatic, width, height, config, queryParams })
+    openEditor('edit', { i, type, name, description, isStatic, width, height, w, h, config, queryParams })
   };
 
   render() {

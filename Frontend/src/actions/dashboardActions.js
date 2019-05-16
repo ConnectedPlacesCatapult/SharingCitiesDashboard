@@ -10,8 +10,13 @@ import {
   FETCH_LAYOUT,
   FETCH_LAYOUT_FULFILLED,
   FETCH_LAYOUT_REJECTED,
-  UPDATE_LAYOUT
+  UPDATE_LAYOUT,
+  SAVE_LAYOUT,
+  SAVE_LAYOUT_FULFILLED,
+  SAVE_LAYOUT_REJECTED,
+  HIDE_NOTIFICATION,
 } from './../constants';
+import _ from 'lodash'
 
 export const deleteWidget = (widgetId) => {
   return (dispatch) => {
@@ -54,7 +59,6 @@ export const fetchLayout = () => {
     axiosInstance
       .post('/widgets/get_layouts', requestData)
       .then((response) => {
-        console.log('widget response', response)
         const layout = response.data.map((widget) => ({
           i: widget.id,
           x: widget.x,
@@ -74,6 +78,65 @@ export const fetchLayout = () => {
           payload: error,
         })
       })
+  }
+};
+
+export const saveLayout = () => {
+  const userID = getUserID()
+
+  return (dispatch, getState) => {
+    const state = getState()
+    const newLayout = _.get(state, 'dashboard.layout')
+
+    const cleanedLayout = []
+
+    for (let i = 0; i < newLayout.length; i++) {
+      const layoutItem = {
+        id: newLayout[i].i,
+        x: newLayout[i].x,
+        y: newLayout[i].y,
+        h: newLayout[i].h,
+        w: newLayout[i].w,
+        static: "false"
+      }
+      cleanedLayout.push(layoutItem)
+    }
+
+    const newLayoutObject = {
+      layouts: cleanedLayout
+    }
+
+    dispatch({
+      type: SAVE_LAYOUT,
+    });
+
+    const requestData = {
+      userID: userID
+    };
+    axiosInstance.post('/widgets/save_layouts', newLayoutObject).then((response) => {
+
+      dispatch({
+        type: SAVE_LAYOUT_FULFILLED
+      })
+
+      setTimeout(() => {
+        dispatch({
+          type: HIDE_NOTIFICATION,
+        })
+      }, 5000)
+    })
+      .catch((error) => {
+        dispatch({
+          type: SAVE_LAYOUT_REJECTED,
+          payload: error.statusText,
+        })
+      })
+
+    setTimeout(() => {
+      dispatch({
+        type: HIDE_NOTIFICATION,
+      })
+    }, 5000)
   }
 };
 
@@ -108,6 +171,8 @@ export const fetchWidgets = () => {
             i: widget.id,
             width: parseInt(widgetData.width),
             height: parseInt(widgetData.height),
+            w: parseInt(widgetData.w),
+            h: parseInt(widgetData.h),
             isStatic: (widgetData.isStatic === 'true'),
           }
         });
