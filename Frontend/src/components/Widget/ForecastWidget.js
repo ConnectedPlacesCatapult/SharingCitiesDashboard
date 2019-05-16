@@ -296,8 +296,8 @@ class ForecastWidget extends React.Component {
               <span className={classes.mapeRating}> ({this.state.mapeRating})</span>
             </Typography>
             <ContainerDimensions>
-            {({ width }) => {
-              const responsiveSpec = { ...spec, width: Math.floor(width) }
+            {({ width, height }) => {
+              const responsiveSpec = { ...spec, width: Math.floor(width), height: Math.floor(height) - 100 }
               return <VegaLite
                 className={classes.root}
                 spec={responsiveSpec}

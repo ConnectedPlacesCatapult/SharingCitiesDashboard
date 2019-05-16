@@ -178,8 +178,8 @@ class PlotWidget extends React.Component {
       >
         <Fade in={!loading} mountOnEnter>
           <ContainerDimensions>
-            {({ width }) => {
-              const responsiveSpec = { ...spec, width: Math.floor(width) }
+            {({ width, height }) => {
+              const responsiveSpec = { ...spec, width: Math.floor(width), height: Math.floor(height) - 100 }
               return <VegaLite
                 className={classes.root}
                 spec={responsiveSpec}
