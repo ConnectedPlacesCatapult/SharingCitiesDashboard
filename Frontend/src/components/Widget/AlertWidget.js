@@ -198,7 +198,7 @@ class AlertWidget extends React.Component {
                 <TableCell component="th" scope="row">Status</TableCell>
                 {config.triggered.toString() === 'true'
                   ? <TableCell className={classes.cellTriggered}>{config.triggerEvent.message}<br />at {config.triggerEvent.timestamp}</TableCell>
-                  : <TableCell className={classes.cellValue}>alert active</TableCell>
+                  : <TableCell className={classes.cellValue}>active</TableCell>
                 }
             </TableRow>
             </TableBody>

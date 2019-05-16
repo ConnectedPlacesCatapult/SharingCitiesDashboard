@@ -125,7 +125,7 @@ class AlertPreview extends React.Component {
               <TableCell component="th" scope="row">Status</TableCell>
               {editor.widget.config.triggered.toString() === 'true'
                 ? <TableCell className={classes.cellTriggered}>{editor.widget.config.triggerEvent.message}<br />at {editor.widget.config.triggerEvent.timestamp}</TableCell>
-                : <TableCell className={classes.cellValue}>alert active</TableCell>
+                : <TableCell className={classes.cellValue}>active</TableCell>
               }
             </TableRow>
           </TableBody>
