@@ -86,7 +86,7 @@ export const saveLayout = () => {
 
   return (dispatch, getState) => {
     const state = getState()
-    const newLayout = _.get(state, 'dashboard.layout')
+    const newLayout = _.get(state, 'dashboard.newLayout')
 
     const cleanedLayout = []
 

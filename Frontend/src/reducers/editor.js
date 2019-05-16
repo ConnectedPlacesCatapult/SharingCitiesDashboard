@@ -44,8 +44,8 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_ALERT: {
       return {
         ...defaultProperties,
-        width: 300,
-        height: 240,
+        w: 8,
+        h: 8,
         config: {
           ...defaultProperties.config,
           alertId: null,
@@ -60,8 +60,8 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_FORECAST: {
       return {
         ...defaultProperties,
-        width: 400,
-        height: 200,
+        w: 8,
+        h: 8,
         config: {
           ...defaultProperties.config,
           ...FCC_CONFIG.editorDefaultConfig.forecast,
@@ -77,8 +77,8 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_MAP: {
       return {
         ...defaultProperties,
-        width: 400,
-        height: 240,
+        w: 8,
+        h: 8,
         config: {
           ...defaultProperties.config,
           center: FCC_CONFIG.widgetEditorDefaults.mapCenter,
@@ -104,8 +104,8 @@ const getWidgetDefaultProperties = (currentProperties) => {
     case WIDGET_TYPE_PLOT: {
       return {
         ...defaultProperties,
-        w: 10,
-        h: 5,
+        w: 8,
+        h: 8,
         config: {
           ...defaultProperties.config,
           ...FCC_CONFIG.editorDefaultConfig.plot,

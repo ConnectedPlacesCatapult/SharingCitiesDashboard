@@ -13,6 +13,7 @@ import {
 const initialState = {
   alertsActive: false,
   layout: [],
+  newLayout: [],
   widgets: [],
   fetching: false,
   fetched: false,
@@ -66,7 +67,7 @@ export default (state=initialState, action={}) => {
     case UPDATE_LAYOUT: {
       return {
         ...state,
-        layout: action.payload,
+        newLayout: action.payload,
         layoutChanged: true
       }
     }

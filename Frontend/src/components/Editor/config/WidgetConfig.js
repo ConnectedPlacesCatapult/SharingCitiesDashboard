@@ -70,7 +70,7 @@ class WidgetConfig extends React.Component {
             onChange={this.setWidgetProperty('w')}
             margin="normal"
           />
-          {editor.widget.w > 12 ? <Typography color="error">Please select a value below or equal to 12</Typography> : null}
+          {editor.widget.w < 4 || editor.widget.w > 12 ? <Typography color="error">A value between 4 and 12 is advised</Typography> : null}
         </FormControl> : null}
         {/*Hide height option on edit mode*/}
         {editor.mode === 'add' ? <FormControl htmlFor="widget-height">
@@ -81,7 +81,7 @@ class WidgetConfig extends React.Component {
               onChange={this.setWidgetProperty('h')}
               margin="normal"
             />
-            {editor.widget.h > 6 ? <Typography color="error">Please select a value below or equal to 6</Typography> : null}
+            {editor.widget.h > 15 || editor.widget.h < 8 ? <Typography color="error">A value between 8 and 15 is advised</Typography> : null}
         </FormControl> : null}
         <FormGroup row>
           <FormControlLabel
