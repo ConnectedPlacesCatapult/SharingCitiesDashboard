@@ -3,11 +3,6 @@
 unset DEBUG
 PREFIX="   -"
 
-# Set install flags
-if [ ! $PYREQ_INSTALLED ]; then
-    export PYREQ_INSTALLED=False
-fi
-
 # Initialize script
 echo "-- FCC API Setup --"
 
@@ -15,7 +10,7 @@ echo "-- FCC API Setup --"
 cd ~/SharingCitiesDashboard/Analytics
 
 # Check if python requirements have been installed
-if [ $PYREQ_INSTALLED = False ]; then
+if [ ! -f ~/pyreq_installed ]; then
     # Check if pip is installed
     if [ -z "$(which pip3)" ]; then
         # Install python3-pip3
@@ -25,7 +20,7 @@ if [ $PYREQ_INSTALLED = False ]; then
     # Install python requirements
     echo "$PREFIX Installing python requirements"
     pip3 install -r requirements.txt
-    export PYREQ_INSTALLED=True
+    touch ~/pyreq_installed
 fi
 
 # Check if Redis is installed
@@ -45,16 +40,28 @@ sudo systemctl restart redis.service
 
 # Start Celery worker
 echo "$PREFIX Starting Celery worker"
-sudo apt install python-celery-common
+# Check if python-celery installed
+if [ ! -f ~/celery_installed ]; then
+  sudo apt install python-celery-common
+  touch ~/celery_installed
+fi
 screen -S Celery -dm bash -c 'celery -A manage.celery_task worker -l info; exec sh'
 
-# Setup DB structure
-echo "$PREFIX Initialize DB structure"
-python3 db_setup.py
+# Check if DB Structure Initialized
+if [ ! -f ~/db_initialized ]; then
+    # Setup DB structure
+    echo "$PREFIX Initialize DB structure"
+    python3 db_setup.py
+    touch ~/db_initialized
+fi
 
-# Create SuperUser account
-echo "$PREFIX Setup SuperUser account"
-python3 manage.py add_superuser
+# Check Superuser Setup
+if [ ! -f ~/superuser_added ]; then
+  # Create SuperUser account
+  echo "$PREFIX Setup SuperUser account"
+  python3 manage.py add_superuser
+  touch ~/superuser_added
+fi
 
 # Serve the API on port 5000
 python3 manage.py gunicorn

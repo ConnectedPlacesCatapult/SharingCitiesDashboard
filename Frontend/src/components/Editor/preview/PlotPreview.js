@@ -147,8 +147,8 @@ class PlotPreview extends React.Component {
     const fullSpec = {
       ...spec,
       ...editor.widget.config.spec,
-      width: editor.widget.width,
-      height: editor.widget.height,
+      width: 400,
+      height: 200,
     };
 
     return (

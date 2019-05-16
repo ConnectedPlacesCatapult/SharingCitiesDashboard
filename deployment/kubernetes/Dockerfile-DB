@@ -21,7 +21,7 @@ ENV LANG en_US.utf8
 
 RUN mkdir /docker-entrypoint-initdb.d
 COPY ./Analytics/settings/config.env.yml config.env.yml
-COPY ./docker-entrypoint.sh ./
+COPY ./deployment/kubernetes/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 ENV PG_MAJOR 11
 ENV PG_VERSION 11.2
@@ -148,7 +148,6 @@ ENV PGDATA /var/lib/postgresql/data
 RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA" # this 777 will be replaced by 700 at runtime (allows semi-arbitrary "--user" values)
 VOLUME /var/lib/postgresql/data
 
-COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 EXPOSE 5432
@@ -209,4 +208,4 @@ RUN set -ex \
     && rm -rf /usr/src/postgis \
     && apk del .fetch-deps .build-deps .build-deps-edge
 
-COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/postgis.sh
+COPY ./deployment/kubernetes/initdb-postgis.sh /docker-entrypoint-initdb.d/postgis.sh

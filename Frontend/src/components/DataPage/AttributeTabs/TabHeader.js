@@ -9,6 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import {
   removeAttributeData,
+  setActiveTabAttribute,
   toggleAttributeSelected,
 } from "../../../actions/dataTableActions";
 
@@ -29,25 +30,24 @@ class TabHeader extends React.Component {
     classes: PropTypes.object.isRequired,
     attributeId: PropTypes.string.isRequired,
     attributeName: PropTypes.string.isRequired,
+    attributeTable: PropTypes.string.isRequired,
+    value: PropTypes.number.isRequired,
+    onChange: PropTypes.func.isRequired,
+    setActiveTabAttribute: PropTypes.func.isRequired,
     toggleAttributeSelected: PropTypes.func.isRequired,
   };
 
-  handleClick = (e) => {
-    this.props.onChange(e, this.props.value)
+  handleClick = () => {
+    const { value, attributeId, attributeName, attributeTable, onChange, setActiveTabAttribute } = this.props;
+
+    onChange(value);
+    setActiveTabAttribute(attributeId, attributeName, attributeTable)
   };
 
   handleCloseClick = (e) => {
     e.stopPropagation();
 
     const { dataTable, attributeId, removeAttributeData, toggleAttributeSelected } = this.props;
-
-    /**
-     * products.filter(product =>
-     product.items.some(item => item.name === 'milk');
-     ).map(product =>
-     product.id
-     )
-     */
 
     let themeId = -1;
     let subthemeId = -1;
@@ -95,6 +95,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   removeAttributeData: (attributeId) => dispatch(removeAttributeData(attributeId)),
+  setActiveTabAttribute: (id, name, table) => dispatch(setActiveTabAttribute(id, name, table)),
   toggleAttributeSelected: (themeId, subthemeId, attributeName) => dispatch(toggleAttributeSelected(themeId, subthemeId, attributeName)),
 });
 

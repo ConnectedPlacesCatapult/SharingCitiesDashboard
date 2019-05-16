@@ -14,6 +14,8 @@ import {
   MAPE_RATING_FAIR,
   MAPE_RATING_GOOD,
 } from './../../constants';
+import LoadingIndicator from './LoadingIndicator';
+import ContainerDimensions from 'react-container-dimensions'
 
 const styles = (theme) => ({
   root: {
@@ -48,6 +50,8 @@ class ForecastWidget extends React.Component {
     description: PropTypes.string.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
+    w: PropTypes.number.isRequired,
+    h: PropTypes.number.isRequired,
     isStatic: PropTypes.bool.isRequired,
     type: PropTypes.string.isRequired,
     config: PropTypes.object.isRequired,
@@ -57,7 +61,7 @@ class ForecastWidget extends React.Component {
   constructor(props) {
     super(props);
 
-    const { theme, config, width, height } = this.props;
+    const { theme, config, width, height, w, h } = this.props;
 
     const titleTypography = theme.typography.body1;
     const labelTypography = theme.typography.body2;
@@ -73,8 +77,10 @@ class ForecastWidget extends React.Component {
       data: null,
       spec: {
         ...config.spec,
-        width: width,
-        height: height,
+        width: 400,
+        height: 200,
+        w: w,
+        h: h,
         config: {
           axis: {
             // x & y axis lines
@@ -245,7 +251,7 @@ class ForecastWidget extends React.Component {
   };
 
   render() {
-    const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
+    const { classes, i, type, name, description, isStatic, width, height, config, queryParams, w, h } = this.props;
     const { spec, loading, data, loadState, loadStatus } = this.state;
 
     if (loading) {
@@ -258,6 +264,8 @@ class ForecastWidget extends React.Component {
           isStatic={isStatic}
           width={width}
           height={height}
+          w={w}
+          h={h}
           config={config}
           queryParams={queryParams}
         >
@@ -275,6 +283,8 @@ class ForecastWidget extends React.Component {
         isStatic={isStatic}
         width={width}
         height={height}
+        w={w}
+        h={h}
         config={config}
         queryParams={queryParams}
       >
@@ -285,11 +295,17 @@ class ForecastWidget extends React.Component {
               <span className={classes.mapeValue}> {this.state.mape.toFixed(3)}</span>
               <span className={classes.mapeRating}> ({this.state.mapeRating})</span>
             </Typography>
-            <VegaLite
-              spec={spec}
-              data={data}
-              tooltip={this.tooltipHandler.call}
-            />
+            <ContainerDimensions>
+            {({ width }) => {
+              const responsiveSpec = { ...spec, width: Math.floor(width) }
+              return <VegaLite
+                className={classes.root}
+                spec={responsiveSpec}
+                data={data}
+                tooltip={this.tooltipHandler.call}
+              />
+            }}
+          </ContainerDimensions>
           {/*</div>*/}
         </div>
       </WidgetWrapper>
