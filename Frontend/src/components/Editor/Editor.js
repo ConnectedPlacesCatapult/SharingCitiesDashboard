@@ -67,7 +67,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  saveWidget: (mode, widget) => dispatch(saveWidget(mode, widget)),
+  saveWidget: (mode, widget) => dispatch(saveWidget(mode, widget))
 });
 
 Editor = withStyles(styles)(Editor);

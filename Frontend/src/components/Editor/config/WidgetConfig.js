@@ -9,6 +9,7 @@ import {
   Switch,
   TextField,
   withStyles,
+  Typography
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { setWidgetProperty } from './../../../actions/editorActions';
@@ -60,24 +61,28 @@ class WidgetConfig extends React.Component {
             rows={3}
           />
         </FormControl>
-        <FormControl htmlFor="widget-width">
+        {/*Hide width option on edit mode*/}
+        {editor.mode === 'add' ? <FormControl htmlFor="widget-width">
           <TextField
             id="widget-width"
-            label="Width"
-            value={editor.widget.width}
-            onChange={this.setWidgetProperty('width')}
+            label="Width (columns)"
+            value={editor.widget.w}
+            onChange={this.setWidgetProperty('w')}
             margin="normal"
           />
-        </FormControl>
-        <FormControl htmlFor="widget-height">
-          <TextField
-            id="widget-height"
-            label="Height"
-            value={editor.widget.height}
-            onChange={this.setWidgetProperty('height')}
-            margin="normal"
-          />
-        </FormControl>
+          {editor.widget.w < 4 || editor.widget.w > 12 ? <Typography color="error">A value between 4 and 12 is advised</Typography> : null}
+        </FormControl> : null}
+        {/*Hide height option on edit mode*/}
+        {editor.mode === 'add' ? <FormControl htmlFor="widget-height">
+            <TextField
+              id="widget-height"
+              label="Height (rows)"
+              value={editor.widget.h}
+              onChange={this.setWidgetProperty('h')}
+              margin="normal"
+            />
+            {editor.widget.h > 15 || editor.widget.h < 8 ? <Typography color="error">A value between 8 and 15 is advised</Typography> : null}
+        </FormControl> : null}
         <FormGroup row>
           <FormControlLabel
             label="Static"

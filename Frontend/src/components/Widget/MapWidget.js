@@ -89,6 +89,8 @@ class MapWidget extends React.Component {
     description: PropTypes.string.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
+    w: PropTypes.number.isRequired,
+    h: PropTypes.number.isRequired,
     isStatic: PropTypes.bool.isRequired,
     type: PropTypes.string.isRequired,
     config: PropTypes.object.isRequired,
@@ -97,6 +99,8 @@ class MapWidget extends React.Component {
 
   constructor(props) {
     super(props);
+
+    const { config, w, h } = this.props;
 
     this.mapRef = React.createRef();
     this.minValue = 0;
@@ -110,6 +114,11 @@ class MapWidget extends React.Component {
       attributes: [],
       markerColors: [],
       markerOpacity: 1,
+      spec: {
+        ...config.spec,
+        w: w,
+        h: h
+      }
     };
   }
 
@@ -228,7 +237,7 @@ class MapWidget extends React.Component {
   };
 
   render() {
-    const { classes, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
+    const { classes, i, type, name, description, isStatic, width, height, config, queryParams, w, h } = this.props;
     const { loading, error, data, attributes, markerColors, markerOpacity } = this.state;
 
     if (!data) {
@@ -241,6 +250,8 @@ class MapWidget extends React.Component {
           isStatic={isStatic}
           width={width}
           height={height}
+          w={w}
+          h={h}
           config={config}
           queryParams={queryParams}
         >
@@ -318,6 +329,8 @@ class MapWidget extends React.Component {
         isStatic={isStatic}
         width={width}
         height={height}
+        w={w}
+        h={h}
         config={config}
         queryParams={queryParams}
       >

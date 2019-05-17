@@ -15,6 +15,7 @@ import Editor from './../Editor';
 import GridLayout from './GridLayout';
 import NoWidgets from './NoWidgets';
 import Header from './../common/Header';
+import { saveLayout } from '../../actions/dashboardActions';
 
 const styles = (theme) => ({
   root: {
@@ -31,6 +32,9 @@ const styles = (theme) => ({
     margin: '2em 1em',
     position: 'fixed',
     bottom: 0
+  },
+  saveLayout: {
+    marginLeft: '1em'
   }
 });
 
@@ -59,10 +63,30 @@ class Dashboard extends React.Component {
     this.setState({ createWidgetMenuAnchorEl: null })
   };
 
+  handleSaveLayoutClick = () => {
+    const { saveLayout } = this.props;
+    saveLayout();
+  };
+
+
   noWidgetsPrompt() {
     const { dashboard } = this.props;
     if (dashboard && dashboard.fetched === true && dashboard.widgets && dashboard.widgets.length === 0) {
       return <NoWidgets/>
+    }
+  }
+
+  layoutChanged() {
+    const { dashboard, classes } = this.props;
+    if (dashboard && dashboard.layoutChanged === true) {
+      return <Button
+        variant="contained"
+        color="primary"
+        className={classes.saveLayout}
+        onClick={this.handleSaveLayoutClick}
+      >
+        Save Layout
+      </Button>
     }
   }
 
@@ -90,6 +114,7 @@ class Dashboard extends React.Component {
             >
               Create Widget
             </Button>
+            {this.layoutChanged()}
           </div>
         </main>
         <Modal
@@ -111,6 +136,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   closeEditor: () => dispatch(closeEditor()),
+  saveLayout: () => dispatch(saveLayout()),
 });
 
 Dashboard = withStyles(styles)(Dashboard);

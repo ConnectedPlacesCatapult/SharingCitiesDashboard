@@ -10,6 +10,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from retrying import retry
 from sqlalchemy.orm import sessionmaker, scoped_session
 
+sys.path.append('../')
+
 from app import create_app
 from importers.state_decorator import ImporterStatus
 from models.api import API as Api_Class
@@ -17,7 +19,6 @@ from models.importer_status import ImporterStatuses
 from models.attributes import Attributes
 from models.attribute_range import AttributeRange
 
-sys.path.append('../..')
 from settings import GetConfig
 
 config = GetConfig.configure('postgres')
@@ -103,7 +104,7 @@ class Scheduler(object):
             if result_entry.state != "success":
                 raise RetryingException
                 # raising an exception informs the @retry decorator to retry
-                # the function according to it's arguments 
+                # the function according to it's arguments
 
     @staticmethod
     def get_apis() -> list:

@@ -12,7 +12,7 @@ if [ -z "$(npm -v)" ]; then
     # Install postgres
     echo "   $PREFIX Installing node"
     curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
-    sudo apt install nodejs
+    sudo apt install nodejs xsel
 fi
 echo "   $PREFIX Node installed!"
 
