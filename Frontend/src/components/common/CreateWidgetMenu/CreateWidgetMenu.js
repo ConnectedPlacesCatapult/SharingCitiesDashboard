@@ -48,10 +48,19 @@ class CreateWidgetMenu extends React.Component {
   }
 
   handleTypeClicked = (type) => {
-    const { mode, onClose, openEditor } = this.props;
+    const { mode, onClose, openEditor, dataTable } = this.props;
 
     onClose();
-    openEditor(mode, { type })
+
+    const payload = { type };
+
+    if (mode === "edit") {
+      payload.queryParams = {
+        attributedata: (dataTable.activeTabAttribute) ? dataTable.activeTabAttribute.name: dataTable.data[0]['Attribute_Name'],
+      };
+    }
+
+    openEditor(mode, payload)
   };
 
   handleClose = () => {
@@ -108,11 +117,15 @@ class CreateWidgetMenu extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  dataTable: state.dataTable,
+});
+
 const mapDispatchToProps = (dispatch) => ({
   openEditor: (mode, properties) => dispatch(openEditor(mode, properties)),
 });
 
 CreateWidgetMenu = withStyles(styles)(CreateWidgetMenu);
-CreateWidgetMenu = connect(null, mapDispatchToProps)(CreateWidgetMenu);
+CreateWidgetMenu = connect(mapStateToProps, mapDispatchToProps)(CreateWidgetMenu);
 
 export default CreateWidgetMenu
