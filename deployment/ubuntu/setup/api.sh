@@ -25,7 +25,7 @@ fi
 
 # Check if Redis is installed
 echo "$PREFIX Checking for Redis"
-if [ -z "$(which redis)" ]; then
+if [ -z "$(which redis-server)" ]; then
     # Install Nginx
     echo "   $PREFIX Installing Redis"
     sudo apt install redis-server
