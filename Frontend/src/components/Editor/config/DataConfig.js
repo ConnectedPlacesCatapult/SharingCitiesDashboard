@@ -12,6 +12,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
   withStyles,
 } from '@material-ui/core';
 import BarChartIcon from '@material-ui/icons/BarChart';
@@ -24,6 +25,10 @@ const styles = (theme) => ({
   },
   spacer: {
     margin: `${theme.spacing.unit}px 0`,
+  },
+  listHeightLimit: {
+    maxHeight: `${theme.spacing.unit * 30}px`,
+    overflowY: 'auto',
   },
 });
 
@@ -40,6 +45,7 @@ class DataConfig extends React.Component {
     this.state = {
       selectedThemes: [],
       selectedSubtheme: null,
+      selectedAttributes: [],
       allSubthemes: [],
       allAttributes: [],
     };
@@ -55,6 +61,7 @@ class DataConfig extends React.Component {
 
       let selectedThemes = [];
       let selectedSubtheme = null;
+      let selectedAttributes = [];
 
       let allSubthemes = [];
       let allAttributes = [];
@@ -76,13 +83,15 @@ class DataConfig extends React.Component {
       for (let queryAttribute of attributesFromQueryParams) {
         const attr = allAttributes.find(a => a.name === queryAttribute);
 
-        selectedThemes = [...selectedThemes, attr.theme_id];
-        selectedSubtheme = attr.sub_theme_id;
+        selectedThemes = [...selectedThemes, attr['theme_id']];
+        selectedSubtheme = attr['sub_theme_id'];
+        selectedAttributes = [...selectedAttributes, queryAttribute]
       }
 
       this.setState({
         selectedThemes: [...new Set(selectedThemes)],
         selectedSubtheme,
+        selectedAttributes,
         allSubthemes,
         allAttributes,
       })
@@ -90,30 +99,90 @@ class DataConfig extends React.Component {
   }
 
   handleThemeChange = (e) => {
-    const themeId = Number(e.target.value);
-    const checked = e.target.checked;
+    const { selectedThemes, selectedSubtheme, selectedAttributes, allSubthemes, allAttributes } = this.state;
 
-    this.setState((prevState) => ({
-      selectedThemes: (!checked) ? prevState.selectedThemes.filter(id => id !== themeId) : [...prevState.selectedThemes, themeId],
-    }))
+    const themeId = Number(e.target.value);
+    const alreadySelected = (!e.target.checked);
+    const newSelectedThemes = (alreadySelected) ? selectedThemes.filter(id => id !== themeId) : [...selectedThemes, themeId];
+    let newSelectedSubtheme = selectedSubtheme;
+    let newSelectedAttributes = selectedAttributes;
+
+    // if this theme wasn't already selected...
+    if (!alreadySelected) {
+
+      // ... and if there is already a subtheme selected
+      // make sure the selectedSubtheme is a child of one of the selected themes now
+      if (selectedSubtheme) {
+        const selectedSubthemeThemeId = allSubthemes.find((subtheme) => subtheme['id'] === selectedSubtheme)['Theme id'];
+
+        if (newSelectedThemes.indexOf(selectedSubthemeThemeId) === -1) {
+          newSelectedSubtheme = null;
+        }
+      }
+
+      // ... now if there are already attributes selected
+      // make sure the selected attributes are grandchildren of one of the selected themes now
+      if (selectedAttributes.length) {
+        newSelectedAttributes = selectedAttributes.filter((attributeName) => {
+          const attributeThemeId = allAttributes.find((attr) => attr['name'] === attributeName)['theme_id'];
+
+          return newSelectedThemes.includes(attributeThemeId)
+        })
+      }
+    }
+
+    this.setState({
+      selectedThemes: newSelectedThemes,
+      selectedSubtheme: newSelectedSubtheme,
+      selectedAttributes: newSelectedAttributes,
+    }, this.setQueryParams)
   };
 
   handleSubthemeClick = (e, subthemeId) => {
-    this.setState({ selectedSubtheme: subthemeId });
+    const { selectedSubtheme, selectedAttributes, allAttributes } = this.state;
 
-    const subthemeAttributes = this.state.allAttributes.reduce((attributes, attribute) => {
-      if (attribute['sub_theme_id'] === subthemeId) {
-        attributes.push(attribute['name']);
+    const alreadySelected = (subthemeId === selectedSubtheme);
+    let newSelectedAttributes = selectedAttributes;
+
+    // if this subtheme wasn't already selected...
+    if (!alreadySelected) {
+
+      // ... and if there are already attributes selected
+      if (selectedAttributes.length) {
+
+        // make sure the selected attributes are children of the selected subthemes
+        newSelectedAttributes = selectedAttributes.filter((attributeName) => {
+          const attributeSubthemeId = allAttributes.find((attr) => attr['name'] === attributeName)['sub_theme_id'];
+
+          return attributeSubthemeId === subthemeId
+        })
       }
-      return attributes
-    }, []);
+    }
 
-    this.props.setWidgetQueryProperty('attributedata', subthemeAttributes.join())
+    this.setState({
+      selectedSubtheme: (alreadySelected) ? null : subthemeId,
+      selectedAttributes: newSelectedAttributes,
+    }, this.setQueryParams)
+  };
+
+  handleAttributeClick = (e, attributeName) => {
+    const { selectedAttributes } = this.state;
+
+    this.setState((prevState) => ({
+      selectedAttributes: (selectedAttributes.indexOf(attributeName) > -1) ? prevState.selectedAttributes.filter(name => name !== attributeName) : [...prevState.selectedAttributes, attributeName],
+    }), this.setQueryParams);
+  };
+
+  setQueryParams = () => {
+    const { selectedAttributes } = this.state;
+    const { setWidgetQueryProperty } = this.props;
+
+    setWidgetQueryProperty('attributedata', selectedAttributes.join())
   };
 
   render() {
     const { classes, editor } = this.props;
-    const { selectedThemes, selectedSubtheme, allSubthemes } = this.state;
+    const { selectedThemes, selectedSubtheme, selectedAttributes, allSubthemes, allAttributes } = this.state;
 
     const themeCheckboxes = editor.themeTree.map((theme, i) => {
       return (
@@ -132,18 +201,14 @@ class DataConfig extends React.Component {
     });
 
     const getSubthemeListItems = () => {
-      let subthemes = [];
+      let possibleSubthemes = allSubthemes;
 
-      // if no theme is selected show all subthemes
-      if (!selectedThemes.length) {
-        subthemes = allSubthemes;
-
-      // filter available subthemes based on selected theme(s)
-      } else {
-        subthemes = allSubthemes.filter((subtheme) => selectedThemes.includes(subtheme['Theme id']))
+      // if any themes are selected filter the possible subthemes based on the selected themes
+      if (selectedThemes.length) {
+        possibleSubthemes = allSubthemes.filter((subtheme) => selectedThemes.includes(subtheme['Theme id']))
       }
 
-      return subthemes.map((subtheme, i) => <ListItem
+      return possibleSubthemes.map((subtheme, i) => <ListItem
         key={i}
         button
         selected={selectedSubtheme === subtheme['id']}
@@ -154,6 +219,34 @@ class DataConfig extends React.Component {
         </ListItemIcon>
         <ListItemText>
           {subtheme['Name']}
+        </ListItemText>
+      </ListItem>)
+    };
+
+    const getAttributeListItems = () => {
+      let possibleAttributes = allAttributes;
+
+      // if any themes are selected filter the possible attributes based on the selected themes
+      if (selectedThemes.length) {
+        possibleAttributes = possibleAttributes.filter((attr) => selectedThemes.includes(attr['theme_id']))
+      }
+
+      // if a subtheme is selected filter the possible attributes based on the selected subtheme
+      if (selectedSubtheme) {
+        possibleAttributes = possibleAttributes.filter((attr) =>  attr['sub_theme_id'] === selectedSubtheme)
+      }
+
+      return possibleAttributes.map((attribute, i) => <ListItem
+        key={i}
+        button
+        selected={selectedAttributes.indexOf(attribute['name']) > -1}
+        onClick={(e) => this.handleAttributeClick(e, attribute['name'])}
+      >
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText>
+          {attribute['name']}
         </ListItemText>
       </ListItem>)
     };
@@ -170,10 +263,21 @@ class DataConfig extends React.Component {
         </FormControl>
         <Divider />
         <List
+          className={classes.listHeightLimit}
           component="nav"
           dense
         >
+          <ListSubheader>Filter attributes by subtheme</ListSubheader>
           {getSubthemeListItems()}
+        </List>
+        <Divider />
+        <List
+          className={classes.listHeightLimit}
+          component="nav"
+          dense
+        >
+          <ListSubheader>Available attributes</ListSubheader>
+          {getAttributeListItems()}
         </List>
       </FormGroup>
     )
