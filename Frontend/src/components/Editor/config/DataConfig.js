@@ -48,6 +48,7 @@ class DataConfig extends React.Component {
       selectedAttributes: [],
       allSubthemes: [],
       allAttributes: [],
+      attributeData: "",
     };
 
     props.getThemeTree();
@@ -94,6 +95,7 @@ class DataConfig extends React.Component {
         selectedAttributes,
         allSubthemes,
         allAttributes,
+        attributeData: (editor.widget.queryParams && editor.widget.queryParams['attributedata']) ? editor.widget.queryParams['attributedata'] : "",
       })
     }
   }
@@ -174,10 +176,18 @@ class DataConfig extends React.Component {
   };
 
   setQueryParams = () => {
-    const { selectedAttributes } = this.state;
+    const { selectedAttributes, attributeData } = this.state;
     const { setWidgetQueryProperty } = this.props;
 
-    setWidgetQueryProperty('attributedata', selectedAttributes.join())
+    const newAttributeData = selectedAttributes.join();
+
+    if (newAttributeData !== attributeData) {
+      this.setState({
+        attributeData: newAttributeData
+      }, () => setWidgetQueryProperty('attributedata', selectedAttributes.join()))
+    }
+
+    //setWidgetQueryProperty('attributedata', selectedAttributes.join())
   };
 
   render() {
