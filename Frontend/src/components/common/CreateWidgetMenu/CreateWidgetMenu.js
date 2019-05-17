@@ -54,7 +54,7 @@ class CreateWidgetMenu extends React.Component {
 
     const payload = { type };
 
-    if (mode === "edit") {
+    if (mode === "add") {
       payload.queryParams = {
         attributedata: (dataTable.activeTabAttribute) ? dataTable.activeTabAttribute.name: dataTable.data[0]['Attribute_Name'],
       };
