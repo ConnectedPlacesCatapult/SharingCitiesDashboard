@@ -99,7 +99,7 @@ module.exports = {
     widgetName: "New Widget",
     widgetDescription: "",
     widgetType: "plot",
-    widgetWidth: 200,
+    widgetWidth: 300,
     widgetHeight: 200,
     widgetIsStatic: false,
   },

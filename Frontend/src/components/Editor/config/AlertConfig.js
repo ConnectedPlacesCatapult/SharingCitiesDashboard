@@ -4,6 +4,7 @@ import {
   Divider,
   FormControl,
   FormGroup,
+  FormLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -23,7 +24,7 @@ const styles = (theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  divider: {
+  spacer: {
     margin: `${theme.spacing.unit}px 0`,
   },
   formControl: {
@@ -53,7 +54,11 @@ class AlertConfig extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchAlert()
+    const { editor } = this.props;
+
+    if (editor.mode === "edit") {
+      this.checkAlertStatus();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -83,46 +88,35 @@ class AlertConfig extends React.Component {
     }
   }
 
-  fetchAlert() {
-    const { editor } = this.props;
-
-    editor.fetching = true;
-
-    const requestData = {
-      user_id: getUserID(),
-      attribute_id: editor.widget.config.attributeId,
-      widget_id: editor.widget.i,
-    };
+  checkAlertStatus() {
+    const { editor, setWidgetConfigProperty } = this.props;
 
     axiosInstance
-      .get('/alert/get_alerts', { params: requestData })
-      .then((response) => {
-        editor.fetching = false;
-
-        // check for differences between widget alert and actual alert
-        // update editor.widget.config if so
-        if (response.data[0].attribute_id !== editor.widget.config.attributeId) {
-          editor.widget.config.attributeId = response.data[0].attribute_id
-        }
-
-        if (response.data[0].min_threshold.toString() !== editor.widget.config.minThreshold.toString()) {
-          editor.widget.config.minThreshold = response.data[0].min_threshold
-        }
-
-        if (response.data[0].max_threshold.toString() !== editor.widget.config.maxThreshold.toString()) {
-          editor.widget.config.maxThreshold = response.data[0].max_threshold
-        }
-
-        if (response.data[0].activated.toString() !== editor.widget.config.activated.toString()) {
-          editor.widget.config.activated = response.data[0].activated
-        }
-
-        this.setState({
-          alert: response.data[0],
-        })
+      .get('alert/check_alerts', {
+        params: {
+          attribute_id: editor.widget.config.attributeId,
+          user_id: getUserID(),
+        },
       })
-      .catch((error) => {
-        this.setState({ error})
+      .then((response) => {
+        if (response.data[editor.widget.config.type].length) {
+          const triggeredAlert = response.data[editor.widget.config.type].find((alert) => alert.id === editor.widget.config.alertId);
+
+          if (triggeredAlert) {
+            const triggerEvent = {
+              ...editor.widget.config.triggerEvent,
+              message: triggeredAlert['type'],
+              value: triggeredAlert['value'],
+              timestamp: triggeredAlert['timestamp'],
+            };
+
+            setWidgetConfigProperty("triggered", true);
+            setWidgetConfigProperty("triggerEvent", triggerEvent);
+          }
+        }
+      })
+      .catch((err) => {
+        this.setState({ error: err.response })
       })
   }
 
@@ -138,11 +132,10 @@ class AlertConfig extends React.Component {
 
     const attributeMenuItems = attributes.map((attribute, i) => <MenuItem key={i} value={attribute.id}>{attribute.name}</MenuItem>);
 
+    // ToDo :: need to add "reset alert" functionality
     return (
       <FormGroup className={classes.root}>
-
-        <Divider className={classes.divider} />
-
+        <Divider className={classes.spacer} />
         <FormControl className={classes.formControl} htmlFor="alert-attribute">
           <InputLabel htmlFor="alert-attribute">Attribute to track</InputLabel>
           <Select
@@ -157,22 +150,27 @@ class AlertConfig extends React.Component {
             {attributeMenuItems}
           </Select>
         </FormControl>
-
-        <Divider className={classes.divider} />
-
+        <Divider className={classes.spacer} />
+        <FormLabel>Type</FormLabel>
+        <FormControl htmlFor="alert-type">
+          <Select
+            label="type"
+            value={editor.widget.config.type}
+            onChange={this.setAlertConfigProperty('type')}
+            inputProps={{
+              name: 'alertType',
+              id: 'alert-type',
+            }}
+          >
+            <MenuItem value="max">Maximum threshold</MenuItem>
+            <MenuItem value="min">Minimum threshold</MenuItem>
+          </Select>
+        </FormControl>
+        <Divider className={classes.spacer} />
         <TextField
-          label="Minimum threshold"
-          value={editor.widget.config.minThreshold ? editor.widget.config.minThreshold: ''}
-          onChange={this.setAlertConfigProperty('minThreshold')}
-          margin="normal"
-        />
-
-        <Divider className={classes.divider} />
-
-        <TextField
-          label="Maximum threshold"
-          value={editor.widget.config.maxThreshold ? editor.widget.config.maxThreshold: ''}
-          onChange={this.setAlertConfigProperty('maxThreshold')}
+          label="Threshold value"
+          value={editor.widget.config.value}
+          onChange={this.setAlertConfigProperty('value')}
           margin="normal"
         />
       </FormGroup>

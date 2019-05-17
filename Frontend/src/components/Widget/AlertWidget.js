@@ -8,6 +8,8 @@ import {
   TableRow,
   withStyles,
 } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { saveWidget } from './../../actions/editorActions';
 import { axiosInstance } from './../../api/axios';
 import { getUserID } from './../../api/session';
 import WidgetWrapper from './WidgetWrapper';
@@ -15,14 +17,14 @@ import WidgetWrapper from './WidgetWrapper';
 const styles = (theme) => ({
   root: {
     transition: 'all 0.2s ease',
-    //width: 'auto',
-    //height: '100%',
-    //maxWidth: 0,
-    //maxHeight: 0,
     overflow: 'hidden',
   },
   cellValue: {
     color: theme.palette.primary.main,
+    textAlign: 'right',
+  },
+  cellTriggered: {
+    color: theme.palette.secondary.main,
     textAlign: 'right',
   },
 });
@@ -30,7 +32,6 @@ const styles = (theme) => ({
 class AlertWidget extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    theme: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     width: PropTypes.number.isRequired,
@@ -50,22 +51,28 @@ class AlertWidget extends React.Component {
       attributes: [],
     };
 
-    this.eventSource = null;
+    this.intervalTimer = null;
   }
 
   componentDidMount() {
     this.getAllAttributes();
-    this.connectToSSE();
   }
 
   componentWillUnmount() {
-    if (this.eventSource) {
-      this.eventSource.close();
-      this.eventSource = null;
-    }
+    this.killTimer(this.intervalTimer)
   }
 
+  killTimer = (timer) => {
+    if (timer) {
+      clearInterval(timer);
+
+      timer = null;
+    }
+  };
+
   getAllAttributes = () => {
+    const { config } = this.props;
+
     this.setState({ loading: true });
 
     axiosInstance
@@ -74,6 +81,14 @@ class AlertWidget extends React.Component {
         this.setState({
           attributes: response.data,
           loading: false,
+        }, () => {
+
+          // no need to check status if alert is already triggered
+          if (config.triggered.toString() === "false") {
+            this.intervalTimer = setInterval(this.checkAlertStatus, 10000);
+
+            this.checkAlertStatus()
+          }
         })
       })
       .catch((error) => {
@@ -85,33 +100,62 @@ class AlertWidget extends React.Component {
     ;
   };
 
-  connectToSSE() {
-    if (this.eventSource === null) {
-      const apiUrl = `${process.env.API_HOST}`;
-      const path = '/alert/triggered';
-      const userID = getUserID();
-      const args = `?user_id=${userID}`;
+  checkAlertStatus = () => {
+    const { i, type, name, description, isStatic, width, height, w, h, config, queryParams, saveWidget } = this.props;
 
-      this.eventSource = new EventSource(`${apiUrl}${path}${args}`);
-      this.eventSource.onerror = (err) => {
-        console.log(err);
-      };
-      this.eventSource.onmessage = (e) => {
-        console.log(e);
+    axiosInstance
+      .get('/alert/check_alerts', {
+        params: {
+          attribute_id: config.attributeId,
+          user_id: getUserID(),
+        }
+      })
+      .then((response) => {
+        if (response.data[config.type].length) {
+          const triggeredAlert = response.data[config.type].find((alert) => alert.id === config.alertId);
 
-        // ToDo :: handle the updated widget state here. Currently I'm not aware of the response format
-      }
-    }
+          if (triggeredAlert) {
+
+            // kill the timer
+            this.killTimer(this.intervalTimer);
+
+            // rebuild a widget object with the updated alert info
+            const widget = {
+              type,
+              name,
+              description,
+              width,
+              height,
+              w,
+              h,
+              isStatic,
+              config: {
+                ...config,
+                triggered: true,
+                triggerEvent: {
+                  ...config.triggerEvent,
+                  message: triggeredAlert['type'],
+                  value: triggeredAlert['value'],
+                  timestamp: triggeredAlert['timestamp'],
+                }
+              },
+              queryParams,
+              i,
+            };
+
+            // get the editor to save it in "edit" mode
+            saveWidget('edit', widget)
+          }
+        }
+      })
+      .catch((err) => {
+        this.setState({ error: err.response })
+      })
   };
 
   render() {
-    const { classes, theme, i, type, name, description, isStatic, width, height, config, queryParams } = this.props;
-    const { loading, error } = this.state;
-
-    const tableStyles = {
-      //width: `${width}px`,
-      //height: `${height}px`,
-    };
+    const { classes, i, type, name, description, isStatic, width, height, w, h, config, queryParams } = this.props;
+    const { loading } = this.state;
 
     const getAttributeNameFromId = (attributeId) => {
       const { attributes } = this.state;
@@ -130,28 +174,33 @@ class AlertWidget extends React.Component {
         isStatic={isStatic}
         width={width}
         height={height}
+        w={w}
+        h={h}
         config={config}
         queryParams={queryParams}
       >
         <Fade in={!loading} mountOnEnter>
-          <Table className={classes.root} padding="none" style={tableStyles}>
+          <Table className={classes.root} padding="none">
             <TableBody>
               <TableRow>
-                <TableCell component="th" scope="row">Attribute</TableCell>
+                <TableCell component="th" scope="row">Watched attribute</TableCell>
                 <TableCell className={classes.cellValue}>{getAttributeNameFromId(config.attributeId)}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell component="th" scope="row">Minimum threshold</TableCell>
-                <TableCell className={classes.cellValue}>{config.minThreshold}</TableCell>
+                <TableCell component="th" scope="row">Alert type</TableCell>
+                <TableCell className={classes.cellValue}>{config.type} threshold</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell component="th" scope="row">Maximum threshold</TableCell>
-                <TableCell className={classes.cellValue}>{config.maxThreshold}</TableCell>
+                <TableCell component="th" scope="row">Threshold value</TableCell>
+                <TableCell className={classes.cellValue}>{config.value}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell component="th" scope="row">Activated</TableCell>
-                <TableCell className={classes.cellValue}>{config.activated.toString()}</TableCell>
-              </TableRow>
+                <TableCell component="th" scope="row">Status</TableCell>
+                {config.triggered.toString() === 'true'
+                  ? <TableCell className={classes.cellTriggered}>{config.triggerEvent.message}<br />at {config.triggerEvent.timestamp}</TableCell>
+                  : <TableCell className={classes.cellValue}>active</TableCell>
+                }
+            </TableRow>
             </TableBody>
           </Table>
         </Fade>
@@ -160,6 +209,11 @@ class AlertWidget extends React.Component {
   }
 }
 
-AlertWidget = withStyles(styles, { withTheme: true })(AlertWidget);
+const mapDispatchToProps  = (dispatch) => ({
+  saveWidget: (mode, widget) => dispatch(saveWidget(mode, widget)),
+});
+
+AlertWidget = withStyles(styles)(AlertWidget);
+AlertWidget = connect(null, mapDispatchToProps)(AlertWidget);
 
 export default AlertWidget
