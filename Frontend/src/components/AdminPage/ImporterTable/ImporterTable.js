@@ -159,7 +159,6 @@ class ImporterTable extends React.Component {
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
           />
         </Paper>
-        }
         <Modal open={this.state.importerLogsModalOpen} onClose={this.handleImporterLogsClose} disableAutoFocus={true}>
           <ImporterLogsModal selectedImporter={this.state.selectedImporter} onCloseClick={this.handleImporterLogsClose}></ImporterLogsModal>
         </Modal>

@@ -146,7 +146,6 @@ class Milan_API_sensori_meteo(BaseImporter):
         Get Import configurations
         Instantiate BaseImporter
         """
-        self.get_config()
         self.BASE_URL += 'data_inizio={0}%2000%3A00%3A01&data_fine={1}%2000%3A00%3A01'.format(
             (datetime.now() - timedelta(1)).strftime('%Y-%m-%d'), datetime.now().strftime('%Y-%m-%d'))
         super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME, self.API_KEY, self.API_CLASS,

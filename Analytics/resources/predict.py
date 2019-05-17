@@ -26,11 +26,17 @@ def predict(values, timestamp, n_pred):
 
     #### if freq = None then default to 1H
     if not pred_freq:
-        pred_freq = '1H'
 
+        #### backup frequency inference if pandas can't figure it out 
+        averaged_df = df.groupby('api_timestamp').mean()
+        res = (pd.Series(averaged_df.index[1:]) - pd.Series(averaged_df.index[:-1])).value_counts()
+        pred_freq = pd.tseries.frequencies.to_offset(res.index[0]).freqstr
+
+        #### last resort backup: default to 1H
+        if not pred_freq:
+            pred_freq = '1H'
 
     #### try prophet forecasting engine
-
     forecasting_engine = 'Prophet'
 
     #### resample to make predictions consistent.
@@ -70,9 +76,10 @@ def predict(values, timestamp, n_pred):
     #### Gather the forecasted values
 
     temp = []
-    pred_timestamps = forecast.ds.values[len(df)-n_pred:len(df)]
+    num_results = len(forecast.ds)
+    pred_timestamps = forecast.ds.values[num_results-n_pred:num_results]
 
-    for i, j in enumerate(range(len(df)-n_pred,len(df))):
+    for i, j in enumerate(range(num_results-n_pred,num_results)):
         temp.append({
             'Value': np.round(forecast.yhat.values[j],3),
             'Value_Upper':  np.round(forecast.yhat_upper.values[j],3),
