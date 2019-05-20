@@ -13,6 +13,7 @@ RUN mkdir /Analytics/settings
 COPY /Frontend/package*.json /Frontend/
 WORKDIR /Frontend
 RUN npm i --save
+RUN npm i --save react-container-dimensions
 RUN npm install -g serve
 
 # Build the Node app
