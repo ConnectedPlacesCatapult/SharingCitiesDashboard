@@ -95,7 +95,7 @@ class OptionsSidePanel extends React.Component {
               mode="add"
               anchorEl={createWidgetMenuAnchorEl}
               onClose={this.handleCloseCreateWidgetMenu}
-              enableAlert={true}
+              enableAlert={false}
               enableForecast={true}
             />
             <Button
