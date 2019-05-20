@@ -8,11 +8,11 @@ function getApiAddress() {
     read -p "Is this correct? $api_address [y/N]: " -n 1 -r
     echo    # (optional) move to a new line
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo "Inserting API address into code..."
+        echo "  - Inserting API address into code..."
         sed -i '' -e 's@<<api-address>>@'$api_address'@g' ../../Frontend/fcc.config.js
         sed -i '' -e 's@<<api-address>>@'$api_address'@g' ../../Frontend/src/api/axios.js
         sed -i '' -e 's@<<api-address>>@'$api_address'@g' ../../Frontend/src/api/urls.js
-        touch ~/api_address && echo $api_address > ~/api_address
+        touch ./api_address && echo $api_address > ./api_address
     else
         # Exit if no API address provided
         echo "Cannot continue without an API address!"
@@ -21,17 +21,17 @@ function getApiAddress() {
 }
 
 # Check if API details exist
-if [ ! -f ~/api_address ]; then
+if [ ! -f ./api_address ]; then
     # Collect API address
     getApiAddress
 else
     # Confirm existing API address is correct
-    api_address="$(cat ~/api_address)"
+    api_address="$(cat ./api_address)"
     read -p "Is this address still correct? $api_address [y/N]: " -n 1 -r
     echo    # (optional) move to a new line
     if [[ $REPLY =~ ^[Nn]$ ]]; then
         # Remove API address file
-        rm ~/api_address
+        rm ./api_address
         # Collect new API address
         getApiAddress
     fi
@@ -54,13 +54,13 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "  - Creating ui-deployment.yaml file..."
     cp ./ui-template.yaml ./ui-deployment.yaml
     # Update file
-    echo "Updating UI deployment file..."
+    echo "  - Updating UI deployment file..."
     sed -i '' -e 's@<<ui-image-details>>@'$ui_image_details'@g' ./ui-template.yaml
     # Build and tag Dockerfile
-    echo "Building UI Dockerfile..."
+    echo "  - Building UI Dockerfile..."
     docker build -f Dockerfile-UI -t $ui_image_details ../../
     # Push UI docker image
-    echo "Pushing UI Docker image..."
+    echo "  - Pushing UI Docker image..."
     docker push $ui_image_details
 
     # Confirm deployment with user

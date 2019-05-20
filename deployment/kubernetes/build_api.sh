@@ -16,13 +16,13 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "  - Creating api-deployment.yaml file..."
     cp ./api-template.yaml ./api-deployment.yaml
     # Update file
-    echo "Updating API deployment file..."
+    echo "  - Updating API deployment file..."
     sed -i '' -e 's@<<api-image-details>>@'$api_image_details'@g' ./api-deployment.yaml
     # Build and tag Dockerfile
-    echo "Building API Dockerfile..."
+    echo "  - Building API Dockerfile..."
     docker build -f Dockerfile-API -t $api_image_details ../../
     # Push API docker image
-    echo "Pushing API Docker image..."
+    echo "  - Pushing API Docker image..."
     docker push $api_image_details
 
     # Confirm deployment with user
