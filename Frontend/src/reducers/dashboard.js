@@ -7,7 +7,8 @@ import {
   UPDATE_LAYOUT,
   FETCH_WIDGETS,
   FETCH_WIDGETS_FULFILLED,
-  FETCH_WIDGETS_REJECTED
+  FETCH_WIDGETS_REJECTED,
+  SAVE_LAYOUT_FULFILLED
 } from "./../constants";
 
 const initialState = {
@@ -18,7 +19,7 @@ const initialState = {
   fetching: false,
   fetched: false,
   error: null,
-  layoutChanged: false
+  layoutChanged: false,
 };
 
 export default (state=initialState, action={}) => {
@@ -61,6 +62,13 @@ export default (state=initialState, action={}) => {
         fetching: false,
         fetched: false,
         error: action.payload,
+      }
+    }
+
+    case SAVE_LAYOUT_FULFILLED: {
+      return {
+        ...state,
+        layoutChanged: false
       }
     }
 
