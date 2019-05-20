@@ -92,6 +92,7 @@ class OptionsSidePanel extends React.Component {
               Export Data
             </Button>
             <CreateWidgetMenu
+              useDataTable={true}
               mode="add"
               anchorEl={createWidgetMenuAnchorEl}
               onClose={this.handleCloseCreateWidgetMenu}

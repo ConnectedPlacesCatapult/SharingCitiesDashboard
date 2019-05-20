@@ -89,8 +89,6 @@ export const saveWidget = (mode, widget) => {
 
     axiosInstance.post("widgets/create_widget", requestData).then((response) => {
 
-      console.log('requestData', requestData)
-
       // hold off on updating dashboard if this is an alert widget - there's more to be done
       if (widget.type !== WIDGET_TYPE_ALERT) {
         dispatch(fetchWidgets());
@@ -103,12 +101,12 @@ export const saveWidget = (mode, widget) => {
       });
 
       // handle adding or updating alerts for alert widgets
+      // ToDo :: if updating alert widget from actual widget component no need to update the alert itself
       if (widget.type === WIDGET_TYPE_ALERT) {
         const alertPayload = {
-          activated: widget.config.activated,
+          activated: widget.config.triggered,
           attribute_id: widget.config.attributeId,
-          max_threshold: widget.config.maxThreshold,
-          min_threshold: widget.config.minThreshold,
+          [widget.config.type === "max" ? "max_threshold" : "min_threshold"]: widget.config.value,
         };
 
         let alertEndpoint = "/alert";

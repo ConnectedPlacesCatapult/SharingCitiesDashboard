@@ -59,7 +59,7 @@ export default (state=initialState, action={}) => {
     case EDITOR_SAVE_WIDGET_FULFILLED: {
       return {
         ...state,
-        message: 'Widget Saved and Added to Dashboard',
+        message: 'Widget Saved',
         showAlert: true,
         variant: 'successNotification'
       }

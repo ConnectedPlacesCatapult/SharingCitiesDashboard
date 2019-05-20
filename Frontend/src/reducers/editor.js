@@ -29,7 +29,6 @@ const getWidgetDefaultProperties = (currentProperties) => {
   const { type } = currentProperties;
 
   const defaultProperties = {
-    ...currentProperties,
     name: FCC_CONFIG.widgetEditorDefaults.widgetName,
     description: FCC_CONFIG.widgetEditorDefaults.widgetDescription,
     width: FCC_CONFIG.widgetEditorDefaults.widgetWidth,
@@ -37,6 +36,7 @@ const getWidgetDefaultProperties = (currentProperties) => {
     isStatic: FCC_CONFIG.widgetEditorDefaults.widgetIsStatic,
     config: {},
     queryParams: {},
+    ...currentProperties,
   };
 
   switch (type) {
@@ -50,9 +50,14 @@ const getWidgetDefaultProperties = (currentProperties) => {
           ...defaultProperties.config,
           alertId: null,
           attributeId: null,
-          activated: true,
-          maxThreshold: null,
-          minThreshold: null,
+          triggered: false,
+          triggerEvent: {
+            message: "",
+            value: null,
+            timestamp: null,
+          },
+          type: "max",
+          value: 0,
         },
       }
     }
