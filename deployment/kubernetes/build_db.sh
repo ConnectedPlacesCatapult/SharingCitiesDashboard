@@ -11,7 +11,7 @@ db_image_details=$reg_address"db:"$db_version
 echo "NB: Please check and confirm value, this will build and push the DB dockerfile!"
 read -p "Is this correct? $db_image_details [y/N]: " -n 1 -r
 echo    # (optional) move to a new line
-if [[ $REPLY =~ ^[Yy]$ ]] then
+if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Create the deployment file
     echo "  - Creating db-deployment.yaml file..."
     cp ./db-template.yaml ./db-deployment.yaml
@@ -28,7 +28,7 @@ if [[ $REPLY =~ ^[Yy]$ ]] then
     # Confirm deployment with user
     read -p "Do you want to deploy/update the DB? $db_image_details [y/N]: " -n 1 -r
     echo    # (optional) move to a new line
-    if [[ $REPLY =~ ^[Yy]$ ]] then
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
         # Apply the file
         echo "  - Deploying the DB file..."
         kubectl apply -f ./db-deployment.yaml
@@ -36,13 +36,13 @@ if [[ $REPLY =~ ^[Yy]$ ]] then
         # Confirm file removal with user
         read -p "Do you want to remove the generated file? (db-deployment.yaml) [y/N]: " -n 1 -r
         echo    # (optional) move to a new line
-        if [[ $REPLY =~ ^[Yy]$ ]] then
-          echo "  - Removing db-deployment.yaml file..."
-          rm ./db-deployment.yaml
-        elif [[ $REPLY =~ ^[Nn]$ ]] then
-          cleaned_version=${db_version//./_}
-          echo "  - Renaming file to ./db-deployment$cleaned_version.yaml ..."
-          mv ./db-deployment ./db-deployment$cleaned_version.yaml
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            echo "  - Removing db-deployment.yaml file..."
+            rm ./db-deployment.yaml
+        elif [[ $REPLY =~ ^[Nn]$ ]]; then
+            cleaned_version=${db_version//./_}
+            echo "  - Renaming file to ./db-deployment$cleaned_version.yaml ..."
+            mv ./db-deployment ./db-deployment$cleaned_version.yaml
         fi
         # User cancelled/chose "No"
     fi
