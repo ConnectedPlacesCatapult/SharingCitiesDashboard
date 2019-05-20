@@ -78,7 +78,7 @@ class Dashboard extends React.Component {
 
   layoutChanged() {
     const { dashboard, classes } = this.props;
-    if (dashboard && dashboard.layoutChanged === true) {
+    if (dashboard && dashboard.layoutChanged === true && dashboard.widgets.length > 0) {
       return <Button
         variant="contained"
         color="primary"

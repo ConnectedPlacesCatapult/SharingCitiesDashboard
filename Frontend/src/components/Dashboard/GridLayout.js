@@ -41,6 +41,7 @@ class GridLayout extends React.Component {
     this.state = {
       layout: props.dashboard.layout,
       widgets: props.dashboard.widgets,
+      firstPageLoad: true
     };
 
     props.fetchWidgets();
@@ -58,8 +59,13 @@ class GridLayout extends React.Component {
   }
 
   onLayoutChange(layout) {
+    const { firstPageLoad } = this.state;
     const { updateLayout } = this.props;
-    updateLayout(layout);
+    if (firstPageLoad === true) {
+      this.setState({ firstPageLoad: false })
+    } else {
+      updateLayout(layout);
+    }
   }
 
   render() {
