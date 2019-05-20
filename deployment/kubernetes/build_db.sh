@@ -2,10 +2,8 @@
 
 # Get Container registry details
 read -p "Enter DB Container Registry Address: " reg_address
-
 # Get Container Image version
 read -p "Enter DB Image Version: " db_version
-
 # Set Image details value
 db_image_details=$reg_address"db:"$db_version
 
