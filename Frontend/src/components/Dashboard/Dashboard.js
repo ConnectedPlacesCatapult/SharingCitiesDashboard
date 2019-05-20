@@ -41,6 +41,7 @@ const styles = (theme) => ({
 class Dashboard extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    useDataTable: PropTypes.bool.isRequired,
     editor: PropTypes.object.isRequired,
     closeEditor: PropTypes.func.isRequired,
   };
@@ -78,7 +79,7 @@ class Dashboard extends React.Component {
 
   layoutChanged() {
     const { dashboard, classes } = this.props;
-    if (dashboard && dashboard.layoutChanged === true) {
+    if (dashboard && dashboard.layoutChanged === true && dashboard.widgets.length > 0) {
       return <Button
         variant="contained"
         color="primary"
@@ -103,6 +104,7 @@ class Dashboard extends React.Component {
           <GridLayout />
           <div className={classes.createWidgetContainer}>
             <CreateWidgetMenu
+              useDataTable={false}
               mode="add"
               anchorEl={createWidgetMenuAnchorEl}
               onClose={this.handleCloseCreateWidgetMenu}

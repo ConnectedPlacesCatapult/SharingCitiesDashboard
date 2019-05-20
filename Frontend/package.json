@@ -30,6 +30,7 @@
     "moment": "^2.24.0",
     "prop-types": "^15.7.1",
     "react": "^16.6.0",
+    "react-container-dimensions": "^1.4.1",
     "react-dom": "^16.6.0",
     "react-grid-layout": "^0.16.6",
     "react-leaflet": "^2.1.1",
