@@ -30,7 +30,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo    # (optional) move to a new line
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         # Apply the file
-        echo "  - Deploying the DB file..."
+        echo "  - Deploying the API file..."
         kubectl apply -f ./api-deployment.yaml
 
         # Confirm file removal with user
