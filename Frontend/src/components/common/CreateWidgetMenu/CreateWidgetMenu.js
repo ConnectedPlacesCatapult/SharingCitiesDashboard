@@ -48,15 +48,15 @@ class CreateWidgetMenu extends React.Component {
   }
 
   handleTypeClicked = (type) => {
-    const { mode, onClose, openEditor, dataTable } = this.props;
+    const { mode, onClose, openEditor, dataTable, useDataTable } = this.props;
 
     onClose();
 
     const payload = { type };
 
-    if (mode === "add") {
+    if (mode === "add" && useDataTable) {
       payload.queryParams = {
-        attributedata: (dataTable.activeTabAttribute) ? dataTable.activeTabAttribute.name: dataTable.data[0]['Attribute_Name'],
+        attributedata: (dataTable.activeTabAttribute) ? dataTable.activeTabAttribute.name : dataTable.data[0]['Attribute_Name'],
       };
     }
 
