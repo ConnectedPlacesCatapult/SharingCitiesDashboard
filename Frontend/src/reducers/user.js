@@ -9,19 +9,38 @@ import {
   LOGIN_REJECTED,
   REGISTER_FULFILLED,
   REGISTER_REJECTED,
-  RESET_STATE
+  RESET_STATE,
+  SHOW_CHANGE_PASSWORD,
+  HIDE_CHANGE_PASSWORD,
+  PASSWORD_CHANGE_FULFILLED,
+  PASSWORD_CHANGE_REJECTED
 } from './../constants';
 
 const initialState = {
   isAuthenticated: false,
   user: {},
   loginMessage: '',
-  loginError: ''
+  loginError: '',
+  showChangePassword: false
 };
 
 export default (state=initialState, action={}) => {
 
   switch(action.type) {
+
+    case SHOW_CHANGE_PASSWORD: {
+      return {
+        ...state,
+        showChangePassword: true,
+      }
+    }
+
+    case HIDE_CHANGE_PASSWORD: {
+      return {
+        ...state,
+        showChangePassword: false,
+      }
+    }
 
     case SET_CURRENT_USER: {
       return {
@@ -68,6 +87,20 @@ export default (state=initialState, action={}) => {
       return {
         loginMessage: '',
         loginError: action.payload.response.data.message
+      }
+    }
+
+    case PASSWORD_CHANGE_FULFILLED: {
+      return {
+        loginMessage: 'Your password was successfully changed. Please login with your new credentials',
+        loginError: ''
+      }
+    }
+
+    case PASSWORD_CHANGE_REJECTED: {
+      return {
+        loginMessage: '',
+        loginError: 'There was a problem changing your password'
       }
     }
 
