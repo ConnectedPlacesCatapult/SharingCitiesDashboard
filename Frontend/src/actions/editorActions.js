@@ -92,7 +92,9 @@ export const saveWidget = (mode, widget) => {
       // hold off on updating dashboard if this is an alert widget - there's more to be done
       if (widget.type !== WIDGET_TYPE_ALERT) {
         dispatch(fetchWidgets());
-        dispatch(fetchLayout());
+        setTimeout(() => {
+          dispatch(fetchLayout());
+        }, 100)
       }
 
       dispatch({
@@ -146,7 +148,9 @@ export const saveWidget = (mode, widget) => {
                 .then((response) => {
                   // both widget and it's alert are now up to date
                   dispatch(fetchWidgets());
-                  dispatch(fetchLayout());
+                  setTimeout(() => {
+                    dispatch(fetchLayout());
+                  }, 100)
                 })
                 .catch((error) => {
                   dispatch({
@@ -157,7 +161,9 @@ export const saveWidget = (mode, widget) => {
               ;
             } else {
               dispatch(fetchWidgets());
-              dispatch(fetchLayout());
+              setTimeout(() => {
+                dispatch(fetchLayout());
+              }, 100)
             }
           })
           .catch((error) => {
