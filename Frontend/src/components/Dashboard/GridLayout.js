@@ -15,6 +15,7 @@ import PlotWidget from './../Widget/PlotWidget';
 
 import './../../../node_modules/react-grid-layout/css/styles.css';
 import './../../../node_modules/react-resizable/css/styles.css';
+import {HIDE_NOTIFICATION} from "../../constants";
 
 const ReactGridLayout = RGL;
 
@@ -37,6 +38,8 @@ class GridLayout extends React.Component {
     super(props);
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
+    this.onDragStop = this.onDragStop.bind(this);
+    this.onResizeStop = this.onResizeStop.bind(this);
 
     this.state = {
       layout: props.dashboard.layout,
@@ -45,7 +48,10 @@ class GridLayout extends React.Component {
     };
 
     props.fetchWidgets();
-    props.fetchLayout();
+
+    setTimeout(() => {
+      props.fetchLayout();
+    }, 100)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -66,6 +72,16 @@ class GridLayout extends React.Component {
     } else {
       updateLayout(layout);
     }
+  }
+
+  onDragStop(layout) {
+    const { updateLayout } = this.props;
+    updateLayout(layout);
+  }
+
+  onResizeStop(layout) {
+    const { updateLayout } = this.props;
+    updateLayout(layout);
   }
 
   render() {
@@ -95,7 +111,9 @@ class GridLayout extends React.Component {
         cols={12}
         rowHeight={30}
         width={1200}
-        onLayoutChange={this.onLayoutChange}
+        // onLayoutChange={this.onLayoutChange}
+        onResizeStop={this.onResizeStop}
+        onDragStop={this.onDragStop}
         className={classes.gridLayout}
         draggableHandle='.draggableHandle'
       >
