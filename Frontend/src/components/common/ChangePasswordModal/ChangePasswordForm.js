@@ -9,7 +9,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
-import LoginMessage from './../../LoginPage/LoginMessage'
+import PasswordChangeMessage from './PasswordChangeMessage'
 
 import { doPasswordChange } from "../../../actions/userActions";
 
@@ -66,7 +66,7 @@ class ChangePasswordForm extends React.Component {
   };
 
   render() {
-    const { password, passwordNew, confirmPasswordNew, errors, isLoading, registrationFailed, registrationError } = this.state;
+    const { password, passwordNew, confirmPasswordNew, errors, isLoading, registrationFailed, registrationError, user } = this.state;
     const { classes } = this.props;
 
     return (
@@ -108,7 +108,7 @@ class ChangePasswordForm extends React.Component {
           />
         </FormControl>
 
-        { registrationFailed ? <div><Typography color="error">{registrationError}</Typography></div> : null}
+        <PasswordChangeMessage/>
 
         <Button
           type="submit"

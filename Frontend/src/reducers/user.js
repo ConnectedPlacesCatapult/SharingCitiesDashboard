@@ -99,6 +99,7 @@ export default (state=initialState, action={}) => {
 
     case PASSWORD_CHANGE_REJECTED: {
       return {
+        ...state,
         loginMessage: '',
         loginError: 'There was a problem changing your password'
       }
@@ -106,6 +107,7 @@ export default (state=initialState, action={}) => {
 
     case CLEAR_LOGIN_ERRORS: {
       return {
+        ...state,
         loginMessage: '',
         loginError: ''
       }

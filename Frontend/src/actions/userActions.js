@@ -167,6 +167,9 @@ export const hideChangePassword = () => {
     dispatch({
       type: HIDE_CHANGE_PASSWORD
     })
+    dispatch({
+      type: CLEAR_LOGIN_ERRORS
+    })
   }
 };
 
