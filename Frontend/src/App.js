@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import SnackBar from "./components/common/SnackBar/SnackBar";
 import AdminPage from './components/AdminPage';
+import ChangePasswordModal from './components/common/ChangePasswordModal';
 import DashboardPage from './components/Dashboard';
 import DataPage from './components/DataPage';
 import LoginPage from './components/LoginPage';
@@ -26,6 +27,7 @@ class App extends React.Component {
       <MuiThemeProvider theme={localTheme}>
         <CssBaseline />
         <SnackBar notification={notifications}/>
+        <ChangePasswordModal/>
         <BrowserRouter>
           <Switch>
             <Route exact path="/" component={DashboardPage} />
@@ -40,7 +42,7 @@ class App extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  notifications: state.notifications,
+  notifications: state.notifications
 });
 
 App = connect(mapStateToProps, null)(App);
