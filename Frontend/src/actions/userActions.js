@@ -11,7 +11,10 @@ import {
   REGISTER_REJECTED,
   RESET_STATE,
   PROMPT_USER_DELETE,
+  PASSWORD_CHANGE_FULFILLED,
+  PASSWORD_CHANGE_REJECTED,
 } from './../constants';
+import {HIDE_CHANGE_PASSWORD, SHOW_CHANGE_PASSWORD} from "../constants";
 
 export const login = (userCredentials, props) => {
   return (dispatch) => {
@@ -99,6 +102,30 @@ export function doRegister(userCredentials) {
   }
 }
 
+export function doPasswordChange(userCredentials) {
+  return (dispatch) => {
+    const credentials = {
+      email: userCredentials.email,
+      fullName: userCredentials.fullName,
+      password: userCredentials.password,
+      password_new: userCredentials.passwordNew
+    };
+
+    const session = axiosInstance.post('/register', credentials).then((response) => {
+      dispatch({
+        type: PASSWORD_CHANGE_FULFILLED,
+        payload: response,
+      })
+    })
+      .catch((err) => {
+        dispatch({
+          type: PASSWORD_CHANGE_REJECTED,
+          payload: err,
+        })
+      })
+  }
+}
+
 export const requestPassword = (email) => {
   return (dispatch) => {
     const userInfo = {
@@ -123,6 +150,25 @@ export const clearLoginErrors = () => {
   return (dispatch) => {
     dispatch({
       type: CLEAR_LOGIN_ERRORS,
+    })
+  }
+};
+
+export const showChangePassword = () => {
+  return (dispatch) => {
+    dispatch({
+      type: SHOW_CHANGE_PASSWORD
+    })
+  }
+};
+
+export const hideChangePassword = () => {
+  return (dispatch) => {
+    dispatch({
+      type: HIDE_CHANGE_PASSWORD
+    })
+    dispatch({
+      type: CLEAR_LOGIN_ERRORS
     })
   }
 };
