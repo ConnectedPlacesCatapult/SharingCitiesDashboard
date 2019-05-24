@@ -55,9 +55,7 @@ class ChangePasswordForm extends React.Component {
     if (this.state.passwordNew === this.state.confirmPasswordNew) {
       this.props.doPasswordChange(this.state, this.props)
     } else {
-      console.log('here here here')
-      this.setState(
-      {registrationError: 'Passwords do not match', registrationFailed: true})
+      this.setState({registrationError: 'Passwords do not match', registrationFailed: true})
     }
   };
 
