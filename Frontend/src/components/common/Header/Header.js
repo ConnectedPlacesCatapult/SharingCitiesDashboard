@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom'
+import RegisterForm from './../../LoginPage/RegisterForm'
 
 import {
   AppBar,
@@ -20,12 +21,12 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
-import AccountIcon from '@material-ui/icons/AccountCircle';
+import LockIcon from '@material-ui/icons/Lock';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import { Logout as LogoutIcon } from 'mdi-material-ui';
 import { connect } from 'react-redux';
-import { logout, getUser } from './../../../actions/userActions';
+import { logout, getUser, showChangePassword } from './../../../actions/userActions';
 import { NavLink, withRouter } from 'react-router-dom';
 import LoginForm from './../../LoginPage/LoginForm';
 
@@ -165,6 +166,11 @@ class Header extends React.Component {
     }
   }
 
+  handleChangePassword = () => {
+    const { showChangePassword } = this.props;
+    showChangePassword();
+  };
+
   showModal() {
     const {classes, user} = this.props;
     if (!user) {
@@ -215,18 +221,6 @@ class Header extends React.Component {
 
     return (
       <React.Fragment>
-        {/*<FormGroup className={classes.themeToggle} row>
-          <FormControlLabel
-            control={
-              <Switch
-                //checked={this.state.checkedA}
-                //onChange={this.handleChange('checkedA')}
-                value="checkedA"
-              />
-            }
-            label="Toggle light/dark"
-          />
-        </FormGroup>*/}
         <AppBar position="absolute" color="default" className={classes.root}>
           <Toolbar className={classes.toolbar} disableGutters>
             <img className={classes.logoImage} src={BG_IMAGE_SRC} width="220px" height="auto"/>
@@ -247,7 +241,7 @@ class Header extends React.Component {
                   <Paper>
                     <ClickAwayListener onClickAway={this.handleClose}>
                       <MenuList>
-                        <MenuItem disabled onClick={this.handleClose}><AccountIcon className={classes.menuIcon} />Profile</MenuItem>
+                        <MenuItem onClick={this.handleChangePassword}><LockIcon className={classes.menuIcon} />Change Password</MenuItem>
                         <MenuItem onClick={() => this.props.logout(this.props)}><LogoutIcon className={classes.menuIcon} />Logout</MenuItem>
                       </MenuList>
                     </ClickAwayListener>
@@ -273,6 +267,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getUser: () => dispatch(getUser()),
+  showChangePassword: () => dispatch(showChangePassword()),
   logout: (props) => dispatch(logout(props)),
 });
 
