@@ -101,8 +101,8 @@ const getWidgetDefaultProperties = (currentProperties) => {
           ...defaultProperties.queryParams,
           grouped: true,
           harmonising_method: "long",
-          limit: 100,
-          per_sensor: true,
+          limit: 10,
+          per_sensor: false,
         }
       }
     }
