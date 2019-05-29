@@ -66,7 +66,6 @@ export const fetchLayout = () => {
           w: widget.w,
           h: widget.h,
         }));
-
         dispatch({
           type: FETCH_LAYOUT_FULFILLED,
           payload: layout,

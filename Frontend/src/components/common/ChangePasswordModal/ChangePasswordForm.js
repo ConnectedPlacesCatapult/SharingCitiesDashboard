@@ -7,10 +7,11 @@ import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 
-import LoginMessage from './LoginMessage'
+import PasswordChangeMessage from './PasswordChangeMessage'
 
-import { doRegister } from "../../actions/userActions";
+import { doPasswordChange } from "../../../actions/userActions";
 
 // redux
 import { connect } from 'react-redux';
@@ -30,13 +31,13 @@ const styles = (theme) => ({
   },
 });
 
-class RegisterForm extends React.Component {
+class ChangePasswordForm extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      email: '',
-      fullName: '',
+      email: props.user.user.email,
+      fullName: props.user.user.fullname,
       password: '',
       passwordNew: '',
       confirmPasswordNew: '',
@@ -52,10 +53,11 @@ class RegisterForm extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     if (this.state.passwordNew === this.state.confirmPasswordNew) {
-      this.props.doRegister(this.state, this.props)
+      this.props.doPasswordChange(this.state, this.props)
+      this.setState({registrationError: '', registrationFailed: false})
     } else {
-      this.setState(
-        {registrationError: 'Passwords do not match', registrationFailed: true})
+      console.log('dont match')
+      this.setState({registrationError: 'Passwords do not match', registrationFailed: true})
     }
   };
 
@@ -64,38 +66,13 @@ class RegisterForm extends React.Component {
   };
 
   render() {
-    const { email, password, passwordNew, confirmPasswordNew, fullName, errors, isLoading } = this.state;
+    const { password, passwordNew, confirmPasswordNew, errors, isLoading, registrationFailed, registrationError, user } = this.state;
     const { classes } = this.props;
 
     return (
       <form className={classes.form} onSubmit={this.onSubmit}>
         <FormControl margin="normal" required fullWidth>
-          <InputLabel htmlFor="email">Email Address</InputLabel>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            autoFocus
-            error={errors.email}
-            onChange={this.onChange}
-            value={email}
-          />
-        </FormControl>
-        <FormControl margin="normal" required fullWidth>
-          <InputLabel htmlFor="fullName">Full Name</InputLabel>
-          <Input
-            id="fullName"
-            name="fullName"
-            type="string"
-            autoComplete="fullName"
-            error={errors.fullName}
-            onChange={this.onChange}
-            value={fullName}
-          />
-        </FormControl>
-        <FormControl margin="normal" required fullWidth>
-          <InputLabel htmlFor="oldPassword">Provided Password</InputLabel>
+          <InputLabel htmlFor="oldPassword">Old Password</InputLabel>
           <Input
             name="password"
             type="password"
@@ -130,7 +107,11 @@ class RegisterForm extends React.Component {
             value={confirmPasswordNew}
           />
         </FormControl>
-        <LoginMessage/>
+
+        <PasswordChangeMessage/>
+
+        { registrationFailed ? <div><Typography color="error">{registrationError}</Typography></div> : null }
+
         <Button
           type="submit"
           fullWidth
@@ -146,15 +127,19 @@ class RegisterForm extends React.Component {
   }
 }
 
-RegisterForm.propTypes = {
+ChangePasswordForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  doRegister: (userCredentials, props) => dispatch(doRegister(userCredentials, props)),
+const mapStateToProps = (state) => ({
+  user: state.user,
 });
 
-RegisterForm = withStyles(styles)(RegisterForm);
-RegisterForm = connect(null, mapDispatchToProps)(RegisterForm);
+const mapDispatchToProps = (dispatch) => ({
+  doPasswordChange: (userCredentials, props) => dispatch(doPasswordChange(userCredentials, props)),
+});
 
-export default RegisterForm
+ChangePasswordForm = withStyles(styles)(ChangePasswordForm);
+ChangePasswordForm = connect(mapStateToProps, mapDispatchToProps)(ChangePasswordForm);
+
+export default ChangePasswordForm
