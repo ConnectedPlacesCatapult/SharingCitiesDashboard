@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: fcc-api
-        image: <<registry-address>>api:v0.1
+        image: <<api-image-details>>
         args:
         - python
         - manage.py
@@ -22,14 +22,14 @@ spec:
         - containerPort: 5000
           protocol: TCP
       - name: redis
-        image: <<registry-address>>api:v0.1
+        image: <<api-image-details>>
         args:
         - redis-server
         ports:
         - containerPort: 6379
           protocol: TCP
       - name: celery
-        image: <<registry-address>>api:v0.1
+        image: <<api-image-details>>
         args:
         - celery
         - -A

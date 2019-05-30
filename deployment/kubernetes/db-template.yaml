@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: fcc-db
-          image: <<registry-address>>db:v0.1
+          image: <<db-image-details>>
           volumeMounts:
             - name: pg-claim-mount
               mountPath: /var/lib/postgresql
