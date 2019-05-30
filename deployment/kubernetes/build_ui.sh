@@ -55,7 +55,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     cp ./ui-template.yaml ./ui-deployment.yaml
     # Update file
     echo "  - Updating UI deployment file..."
-    sed -i '' -e 's@<<ui-image-details>>@'$ui_image_details'@g' ./ui-template.yaml
+    sed -i '' -e 's@<<ui-image-details>>@'$ui_image_details'@g' ./ui-deployment.yaml
     # Build and tag Dockerfile
     echo "  - Building UI Dockerfile..."
     docker build -f Dockerfile-UI -t $ui_image_details ../../
