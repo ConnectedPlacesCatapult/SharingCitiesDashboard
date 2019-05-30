@@ -3,7 +3,7 @@ import axios from 'axios'
 
 
 export const axiosInstance = axios.create({
-  baseURL: '<<api-address>>'
+  baseURL: `${process.env.API_HOST}`
 })
 
 // export const axiosLoginInstance = axios.create({
