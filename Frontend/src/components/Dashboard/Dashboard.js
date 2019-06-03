@@ -41,7 +41,6 @@ const styles = (theme) => ({
 class Dashboard extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    useDataTable: PropTypes.bool.isRequired,
     editor: PropTypes.object.isRequired,
     closeEditor: PropTypes.func.isRequired,
   };

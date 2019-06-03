@@ -26,6 +26,7 @@ class CreateWidgetMenu extends React.Component {
     mode: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
     openEditor: PropTypes.func.isRequired,
+    useDataTable: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
