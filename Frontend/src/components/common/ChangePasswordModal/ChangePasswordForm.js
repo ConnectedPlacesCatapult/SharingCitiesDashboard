@@ -54,7 +54,9 @@ class ChangePasswordForm extends React.Component {
     e.preventDefault();
     if (this.state.passwordNew === this.state.confirmPasswordNew) {
       this.props.doPasswordChange(this.state, this.props)
+      this.setState({registrationError: '', registrationFailed: false})
     } else {
+      console.log('dont match')
       this.setState({registrationError: 'Passwords do not match', registrationFailed: true})
     }
   };
@@ -107,6 +109,8 @@ class ChangePasswordForm extends React.Component {
         </FormControl>
 
         <PasswordChangeMessage/>
+
+        { registrationFailed ? <div><Typography color="error">{registrationError}</Typography></div> : null }
 
         <Button
           type="submit"

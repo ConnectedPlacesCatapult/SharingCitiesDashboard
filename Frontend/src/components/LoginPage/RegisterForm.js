@@ -95,7 +95,7 @@ class RegisterForm extends React.Component {
           />
         </FormControl>
         <FormControl margin="normal" required fullWidth>
-          <InputLabel htmlFor="oldPassword">Old Password</InputLabel>
+          <InputLabel htmlFor="oldPassword">Provided Password</InputLabel>
           <Input
             name="password"
             type="password"
