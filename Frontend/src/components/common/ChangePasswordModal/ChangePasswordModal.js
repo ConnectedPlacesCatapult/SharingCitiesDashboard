@@ -69,7 +69,7 @@ class ChangePasswordModal extends React.Component {
     const { classes, user } = this.props;
 
     return (
-      <Modal open={user.showChangePassword} onClose={this.handleChangePasswordClose}>
+      <Modal open={("showChangePassword" in user) ? user.showChangePassword : false} onClose={this.handleChangePasswordClose}>
         <div className={classes.root}>
           <main className={classes.content}>
             <main className={classes.layout}>
