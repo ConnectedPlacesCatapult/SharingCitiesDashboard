@@ -58,7 +58,6 @@ class DataTableBody extends React.Component {
       return columns.map((column, i) =>
         <TableCell
           key={i}
-          //numeric={column.numeric}
           align={column.numeric ? "right" : "inherit"}
           padding={(i === 0 || i === (columns.length - 1)) ? 'none' : 'default'}
           className={classNames(classes.cellValue, classes.cellBorder)}
