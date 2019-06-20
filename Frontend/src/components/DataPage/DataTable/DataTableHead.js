@@ -44,7 +44,8 @@ class DataTableHead extends React.Component {
           {columns.map((column, i) =>
               <TableCell
                 key={i}
-                numeric={column.numeric}
+                //numeric={column.numeric}
+                align={column.numeric ? "right" : "inherit"}
                 padding={(i === 0 || i === (columns.length - 1)) ? 'none' : 'default'}
                 sortDirection={orderBy === column.id ? order : false}
                 className={classes.cellBorder}
