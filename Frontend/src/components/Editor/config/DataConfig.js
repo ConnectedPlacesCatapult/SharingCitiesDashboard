@@ -100,12 +100,12 @@ class DataConfig extends React.Component {
     }
   }
 
-  handleThemeChange = (e) => {
+  handleThemeClick = (e, themeId) => {
     const { selectedThemes, selectedSubtheme, selectedAttributes, allSubthemes, allAttributes } = this.state;
 
-    const themeId = Number(e.target.value);
-    const alreadySelected = (!e.target.checked);
+    const alreadySelected = (selectedThemes.indexOf(themeId) > -1);
     const newSelectedThemes = (alreadySelected) ? selectedThemes.filter(id => id !== themeId) : [...selectedThemes, themeId];
+
     let newSelectedSubtheme = selectedSubtheme;
     let newSelectedAttributes = selectedAttributes;
 
@@ -194,19 +194,20 @@ class DataConfig extends React.Component {
     const { classes, editor } = this.props;
     const { selectedThemes, selectedSubtheme, selectedAttributes, allSubthemes, allAttributes } = this.state;
 
-    const themeCheckboxes = editor.themeTree.map((theme, i) => {
+    const themeListItems = editor.themeTree.map((theme, i) => {
       return (
-        <FormControlLabel
-          key={i}
-          label={theme['Name']}
-          control={
-            <Checkbox
-              checked={selectedThemes.indexOf(theme.id) > -1}
-              onChange={this.handleThemeChange}
-              value={theme['id'].toString()}
-            />
-          }
-        />
+        <ListItem 
+          key={i} 
+          button
+          selected={selectedThemes.indexOf(theme.id) > -1}
+          onClick={(e) => this.handleThemeClick(e, theme.id)}
+        >
+          <Checkbox
+            checked={selectedThemes.indexOf(theme.id) > -1}
+            value={theme.id.toString()}
+          />
+          <ListItemText>{theme['Name']}</ListItemText>
+        </ListItem>
       )
     });
 
@@ -264,14 +265,26 @@ class DataConfig extends React.Component {
     return (
       <FormGroup className={classes.root}>
         <Divider className={classes.spacer} />
-        <FormControl component="fieldset">
+
+        {/* <FormControl component="fieldset">
           <FormLabel component="legend">Themes</FormLabel>
           <FormGroup>
             {themeCheckboxes}
           </FormGroup>
           <FormHelperText>Filter attributes by theme</FormHelperText>
-        </FormControl>
-        <Divider />
+        </FormControl> */}
+
+        <List
+          className={classes.listHeightLimit}
+          component="nav"
+          dense
+        >
+          <ListSubheader>Filter attributes by theme</ListSubheader>
+          {themeListItems}
+        </List>
+
+        <Divider className={classes.spacer} />
+
         <List
           className={classes.listHeightLimit}
           component="nav"
@@ -280,7 +293,9 @@ class DataConfig extends React.Component {
           <ListSubheader>Filter attributes by subtheme</ListSubheader>
           {getSubthemeListItems()}
         </List>
-        <Divider />
+
+        <Divider className={classes.spacer} />
+
         <List
           className={classes.listHeightLimit}
           component="nav"
