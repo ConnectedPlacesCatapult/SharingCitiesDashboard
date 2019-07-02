@@ -107,7 +107,7 @@ def check_min_and_max_alert_widgets(attribute_range_entry: db.Model):
 
     if attribute_range_entry.maximum:
         max_alerts = AlertWidgetModel.get_max_alerts(
-            attribute_range_entry.attribute_id, attribute_range_entry.maximum)
+            attribute_range_entry)
         for alert in max_alerts:
             user_details = Users.find_by_id(alert["user_id"])
             if user_details:
@@ -139,7 +139,7 @@ def check_min_and_max_alert_widgets(attribute_range_entry: db.Model):
 
     if attribute_range_entry.minimum:
         min_alerts = AlertWidgetModel.get_min_alerts(
-            attribute_range_entry.attribute_id, attribute_range_entry.minimum)
+            attribute_range_entry)
         for alert in min_alerts:
             user_details = Users.find_by_id(alert["user_id"])
             if user_details:

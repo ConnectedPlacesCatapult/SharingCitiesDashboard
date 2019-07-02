@@ -30,7 +30,7 @@ export const fetchThemes = () => {
     });
 
     axios({
-      url: FCC_CONFIG.apiRoot + '/data',
+      url: FCC_CONFIG.apiRoot + 'data',
       method: 'get',
       params: {},
     })
@@ -63,7 +63,7 @@ export const fetchSubthemes = (themeId) => {
     });
 
     axios({
-      url: FCC_CONFIG.apiRoot + '/data',
+      url: FCC_CONFIG.apiRoot + 'data',
       method: 'get',
       params: {
         [QUERY_PARAMS.THEME_ID]: themeId,
@@ -103,7 +103,7 @@ export const fetchAttributes = (themeId, subthemeId) => {
     });
 
     axios({
-      url: FCC_CONFIG.apiRoot + '/data',
+      url: FCC_CONFIG.apiRoot + 'data',
       method: 'get',
       params: {
         [QUERY_PARAMS.SUBTHEME_ID]: subthemeId,
@@ -145,7 +145,7 @@ export const fetchAttributeData = (attributeName, queryParams = {}) => {
     });
 
     axios({
-      url: FCC_CONFIG.apiRoot + '/data',
+      url: FCC_CONFIG.apiRoot + 'data',
       method: 'get',
       params: {
         ...queryParams,

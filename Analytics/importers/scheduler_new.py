@@ -10,12 +10,15 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from retrying import retry
 from sqlalchemy.orm import sessionmaker, scoped_session
 
+sys.path.append('../')
+
 from app import create_app
 from importers.state_decorator import ImporterStatus
 from models.api import API as Api_Class
 from models.importer_status import ImporterStatuses
+from models.attributes import Attributes
+from models.attribute_range import AttributeRange
 
-sys.path.append('../..')
 from settings import GetConfig
 
 config = GetConfig.configure('postgres')
@@ -101,7 +104,7 @@ class Scheduler(object):
             if result_entry.state != "success":
                 raise RetryingException
                 # raising an exception informs the @retry decorator to retry
-                # the function according to it's arguments 
+                # the function according to it's arguments
 
     @staticmethod
     def get_apis() -> list:
@@ -134,7 +137,8 @@ class Scheduler(object):
         _d_class = data_class()
         logger.info('Starting Importer for {} at:{} '.format
                     (_class, time.strftime('%Y-%m-%d%H:%M:%S')))
-        _d_class._create_datasource()
+        with application.app_context():
+            _d_class._create_datasource()
 
     @staticmethod
     def main_task():
@@ -143,17 +147,20 @@ class Scheduler(object):
         refresh time
         """
 
+        interval = 5
         apis = Scheduler.get_apis()
         for api in apis:
             class_name = api.api_class.split('.')[2]
             sched.add_job(Scheduler.fetch_data, 'interval',
                           name='{}'.format(api.name),
                           seconds=api.refresh_time,
-                          start_date=datetime.now()+timedelta(seconds=5),
+                          start_date=datetime.now()+timedelta(
+                              minutes=interval),
                           end_date=datetime.now()+timedelta(hours=23),
                           args=[api.api_class, api.name],
                           replace_existing=True, id='{}'.format(class_name),
                           jobstore='sqlalchemy', misfire_grace_time=300)
+            interval += interval
 
     @staticmethod
     def run():
@@ -166,6 +173,27 @@ class Scheduler(object):
                                              '', '', False,datetime.now())
                 new_entry.save()
                 new_entry.commit()
+
+        all_attribute = Attributes.get_all()
+        for attribute in all_attribute:
+            if not AttributeRange.get_by_attr_id(attribute.id):
+                attr_min = Attributes.attribute_min(attribute.table_name)
+                attr_max = Attributes.attribute_max(attribute.table_name)
+                try:
+                    new_range = AttributeRange(attribute.id, attr_min.s_id,
+                                               attr_min.value,
+                                               attr_min.timestamp,
+                                               attr_max.s_id,
+                                               attr_max.value,
+                                               attr_max.timestamp,
+                                               datetime.now())
+                except AttributeError:
+                    new_range = AttributeRange(attribute.id, None, None,
+                                               None, None, None, None,
+                                               datetime.now())
+
+                new_range.save()
+                new_range.commit()
 
         sched.add_job(Scheduler.main_task, 'interval',
                       start_date=datetime.now() + timedelta(seconds=5),

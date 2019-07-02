@@ -147,7 +147,6 @@ class AlertWidgetModel(db.Model):
         :return: A list of alerts that have exceeded the maximum threshold
         """
         results = list()
-
         if not attribute_range.maximum:
             return results
 

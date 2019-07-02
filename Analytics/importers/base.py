@@ -28,6 +28,8 @@ from .state_decorator import ImporterStatus
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+class HTTPAuthorizationException(Exception):
+    pass
 
 class BaseImporter(object):
     importer_status = ImporterStatus.get_importer_status()
@@ -86,10 +88,20 @@ class BaseImporter(object):
         :param headers: Request headers
         :return: Data set and an HTTP status code
         """
-        data = requests.get(self.url.replace(' ', '').replace('\n', '') + self.api_key, headers=headers)
+        if not self.api_key:
+            data = requests.get(
+                self.url.replace(' ', '').replace('\n', ''),
+                headers=headers)
+        else:
+            data = requests.get(self.url.replace(' ', '').replace('\n', '') +
+                                self.api_key, headers=headers)
+
+        if data.status_code == HTTPStatus.UNAUTHORIZED:
+            raise HTTPAuthorizationException("Unauthorized")
 
         self.dataset = json.loads(data.text)
-        status_code, message = self.nginx_http_status(self.dataset, data.status_code)
+        status_code, message = self.nginx_http_status(self.dataset,
+                                                      data.status_code)
         return self.dataset, status_code, message
 
     def nginx_http_status(self, data: dict, status_code: int) -> (int, Union[str, None]):
