@@ -9,6 +9,7 @@ import sqlalchemy
 from celery.exceptions import Ignore
 from celery.utils.log import get_task_logger
 from flask_restful import Resource, reqparse, inputs
+from sqlalchemy.exc import OperationalError
 
 from db import db
 from models.attribute_data import ModelClass
@@ -727,8 +728,18 @@ class RequestForData(Resource):
                         "Predictions": predict_from_db.result
                     }
             else:
-                result = PredictionResults.generate_predictions_results(
-                    attribute_table, sensor_id, n_pred, _data, _timestamps)
+                try:
+                    result = PredictionResults.generate_predictions_results(
+                        attribute_table, sensor_id, n_pred, _data, _timestamps)
+                except OperationalError as oe:
+                    self.update_state(
+                        state='CRITICAL',
+                        meta={'status': "Server unable to make prediction."}
+                    )
+                    db.session.rollback()
+                    logger.critical(oe)
+                    raise Ignore()
+
                 UserPredictions.add_entry(u_id, result["Prediction_id"])
 
             pred_data = {"status": "task complete", "result": result}
