@@ -4,7 +4,7 @@ Analytics: [![wercker status](https://app.wercker.com/status/350323c0db166acb504
 
 # Sharing Cities Dashboard
 
-![](logo.jpg)
+![](images/logo.jpg)
 
 ## Table of Contents:
 
@@ -42,7 +42,7 @@ This repo holds the code, deployment configuration and instructions for SharingC
 ### Backend
 At the very core of backend implementation of SharingCities Dashboard there is a Postgres/Postgis database holding the metadata related to the endpoint APIs the sensors and their attributes, the sourced data as well as dashboard related housekeeping data. 
 
-
+![](images/scd-metadata.png)
 
 ## Deployment 
 
