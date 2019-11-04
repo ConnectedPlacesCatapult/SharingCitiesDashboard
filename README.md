@@ -37,7 +37,12 @@ To circumvent this challenge, we have developed a tool that enables users to cre
 This repo holds the code, deployment configuration and instructions for SharingCities dashboard. The implementation of the dashboard consists of two parts:
 
 - A [Flask](https://flask.palletsprojects.com/en/1.1.x/) based backend server. The code is located in the [Analytics](Analytics)
-- A frontend 
+- A frontend implementation based on [React](https://reactjs.org/)
+
+### Backend
+At the very core of backend implementation of SharingCities Dashboard there is a Postgres/Postgis database holding the metadata related to the endpoint APIs the sensors and their attributes, the sourced data as well as dashboard related housekeeping data. 
+
+
 
 ## Deployment 
 
