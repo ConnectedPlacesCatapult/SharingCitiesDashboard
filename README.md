@@ -41,10 +41,18 @@ This repo holds the code, deployment configuration and instructions for SharingC
 - A frontend implementation based on [React](https://reactjs.org/)
 
 ### Backend
+#### Database structure 
 At the very core of backend implementation of SharingCities Dashboard there is a Postgres/Postgis database holding the metadata related to the endpoint APIs the sensors and their attributes, the sourced data as well as dashboard related housekeeping data. 
 
 ![](images/scd-metadata.png)
 
+A functionality description for each table is given below:
+
+``` layouts ``` This table stores the position and dimensions of each widget. It also contains a flag indicating weather the widget is static (on off visualisation) or dynamic (updated whenever new data are imported).
+
+``` widjets ``` This table stores the widgets specifications for each user and each layout. It shares a relationship with ``` layouts ``` table.
+
+``` users ``` 
 ## Deployment 
 
 ## Modules
