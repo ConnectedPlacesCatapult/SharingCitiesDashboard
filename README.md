@@ -6,9 +6,17 @@ Analytics: [![wercker status](https://app.wercker.com/status/350323c0db166acb504
 
 ![](logo.jpg)
 
+## Table of Contents:
+
+- [Introduction](#introduction)
+- [Description](#description)
+- [Requirements](#requirements)
+- [Installing and setting up host](#installing-and-setting-up-the-host)
+- [Quick Start](#quick-start)
+
 ## Introduction
 ### What is sharing cities?
-The Sharing Cities programme seeks to create a better, common approach to making smart cities a reality. By fostering international collaboration between industry and cities, the project seeks to develop affordable, integrated, commercial-scale smart city solutions with a high market potential. For more information on the project click [here](https://drive.google.com/open?id=1ntDUl-UkOadJ6ov6ZzLeyOfllBFpRhW1).
+Sharing Cities, the European Commission funded Horizon 2020 project, seeks to create a better, common approach to making smart cities a reality. By fostering international collaboration between industry and cities, the project seeks to develop affordable, integrated, commercial-scale smart city solutions with a high market potential. For more information on the project click [here](http://www.sharingcities.eu/).
 
 ### What is this tool?
 This tool, provides an interface to city managers for visualising and monitoring the performance of smart city measures such as those relating to housing retrofit, integrated energy management, shared eMobility and smart lampposts. Different combinations of these 'measures' have been deployed in Greenwich, Lisbon and Milan and so this dashboard caters for each location specifically. 
@@ -23,7 +31,13 @@ To circumvent this challenge, we have developed a tool that enables users to cre
 - Explore the data available to them through the USP in their city
 - Perform forecasting on data from specific sensors or specific time-series
 - Create visualisations that they want on their dashboard
+- Create thresholds on specific attributes that can trigger 'alerts' in the dashboard
 
+## Description
+This repo holds the code, deployment configuration and instructions for SharingCities dashboard. The implementation of the dashboard consists of two parts:
+
+- A [Flask](https://flask.palletsprojects.com/en/1.1.x/) based backend server. The code is located in the [Analytics](Analytics)
+- A frontend 
 
 ## Deployment 
 
