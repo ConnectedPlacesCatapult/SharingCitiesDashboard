@@ -9,35 +9,51 @@ At the very core of backend implementation of SharingCities Dashboard there is a
 
 A functionality description for each table is given below:
 
-- *layouts*  This table stores the position and dimensions of each widget. It also contains a flag indicating weather the widget is static (on off visualisation) or dynamic (updated whenever new data are imported).
+### layouts
 
-- *widjets* This table stores the widgets specifications for each user and each layout. It shares a relationship with ``` layouts ``` table.
+  This table stores the position and dimensions of each widget. It also contains a flag indicating weather the widget is static (on off visualisation) or dynamic (updated whenever new data are imported).
 
-- *users* This table stores the credentials for each dashboard user.
+###  widgets
+ This table stores the widgets specifications for each user and each layout. It shares a relationship with ``` layouts ``` table.
 
-- *predictionresults* This table stores the forecasting specifications and results for each user's forecasting job.
+### users
+ This table stores the credentials for each dashboard user.
 
-- *userpredictions* This table stores the association between users and prediction ids. Prediction ids are generated every time a user requests a forecast.
+### predictionresults
+ This table stores the forecasting specifications and results for each user's forecasting job.
 
-- *theme* Table storing the general theme for the data source (e.g. Environment).
+### userpredictions
+ This table stores the association between users and prediction ids. Prediction ids are generated every time a user requests a forecast.
 
-- *subtheme* Table storing a more specific subset of theme (e.g. Air Quality).
+### theme 
+ Table storing the general theme for the data source (e.g. Environment).
 
-- *unit* Table storing the units of measurement for each attribute.
+### subtheme
+ Table storing a more specific subset of theme (e.g. Air Quality).
 
-- *tracker* Table storing moving sensor metadata.
+### unit
+ Table storing the units of measurement for each attribute.
 
-- *location_data* Table storing moving sensor data.
+### tracker
+Table storing moving sensor metadata.
 
-- *attributes* Table storing all attributes, associated metadata and reference data value tables using unique identifiers. 
+### location_data
+ Table storing moving sensor data.
 
-- *api* Table storing API endopoints and specifications.
+### attributes
+ Table storing all attributes, associated metadata and reference data value tables using unique identifiers. 
 
-- *location* Table storing sensor locations.
+### api
+ Table storing API endopoints and specifications.
 
-- *sensor* Table storing sensor metadata using unique identifiers.
+### location
+ Table storing sensor locations.
 
-- *attribute_range* Table storing range of imported value range for each attribute.
+### sensor
+ Table storing sensor metadata using unique identifiers.
+
+### attribute_range
+ Table storing range of imported value range for each attribute.
 
 In addition, the many-to-many relationship between sensors and attributes is stored in a separate table *sensorattribute*. Individual value tables for each attribute are stored in the database as separate tables and are referenced using the ``` table_name ``` column in *attributes* table. The uniqueness of each table is guaranteed by a combination of name and unique identifier. Each data table has the following columns:
 
