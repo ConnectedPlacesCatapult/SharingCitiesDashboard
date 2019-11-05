@@ -6,14 +6,6 @@ Analytics: [![wercker status](https://app.wercker.com/status/350323c0db166acb504
 
 ![](images/logo.jpg)
 
-## Table of Contents:
-
-- [Introduction](#introduction)
-- [Description](#description)
-    * [Backend](#backend)
-- [Requirements](#requirements)
-- [Installing and setting up host](#installing-and-setting-up-the-host)
-- [Quick Start](#quick-start)
 
 ## Introduction
 ### What is sharing cities?
@@ -34,49 +26,26 @@ To circumvent this challenge, we have developed a tool that enables users to cre
 - Create visualisations that they want on their dashboard
 - Create thresholds on specific attributes that can trigger 'alerts' in the dashboard
 
-## Description
-This repo holds the code, deployment configuration and instructions for SharingCities dashboard. The implementation of the dashboard consists of two parts:
+This repo holds the code, deployment configuration and instructions on how to use the SharingCities dashboard. The implementation of the dashboard consists of three parts:
 
-- A [Flask](https://flask.palletsprojects.com/en/1.1.x/) based backend server. The code is located in the [Analytics](Analytics)
+- Importers
+    * Importers are used to source open or propriety data from different APIs and providers. Examples incluse data related to air quality, traffic counts, parking spots etc.
+- [Backend architecture](/Documentation/backend_architecture)
+    * A [Flask](https://flask.palletsprojects.com/en/1.1.x/) based backend server and database structure.
 - A frontend implementation based on [React](https://reactjs.org/)
 
-### Backend
-#### Database structure 
-At the very core of backend implementation of SharingCities Dashboard there is a Postgres/Postgis database holding the metadata related to the endpoint APIs the sensors and their attributes, the sourced data as well as dashboard related housekeeping data. 
 
-![](images/scd-metadata.png)
+## Table of Contents:
 
-A functionality description for each table is given below:
+- [Introduction](#introduction)
+- [Description](#description)
+    * [Backend](#backend)
+- [Requirements](#requirements)
+- [Installing and setting up host](#installing-and-setting-up-the-host)
+- [Quick Start](#quick-start)
 
-``` layouts ``` This table stores the position and dimensions of each widget. It also contains a flag indicating weather the widget is static (on off visualisation) or dynamic (updated whenever new data are imported).
 
-``` widjets ``` This table stores the widgets specifications for each user and each layout. It shares a relationship with ``` layouts ``` table.
 
-``` users ``` This table stores the credentials for each dashboard user.
-
-``` predictionresults ``` This table stores the forecasting specifications and results for each user's forecasting job.
-
-``` userpredictions ``` This table stores the association between users and prediction ids. Prediction ids are generated every time a user requests a forecast.
-
-``` theme ``` Table storing the general theme for the data source (e.g. Environment).
-
-``` subtheme ``` Table storing a more specific subset of theme (e.g. Air Quality).
-
-``` unit ``` Table storing the units of measurement for each attribute.
-
-``` tracker ``` Table storing moving sensor metadata.
-
-``` location_data ``` Table storing moving sensor data.
-
-``` attributes ``` Table storing all attributes, associated metadata and reference data tables. The ID is hashed by the name to allow faster checking of prior existance before flushing in the database.
-
-``` api ``` Table storing API endopoints and specifications.
-
-``` location ``` Table storing sensor locations.
-
-``` sensor ``` Table storing sensor metadata. The ID is hashed by the name to allow faster checking of prior existance before flushing in the database.
-
-``` attribute range ``` Table storing range of imported value range for each attribute.
 
 
 
