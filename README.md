@@ -52,7 +52,34 @@ A functionality description for each table is given below:
 
 ``` widjets ``` This table stores the widgets specifications for each user and each layout. It shares a relationship with ``` layouts ``` table.
 
-``` users ``` 
+``` users ``` This table stores the credentials for each dashboard user.
+
+``` predictionresults ``` This table stores the forecasting specifications and results for each user's forecasting job.
+
+``` userpredictions ``` This table stores the association between users and prediction ids. Prediction ids are generated every time a user requests a forecast.
+
+``` theme ``` Table storing the general theme for the data source (e.g. Environment).
+
+``` subtheme ``` Table storing a more specific subset of theme (e.g. Air Quality).
+
+``` unit ``` Table storing the units of measurement for each attribute.
+
+``` tracker ``` Table storing moving sensor metadata.
+
+``` location_data ``` Table storing moving sensor data.
+
+``` attributes ``` Table storing all attributes, associated metadata and reference data tables. The ID is hashed by the name to allow faster checking of prior existance before flushing in the database.
+
+``` api ``` Table storing API endopoints and specifications.
+
+``` location ``` Table storing sensor locations.
+
+``` sensor ``` Table storing sensor metadata. The ID is hashed by the name to allow faster checking of prior existance before flushing in the database.
+
+``` attribute range ``` Table storing range of imported value range for each attribute.
+
+
+
 ## Deployment 
 
 ## Modules
