@@ -5,7 +5,7 @@ In this section the core backend structure of SharingCities Dashboard is describ
 ## Database structure 
 At the very core of backend implementation of SharingCities Dashboard there is a Postgres/Postgis database holding the metadata related to the endpoint APIs the sensors and their attributes, the sourced data as well as dashboard related housekeeping data. 
 
-![](https://github.com/FutureCitiesCatapult/SharingCitiesDashboard/tree/thanosbnt-patch-1-1/images/scd-metadata.png)
+![](../images/scd-metadata.png)
 
 A functionality description for each table is given below:
 
