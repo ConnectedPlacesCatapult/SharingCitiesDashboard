@@ -41,13 +41,21 @@ A functionality description for each table is given below:
 
 In addition, the many-to-many relationship between sensors and attributes is stored in a separate table *sensorattribute*. Individual value tables for each attribute are stored in the database as separate tables and are referenced using the ``` table_name ``` column in *attributes* table. The uniqueness of each table is guaranteed by a combination of name and unique identifier. Each data table has the following columns:
 
-- *s_id* 
+- **s_id** 
+    
     The ID of a particular sensor.
-- *value* 
-    The senspr value.
-- *api_timestamp* 
+
+- **value** 
+    
+    The sensor value.
+
+- **api_timestamp**
+
     The timestamp reported by the sensor. This could correspond to the time the sensor was queried or the last time the sensor reported a change in value.
-- *timestamp* The time the value was imported in the database.
+
+- **timestamp** 
+
+    The time the value was imported in the database.
 
 ## Backend structure 
 
