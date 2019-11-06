@@ -9,35 +9,50 @@ At the very core of backend implementation of SharingCities Dashboard there is a
 
 A functionality description for each table is given below:
 
-#### layouts This table stores the position and dimensions of each widget. It also contains a flag indicating weather the widget is static (on off visualisation) or dynamic (updated whenever new data are imported).
+### layouts 
+**layouts**  table stores the position and dimensions of each widget. It also contains a flag indicating weather the widget is static (on off visualisation) or dynamic (updated whenever new data are imported).
 
-####  widgets This table stores the widgets specifications for each user and each layout. It shares a relationship with ``` layouts ``` table.
+### widgets 
+**widgets** table stores the widgets specifications for each user and each layout. It shares a relationship with ``` layouts ``` table.
 
-#### users This table stores the credentials for each dashboard user.
+### users
+ **users** This table stores the login credentials for each dashboard user.  
 
-#### predictionresults This table stores the forecasting specifications and results for each user's forecasting job.
+### predictionresults
+ **predictionresults** This table stores the forecasting specifications and results for each user's forecasting job. Along with predicted values, this table stores information related to the mean absolute percentage error (MAPE) as well as the 95% confidence intervals of predictions.
 
-#### userpredictions This table stores the association between users and prediction ids. Prediction ids are generated every time a user requests a forecast.
+### userpredictions 
+ **userpredictions** This table stores the association between users and prediction requests for a specific attribute. Prediction IDs are generated every time a user requests a forecast.
 
-#### theme Table storing the general theme for the data source (e.g. Environment).
+### theme 
+**theme** This table is storing the general theme for the data source (e.g. Environment). This is the first level of categorisation in the dashboard. Themes need to be specified during data import.
 
-#### subtheme Table storing a more specific subset of theme (e.g. Air Quality).
+### subtheme 
+**subtheme** This table is storing a more specific subset of theme (e.g. Air Quality). This is the second level of categorisation in the dashboard. Similar to themes, these need to be specified for each attribute during at an importer level.
 
-#### unit Table storing the units of measurement for each attribute.
+### unit 
+**unit** This table is storing the units of measurement for each attribute (e.g. kg, ppm etc.). The units of measurement need to be specified at the importer level. 
 
-#### tracke Table storing moving sensor metadata.
+### tracker
+**tracker** This table is used for storing moving sensor metadata. Currently this table reflects a requirement for storing GPS enabled shared bikes.
 
-#### location_data Table storing moving sensor data.
+### location_data
+ **location_data** Table storing moving sensor GPS data (e.g. coordinates, satellite fix, number of effective satellites etc.).
 
-#### attributes Table storing all attributes, associated metadata and reference data value tables using unique identifiers. 
+### attributes
+ **attributes** Table storing all attributes, associated metadata and reference data value tables using unique identifiers. In this implementation, this table acts as a catalog linking the metadata structure with the value tables. 
 
-#### api Table storing API endopoints and specifications.
+### api
+**api** Table storing API endopoints and specifications. 
 
-#### location Table storing sensor locations.
+### location
+**location** Table storing sensor locations as geometry objects. 
 
-#### sensor Table storing sensor metadata using unique identifiers.
+### sensor 
+**sensor** This table is links the sensors with their corresponding APIs and locations. A sensor in this context is a physical entity transmitting data (e.g. air quality sensor, parking sensor etc.), however abstract entities (e.g. an LSOA polygon) can also be incorporated within this context.
 
-#### attribute_range Table storing range of imported value range for each attribute.
+### attribute_range 
+**attribute_range** This table is storing the minimum and maximum values of an attribute as well as their corresponding sensor IDs and recorded dates. It is used by the frontend to equalise the scales of plot widgets.
 
 In addition, the many-to-many relationship between sensors and attributes is stored in a separate table *sensorattribute*. Individual value tables for each attribute are stored in the database as separate tables and are referenced using the ``` table_name ``` column in **attributes** table. The uniqueness of each table is guaranteed by a combination of name and unique identifier. Each data table has the following columns:
 
