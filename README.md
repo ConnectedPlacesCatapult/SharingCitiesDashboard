@@ -30,7 +30,7 @@ This repo holds the code, deployment configuration and instructions on how to us
 
 - ***Importers***
     * Importers are used to source open or propriety data from different APIs and providers. Examples incluse data related to air quality, traffic counts, parking spots etc.
-- ***Backend architecture](/Documentation/backend_architecture.md)***
+- ***[Backend architecture](/Documentation/backend_architecture.md)***
     * A [Flask](https://flask.palletsprojects.com/en/1.1.x/) based backend server and database structure.
 - A frontend implementation based on [React](https://reactjs.org/)
 
