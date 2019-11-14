@@ -9,6 +9,12 @@ At the very core of backend implementation of SharingCities Dashboard there is a
 
 A functionality description for each table is given below:
 
+Table name | Description 
+--- | --- 
+*layouts* | This table stores the position and dimensions of each widget. It also contains a flag indicating weather the widget is static (on off visualisation) or dynamic (updated whenever new data are imported).
+1 | 2 
+
+
 #### layouts 
 This table stores the position and dimensions of each widget. It also contains a flag indicating weather the widget is static (on off visualisation) or dynamic (updated whenever new data are imported).
 
