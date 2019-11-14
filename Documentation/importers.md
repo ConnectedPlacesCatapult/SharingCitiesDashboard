@@ -25,5 +25,5 @@ SharingCities Dashboard Greenwich importers were created using a dedicated ArcGI
 
 API/data sample name | Description | Importer | Status | Endpoint 
 --- | --- | --- | --- | ---
-Greenwich smart parking metadata | Location and metadata relating to each parking Lot, each Lot contains a number of parking bays. There are 20 Lots and 46 bays in total. Data table is updated (truncated) each time the api is called | Live  | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/7/
+Greenwich smart parking metadata | Location and metadata relating to each parking Lot, each Lot contains a number of parking bays. There are 20 Lots and 46 bays in total. Data table is updated (truncated) each time the api is called | GreenwichMeta_2 | Live  | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/7/
 
