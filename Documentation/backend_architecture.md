@@ -30,12 +30,9 @@ Table name | Description
 **value_tables** |  Individual value tables for each attribute are stored in the database as separate tables and are referenced using the ``` table_name ``` column in **attributes** table. The uniqueness of each table name is guaranteed by a combination of attribute name and a unique identifier.  
 
 ## Backend implementation 
-
 SharingCitiesDashboard backend is written in Flask and the ORM model used to interact with the database is SQLAlchemy. The following sections describe the supported GET and POST API requests.
 
-## API structure 
-
-### GET requests
+## API GET requests
 The main API GET requests that are served can be categorised to requests related to themes (and subthemes) requests related to sensors, requests related to attributes and requests related to values.
 
 #### Request for theme
@@ -86,6 +83,7 @@ This request is retrieving sensor data from database. It accepts an ID of **sens
         "Description": "No Description"
     },
     ...
+]
 ```
 #### Request for attributes
 This request retrieves attribute data from database. For attribute metadata,the relevant parameter is the name of **attribute**. Parameter **attributedata** can be used if the user wishes to retrieve the relevant data of an attribute. For additional optional parameters please consult the codebase.
@@ -123,7 +121,7 @@ This request retrieves attribute data from database. For attribute metadata,the 
                 "Timestamp": "2019-10-20 23:00:00"
             },
             ...
-
+]
 ```
 
 #### Request for data
@@ -155,7 +153,7 @@ This request retrieves and formats data from the database. In addition to all qu
         "Longitude": -0.1416615248
     },
     ...
-
+]
 ```
 
 - ```0.0.0.0:5000/data?grouped=true&harmonising_method=wide&attributedata=CO,O3```
@@ -183,7 +181,5 @@ This request retrieves and formats data from the database. In addition to all qu
         "timestamp,O3": 1571637600000
     }
     ...
-
+]
 ```
-
-### POST requests

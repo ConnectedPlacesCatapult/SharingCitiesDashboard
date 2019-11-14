@@ -28,7 +28,7 @@ To circumvent this challenge, we have developed a tool that enables users to cre
 
 This repo holds the code, deployment configuration and instructions on how to use the SharingCities dashboard. The implementation of the dashboard consists of three parts:
 
-- ***Importers***
+- ***[Importers](/Documentation/importers.md)***
     * Importers are used to source open or propriety data from different APIs and providers. Examples incluse data related to air quality, traffic counts, parking spots etc.
 - ***[Backend architecture](/Documentation/backend_architecture.md)***
     * A [Flask](https://flask.palletsprojects.com/en/1.1.x/) based backend server and database structure.
