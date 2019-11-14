@@ -49,4 +49,45 @@ Residential sample | Residential house sample energy consumption (Wm) and mean r
 
 The attribute data related to each importer are shown in the table below. Sharing Cities dashboard allows the definition of different measurement units through the implementation of each importer. All attributes are associated with corresponding sensors.
 
+Attribute | Importer | Unit | Description 
+--- | --- | --- | --- 
+b*_heat_vaue | GreenwichSiemens | kWh | Energy consumption
+b*_flow_vaue | GreenwichSiemens | m3/h | Energy flow rate
+b*_temp_out_value | GreenwichSiemens | C | Temperature out
+b*_temp_back_value | GreenwichSiemens | C | Temperature return
+power_sid | GreenwichWholeHouse | Wm | Energy consumption
+avg_lux | GreenwichWholeHouse | Lux	Mean | room luminocity
+temp_sid | GreenwichWholeHouse | C | Mean room temperature
+value_kw | GreenwichKiwiPump | kWh | Energy | consumption
+
+#### Milan
+Currently, there are four API groups associated with SharingCities Dashboard relevant to Milan:
+* SC_EMOBILITY_Refeel. Refeel API to get data bout two e-car available to condominium locate in viale Bacchiglione 
+* SC_EMSmonet_ConsumiEnergetici. Test API for Monet SEMS. 
+* SC_LAMPPOST_SensoriMeteo. REST API to retrieve data from lamp post sensors on the Sharing cities area 
+* SC_PARKING_Kiunsys. REST API to get data related to Parking Area by Kiunsys. 
+
+API/data sample name | Description | Importer | Status | Endpoint 
+--- | --- | --- | --- | ---
+e-mobility refeel data | Information on activities relted to two e-car used by the inhabitants of a condominium located in viale Bacchiglione. The e-car plates are attributed as sensors having coordinates the centroid of viale Bacchiglione. | Milan_API_sc_emobility_refeel | Live | https://api.comune.milano.it:443/SC_EMOBILITY_Refeel/1.0 
+energy management data | Test API for Monet SEMS. | MilanAPI | API subscription status is rejected and as a result importing not available | https://api.comune.milano.it:443/SC_EMSmonet_ConsumiEnergetici/1.0/
+Environmental sensors on lampposts | Information related to the location of the sensors as well as temperature, pressure and humidity | Milan_API_sensori_meteo_meta
+Milan_API_sensori_meteo | Live | https://api.comune.milano.it:443/SC_LAMPPOST_SensoriMeteo/1.0/dati_meteo?
+Smart parking sensors | Location, type and occupancy information for smart parking sensors | Milan_API_sc_parking_kiunsys_meta Milan_API_sc_parking_kiunsys | Live | https://api.comune.milano.it:443/SC_PARKING_Kiunsys/1.0/parkingArea/SHCS02001/parkingSpotSensorsStatus?
+
+Below the associated attributes for each importer are given:
+
+Attribute | Importer | Unit | Description 
+--- | --- | --- | --- 
+parkingSpotType | Milan_API_sc_parking_kiunsys_meta | Categorical | Parking spot type
+positionOnMap | Milan_API_sc_parking_kiunsys_meta | Numerical sensor identifier. Links to the sensor’s coordinates | Location of sensor
+state | Milan_API_sc_parking_kiunsys | Binary | Sensor’s occupancy flag
+rentalState | Milan_API_sc_emobility_refeel | Categorical | Information related to booking state of e-cars
+duration | Milan_API_sc_emobility_refeel | minutes | Duration between two subsequent booking state changes
+pressione | Milan_API_sensori_meteo | mB | Atmospheric pressure
+temperatura | Milan_API_sensori_meteo | C | Temperature
+umidita | Milan_API_sensori_meteo | N/A | Humidity
+temperature, dimmer_perc, dimmer_read, dimmer_default, dimmer_set, do2,tilt_angle, connected_device, energy_delivered,di4, di5, energy_consumed, do1, di1, di2, di3 | MilanAPI
+ | API subscription status is rejected and as a result importing not available | N/A | Lampost environmental sensors
+
 
