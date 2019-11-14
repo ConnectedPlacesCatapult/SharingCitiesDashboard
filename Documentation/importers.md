@@ -27,20 +27,16 @@ API/data sample name | Description | Importer | Status | Endpoint
 --- | --- | --- | --- | ---
 Greenwich smart parking metadata | Location and metadata relating to each parking Lot, each Lot contains a number of parking bays. There are 20 Lots and 46 bays in total. Data table is updated (truncated) each time the api is called | GreenwichMeta_2 | Live | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/7/
 Greenwich smart parking occupancy | Occupancy information relating to each parking Lot i.e. number available. Rows of data are appended to the table each time the api is called | GreenwichOCC_2 | Live | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/8/
-Oxford smart parking metadata | Location and metadata relating to each parking Lot, each Lot contains a number of parking bays. This was sample data relating to Oxford and was used until the Greenwich data came on stream | 
-GreenwichMeta | Tested with Sample | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/0/
-Oxford smart parking occupancy | Occupancy information relating to each parking Lot i.e. number available. Rows of data are appended to the table each time the api is called. | 
-GreenwichOCC | Tested with Sample | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/1/
+Oxford smart parking metadata | Location and metadata relating to each parking Lot, each Lot contains a number of parking bays. This was sample data relating to Oxford and was used until the Greenwich data came on stream | GreenwichMeta | Tested with Sample | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/0/
+Oxford smart parking occupancy | Occupancy information relating to each parking Lot i.e. number available. Rows of data are appended to the table each time the api is called. | GreenwichOCC | Tested with Sample | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/1/
 
 Below a more detailed description of the associated attributes is given.
 
 Attribute | Importer | Unit | Description 
 --- | --- | --- | --- 
 baycount, baycount_2 | GreenwichMeta, GreenwichMeta_2 | count | Number of parking bays in the parking lot
-baytype, baytype_2 | GreenwichMeta, GreenwichMeta_2
-| Categorical | Type of bay
-free, free_2 | GreenwichOCC, GreenwichOCC_2 | count | Count of free spaces
-isoffline, isoffline_2 | GreenwichOCC, GreenwichOCC_2 | binary | Flag indicating sensor status
+baytype, baytype_2 | GreenwichMeta, GreenwichMeta_2 | Categorical | Type of bay
+free, free_2 | GreenwichOCC, GreenwichOCC_2 | count | Count of free spaces isoffline, isoffline_2 | GreenwichOCC, GreenwichOCC_2 | binary | Flag indicating sensor status
 occupied, occupied_2 | GreenwichOCC
 GreenwichOCC_2 | count | Number of occupied spaces
 
