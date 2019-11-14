@@ -88,4 +88,11 @@ temperatura | Milan_API_sensori_meteo | C | Temperature
 umidita | Milan_API_sensori_meteo | N/A | Humidity
 temperature, dimmer_perc, dimmer_read, dimmer_default, dimmer_set, do2,tilt_angle, connected_device energy_delivered,di4, di5, energy_consumed, do1, di1, di2, di3 | MilanAPI | API subscription status is rejected and as a result importing is not available | N/A | Lampost environmental sensors
 
+#### Lisbon
+AlticeLabs are an organisation that are representing / owning Lisbon's USP. From a technical perspective, they have developed the most feature rich API. However, it is designed to enable Device-2-Device communication and is less designed for consumption of the data. Though this documentation is helpful - it does not provide much context on the specific Sharing Cities Data. 
+As a result, there are currently no data retrieving importers operational. As a proof of concept, a generic importer was prepared based on a sample of GiraStation devices (bike docks).
+
+API/data sample name | Description | Importer | Status | Endpoint 
+--- | --- | --- | --- | ---
+GiraStation | Location of bike stations | LisbonAPI | Sample only | N/A
 
