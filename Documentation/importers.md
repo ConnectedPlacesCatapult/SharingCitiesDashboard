@@ -70,9 +70,8 @@ Currently, there are four API groups associated with SharingCities Dashboard rel
 API/data sample name | Description | Importer | Status | Endpoint 
 --- | --- | --- | --- | ---
 e-mobility refeel data | Information on activities relted to two e-car used by the inhabitants of a condominium located in viale Bacchiglione. The e-car plates are attributed as sensors having coordinates the centroid of viale Bacchiglione. | Milan_API_sc_emobility_refeel | Live | https://api.comune.milano.it:443/SC_EMOBILITY_Refeel/1.0 
-energy management data | Test API for Monet SEMS. | MilanAPI | API subscription status is rejected and as a result importing not available | https://api.comune.milano.it:443/SC_EMSmonet_ConsumiEnergetici/1.0/
-Environmental sensors on lampposts | Information related to the location of the sensors as well as temperature, pressure and humidity | Milan_API_sensori_meteo_meta
-Milan_API_sensori_meteo | Live | https://api.comune.milano.it:443/SC_LAMPPOST_SensoriMeteo/1.0/dati_meteo?
+energy management data | Test API for Monet SEMS. | MilanAPI | API subscription status is rejected and as a result importing is not available | https://api.comune.milano.it:443/SC_EMSmonet_ConsumiEnergetici/1.0/
+Environmental sensors on lampposts | Information related to the location of the sensors as well as temperature, pressure and humidity | Milan_API_sensori_meteo_meta, Milan_API_sensori_meteo | Live | https://api.comune.milano.it:443/SC_LAMPPOST_SensoriMeteo/1.0/dati_meteo?
 Smart parking sensors | Location, type and occupancy information for smart parking sensors | Milan_API_sc_parking_kiunsys_meta Milan_API_sc_parking_kiunsys | Live | https://api.comune.milano.it:443/SC_PARKING_Kiunsys/1.0/parkingArea/SHCS02001/parkingSpotSensorsStatus?
 
 Below the associated attributes for each importer are given:
@@ -87,7 +86,6 @@ duration | Milan_API_sc_emobility_refeel | minutes | Duration between two subseq
 pressione | Milan_API_sensori_meteo | mB | Atmospheric pressure
 temperatura | Milan_API_sensori_meteo | C | Temperature
 umidita | Milan_API_sensori_meteo | N/A | Humidity
-temperature, dimmer_perc, dimmer_read, dimmer_default, dimmer_set, do2,tilt_angle, connected_device, energy_delivered,di4, di5, energy_consumed, do1, di1, di2, di3 | MilanAPI
- | API subscription status is rejected and as a result importing not available | N/A | Lampost environmental sensors
+temperature, dimmer_perc, dimmer_read, dimmer_default, dimmer_set, do2,tilt_angle, connected_device energy_delivered,di4, di5, energy_consumed, do1, di1, di2, di3 | MilanAPI | API subscription status is rejected and as a result importing is not available | N/A | Lampost environmental sensors
 
 
