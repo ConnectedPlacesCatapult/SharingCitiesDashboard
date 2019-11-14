@@ -37,18 +37,15 @@ Attribute | Importer | Unit | Description
 baycount, baycount_2 | GreenwichMeta, GreenwichMeta_2 | count | Number of parking bays in the parking lot
 baytype, baytype_2 | GreenwichMeta, GreenwichMeta_2 | Categorical | Type of bay
 free, free_2 | GreenwichOCC, GreenwichOCC_2 | count | Count of free spaces isoffline, isoffline_2 | GreenwichOCC, GreenwichOCC_2 | binary | Flag indicating sensor status
-occupied, occupied_2 | GreenwichOCC
-GreenwichOCC_2 | count | Number of occupied spaces
+occupied, occupied_2 | GreenwichOCC, GreenwichOCC_2 | count | Number of occupied spaces
 
 * Energy related data (energy consumption, flow rate, temperature out etc.) for the Ernest Dense estate in Greenwich as well as residential energy consumption data. 
 
 API/data sample name | Description | Importer | Status | Endpoint 
 --- | --- | --- | --- | ---
-Ernest Dence Boiler House boiler | Boiler energy consumption (kWh) by minute. Sample data. | GreenwichKiwiPump | data from 1/9/18 to 8/9/18  | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/6/
-Siemens Boiler metrics | Metrics for three boilers: energy consumption (kWh), flow rate (m3/h), temperature out (degrees C), temperature return (degrees C) | 
-GreenwichSiemens | data from 8/2/18 to 7/02/18  | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/3/
-Residential sample | Residential house sample energy consumption (Wm) and mean room luminous/temperature data. Sample data. | 
-GreenwichWholeHouse | data from 1/9/18 to 8/9/18  | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/4/
+Ernest Dence Boiler House boiler | Boiler energy consumption (kWh) by minute. Sample data. | GreenwichKiwiPump | data from 1/9/18 to 8/9/18 | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/6/
+Siemens Boiler metrics | Metrics for three boilers: energy consumption (kWh), flow rate (m3/h), temperature out (degrees C), temperature return (degrees C) | GreenwichSiemens | data from 8/2/18 to 7/02/18 | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/3/
+Residential sample | Residential house sample energy consumption (Wm) and mean room luminous/temperature data. Sample data. | GreenwichWholeHouse | data from 1/9/18 to 8/9/18 | https://maps.london.gov.uk/gla/rest/services/apps/smart_parking_demo_service_01/MapServer/4/
 
 The attribute data related to each importer are shown in the table below. Sharing Cities dashboard allows the definition of different measurement units through the implementation of each importer. All attributes are associated with corresponding sensors.
 
