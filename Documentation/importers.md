@@ -163,6 +163,7 @@ class TemplateImporter(BaseImporter): ### The template importer inherits the met
             ### A description for the importer. 
             self.df['description'] = 'a template importer'
 
+            ### Passing, the dataframe as well as the relevant attributes, units, descriptionds api timestamps 
             self.create_datasource(dataframe=self.df, sensor_tag='<THE-SENSOR-ID>', attribute_tag=['<SENSOR-ATTRIBUTE-1>', '<SENSOR-ATTRIBUTE-2>'],
                                    unit_value=['<UNIT-VALUE-1>', '<UNIT-VALUE-2>'], bespoke_unit_tag=['<FILL-IN-HERE-IF-UNIT-NOT-IN-DB>'], description=['description'], bespoke_sub_theme=[],
                                    location_tag=loc, sensor_prefix='template_importer_sensor_', api_timestamp_tag='<THE-API-TIMESTAMP>',
