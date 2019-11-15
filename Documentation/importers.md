@@ -96,3 +96,26 @@ API/data sample name | Description | Importer | Status | Endpoint
 --- | --- | --- | --- | ---
 GiraStation | Location of bike stations | LisbonAPI | Sample only | N/A
 
+### Building an importer
+Building a SharingCities Dashboard importer implies implementing a python class, which inherits methods from [BaseImporter](https://github.com/FutureCitiesCatapult/SharingCitiesDashboard/blob/thanosbnt-patch-1-1/Analytics/importers/base.py) class. 
+The methods in this class provide the means to save all different database components of the Dashboard, as well as helper functions. The example below can be viewed as a walkthrough to the process of making an importer.
+
+
+#### Step 1: Importing the relevant libraries that will be used.
+```python
+from importers.base import BaseImporter, Location, get_config
+from models.sensor import Sensor
+from models import location
+from .state_decorator import ImporterStatus, Status
+
+from db import db
+import pandas as pd
+import numpy as np
+```
+
+#### Step 2: Creating the importer class
+```python
+@GetConfig("GreenwichOCC", 'api_endpoints', 'template_importer') ### Decorators linking to the config file
+class TemplateImporter(BaseImporter): ### The template importer inherits the methods of the BaseImporter class
+    importer_status = ImporterStatus.get_importer_status()  ### Gets the current statis of the importer (eg. success, failure)
+```
