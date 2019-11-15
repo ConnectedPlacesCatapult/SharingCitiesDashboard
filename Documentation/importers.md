@@ -100,8 +100,24 @@ GiraStation | Location of bike stations | LisbonAPI | Sample only | N/A
 Building a SharingCities Dashboard importer implies implementing a python class, which inherits methods from [BaseImporter](https://github.com/FutureCitiesCatapult/SharingCitiesDashboard/blob/thanosbnt-patch-1-1/Analytics/importers/base.py) class. 
 The methods in this class provide the means to save all different database components of the Dashboard, as well as helper functions. The example below can be viewed as a walkthrough to the process of making an importer.
 
+First, the relevant entries in config.yml file need to be created:
 
-#### Step 1: Importing the relevant libraries that will be used.
+#### Step 1: Filling the relevant entries in config.yml
+```bash
+api_endpoints:
+  template_importer:
+    API_CLASS: importers.TemplateImporter
+    API_KEY: ''
+    API_NAME: template_importer
+    BASE_URL: <IMPORTER-ENDPOINT>
+    REFRESH_TIME: 300
+    REFRESH_URL: null
+    TOKEN_EXPIRY: null
+```
+
+After doing this, the importer class can be implemented:
+
+#### Step 2: Importing the relevant libraries that will be used.
 ```python
 from importers.base import BaseImporter, Location, get_config
 from models.sensor import Sensor
@@ -113,9 +129,51 @@ import pandas as pd
 import numpy as np
 ```
 
-#### Step 2: Creating the importer class
+#### Step 3: Creating the importer class
 ```python
-@GetConfig("GreenwichOCC", 'api_endpoints', 'template_importer') ### Decorators linking to the config file
+### Decorators linking to the config.yml file
+@GetConfig("TemplateImporter", 'api_endpoints', 'template_importer') 
 class TemplateImporter(BaseImporter): ### The template importer inherits the methods of the BaseImporter class
-    importer_status = ImporterStatus.get_importer_status()  ### Gets the current statis of the importer (eg. success, failure)
+
+    ### Gets the current statis of the importer (eg. success, failure)
+    importer_status = ImporterStatus.get_importer_status() 
+
+    ### Gets Importer Config, and instantiate BaseImporter
+    def __init__(self) -> None:
+  
+        super().__init__(self.API_NAME, self.BASE_URL, self.REFRESH_TIME,
+                         self.API_KEY, self.API_CLASS,
+                         self.TOKEN_EXPIRY)
+
+    ### Decorator linking to methods for updating the attribute ranges
+    @update_attribute_ranges
+    def _create_datasource(self, headers: Union[str, None] = None) -> None: 
+        ### _create_datasource is a method from BaseImporter that invokes requests to fetch the data from the API
+        try:
+            super()._create_datasource(headers)
+
+            ### create_dataframe  will parse the json response and return the data in a tabular format (dataframe)
+            ### the argument ignore_object_tags will ignore the objects that are assigned to those tags
+            ### see json_reader.py for more options
+            self.df = self.create_dataframe(ignore_object_tags=['info', 'fields'])
+
+            ### Creating a location object and passing the relevant coordinate columns
+            loc = Location('latitude', 'longitude')
+
+            ### A description for the importer. 
+            self.df['description'] = 'a template importer'
+
+            self.create_datasource(dataframe=self.df, sensor_tag='<THE-SENSOR-ID>', attribute_tag=['<SENSOR-ATTRIBUTE-1>', '<SENSOR-ATTRIBUTE-2>'],
+                                   unit_value=['<UNIT-VALUE-1>', '<UNIT-VALUE-2>'], bespoke_unit_tag=['<FILL-IN-HERE-IF-UNIT-NOT-IN-DB>'], description=['description'], bespoke_sub_theme=[],
+                                   location_tag=loc, sensor_prefix='template_importer_sensor_', api_timestamp_tag='<THE-API-TIMESTAMP>',
+                                   is_dependent='<TRUE-IF-SENSOR/LOCATION-ALREADY-IN-DB>')
+
+            self.importer_status.status = Status.success(__class__.__name__)
+
+        ### Catch and log any errors
+        except Exception as e:
+
+            self.importer_status.status = Status.failure(__class__.__name__, e.__str__(), traceback.format_exc())
+
+
 ```
