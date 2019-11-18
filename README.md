@@ -431,15 +431,29 @@ There are two ways to run an importer
 
 The code provided above is generic to all importers. The API is designed with keeping consistency in mind when running importers.
 
-## Scheduler
-
-### What is the Scheduler?
+### How to run the scheduler
 The scheduler is responsible for getting the data periodically from the API's using Importers.
 
 The Scheduler makes use of ```config.yml``` file to retrieve data about importer classes and as every importer follows the same structure it initialises classes at runtime and calls their ```_create_datasource()``` method.
 
 For every importer, the Scheduler initiates a process and then goes to sleep for 24 hours, those subprocess in turn are responsible for running the importers and once and importer has run, the process goes to sleep for the specific time mentioned in the ```config.yml``` file under property ```refresh_time```. 
 
+To run the scheduler, navigate to the Analytics folder and start the scheduler by running 
+
+
+```python3 scheduler_new.py```.
+
+
 In the frontend, the user can monitor the health of importers by clicking on the importers tab under Admin tools. 
 
+### Using the dashboard
+Having installed all components and set up the application, you can navigate to the endpoint of the app. You will be promted to enter your username and password if you are an admin user or register to use the app. 
+<img align="right" src="images/login.png">
+
+The **Forgot password** service uses sendgrid email client. The Sendgrid API key has to be set in the OS environment variables in order for the forgot password email to be sent. Use the commands below in the terminal:
+
+```
+echo "export SENDGRID_API_KEY='YOUR_API_KEY'" > sendgrid.env
+source ./sendgrid.env
+```
 
