@@ -462,11 +462,11 @@ source ./sendgrid.env
 Clicking **Sign in** will teake you to the **Dashboard** page of the app.
 
  <br />
-  <br />
-
  <br />
-
+ <br />
+ <br />
 #### Dashboard
+ <br />
 
 <img align="right" src="images/layout.png">
 
