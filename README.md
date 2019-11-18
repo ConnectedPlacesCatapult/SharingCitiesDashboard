@@ -447,8 +447,10 @@ To run the scheduler, navigate to the Analytics folder and start the scheduler b
 In the frontend, the user can monitor the health of importers by clicking on the importers tab under Admin tools. 
 
 ### Using the dashboard
-Having installed all components and set up the application, you can navigate to the endpoint of the app. You will be promted to enter your username and password if you are an admin user or register to use the app. 
+
 <img align="right" src="images/login.png">
+
+Having installed all components and set up the application, you can navigate to the endpoint of the app. You will be promted to enter your username and password if you are an admin user or register to use the app. 
 
 The **Forgot password** service uses sendgrid email client. The Sendgrid API key has to be set in the OS environment variables in order for the forgot password email to be sent. Use the commands below in the terminal:
 
