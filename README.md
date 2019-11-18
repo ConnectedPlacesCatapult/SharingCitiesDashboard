@@ -447,7 +447,7 @@ To run the scheduler, navigate to the Analytics folder and start the scheduler b
 In the frontend, the user can monitor the health of importers by clicking on the importers tab under Admin tools. 
 
 ### Using the dashboard
-
+#### Login
 <img align="right" src="images/login.png">
 
 Having installed all components and set up the application, you can navigate to the endpoint of the app. You will be promted to enter your email address and password if you are an admin user or register to use the app. 
@@ -461,12 +461,7 @@ source ./sendgrid.env
 
 Clicking **Sign in** will teake you to the **Dashboard** page of the app.
 
-<p> </p>
-<p> </p>
-<p> </p>
-<p> </p>
-
-
+#### Dashboard
 
 <img align="right" src="images/layout.png">
 
