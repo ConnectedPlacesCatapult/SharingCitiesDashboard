@@ -469,7 +469,6 @@ Clicking **Sign in** will teake you to the **Dashboard** page of the app.
 #### Dashboard
 
  <br />
-
 <img align="right" src="images/layout.png">
 
 In the **Dashboard** view of the app you can view all pre-created widgets, or create new ones.
