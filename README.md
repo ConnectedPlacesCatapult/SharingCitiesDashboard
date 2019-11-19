@@ -471,7 +471,6 @@ Clicking **Sign in** will take you to the **Dashboard** page of the app.
  <br />
 
 #### Dashboard
-<img align="right" src="images/layout.png">
 
 In the **Dashboard** view of the app you can view all pre-created widgets, or create new ones. The configuration and placement of the widgets is saved for each user, and is preloaded every time a new session starts up.
 
