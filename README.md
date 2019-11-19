@@ -505,6 +505,8 @@ In this section of the app you can view all registered users of the dashboard, a
  <br />
  <br />
 
+#### 
+
 <img align="right" src="images/admin2.png">
 
 In the *Importers* section of the you can monitor the health of exosting importers and browser log error in case of importer failure. You can also force restart an importer. 
