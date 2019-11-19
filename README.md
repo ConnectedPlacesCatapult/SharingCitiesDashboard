@@ -481,10 +481,20 @@ In the **Dashboard** view of the app you can view all pre-created widgets, or cr
  <br />
  <br />
  <br />
+ <br />
 
 #### Data tools
 <img align="right" src="images/data_tools.png">
 
-In the data tools page you can browse the imported data. The attributes are categorised by theme/subtheme (in the example on the right theme is *Environment* and Subtheme is *Airquality*). Multiple attributes can be selected and displayed as tabs in the main panel. Clicking on the attribute headers you can sort them by value or date.
+In the data tools page you can browse the imported data. The attributes are categorised by theme/subtheme (in the example on the right theme is *Environment* and Subtheme is *Airquality*). Multiple attributes can be selected and displayed as tabs in the main panel. Clicking on the attribute headers you can sort them by value or date. The data can be exported to different formats by clicking on export data. Finally, you can create widgets by clicking on *Create Widgets* button.
 
+ <br />
+ <br />
+ <br />
+ <br />
+
+#### Admin tools
+<img align="right" src="images/admin1.png">
+
+In this section of the app you can view all registered users of the dashboard, add new ones or delete already existing ones. 
 
