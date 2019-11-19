@@ -40,7 +40,7 @@ This repo holds the code, deployment configuration and instructions on how to us
 - [Requirements](#requirements)
 - [Installing](#installing)
 - [Quick Start](#quick-start)
-
+- [Deployment](/Documentation/deployment.md)
 
 ## Requirements
 SharingCities Dashboard has the following requirements:
@@ -54,7 +54,7 @@ SharingCities Dashboard has the following requirements:
 
 
 ## Installing
-This will specify the installation steps needed to get SharingCities Dashboard up and running on a local machine. For production deployment refer to [deployment]().
+This will specify the installation steps needed to get SharingCities Dashboard up and running on a local machine. For production deployment refer to [deployment](/Documentation/deployment.md).
 
 **All commands are Ubuntu specific, but should be easily adaptable to whichever platform you are using (MacOS/Windows/Linux).**
 
@@ -227,7 +227,8 @@ $ celery -A manage.celery_task worker -l info
 
 When a GET request that contains the 'prediction' argument set to true is made to the /data endpoiint, the get_prediction method in /resources/request_for_data.py will be executed asynchronously by the spawned Celery worker.
 A task_id will be contained in the response to this request. The following GET request can then be used to retrieve the result of the get_prediction method:
-  - /pred_status?task_id=<task_id returned by /data endpoint>
+  
+   `/pred_status?task_id=<task_id returned by /data endpoint>`
 
 
 * Change values in `manage.py`:
@@ -260,7 +261,7 @@ to:
 `def __init__(self, host='localhost', port=5000, workers=4):`
 
 
-Please note that the backend relies to a valid config.env.yml file for importer API endpoints and specifications, celery, redis, flask, gunicorn, jwt, postgres and sendgrid configuration. An example is located to /Analytics/settings/config.env.example.yml. Edit this file and rename it to config.env.yml
+Please note that the backend relies to a valid `config.env.yml` file for importer API endpoints and specifications, celery, redis, flask, gunicorn, jwt, postgres and sendgrid configuration. An example is located to `/Analytics/settings/config.env.example.yml`. Edit this file and rename it to `config.env.yml`
 
 **The API can then be accessed at: <http://localhost:5000/>**
 
@@ -307,8 +308,6 @@ As you can see from the example the API is consistent across models and has the 
 
 ### How to run importers
 
-Rename the ```config.yml.example``` to ```config.yml``` in /Analytics/settings/ folder. Make sure you add your relevant API keys if needed.
-
 There are two ways to run an importer
 
 1. Use the add_datasource.py file
@@ -339,9 +338,9 @@ The code provided above is generic to all importers. The API is designed with ke
 ### How to run the scheduler
 The scheduler is responsible for getting the data periodically from the API's using Importers.
 
-The Scheduler makes use of ```config.yml``` file to retrieve data about importer classes and as every importer follows the same structure it initialises classes at runtime and calls their ```_create_datasource()``` method.
+The Scheduler makes use of ```config.env.yml``` file to retrieve data about importer classes and as every importer follows the same structure it initialises classes at runtime and calls their ```_create_datasource()``` method.
 
-For every importer, the Scheduler initiates a process and then goes to sleep for 24 hours, those subprocess in turn are responsible for running the importers and once and importer has run, the process goes to sleep for the specific time mentioned in the ```config.yml``` file under property ```refresh_time```. 
+For every importer, the Scheduler initiates a process and then goes to sleep for 24 hours, those subprocess in turn are responsible for running the importers and once and importer has run, the process goes to sleep for the specific time mentioned in the ```config.env.yml``` file under property ```refresh_time```. 
 
 To run the scheduler, navigate to the Analytics folder and start the scheduler by running 
 
