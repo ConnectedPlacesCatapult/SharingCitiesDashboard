@@ -495,9 +495,18 @@ General options               |  Plot options                |  Data set
 
 #### Map widget
 
-A map widget ![alt text](images/map_widget.png "Plot widget") can be used to display a selected attribute on a map. In terms of available plotting options, **General options** allows definition of the title and description of the map, **Map options** allow the user to choose a different tileset as well as the marker color and opacity. **Data tools** allow adding more attributes on the map. Note that the marker size on the map is proportional to the values of the attribute.
+A map widget ![alt text](images/map_widget.png "Map widget") can be used to display a selected attribute on a map. In terms of available plotting options, **General options** allows definition of the title and description of the map, **Map options** allow the user to choose a different tileset as well as the marker color and opacity. **Data tools** allow adding more attributes on the map. Note that the marker size on the map is proportional to the values of the attribute.
 
 
 General options               |  Map options                 |  Data set
 :----------------------------:|:----------------------------:|:----------------------------:
 ![](images/widget_map.png)    |![](images/widget_map1.png)   |![](images/widget_map2.png)
+
+#### Forecast widget
+
+A forecast widget ![alt text](images/forecast_widget.png "Forecast widget") can be used to generate univariate forecasts on an attribute. The *Widget Editor* of this widget, allows you to choose a title and description for the widget, as well as the attribute to be forecasted and the time steps in the future (this depends on the temporal resolution of the data). This univariate time series forecast feature is generic, and hence makes some assumptions about the data. We provide an indication of the confidence you can place in the forecast values. More accurate forecasts will likely come from a bespoke analysis. 
+
+
+General options               |  Forecast options                 
+:----------------------------:|:----------------------------:
+![](images/widget_forecast.png)    |![](images/widget_forecast1.png)   
