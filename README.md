@@ -211,22 +211,7 @@ $ sudo serve -s build -l 8080
 - `SharingCitiesDashboard/Frontend/fcc.config.js`
 
 ### Step 6: Configure the backend
-The Backend/API is written in Flask and is run/served using Gunicorn:
-
-Rename `settings.py.bak` to `settings.py`:
-
-```
-$ mv settings.py.bak settings.py
-```
-
-Update values in `settings.py`:
-
-```
-DB_USERNAME = 'sharingcities'
-DB_PASSWORD = 'sharingcities'
-DATABASE_NAME = 'test_analytics'
-DB_HOST = 'localhost'
-```
+The Backend/API is written in Flask:
 
 Install asynchronous forecasting requirements
 In order to enforce Celery's asynchronous functionality the following steps need to be followed:
@@ -247,123 +232,43 @@ A task_id will be contained in the response to this request. The following GET r
   - /pred_status?task_id=<task_id returned by /data endpoint>
 
 
-Change values in `manage.py`
+Change values in `manage.py`:
 `host='<host-value>'`
-<br>
-**TO**
-<br>
+
+to:
 `host='0.0.0.0'`
 
-Change values in `gunicornserver.py`
-`def __init__(self, host='<host-value>', port=5000, workers=4):`
-<br>
-**TO**
-<br>
-`def __init__(self, host='localhost', port=5000, workers=4):`
+Start serving:
 
-Start serving with Gunicorn
+```
+$ python3 manage.py runserver
+```
+
+
+Alternatively you can start serving using gunicorn
 
 ```
 $ python3 manage.py gunicorn
 ```
 
+
+
+The `URL` and `PORT` can be set inside the `gunicornserver.py` file
+
+Change:
+`def __init__(self, host='<host-value>', port=5000, workers=4):`
+
+to:
+`def __init__(self, host='localhost', port=5000, workers=4):`
+
+
+Please note that the backend relies to a valid config.env.yml file for importer API endpoints and specifications, celery, redis, flask, gunicorn, jwt, postgres and sendgrid configuration. An example is located to /Analytics/settings/config.env.example.yml. Edit this file and rename it to config.env.yml
+
 **The API can then be accessed at: <http://localhost:5000/>**
-<br>
-**NB:** The `URL` and `PORT` can be set inside the `gunicornserver.py` file
-
-### Step 7:  Nginx
-
-We use Nginx to proxy the components to the web and each other.
-Make sure you're in the correct directory:
-```
-$ cd 
-```
-
-Install Nginx:
-
-```
-$ sudo apt install nginx
-```
-
-Allow Nginx profile in firewall:
-
-```
-$ sudo ufw allow 'Nginx HTTP'
-```
-
-Copy correct Nginx config file:
-
-```
-$ sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bkup
-$ sudo cp ~/SharingCitiesDashboard/nginx.conf /etc/nginx/nginx.conf
-```
-
-Check if Nginx is running:
-```
-$ systemctl status nginx | grep active
-```
-
-If you see `active (running)`:
-
-```
-$ sudo systemctl reload nginx
-```
-
-If you see `inactive (dead)`:
-
-```
-$ sudo systemctl start nginx
-```
-
-**The UI can then be accessed at: `http://<ip-address>`**
-<br>
-**The API can then be accessed at: `http://<ip-address>/api`**
-<br>
-**NB:** The `URL` and `PORT` for the `proxy_pass` addresses can be set inside the `/etc/nginx/nginx.conf` file
-
-<br><br><br>
-
-### Step 8: Components Screen Sessions
-
-There are screen sessions setup and running for each component.
-Connect to Node UI screen:
-
-```
-$ screen -r UI
-```
-
-Connect to Flask API screen:
-
-```
-$ screen -r API
-```
-
-
-*Screen 101*
-* Start a new screen session
-
-```
-$ screen -S <name>
-```
-
-* Detach from a screen session
-`[Ctrl]+[A]+[D]`
-
-* Resume a screen session
-
-```
-$ screen -r
-```
-
-* List screen sessions
-
-```
-$ screen -ls
-```
 
 ---
 
-## Quick-start
+## Quick start
 
 Navigate to the Analytics folder and go to the python shell / REPL. 
   
@@ -404,7 +309,7 @@ As you can see from the example the API is consistent across models and has the 
 
 ### How to run importers
 
-Rename the ```config.yml.example``` to ```config.yml``` in importers folder. Make sure you add your relevant API keys if needed.
+Rename the ```config.yml.example``` to ```config.yml``` in /Analytics/settings/ folder. Make sure you add your relevant API keys if needed.
 
 There are two ways to run an importer
 
