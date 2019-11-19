@@ -475,50 +475,13 @@ Clicking **Sign in** will take you to the **Dashboard** page of the app.
 
 In the **Dashboard** view of the app you can view all pre-created widgets, or create new ones. The configuration and placement of the widgets is saved for each user, and is preloaded every time a new session starts up.
 
- <br />
- <br />
- <br />
- <br />
- <br />
- <br />
- <br />
+In the data tools page you can browse the imported data. The attributes are categorised by theme/subtheme (in the example below theme is *Environment* and Subtheme is *Airquality*). Multiple attributes can be selected and displayed as tabs in the main panel. Clicking on the attribute headers you can sort them by value or date. The data can be exported to different formats by clicking on export data. Finally, you can create widgets by clicking on *Create Widgets* button.
 
-#### Data tools
-<img align="right" src="images/data_tools.png">
+In the **Admin tools** section of the app you can view all registered users of the dashboard, add new ones or delete already existing ones. In the *Importers* section you can monitor the health of exosting importers and browser log error in case of importer failure. You can also force restart an importer. 
 
-In the data tools page you can browse the imported data. The attributes are categorised by theme/subtheme (in the example on the right theme is *Environment* and Subtheme is *Airquality*). Multiple attributes can be selected and displayed as tabs in the main panel. Clicking on the attribute headers you can sort them by value or date. The data can be exported to different formats by clicking on export data. Finally, you can create widgets by clicking on *Create Widgets* button.
-
- <br />
- <br />
- 
-#### Admin tools
-<img align="right" src="images/admin1.png">
-
-In this section of the app you can view all registered users of the dashboard, add new ones or delete already existing ones. 
-
- <br />
- <br />
- <br />
- <br />
- <br />
- <br />
- <br />
- <br />
- <br />
- <br />
- <br />
- <br />
-
-####  
-
-<img align="right" src="images/admin2.png">
-
-In the *Importers* section of the you can monitor the health of exosting importers and browser log error in case of importer failure. You can also force restart an importer. 
-
- <br />
- <br />
- <br />
- <br />
+Dashboard                     |  Data tools                  |  Admin tools
+:----------------------------:|:----------------------------:|:----------------------------:
+![](images/layout.png)        |![](images/data_tools.png)    |![](images/admin1.png)
 
 ### Creating widgets
 
