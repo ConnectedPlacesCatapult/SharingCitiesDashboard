@@ -480,6 +480,7 @@ In the **Dashboard** view of the app you can view all pre-created widgets, or cr
  <br />
  <br />
  <br />
+ <br />
 
 #### Data tools
 <img align="right" src="images/data_tools.png">
