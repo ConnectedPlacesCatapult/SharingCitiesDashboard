@@ -483,7 +483,7 @@ Widgets can be created either in the **Dashboard** or **Data tools** section of 
 
 #### Plot widget
 
-A plot widget ![alt text](images/plot_widget.png "Plot widget") can be used to visualise a selected attribute or group of attributes. It is a wrapper around Vega plotting library, and offers a similar workflow to data visualisation. Clicking on the icon will bring up the *Widget Editor*. Here, you can change the title of the plot, you can add a description, change the width and height of the widget as well as choose to anchor the plot on the dashboard layout.
+A plot widget can be used to visualise a selected attribute or group of attributes. It is a wrapper around Vega plotting library, and offers a similar workflow to data visualisation. Clicking on the icon will bring up the *Widget Editor*. Here, you can change the title of the plot, you can add a description, change the width and height of the widget as well as choose to anchor the plot on the dashboard layout.
 
 The *Plot Options* section of *Widget Editor* allows you to define the details of the plot. The *Mark* section allows you to choose different plotting options (point, line, area, bar etc.). The *Encoding Channels* section of the editor allows you to define the variables that will be plotted against the x (eg. the timestamp) and y axis (eg. the values or an aggregated function of the values) of the plot. The third encoding channel allows you to define a third variable to use in the plot (eg. color, size etc.). 
 
@@ -495,7 +495,7 @@ General options               |  Plot options                |  Data set
 
 #### Map widget
 
-A map widget ![alt text](images/map_widget.png "Map widget") can be used to display a selected attribute on a map. In terms of available plotting options, **General options** allows definition of the title and description of the map, **Map options** allow the user to choose a different tileset as well as the marker color and opacity. **Data tools** allow adding more attributes on the map. Note that the marker size on the map is proportional to the values of the attribute.
+A map widget can be used to display a selected attribute on a map. In terms of available plotting options, **General options** allows definition of the title and description of the map, **Map options** allow the user to choose a different tileset as well as the marker color and opacity. **Data tools** allow adding more attributes on the map. Note that the marker size on the map is proportional to the values of the attribute.
 
 
 General options               |  Map options                 |  Data set
@@ -504,9 +504,17 @@ General options               |  Map options                 |  Data set
 
 #### Forecast widget
 
-A forecast widget ![alt text](images/forecast_widget.png "Forecast widget") can be used to generate univariate forecasts on an attribute. The *Widget Editor* of this widget, allows you to choose a title and description for the widget, as well as the attribute to be forecasted and the time steps in the future (this depends on the temporal resolution of the data). This univariate time series forecast feature is generic, and hence makes some assumptions about the data. We provide an indication of the confidence you can place in the forecast values. More accurate forecasts will likely come from a bespoke analysis. 
+A forecast widget can be used to generate univariate forecasts on an attribute. The *Widget Editor* of this widget, allows you to choose a title and description for the widget, as well as the attribute to be forecasted and the time steps in the future (this depends on the temporal resolution of the data). This univariate time series forecast feature is generic, and hence makes some assumptions about the data. We provide an indication of the confidence you can place in the forecast values. More accurate forecasts will likely come from a bespoke analysis. 
 
 
 General options               |  Forecast options                 
 :----------------------------:|:----------------------------:
 ![](images/widget_forecast.png)    |![](images/widget_forecast1.png)   
+
+#### Alert widget
+
+An alert widget allows the user to generate alerts in case an attribute reaches a maximum or minimum value. An email is sent to the user with a notification stating that the selected attribute has exceeded the threshold value set.
+
+General options               |  Alert options                 
+:----------------------------:|:----------------------------:
+![](images/widget_alert.png)    |![](images/widget_alert1.png)  
