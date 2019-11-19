@@ -515,6 +515,10 @@ In this section of the app you can view all registered users of the dashboard, a
 
 In the *Importers* section of the you can monitor the health of exosting importers and browser log error in case of importer failure. You can also force restart an importer. 
 
+ <br />
+ <br />
+ <br />
+ <br />
 
 ### Creating widgets
 
