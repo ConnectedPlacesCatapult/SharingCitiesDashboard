@@ -503,6 +503,6 @@ General options               |  Plot options                |  Data set
 A map widget ![alt text](images/map_widget.png "Plot widget") can be used to display a selected attribute on a map. In terms of available plotting options, **General options** allows definition of the title and description of the map, **Map options** allow the user to choose a different tileset as well as the marker color and opacity. **Data tools** allow adding more attributes on the map. Note that the marker size on the map is proportional to the values of the attribute.
 
 
-General options               |  Map options                |  Data set
+General options               |  Map options                 |  Data set
 :----------------------------:|:----------------------------:|:----------------------------:
-![](images/widget_editor.png) |![](images/widget_editor1.png)|![](images/widget_editor2.png)
+![](images/widget_map.png)    |![](images/widget_map1.png)   |![](images/widget_map2.png)
