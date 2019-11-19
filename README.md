@@ -518,3 +518,7 @@ An alert widget allows the user to generate alerts in case an attribute reaches 
 General options               |  Alert options                 
 :----------------------------:|:----------------------------:
 ![](images/widget_alert.png)    |![](images/widget_alert1.png)  
+
+An example of the dashboard with all four widgets can be seen below.
+
+<img src="images/dashboard.png">
