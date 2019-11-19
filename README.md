@@ -175,15 +175,13 @@ $ npm i --save
 
 Update the value in `SharingCitiesDashboard/Frontend/src/api/urls.js`
 `export const LOCAL_URL = ‘http://<api-address>/’`
-<br>
-**TO**
-<br>
+
+to:
 `export const LOCAL_URL = ‘http://<ip-address>/api/’`
-Change the value in `SharingCitiesDashboard/fcc.config.js`
+Change the value in `SharingCitiesDashboard/fcc.config.js`:
 `apiRoot: "http://<api-address>/",`
-<br>
-**TO**
-<br>
+
+to:
 `apiRoot: "http://<ip-address>/api/",`
 
 Set node environment mode to Production:
@@ -211,9 +209,9 @@ $ sudo serve -s build -l 8080
 - `SharingCitiesDashboard/Frontend/fcc.config.js`
 
 ### Step 6: Configure the backend
-The Backend/API is written in Flask:
+The Backend/API is written in Flask. To set up all the components: 
 
-Install asynchronous forecasting requirements
+* Install asynchronous forecasting requirements
 In order to enforce Celery's asynchronous functionality the following steps need to be followed:
 
 ```
@@ -221,7 +219,7 @@ $ sudo apt install redis-server
 $ sudo systemctl start redis
 ```
 
-In the Analytics directory, the following command has to be executed in order to create a Celery worker:
+* In the Analytics directory, the following command has to be executed in order to create a Celery worker:
 
 ```
 $ celery -A manage.celery_task worker -l info
@@ -232,13 +230,13 @@ A task_id will be contained in the response to this request. The following GET r
   - /pred_status?task_id=<task_id returned by /data endpoint>
 
 
-Change values in `manage.py`:
+* Change values in `manage.py`:
 `host='<host-value>'`
 
 to:
 `host='0.0.0.0'`
 
-Start serving:
+* Start serving:
 
 ```
 $ python3 manage.py runserver
