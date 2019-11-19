@@ -508,9 +508,26 @@ In this section of the app you can view all registered users of the dashboard, a
  <br />
  <br />
  <br />
- 
+
 ####  
 
 <img align="right" src="images/admin2.png">
 
 In the *Importers* section of the you can monitor the health of exosting importers and browser log error in case of importer failure. You can also force restart an importer. 
+
+
+### Creating widgets
+
+Widgets can be created either in the **Dashboard** or **Data tools** section of the app. There are four types of available widgets: plot, map, forecast and alert.
+
+#### Plot widget
+
+A plot widget ![alt text](images/plot_widget.png "Plot widget") can be used to visualise a selected attribute or group of attributes. It is a wrapper around Vega plotting library, and offers a similar workflow to data visualisation. Clicking on the icon will bring up the *Widget Editor*. Here, you can change the title of the plot, you can add a description, change the width and height of the widget as well as choose to anchor the plot on the dashboard layout.
+
+The *Plot Options* section of *Widget Editor* allows you to define the details of the plot. The *Mark* section allows you to choose different plotting options (point, line, area, bar etc.). The *Encoding Channels* section of the editor allows you to define the variables that will be plotted against the x (eg. the timestamp) and y axis (eg. the values or an aggregated function of the values) of the plot. The third encoding channel allows you to define a third variable to use in the plot (eg. color, size etc.). 
+
+The *Data set* section *Widget Editor* allows you to add additional attributes in the plot or change the existing attribute. Note that the defined settings will propagate to all selected attributes.  
+
+General options               |  Plot options                |  Data set
+:----------------------------:|:----------------------------:|:----------------------------:
+![](images/widget_editor.png) |![](images/widget_editor1.png)|![](images/widget_editor2.png)
