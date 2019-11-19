@@ -361,6 +361,8 @@ $ screen -r
 $ screen -ls
 ```
 
+---
+
 ## Quick-start
 
 Navigate to the Analytics folder and go to the python shell / REPL. 
@@ -446,6 +448,8 @@ To run the scheduler, navigate to the Analytics folder and start the scheduler b
 
 In the frontend, the user can monitor the health of importers by clicking on the importers tab under Admin tools. 
 
+---
+
 ### Using the dashboard
 #### Login
 <img align="right" src="images/login.png">
@@ -471,6 +475,14 @@ Clicking **Sign in** will take you to the **Dashboard** page of the app.
 
 In the **Dashboard** view of the app you can view all pre-created widgets, or create new ones. The configuration and placement of the widgets is saved for each user, and is preloaded every time a new session starts up.
 
+ <br />
+ <br />
+ <br />
+ <br />
 
+#### Data tools
+<img align="right" src="images/data_tools.png">
+
+In the data tools page you can browse the imported data. The attributes are categorised by theme/subtheme (in the example on the right theme is *Environment* and Subtheme is *Airquality*). Multiple attributes can be selected and displayed as tabs in the main panel. Clicking on the attribute headers you can sort them by value or date.
 
 
