@@ -506,7 +506,9 @@ In this section of the app you can view all registered users of the dashboard, a
  <br />
  <br />
  <br />
-
+ <br />
+ <br />
+ 
 ####  
 
 <img align="right" src="images/admin2.png">
