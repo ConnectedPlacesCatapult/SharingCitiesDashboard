@@ -362,3 +362,109 @@ You’ll be prompted for the DB Container details:
 Enter DB Container Registry Address:
 Enter DB Image Version:
 ```
+
+You’ll be prompted to confirm that the generated Image value is correct:
+```bash
+NB: Please check and confirm value, this will build and push the DB dockerfile!
+Is this correct? <docker-image-value> [y/N]:
+```
+
+If you type “N” it will exit and you will have to start the script again. If you type “Y” it will continue to build and push the DB dockerfile/image:
+```bash
+Updating DB deployment file…
+Building DB Dockerfile…
+Pushing DB Docker image…
+```
+
+Deploy the DB kubernetes file:
+```bash
+kubectl apply -f db.yaml
+```
+
+#### Flask API
+The Backend/API image needs to be built and pushed, after which the kubernetes yaml file can be applied/deployed:
+
+Run the API build script:
+```bash
+./build_api.sh
+```
+
+You’ll be prompted for the API Container details:
+```bash
+Enter API Container Registry Address: 
+Enter API Image Version: 
+```
+
+You’ll be prompted to confirm that the generated Image value is correct:
+```bash
+NB: Please check and confirm value, this will build and push the API dockerfile!
+Is this correct? <docker-image-value> [y/N]: 
+```
+
+If you type “N” it will exit and you will have to start the script again. If you type “Y” it will continue to build and push the DB dockerfile/image:
+```bash
+Updating API deployment file…
+Building API Dockerfile…
+Pushing API Docker image…
+```
+
+Deploy the API kubernetes file:
+```bash
+kubectl apply -f api.yaml
+```
+
+The API can now be accessed at the api-svc LoadBalancer’s ip address.
+NB: At this point you will need to get the external-ip for the api-svc LoadBalancer service in order to build and deploy the UI.
+
+#### Node UI
+The Frontend/UI image needs to be built and pushed, after which the kubernetes yaml file can be applied/deployed:
+
+Run the UI build script:
+```bash
+./build_ui.sh
+```
+
+You’ll be prompted for the UI Container details:
+```bash
+Enter UI Container Registry Address: 
+Enter UI Image Version: 
+```
+
+You’ll be prompted to confirm that the generated Image value is correct:
+```bash
+NB: Please check and confirm value, this will build and push the UI dockerfile!
+Is this correct? <docker-image-value> [y/N]: 
+```
+
+If you type “N” it will exit and you will have to start the script again. If you type “Y” it will continue to build and push the DB dockerfile/image:
+```bash
+Updating UI deployment file…
+Building UI Dockerfile…
+Pushing UI Docker image…
+```
+
+Deploy the UI kubernetes file:
+```bash
+kubectl apply -f ui.yaml
+```
+The API can now be accessed at the api-svc LoadBalancer’s ip address.
+The UI can now be accessed at the ui-svc LoadBalancer’s ip address. 
+NB: At this point the FCC Dashboard is deployed but there are no users setup.
+
+#### Setting up the super user
+In order to login and start using the FCC Dashboard a root user needs to be created.
+
+Connect to the fcc-api container on the deployed fcc-api pod:
+```bash
+$ ./add_superuser.sh
+```
+
+You’ll be prompted for the SuperUser credentials:
+```bash
+Fullname:
+Email:
+Password:
+```
+
+You can now login with this user on the UI and will have to follow the instructions to activate and login for the first time.
+
