@@ -309,4 +309,56 @@ e.g. docker exec -it docker_api_1 -ad Air_Quality_KCL
 
 **Register User**; To register the user newly created, on the login page, click on the Register button at the bottom of the login page. Once that is done a user can successfully login to the Dashboard.
 
+## Kubernetes
+This document will guide you through the necessary steps and flow of deploying the SharingCities Service Layer onto kubernetes.
+NB: All code snippets/examples are written specifically for a MacOS/Bash shell
+but should be easily adaptable for whichever OS you are using to deploy.
 
+NB: This document will guide you through a complete HTTP only deployment.
+Setting up TLS is outside the document’s scope.
+
+### Requirements 
+You will need the following software:
+* Install Google Cloud SDK:
+```brew cask install google-cloud-sdk```
+
+* Install Docker for Desktop/Mac
+```brew cask install docker```
+
+* Scripts are written for Bash so you will need to use a bash shell
+
+* Also ensure that you are connected to the correct kubernetes cluster!
+
+### Get the code
+Clone the repository from Github:
+
+```cd && git clone https://github.com/FutureCitiesCatapult/SharingCitiesDashboard```
+
+Checkout the Ubuntu branch:
+```cd ~/SharingCitiesDashboard && git checkout k8s-ready-deployment```
+
+### Deploy the components
+#### Setup config file
+The config file will provide settings and values for the code to work. This is confidential and contains sensitive data so will need to be manually copied and pasted or synced to the machine.
+
+Copy the file to the correct directory:
+```cp ~/Downloads/config.env.yml ~/SharingCitiesDashboard/Analytics/settings/```
+
+NB: Setup/Update the values in
+```SharingCitiesDashboard/Analytics/settings/config.env.yml``` according to your needs/specifications.
+
+#### Change to Deployment Directory
+You must be in the kubernetes deployment directory
+```cd ~/SharingCitiesDashboard/deployment/kubernetes```
+
+#### Postgres Database
+The Postgres DB image needs to be built and pushed, after which the kubernetes yaml file can be applied/deployed:
+
+Run the DB build script:
+```./build_db.sh```
+
+You’ll be prompted for the DB Container details:
+```bash
+Enter DB Container Registry Address:
+Enter DB Image Version:
+```
