@@ -168,30 +168,30 @@ $ sudo systemctl start nginx
 **NB:** The `URL` and `PORT` for the `proxy_pass` addresses can be set inside the `/etc/nginx/nginx.conf` file
 
 
-## Components Screen Sessions
+### Components Screen Sessions
 There are screen sessions setup and running for each component:
-### Connect to Node UI screen
+#### Connect to Node UI screen
 ```
 $ screen -r UI
 ```
-### Connect to Flask API screen
+#### Connect to Flask API screen
 ```
 $ screen -r API
 ```
 
 
-## Screen 101
-### Start a new screen session
+### Screen 101
+#### Start a new screen session
 ```
 $ screen -S <name>
 ```
-### Detach from a screen session
+#### Detach from a screen session
 `[Ctrl]+[A]+[D]`
-### Resume a screen session
+#### Resume a screen session
 ```
 $ screen -r
 ```
-### List screen sessions
+#### List screen sessions
 ```
 $ screen -ls
 ```
