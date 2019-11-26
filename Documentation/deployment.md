@@ -131,6 +131,7 @@ Rename
  ```
  settings.py.bak
  ```
+
 <br>
 to
 <br>
@@ -139,6 +140,7 @@ to
 settings.py
 ```
 
+```
 $ mv settings.py.bak settings.py
 ```
 
@@ -154,6 +156,7 @@ Change values in `manage.py`:
 ```
 host='<host-value>'
 ```
+
 <br>
 to
 <br>
@@ -166,6 +169,7 @@ Change values in `gunicornserver.py`
 ```
 def __init__(self, host='<host-value>', port=5000, workers=4):
 ```
+
 <br>
 to
 <br>
@@ -175,7 +179,6 @@ def __init__(self, host=localhost, port=5000, workers=4):
 ```
 
 Start serving with Gunicorn:
-
 ```
 $ python3 manage.py gunicorn
 ```
@@ -253,7 +256,8 @@ Resume a screen session:
 ```
 $ screen -r
 ```
-#### List screen sessions
+
+List screen sessions:
 ```
 $ screen -ls
 ```
