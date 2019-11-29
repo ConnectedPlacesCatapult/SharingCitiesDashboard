@@ -15,3 +15,7 @@ RUN    /etc/init.d/postgresql start &&\
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.5/main/pg_hba.conf
 USER root
 
+# Create a Work Directory for the Code
+RUN mkdir /Analytics
+WORKDIR /Analytics
+COPY Analytics .

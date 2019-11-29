@@ -10,11 +10,6 @@ build:
         code: |
           /etc/init.d/postgresql start
     - script:
-        name: Set Settings file
-        code: |
-          mv Analytics/settings.py.test Analytics/settings.py
-          cat Analytics/settings.py
-    - script:
         name: Setup Database
         code: |
           python3 Analytics/inittb_operations.py
