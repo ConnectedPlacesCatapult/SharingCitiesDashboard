@@ -18,8 +18,8 @@ RUN sudo apt-get update && apt-get -y install postgresql postgresql-client postg
 RUN sudo apt-get -y install postgis
 USER postgres
 RUN    /etc/init.d/postgresql start &&\
-    psql --command "CREATE USER root WITH SUPERUSER PASSWORD 'root';" &&\
-    createdb -O root test_analytics &&\
+    psql --command "CREATE USER sharingcities WITH SUPERUSER PASSWORD 'sharingcities';" &&\
+    createdb -O root analytics &&\
     psql -d test_analytics -c "CREATE EXTENSION postgis;"
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/10/main/pg_hba.conf
 USER root
