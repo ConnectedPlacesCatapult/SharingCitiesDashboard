@@ -11,7 +11,7 @@ import sqlalchemy
 app = create_app()
 
 db_uri = '%s://%s:%s@%s/%s' % (
-    app.config["'db_psql_base_uri"], app.config['db_username'],
+    app.config['db_psql_base_uri'], app.config['db_username'],
     app.config['db_password'], app.config['db_host'], app.config['db_name'])
 engine = sqlalchemy.create_engine(db_uri)
 conn = engine.connect()
