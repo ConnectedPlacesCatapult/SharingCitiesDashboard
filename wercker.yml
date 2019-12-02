@@ -10,10 +10,6 @@ build:
         code: |
           /etc/init.d/postgresql start
     - script:
-        name: Setup Database
-        code: |
-          python3 Analytics/initdb.py
-    - script:
         name: Run Test
         code: |
           python3 Analytics/run_tests.py
